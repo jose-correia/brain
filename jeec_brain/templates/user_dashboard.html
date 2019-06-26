@@ -1,0 +1,57 @@
+<html>  
+  <head>
+    <title>User Dashboard</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="stylesheet" href="/static/user_dashboard_style.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+</head>
+  <body>
+    <div class="section-header">
+        <h2>{{name}}</h2>
+        <p>{{ username }}</p>
+    </div>
+
+    <div class="resume-container">
+        <img class="resume-logo" src="/static/resume.svg">
+    </div>
+
+    <div class="dashboard-card">
+        {% if has_uploaded == true %}
+            <h3 class="upload-msg">Your CV has been uploaded!<p>New submissions are now closed!</p></h3>
+            <form method=post class="submited-file-form">
+                <div class="check-container">
+                    <input type="submit" name=submit value="Check" id="check" class="check-button">
+                    <label for="check"><img class="check-logo" src="/static/check.svg">Check CV</label>
+                </div>
+                
+                <div class="delete-container">
+                    <input type="submit" name=submit value="Delete" id="delete" class="delete-button">
+                    <label for="delete"><img class="delete-logo" src="/static/delete.svg">Delete CV</label>
+                </div>
+            </form>
+        {% else %}
+            <!--<h3 class="upload-msg">Upload your CV!</h3>
+            <div class="size-warning">Maximum file size: 8 Mb</div>
+            <form method=post enctype=multipart/form-data>
+                <div class="inputfile-container">
+                    <input type=file accept=".pdf" name=file id="file" class="inputfile">
+                    <label for="file" id="file-label">Choose a file</label>
+                </div>
+
+                <div class="upload-container">
+                    <input type=submit name=submit value="Upload" id="submit" class="upload-button">
+                    <label for="submit"><img class="upload-logo" src="/static/upload.svg">Upload</label>
+                </div>
+            </form>-->
+            <h3 class="upload-msg">Submissions are closed! :(</h3>
+        {% endif %}
+    </div>
+
+    <div class="logout-container">
+        <form action="/auth/logout" method=get>
+            <input type="submit" name=submit value="Logout" class="logout-button">
+        </form>
+    </div>
+  </body>
+</html>  

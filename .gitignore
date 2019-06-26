@@ -1,0 +1,25 @@
+# ignore a file type
+*.json
+*.pyc
+*.env
+*.sh
+
+fenixedu.ini
+
+# add an exception (using !) to the preceding rule to track a specific file
+!package.json
+
+/jeec_brain/database/migrations
+/jeec_brain/storage/
+
+/__pycache__
+
+/venv
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
