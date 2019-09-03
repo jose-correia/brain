@@ -20,7 +20,7 @@ class Config(object):
 
     ALLOWED_EXTENSIONS = ['pdf']
     CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN')
-    MAX_CONTENT_LENGTH = os.environ.get('MAX_CONTENT_LENGTH')
+    MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH'))
 
     ACTIVITIES = ['Workshops', 'Speakers', 'Tech Talks', 'Panel Discussions', 'Job Fair', 'Matchmaking']
 

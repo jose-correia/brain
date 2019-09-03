@@ -1,6 +1,7 @@
 from .. import bp
 from flask import render_template
-from jeec_brain.finders.speakers_finder import SpeakerFinder
+from jeec_brain.finders.speakers_finder import SpeakersFinder
+from jeec_brain.handlers.speakers_handler import SpeakersHandler
 from jeec_brain.apps.auth.wrappers import require_admin_login
 
 

@@ -47,7 +47,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False, e
 
-            student = StudentFinder.get_from_ist_id(ist_id=person['username'])
+            student = StudentsFinder.get_from_ist_id(ist_id=person['username'])
 
             if student is None:
                 try:
@@ -68,7 +68,7 @@ class AuthHandler(object):
     
     @staticmethod
     def login_company(username, password):
-        company = CompanyFinder.get_from_username(username=username)
+        company = CompaniesFinder.get_from_username(username=username)
 
         if company is None or not company.check_password(password):
             logger.error('''Company tried to login with invalid credentials!
@@ -85,7 +85,7 @@ class AuthHandler(object):
         if username == os.environ.get('ADMIN_USERNAME') \
                     and password == os.environ.get('ADMIN_KEY'): 
 
-            user = UserFinder.get_user_from_username(username)
+            user = UsersFinder.get_user_from_username(username)
 
             if user is None:
                 try:
@@ -93,12 +93,15 @@ class AuthHandler(object):
                     logger.info("New admin added to the DB")
                 except Exception as e:
                     logger.error(e)
-                    return False, e
+                    return False
 
             login_user(user)
             logger.info("Admin authenticated!")
             session['admin'] = True
-            return True, None
+            return True
+        
+        else:
+            return False
 
 
     @staticmethod

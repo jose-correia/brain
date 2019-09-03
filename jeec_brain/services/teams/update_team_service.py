@@ -4,7 +4,7 @@ from jeec_brain.models.teams import Teams
 
 class UpdateTeamService():
     
-    def __init__(self, team: team, kwargs: Dict):
+    def __init__(self, team: Teams, kwargs: Dict):
         self.team = team
         self.kwargs = kwargs
 

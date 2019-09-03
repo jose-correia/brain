@@ -1,6 +1,7 @@
 from .. import bp
 from flask import render_template, current_app
-from jeec_brain.finders.activity_finder import ActivityFinder
+from jeec_brain.finders.activities_finder import ActivitiesFinder
+from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.apps.auth.wrappers import require_admin_login
 
 

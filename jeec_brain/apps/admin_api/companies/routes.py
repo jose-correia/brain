@@ -2,13 +2,13 @@ from .. import bp
 from flask import render_template, request
 
 # parsers
-from parsers import create_comapny_parser, update_comapny_parser
+from jeec_brain.apps.admin_api.companies.parsers import create_comapny_parser, update_comapny_parser
 
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 
 # finders
-from jeec_brain.finders.company_finder import CompanyFinder
+from jeec_brain.finders.companies_finder import CompaniesFinder
 
 # values
 from jeec_brain.values.company_value import CompanyValue
@@ -20,9 +20,9 @@ from jeec_brain.apps.auth.wrappers import require_admin_login
 @bp.route('/companies', methods=['GET'])
 @require_admin_login
 def companies_dashboard():
-    companies_list = CompanyFinder.get_all()
+    companies_list = CompaniesFinder.get_all()
 
-    return render_template('admin/companies_dashboard.html', companies=companies_list)
+    return render_template('admin/companies/companies_dashboard.html', companies=companies_list)
 
 
 @bp.route('/companies', methods=['POST'])
@@ -48,7 +48,7 @@ def create_company():
 def update_company(company_external_id):
     payload = update_comapny_parser.parse_args()
 
-    company = CompanyFinder.get_from_external_id(company_external_id)
+    company = CompaniesFinder.get_from_external_id(company_external_id)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)
@@ -64,7 +64,7 @@ def update_company(company_external_id):
 @bp.route('/companies/<string:company_external_id>', methods=['DELETE'])
 @require_admin_login
 def delete_company(company_external_id):
-    company = CompanyFinder.get_from_external_id(company_external_id)
+    company = CompaniesFinder.get_from_external_id(company_external_id)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)
@@ -78,7 +78,7 @@ def delete_company(company_external_id):
 @bp.route('/companies/<string:company_external_id>/activities', methods=['GET'])
 @require_admin_login
 def get_company_activities(company_external_id):
-    company = CompanyFinder.get_from_external_id(company_external_id)
+    company = CompaniesFinder.get_from_external_id(company_external_id)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)

@@ -69,7 +69,7 @@ def create_app():
 
 @login_manager.user_loader
 def load_user(username):
-    return UserFinder.get_user_from_username(username=username)
+    return UsersFinder.get_user_from_username(username=username)
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():

@@ -12,18 +12,32 @@
     
   </head>
   <body>
-    <div class="logo-container">
-      <img class="jeec-logo" src="/static/jeec_logo.svg">
-    </div>
 
     <div class="section-header" >
-      <h2>Companies Management/h2>
+      <h2>Companies Management</h2>
     </div>
 
-    <select>
-        {% for company in companies %}
-            <option value="{{ company.id }}">{{ company.name }}</option>
-        {% endfor %}
-    </select>
+    <table>
+        <thead><tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>CV Platform</th>
+          <th>Business</th>
+        </tr></thead>
+        <tbody>
+            {% for company in companies %}
+              <tr>
+                <td><a href="/testresult?query={{ d }}">{{ company.name }}</td></a>
+                <td>{{ company.email }}</td>
+                <td>{{ company.access_cv_platform }}</td>
+                <td>{{ company.business_area }}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form action="/action_page.php" method="get">
+      <button name="subject" type="submit">Add Company</button>
+    </form>
   </body>
 </html>  

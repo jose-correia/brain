@@ -8,6 +8,6 @@ class UpdateSpeakerService():
         self.speaker = speaker
         self.kwargs = kwargs
 
-    def call(self) -> Optional[Speaker]:
+    def call(self) -> Optional[Speakers]:
         update_result = self.speaker.update(**self.kwargs)
         return update_result
