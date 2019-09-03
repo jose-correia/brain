@@ -1,21 +1,21 @@
 # SERVICES
 from jeec_brain.services.companies.create_company_service import CreateCompanyService
-from jeec_brain.services.update_data_service import UpdateDataService
+from jeec_brain.services.companies.update_company_service import UpdateCompanyService
 from jeec_brain.services.companies.delete_company_service import DeleteCompanyService
 
 
-class CompaniesHandler(object):
+class CompaniesHandler():
+    
     @classmethod
-    def create_company(cls, name, email, business_area, link):
-        return CreateCompanyService(
-            name=name, email=email, business_area=business_area, link=link).call()
+    def create_company(cls, **kwargs):
+        return CreateCompanyService(kwargs=kwargs).call()
 
     @classmethod
     def update_company(cls, company, **kwargs):
-        return UpdateDataService(data_model=company, kwargs=kwargs).call()
+        return UpdateCompanyService(company=company, kwargs=kwargs).call()
 
     @classmethod
-    def delete_company(cls, company, **kwargs):
+    def delete_company(cls, company):
         return DeleteCompanyService(company=company).call()
 
     # @classmethod
@@ -25,3 +25,4 @@ class CompaniesHandler(object):
     #         return True
     #     except Exception as e:
     #         logger.error(e)
+    
