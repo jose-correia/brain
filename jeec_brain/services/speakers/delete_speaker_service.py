@@ -1,5 +1,4 @@
 from jeec_brain.models.speakers import Speakers
-from jeec_brain.database import db
 
 
 class DeleteSpeakerService():
@@ -8,12 +7,6 @@ class DeleteSpeakerService():
         self.speaker = speaker
 
     def call(self) -> bool:
-
-        try:
-            db.session.delete(self.speaker)
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
-            return False
-
-        return True
+        result = self.speaker.delete()
+        return result
+        

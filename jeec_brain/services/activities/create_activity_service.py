@@ -23,7 +23,7 @@ class CreateActivityService():
     def call(self) -> Optional[Activities]:
         
         activity = Activities.create(
-            name=self.username,
+            name=self.name,
             description=self.description,
             location=self.location,
             datetime=self.datetime,
@@ -43,8 +43,6 @@ class CreateActivityService():
             except Exception:
                 logger.exception('Failed to add new activity to company')
                 return None
-            else:
-                return agent
         
         if self.speaker:
             try:
@@ -54,6 +52,6 @@ class CreateActivityService():
             except Exception:
                 logger.exception('Failed to add new activity to speaker')
                 return None
-            else:
-                return agent
+
+        return activity
 

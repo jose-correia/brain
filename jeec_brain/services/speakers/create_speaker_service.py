@@ -1,13 +1,32 @@
-from jeec_brain.models.users import Users
+import logging
+from jeec_brain.models.speakers import Speakers
+from typing import Dict, Optional
 
-class CreateUserService(object):
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
+logger = logging.getLogger(__name__)
 
-    def call(self):
-        user = Users(**self.kwargs)
+
+class CreateSpeakerService():
+
+    def __init__(self, payload: Dict):
+        self.name = payload.get('name')
+        self.company = payload.get('company')
+        self.position = payload.get('position')
+        self.country = payload.get('country')
+        self.bio = payload.get('bio')
+        self.linkedin_url = payload.get('linkedin_url')
+
+    def call(self) -> Optional[Speakers]:
         
-        user.create()
-        user.reload()
-        
-        return user
+        speaker = Speakers.create(
+            name=self.name,
+            company=self.company,
+            position=self.position,
+            country=self.country,
+            bio=self.bio,
+            linkedin_url=self.linkedin_url
+        )
+
+        if not speaker:
+            return None
+
+        return speaker

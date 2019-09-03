@@ -1,5 +1,4 @@
 from jeec_brain.models.colaborators import Colaborators
-from jeec_brain.database import db
 
 
 class DeleteColaboratorService():
@@ -8,12 +7,5 @@ class DeleteColaboratorService():
         self.colaborator = colaborator
 
     def call(self) -> bool:
-
-        try:
-            db.session.delete(self.colaborator)
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
-            return False
-
-        return True
+        result = self.colaborator.delete()
+        return result
