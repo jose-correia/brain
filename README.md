@@ -1,4 +1,4 @@
-# JEEC CV Platform 
+# JEEC Administration System 
 
 ### Table of contents
 * [What is this?](#what-is-this)
@@ -8,7 +8,8 @@
 * [Useful links](#useful-links)
 
 ## What is this?
-Welcome to the JEEC CV Platform! This service is open during the event so that students can submit their resume's to the companies that attended. 
+Welcome to the JEEC Brain! This system serves the purpose of managing
+all the technological services of the JEEC event. 
 
 ## Tech Stack and key concepts
 *   Python
