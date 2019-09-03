@@ -1,34 +1,35 @@
-from flask import jsonify, Response, request
+from flask import request, render_template, session, redirect, url_for, current_app
 from . import bp
 
-import json
-
-# content routes
-@bp.route('/')
-@bp.route('/', methods=['POST'])
-def handlefile():
-    return jsonify({'welcome message': "Hi, this is JEEC CV Platform"})
+from flask_login import current_user
+from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
 
 
-# content routes
-@bp.route('/adduser', methods=['POST'])
-def add_user():
-    return jsonify({'welcome message': "Hi, this is JEEC CV Platform"})
+@bp.route('/admin-login', methods=['GET'])
+def get_admin_login_form():
+    if current_user.is_authenticated and session.get('admin'):
+        return redirect(url_for('admin_api.dashboard'))
+    return render_template('admin/admin_login.html')
 
 
-# content routes
-@bp.route('/getuser', methods=['GET'])
-def get_user():
-    return jsonify({'welcome message': "Hi, this is JEEC CV Platform"})
-
-
-# content routes
-@bp.route('/mdeleteusers', methods=['POST', 'DELETE', 'GET'])
-def delete_user():
-    return jsonify({'welcome message': "Hi, this is JEEC CV Platform"})
-
+@bp.route('/admin-login', methods=['POST'])
+def login():
+    if session.get('admin'):
+        return redirect(url_for('admin_bp.dashboard'))
     
-@bp.route('/cleantemporary', methods=['GET'])
-def get():
-    return jsonify({'welcome message': "Hi, this is JEEC CV Platform"})
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if AuthHandler.login_admin(username, password) is False:
+        return render_template('admin_login.html', error="Invalid credentials!")
+
+    return redirect(url_for('admin_api.dashboard'))
+
+
+# content routes
+@bp.route('/dashboard', methods=['GET'])
+@require_admin_login
+def dashboard():
+    return render_template('admin/dashboard.html')
 

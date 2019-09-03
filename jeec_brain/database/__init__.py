@@ -4,10 +4,17 @@ from sqlalchemy.dialects.postgresql import UUID
 
 db = SQLAlchemy()
 db.UUID = UUID(as_uuid=True)
+db_session = db.session
+
 
 def create_tables():
-    from jeec_brain.models.company import Company
-    from jeec_brain.models.student import Student
+    from jeec_brain.models.companies import Companies
+    from jeec_brain.models.students import Students
+    from jeec_brain.models.activities import Activities
+    from jeec_brain.models.colaborators import Colaborators
+    from jeec_brain.models.speakers import Speakers
+    from jeec_brain.models.users import Users
+    from jeec_brain.models.teams import Teams
     db.create_all()
 
 

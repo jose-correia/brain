@@ -19,6 +19,10 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     ALLOWED_EXTENSIONS = ['pdf']
+    CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN')
+    MAX_CONTENT_LENGTH = os.environ.get('MAX_CONTENT_LENGTH')
+
+    ACTIVITIES = ['Workshops', 'Speakers', 'Tech Talks', 'Panel Discussions', 'Job Fair', 'Matchmaking']
 
 
 

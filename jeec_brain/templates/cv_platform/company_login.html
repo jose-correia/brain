@@ -1,0 +1,39 @@
+<html>
+
+<head>
+    <title>Company|Login</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="stylesheet" href="/static/cv_platform/css/company_login.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+<body>
+    <div class="section-header">
+        <h2>Company Login
+            <p>Download IST CV's submited by the students</p>
+        </h2>
+    </div>
+
+    <div class="login-card">
+        <form action="" method="post">
+            <div class="username-container">
+                <input type="text" placeholder="Username" class="username-input" name="username" value="{{request.form.username }}">
+            </div>
+            <div class="password-container">
+                <input type="password" placeholder="Password" class="password-input" name="password" value="{{request.form.password }}">
+            </div>
+
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+
+            <div class="login-button-container">
+                <input type="submit" value="Login" class="login-button">
+            </div>
+        </form>
+    </div>
+    </div>
+</body>
+
+</html>

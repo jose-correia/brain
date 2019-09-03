@@ -7,7 +7,7 @@ import os, os.path
 app = create_app()
 manager = Manager(app)
 current_path = os.path.dirname(os.path.realpath(__file__))
-migrations_dir = os.path.join(current_path, 'app', 'database', 'migrations')
+migrations_dir = os.path.join(current_path, 'jeec_brain', 'database', 'migrations')
 migrate = Migrate(app, db, directory=migrations_dir)
 
 
@@ -20,7 +20,7 @@ def count_files():
 
 
 @manager.command
-def dump_istids():
+def dump_ist_ids():
     current_path = os.path.dirname(os.path.realpath(__file__))
     directory =  os.path.join(current_path, 'app', 'storage')  
 
