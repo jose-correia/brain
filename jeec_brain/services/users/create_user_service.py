@@ -1,11 +1,12 @@
 from jeec_brain.models.users import Users
 
-class CreateUserService(object):
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
+class CreateUserService():
+    def __init__(self, username, role):
+        self.username = username
+        self.role = role
 
     def call(self):
-        user = Users(**self.kwargs)
+        user = Users(username=self.username, role=self.role)
         
         user.create()
         user.reload()
