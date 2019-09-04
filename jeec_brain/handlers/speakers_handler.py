@@ -8,7 +8,7 @@ class SpeakersHandler():
 
     @classmethod
     def create_speaker(cls, **kwargs):
-        return CreateSpeakerService(kwargs=kwargs).call()
+        return CreateSpeakerService(payload=kwargs).call()
 
     @classmethod
     def update_speaker(cls, speaker, **kwargs):

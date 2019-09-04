@@ -38,7 +38,7 @@
         <input type="submit" value="Save">
     </form>
 
-    <form action="/admin/company/{{company.external_id}}/delete" method="get">
+    <form action="/admin/company/{{company.external_id.hex}}/delete" method="get">
         <button>Delete Company</button>
     </form>
 

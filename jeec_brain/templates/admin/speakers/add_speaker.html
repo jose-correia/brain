@@ -14,19 +14,28 @@
   <body>
 
     <div class="section-header" >
-      <h2>JEEC Admin Dashboard</h2>
+      <h2>Add a new Speaker</h2>
     </div>
 
-    <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
-        <button>Manage Companies</button>
+    <form action="{{ url_for('admin_api.create_speaker') }}" method="post">
+        Name:<br>
+        <input type="text" name="name" required><br>
+        Company name:<br>
+        <input type="text" name="company"><br>
+        Position:<br>
+        <input type="text" name="position"><br>
+        Country:<br>
+        <input type="text" name="country"><br>
+        Biography:<br>
+        <input type="text" name="bio"><br>
+        LinkedIn:<br>
+        <input type="text" name="linkedin_url"><br>
+
+        <input type="submit" value="Save">
     </form>
 
     <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
-        <button>Manage Speakers</button>
-    </form>
-
-    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-        <button>Log Out</button>
+        <button>Cancel</button>
     </form>
   </body>
 </html>  

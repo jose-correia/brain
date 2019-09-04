@@ -115,18 +115,18 @@ def delete_company(company_external_id):
         return APIErrorValue('Company deletion failed').json(500)
 
 
-@bp.route('/companies/<string:company_external_id>/activities', methods=['GET'])
-@require_admin_login
-def get_company_activities(company_external_id):
-    company = CompaniesFinder.get_from_external_id(company_external_id)
+# @bp.route('/companies/<string:company_external_id>/activities', methods=['GET'])
+# @require_admin_login
+# def get_company_activities(company_external_id):
+#     company = CompaniesFinder.get_from_external_id(company_external_id)
 
-    if company is None:
-        return APIErrorValue('Couldnt find company').json(500)
+#     if company is None:
+#         return APIErrorValue('Couldnt find company').json(500)
         
-    if CompaniesHandler.delete_company(company):
-        return {'message': "Company {} was deleted".format(company.name)}
-    else:
-        return APIErrorValue('Company deletion failed').json(500)
+#     if CompaniesHandler.delete_company(company):
+#         return {'message': "Company {} was deleted".format(company.name)}
+#     else:
+#         return APIErrorValue('Company deletion failed').json(500)
 
 
 # @bp.route('/companies/<string:company_external_id>/activities', methods=['POST'])
