@@ -44,7 +44,6 @@
     font-size: 25px;
     font-family: 'Karla';
     font-weight: 600;
-    margin-top: 80px;
 }
 
 .flexbox-btns {
@@ -94,12 +93,33 @@ button:hover {
     margin-top: 10px;
 }
 
+.back-btn {
+    margin-left: 40px;
+    margin-top: 10px;
+}
+
+.add-btn {
+    margin-right: 40px;
+    margin-top: 10px;
+}
+
+.delete-btn {
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
 .icon-green {
     color: green
 }
 
 .icon-red {
     color: red
+}
+
+.list {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 30px;
 }
 
 /* On screens that are 500px wide*/
