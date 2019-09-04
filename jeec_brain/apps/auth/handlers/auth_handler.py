@@ -105,10 +105,22 @@ class AuthHandler(object):
 
 
     @staticmethod
-    def logout():
+    def logout_student():
+        current_user.session_token = None
+        current_user.save()
+        session.pop('student')
+        logout_user()
+
+    @staticmethod
+    def logout_company():
+        current_user.session_token = None
+        current_user.save()
+        session.pop('company')
+        logout_user()
+
+    @staticmethod
+    def logout_admin():
         current_user.session_token = None
         current_user.save()
         session.pop('admin')
-        session.pop('student')
-        session.pop('company')
         logout_user()
