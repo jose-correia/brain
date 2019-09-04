@@ -21,7 +21,8 @@ all the technological services of the JEEC event.
 1. Fork this repository
 2. Install PostreSQL
 2. Install required dependencies inside the /webapp directory with:
-    - `pip install -r requirement.txt`
+    - `python3.6 -m virtualenv venv`
+    - `python3.6 -m pip install -r requirement.txt`
 3. Run the database service with:
     - `sudo service postgresql start`
 4. Create a database in postgresql for the application
