@@ -33,16 +33,20 @@
 
     <div class="flexbox-btns">
         <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
-            <button class="waves-effect waves-light btn-large">Companies</button>
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn">Companies</button>
         </form>
     
         <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
-            <button class="waves-effect waves-light btn-large">Speakers</button>
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn">Speakers</button>
         </form>
     
         <form action="{{ url_for('admin_api.teams_dashboard') }}" method="get">
-            <button class="waves-effect waves-light btn-large">Teams</button>
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn">Teams</button>
         </form>
+
+        <!--<form action="{{ url_for('admin_api.activities_dashboard') }}" method="get">
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn">Activities</button>
+        </form>-->
     </div>
 
     <blockquote style="margin-left: 40px;margin-top: 200px;">

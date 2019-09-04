@@ -95,6 +95,10 @@ button:hover {
     margin-top: 10px;
 }
 
+.dashboard-btn {
+    width: 200px;
+}
+
 .back-btn {
     margin-left: 40px;
     margin-top: 10px;
