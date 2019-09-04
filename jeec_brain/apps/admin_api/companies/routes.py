@@ -100,7 +100,7 @@ def update_company(company_external_id):
     return redirect(url_for('admin_api.companies_dashboard'))
 
 
-@bp.route('/companies/<string:company_external_id>', methods=['DELETE'])
+@bp.route('/company/<string:company_external_id>/delete', methods=['GET'])
 @require_admin_login
 def delete_company(company_external_id):
     company = CompaniesFinder.get_from_external_id(company_external_id)
@@ -109,7 +109,8 @@ def delete_company(company_external_id):
         return APIErrorValue('Couldnt find company').json(500)
         
     if CompaniesHandler.delete_company(company):
-        return {'message': "Company {} was deleted".format(company.name)}
+        return redirect(url_for('admin_api.companies_dashboard'))
+
     else:
         return APIErrorValue('Company deletion failed').json(500)
 

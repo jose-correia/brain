@@ -38,6 +38,10 @@
         <input type="submit" value="Save">
     </form>
 
+    <form action="/admin/company/{{company.external_id}}/delete" method="get">
+        <button>Delete Company</button>
+    </form>
+
     <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
         <button>Cancel</button>
     </form>
