@@ -1,4 +1,4 @@
-from flask import session, Response
+from flask import session, Response, redirect, url_for
 from functools import wraps
 from flask_login import current_user
 
@@ -34,7 +34,10 @@ def require_company_login(func):
 def require_admin_login(func):
     @wraps(func)
     def check_admin_login(*args, **kwargs):
-        user_role = current_user.get_role()
+        try:
+            user_role = current_user.get_role()
+        except:
+            return redirect(url_for('admin_api.get_admin_login_form'))
 
         if not session['admin'] or user_role != "admin":
             return Response("Access denied")

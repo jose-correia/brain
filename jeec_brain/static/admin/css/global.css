@@ -1,0 +1,113 @@
+.section-header {
+    position: relative;
+    padding-bottom: 10px;
+    margin-top: 140px;
+    margin-bottom: 20px;
+  }
+  
+.section-header h2 {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 36px;
+    text-transform: uppercase;
+    text-align: center;
+    font-family: Avenir,Helvetica,Arial,sans-serif;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.section-header p {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    font-size: 18px;
+    font-family: 'Karla';
+    font-weight: 500;
+    color: #9195a2;
+}
+
+.section-header::before {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100px;
+    height: 2px;
+    background: #42a5f5;
+    bottom: 0;
+    left: calc(50% - 50px);
+}
+
+.section-title {
+    font-size: 25px;
+    font-family: 'Karla';
+    font-weight: 600;
+    margin-top: 80px;
+}
+
+.flexbox-btns {
+    display: -webkit-box;  /* iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* IE 10 */
+    display: -webkit-flex; /* Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;         /*Firefox, Chrome, Opera */
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 30px;
+}
+
+button {
+    font-weight: 600;
+    transition: all .2s ease-in-out; 
+}
+
+button:hover {
+    cursor: pointer;
+    transform: scale(1.03); 
+}
+
+.nav-bar {
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.1);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: white;
+}
+
+.jeec-logo-mobile {
+    display: block;
+    width: 50px;
+    margin-left: 40px;
+    float: left;
+}
+
+.logout-btn {
+    float: right;
+    margin-right: 40px;
+    width: 130px;
+    margin-top: 10px;
+}
+
+.icon-green {
+    color: green
+}
+
+.icon-red {
+    color: red
+}
+
+/* On screens that are 500px wide*/
+@media only screen and (max-width: 500px) {
+    button {
+        width: 150px;
+        height: 70px;
+        font-size: 18px;
+    }
+}
+

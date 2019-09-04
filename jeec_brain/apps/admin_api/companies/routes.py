@@ -1,9 +1,6 @@
 from .. import bp
 from flask import render_template, request, redirect, url_for
 
-# parsers
-from jeec_brain.apps.admin_api.companies.parsers import create_comapny_parser, update_comapny_parser
-
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 
@@ -11,7 +8,6 @@ from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.finders.companies_finder import CompaniesFinder
 
 # values
-from jeec_brain.values.company_value import CompanyValue
 from jeec_brain.values.api_error_value import APIErrorValue
 
 from jeec_brain.apps.auth.wrappers import require_admin_login
