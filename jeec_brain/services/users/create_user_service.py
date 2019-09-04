@@ -1,4 +1,5 @@
 from jeec_brain.models.users import Users
+from typing import Optional
 
 
 class CreateUserService():
