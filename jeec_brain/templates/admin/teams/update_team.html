@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -29,27 +32,43 @@
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
+    
 
     <div class="section-title center-align" style="margin-top:90px;">
         Edit team
     </div>
 
-    <form method="post">
-        Name:<br>
-        <input type="text" name="name" value="{{ team.name }}"><br>
-        Description:<br>
-        <input type="text" name="description" value="{{ team.description }}"><br>
-        
-        <input type="submit" value="Save">
-    </form>
+    <div class="create-form">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% endif %}
 
-    <form action="/admin/team/{{team.external_id.hex}}/new-member" method="get">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Add Member</button>
-    </form>
+      <form class="col s12" method="post">
+          <div class="row">
+            <div class="input-field col s12">
+              <input class="col s4" id="name" name="name" type="text" class="validate" value="{{ team.name }}" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s8">
+              <textarea id="description" name="description" class="materialize-textarea" value="{{team.description}}">{{ team.description }}</textarea>
+            </div>
+          </div>
+          
+          <button type="submit" class="waves-effect blue lighten-2 btn add-btn left"><i class="material-icons left">save</i>Save Team</button>
+      </form>
+    </div>
 
     <div class="section-title center-align" style="margin-top:90px;">
         List of members
     </div>
+
+    <form action="/admin/team/{{team.external_id.hex}}/new-member" method="get">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Add Member</button>
+    </form>
 
     <div class="list">
       <table class="striped">
@@ -62,7 +81,7 @@
           <tbody>
               {% for member in team.members %}
                 <tr>
-                  <td>{{ member.name }}</td>
+                  <td><b>{{ member.name }}</b></td>
   
                   <td>
                     {% if member.ist_id is not none %}
@@ -86,7 +105,7 @@
                   <td>
                     {% set member_id = team.members[loop.index-1].external_id.hex %}
                     <form action="/admin/team/{{team.external_id.hex}}/members/{{ member_id }}" method="get">
-                        <button>Edit</button>
+                      <button class="waves-effect waves-light btn-small"><i class="material-icons left">edit</i>Edit</button>
                     </form>
                   </td>
                 </tr>
@@ -94,8 +113,6 @@
           </tbody>
       </table>
     </div>
-
-    
 
     <form action="/admin/team/{{team.external_id.hex}}/delete" method="get">
       <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete Team</button>

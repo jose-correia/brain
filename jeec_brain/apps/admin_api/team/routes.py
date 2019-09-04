@@ -33,7 +33,7 @@ def create_team():
     )
     
     if team is None:
-        return APIErrorValue('Team creation failed').json(500)
+        return render_template('admin/teams/add_team.html', error="Failed to create team!")
 
     return redirect(url_for('admin_api.teams_dashboard'))
 
@@ -63,8 +63,8 @@ def update_team(team_external_id):
         description=description
     )
     
-    if update_team is None:
-        return APIErrorValue('Team update failed').json(500)
+    if updated_team is None:
+        return render_template('admin/teams/update_team.html', team=team, error="Failed to update team!")
 
     return redirect(url_for('admin_api.teams_dashboard'))
 
@@ -81,7 +81,7 @@ def delete_team(team_external_id):
         return redirect(url_for('admin_api.teams_dashboard'))
 
     else:
-        return APIErrorValue('Team deletion failed').json(500)
+        return render_template('admin/teams/update_team.html', team=team, error="Failed to delete team!")
 
 
 @bp.route('/team/<string:team_external_id>/new-member', methods=['GET'])
@@ -117,7 +117,7 @@ def create_team_member(team_external_id):
     )
     
     if member is None:
-        return APIErrorValue('Team member creation failed').json(500)
+        return render_template('admin/teams/add_team_member.html', team=team, error="Failed to create team member!")
 
     return redirect(url_for('admin_api.update_team', team_external_id=team_external_id))
 
@@ -165,7 +165,7 @@ def update_team_member(team_external_id, member_external_id):
     )
     
     if updated_member is None:
-        return APIErrorValue('Team member update failed').json(500)
+        return render_template('admin/teams/update_team_member.html', member=member, error="Failed to update team member!")
 
     return render_template('admin/teams/update_team.html', team=team, member=member)
 
@@ -187,4 +187,4 @@ def delete_team_member(team_external_id, member_external_id):
         return redirect(url_for('admin_api.update_team', team_external_id=team_external_id))
 
     else:
-        return APIErrorValue('Team member deletion failed').json(500)
+        return render_template('admin/teams/update_team_member.html', member=member, error="Failed to delete team member!")

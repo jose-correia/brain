@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -26,21 +29,46 @@
       <h2>Add a new team member</h2>
     </div>
 
-    <form action="/admin/team/{{team.external_id.hex}}/new-member" method="post">
-        Name:<br>
-        <input type="text" name="name" required><br>
-        IST_id:<br>
-        <input type="text" name="ist_id"><br>
-        Email:<br>
-        <input type="text" name="email"><br>
-        LinkedIn:<br>
-        <input type="text" name="linkedin_url"><br>
-      
-        <input type="submit" value="Save">
+    <form action="/admin/team/{{team.external_id.hex}}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
-    <form action="/admin/team/{{team.external_id.hex}}" method="get">
-        <button>Cancel</button>
-    </form>
+    <br>
+
+    <div class="create-form">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% endif %}
+
+      <form class="col s12" action="/admin/team/{{team.external_id.hex}}/new-member" method="post">
+        <div class="row">
+          <div class="input-field col s5">
+            <input id="name" name="name" type="text" class="validate" required>
+            <label for="name">Name</label>
+          </div>
+
+          <div class="input-field col s1">
+            <input id="ist_id" name="ist_id" type="text">
+            <label for="ist_id">IST_id</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s3">
+            <input id="email" name="email" type="text" class="validate">
+            <label for="email">Email</label>
+          </div>
+
+          <div class="input-field col s3">
+            <input id="linkedin_url" name="linkedin_url" type="text">
+            <label for="linkedin_url">LinkedIn</label>
+          </div>
+        </div>
+        
+          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Member</button>
+      </form>
+    </div>
   </body>
 </html>  

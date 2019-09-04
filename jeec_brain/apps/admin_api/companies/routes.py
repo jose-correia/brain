@@ -24,7 +24,7 @@ def companies_dashboard():
 @bp.route('/new-company', methods=['GET'])
 @require_admin_login
 def add_company_dashboard():
-    return render_template('admin/companies/add_company.html')
+    return render_template('admin/companies/add_company.html', error=None)
 
 
 @bp.route('/new-company', methods=['POST'])
@@ -50,7 +50,7 @@ def create_company():
     )
     
     if company is None:
-        return APIErrorValue('Company creation failed').json(500)
+        return render_template('admin/companies/add_company.html', error="Failed to create company! Maybe it already exists :)")
 
     return redirect(url_for('admin_api.companies_dashboard'))
 
@@ -59,7 +59,7 @@ def create_company():
 def get_company(company_external_id):
     company = CompaniesFinder.get_from_external_id(company_external_id)
 
-    return render_template('admin/companies/update_company.html', company=company)
+    return render_template('admin/companies/update_company.html', company=company, error=None)
 
 @bp.route('/company/<string:company_external_id>', methods=['POST'])
 @require_admin_login
@@ -91,7 +91,7 @@ def update_company(company_external_id):
     )
     
     if updated_company is None:
-        return APIErrorValue('Company update failed').json(500)
+        return render_template('admin/companies/update_company.html', company=company, error="Failed to update company!")
 
     return redirect(url_for('admin_api.companies_dashboard'))
 
@@ -108,7 +108,7 @@ def delete_company(company_external_id):
         return redirect(url_for('admin_api.companies_dashboard'))
 
     else:
-        return APIErrorValue('Company deletion failed').json(500)
+        return render_template('admin/companies/update_company.html', company=company, error="Failed to delete company!")
 
 
 # @bp.route('/companies/<string:company_external_id>/activities', methods=['GET'])

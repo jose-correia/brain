@@ -17,34 +17,57 @@
     <div class="nav-bar">
         <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
 
-        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+        <form action="admin/team/{{member.team.external_id.hex}}" method="get">
         <button class="waves-effect waves-light btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
         </form>
     </div>
 
     <div class="section-header" >
       <h2>Add a new team member</h2>
+      <p>{{ member.team.name }}</p>
     </div>
 
-    <form method="post">
-        Name:<br>
-        <input type="text" name="name" value="{{ member.name }}"><br>
-        IST_id:<br>
-        <input type="text" name="ist_id" value="{{ member.ist_id }}"><br>
-        Email:<br>
-        <input type="text" name="email" value="{{ member.email }}"><br>
-        LinkedIn:<br>
-        <input type="text" name="linkedin_url" value="{{ member.linkedin_url }}"><br>
-      
-        <input type="submit" value="Save">
+    <form action="/admin/team/{{member.team.external_id.hex}}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
+
+    <br>
+
+    <div class="create-form">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% endif %}
+
+      <form class="col s12" method="post">
+          <div class="row">
+            <div class="input-field col s5">
+              <input id="name" name="name" type="text" class="validate" value="{{ member.name }}" required>
+            </div>
+  
+            <div class="input-field col s1">
+              <input id="ist_id" name="ist_id" type="text" value="{{ member.ist_id }}">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s3">
+              <input id="email" name="email" type="text" class="validate" value="{{ member.email }}">
+            </div>
+  
+            <div class="input-field col s3">
+              <input id="linkedin_url" name="linkedin_url" type="text" value="{{ member.linkedin_url }}">
+            </div>
+          </div>
+
+          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Member</button>
+      </form>
+    </div>
 
     <form action="/admin/team/{{member.team.external_id.hex}}/members/{{member.external_id.hex}}/delete" method="get">
-        <button>Delete member</button>
+      <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete Member</button>
     </form>
 
-    <form action="/admin/team/{{member.team.external_id.hex}}" method="get">
-        <button>Cancel</button>
-    </form>
   </body>
 </html>  

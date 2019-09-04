@@ -51,7 +51,7 @@
           <tbody>
               {% for speaker in speakers %}
                 <tr>
-                  <td>{{ speaker.name }}</td>
+                  <td><b>{{ speaker.name }}</b></td>
                   
                   <td>
                     {% if speaker.company is not none %}
@@ -71,7 +71,7 @@
                     {% endif %}
                   </td>
   
-                  <td>
+                  <td style="width: 20%">
                     {% if speaker.bio is not none %}
                       {{ speaker.bio }}
                     {% endif %}
@@ -79,7 +79,7 @@
                   
                   <td>
                     {% if speaker.linkedin_url is not none %}
-                      <a href="{{ speaker.linkedin_url }}">{{ speaker.linkedin_url }}</a>
+                      <a href="{{ speaker.linkedin_url }}">Check profile</a>
                     {% endif %}
                   </td>
   

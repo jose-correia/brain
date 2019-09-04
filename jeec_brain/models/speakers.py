@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Speakers(ModelMixin, db.Model):
     __tablename__ = 'speakers'
     
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=False)
 
     company = db.Column(db.String(100))
     position = db.Column(db.String(100))

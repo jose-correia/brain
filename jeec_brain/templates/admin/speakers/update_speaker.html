@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -25,32 +28,63 @@
     <div class="section-header" >
         <h2>{{ speaker.name }}</h2>
     </div>
-
-    <h4>Edit speaker</h4>
-
-    <form method="post">
-        Name:<br>
-        <input type="text" name="name" value="{{ speaker.name }}"><br>
-        Company name:<br>
-        <input type="text" name="company" value="{{ speaker.company }}"><br>
-        Position:<br>
-        <input type="text" name="position" value="{{ speaker.position }}"><br>
-        Country:<br>
-        <input type="text" name="country" value="{{ speaker.country }}"><br>
-        Biography:<br>
-        <input type="text" name="bio" value="{{ speaker.bio }}"><br>
-        LinkedIn:<br>
-        <input type="text" name="linkedin_url" value="{{ speaker.linkedin_url }}"><br>
-
-        <input type="submit" value="Save">
+    
+    <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
+
+    <br>
+
+    <div class="create-form">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% endif %}
+      
+      <form class="col s12" method="post">
+          <div class="row">
+            <div class="input-field col s12">
+              <input class="col s4" id="name" name="name" type="text" class="validate" value="{{ speaker.name }}" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s4">
+              <input id="company" name="company" type="text" value="{{ speaker.company }}">
+            </div>
+  
+          
+            <div class="input-field col s4">
+              <input id="position" name="position" type="text" value="{{ speaker.position }}">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s4">
+              <input id="country" name="country" type="text" value="{{ speaker.country }}">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s8">
+              <textarea id="bio" name="bio" class="materialize-textarea" value="{{speaker.bio}}">{{ speaker.bio }}</textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s4">
+              <input id="linkedin_url" name="linkedin_url" type="text" value="{{ speaker.linkedin_url }}">
+            </div>
+          </div>
+
+          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Speaker</button>
+      </form>
+    </div>
 
     <form action="/admin/speaker/{{speaker.external_id}}/delete" method="get">
-        <button>Delete Speaker</button>
+      <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete Company</button>
     </form>
-
-    <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
-        <button>Cancel</button>
-    </form>
+    <br>
   </body>
 </html>  

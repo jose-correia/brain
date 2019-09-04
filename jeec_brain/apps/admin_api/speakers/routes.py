@@ -40,7 +40,7 @@ def create_speaker():
     )
     
     if speaker is None:
-        return APIErrorValue('Speaker creation failed').json(500)
+        return render_template('admin/speakers/add_speaker.html', error="Failed to create speaker!")
 
     return redirect(url_for('admin_api.speakers_dashboard'))
 
@@ -80,7 +80,7 @@ def update_speaker(speaker_external_id):
     )
     
     if updated_speaker is None:
-        return APIErrorValue('Speaker update failed').json(500)
+        return render_template('admin/speakers/update_speaker.html', speaker=speaker, error="Failed to update speaker!")
 
     return redirect(url_for('admin_api.speakers_dashboard'))
 
@@ -97,5 +97,5 @@ def delete_speaker(speaker_external_id):
         return redirect(url_for('admin_api.speakers_dashboard'))
 
     else:
-        return APIErrorValue('Speaker deletion failed').json(500)
+        return render_template('admin/speakers/update_speaker.html', speaker=speaker, error="Failed to delete speaker!")
 

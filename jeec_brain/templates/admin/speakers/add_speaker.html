@@ -1,7 +1,12 @@
 <html>  
   <head>
     <title>JEEC|Admin</title>
-    <link rel="stylesheet" href="/static/cv_platform/css/index_style.css">
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -24,25 +29,62 @@
       <h2>Add a new Speaker</h2>
     </div>
 
-    <form action="{{ url_for('admin_api.create_speaker') }}" method="post">
-        Name:<br>
-        <input type="text" name="name" required><br>
-        Company name:<br>
-        <input type="text" name="company"><br>
-        Position:<br>
-        <input type="text" name="position"><br>
-        Country:<br>
-        <input type="text" name="country"><br>
-        Biography:<br>
-        <input type="text" name="bio"><br>
-        LinkedIn:<br>
-        <input type="text" name="linkedin_url"><br>
-
-        <input type="submit" value="Save">
-    </form>
-
     <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
-        <button>Cancel</button>
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
+
+    <br>
+
+    <div class="create-form">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% endif %}
+
+      <form class="col s12" action="{{ url_for('admin_api.create_speaker') }}" method="post">
+          <div class="row">
+            <div class="input-field col s12">
+              <input class="col s4" id="name" name="name" type="text" class="validate" required>
+              <label for="name">Name</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s4">
+              <input id="company" name="company" type="text" class="validate">
+              <label for="company">Company name</label>
+            </div>
+
+            <div class="input-field col s4">
+              <input id="position" name="position" type="text">
+              <label for="position">Position in the company</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s12">
+              <input class="col s4" id="country" name="country" type="text">
+              <label for="country">Origin country</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s8">
+              <textarea id="bio" class="materialize-textarea"></textarea>
+              <label for="bio">Biography</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s12">
+              <input class="col s4" id="linkedin_url" name="linkedin_url" type="text">
+              <label for="linkedin_url">LinkedIn url</label>
+            </div>
+          </div>
+  
+          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Speaker</button>
+      </form>
+    </div>
   </body>
 </html>  
