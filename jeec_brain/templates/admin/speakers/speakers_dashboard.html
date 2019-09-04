@@ -29,7 +29,7 @@
         <tbody>
             {% for speaker in speakers %}
               <tr>
-                <td><a href="speaker/{{ speaker.external_id.hex }}">{{ speaker.name }}</a></td>
+                <td>{{ speaker.name }}</td>
                 
                 <td>
                   {% if speaker.company is not none %}
@@ -59,6 +59,12 @@
                   {% if speaker.linkedin_url is not none %}
                     <a href="{{ speaker.linkedin_url }}">{{ speaker.linkedin_url }}</a>
                   {% endif %}
+                </td>
+
+                <td>
+                  <form action="/admin/speaker/{{speaker.external_id.hex}}" method="get">
+                      <button>Edit</button>
+                  </form>
                 </td>
               </tr>
             {% endfor %}

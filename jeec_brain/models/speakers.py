@@ -17,7 +17,7 @@ class Speakers(ModelMixin, db.Model):
 
     linkedin_url = db.Column(db.String(100))
 
-    activities = relationship("Activities", back_populates='speaker')
+    activities = relationship("Activities", back_populates='speaker', lazy='dynamic')
     
     def __repr__(self):
         return 'Name: {}'.format(self.name)

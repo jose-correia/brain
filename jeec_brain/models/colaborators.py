@@ -8,6 +8,7 @@ class Colaborators(ModelMixin, db.Model):
     
     name = db.Column(db.String(100), nullable=False)
     ist_id = db.Column(db.String(10), unique=True)
+    email = db.Column(db.String(100))
 
     team = relationship('Teams', back_populates="members", uselist=False)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))

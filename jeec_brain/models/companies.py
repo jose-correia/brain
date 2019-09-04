@@ -19,7 +19,7 @@ class Companies(db.Model, ModelMixin):
 
     access_cv_platform = db.Column(db.Boolean, default=False)
     
-    activities = relationship("Activities", back_populates='company')
+    activities = relationship("Activities", back_populates='company', lazy='dynamic')
     
     business_area = db.Column(db.String(100))
 

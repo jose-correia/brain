@@ -14,33 +14,27 @@
   <body>
 
     <div class="section-header" >
-        <h2>{{ speaker.name }}</h2>
+      <h2>Add a new team member</h2>
     </div>
-
-    <h4>Edit speaker</h4>
 
     <form method="post">
         Name:<br>
-        <input type="text" name="name" value="{{ speaker.name }}"><br>
-        Company name:<br>
-        <input type="text" name="company" value="{{ speaker.company }}"><br>
-        Position:<br>
-        <input type="text" name="position" value="{{ speaker.position }}"><br>
-        Country:<br>
-        <input type="text" name="country" value="{{ speaker.country }}"><br>
-        Biography:<br>
-        <input type="text" name="bio" value="{{ speaker.bio }}"><br>
+        <input type="text" name="name" value="{{ member.name }}"><br>
+        IST_id:<br>
+        <input type="text" name="ist_id" value="{{ member.ist_id }}"><br>
+        Email:<br>
+        <input type="text" name="email" value="{{ member.email }}"><br>
         LinkedIn:<br>
-        <input type="text" name="linkedin_url" value="{{ speaker.linkedin_url }}"><br>
-
+        <input type="text" name="linkedin_url" value="{{ member.linkedin_url }}"><br>
+      
         <input type="submit" value="Save">
     </form>
 
-    <form action="/admin/speaker/{{speaker.external_id}}/delete" method="get">
-        <button>Delete Speaker</button>
+    <form action="/admin/team/{{member.team.external_id.hex}}/members/{{member.external_id.hex}}/delete" method="get">
+        <button>Delete member</button>
     </form>
 
-    <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
+    <form action="/admin/team/{{member.team.external_id.hex}}" method="get">
         <button>Cancel</button>
     </form>
   </body>

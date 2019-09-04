@@ -1,0 +1,85 @@
+<html>  
+  <head>
+    <title>JEEC|Admin</title>
+    <link rel="stylesheet" href="/static/cv_platform/css/index_style.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+
+    <div class="section-header" >
+      <h2>{{ team.name }} Team</h2>
+    </div>
+
+    <h4>Edit team</h4>
+    <form method="post">
+        Name:<br>
+        <input type="text" name="name" value="{{ team.name }}"><br>
+        Description:<br>
+        <input type="text" name="description" value="{{ team.description }}"><br>
+        
+        <input type="submit" value="Save">
+    </form>
+
+    <h4>Edit members</h4>
+    <form action="/admin/team/{{team.external_id.hex}}/new-member" method="get">
+      <button>Add member</button>
+    </form>
+  
+    <table>
+        <thead><tr>
+          <th>Name</th>
+          <th>IST_id</th>
+          <th>Email</th>
+          <th>LinkedIn</th>
+        </tr></thead>
+        <tbody>
+            {% for member in team.members %}
+              <tr>
+                <td>{{ member.name }}</td>
+
+                <td>
+                  {% if member.ist_id is not none %}
+                    {{ member.ist_id }}
+                  {% endif %}
+                </td>
+
+                <td>
+                  {% if member.email is not none %}
+                    {{ member.email }}
+                  {% endif %}
+                </td>
+
+                <td>
+                  {% if member.linkedin_url is not none %}
+                    <a href="{{ member.linkedin_url }}">{{ member.linkedin_url }}</a>
+                  {% endif %}
+                </td>
+                  
+
+                <td>
+                  {% set member_id = team.members[loop.index-1].external_id.hex %}
+                  <form action="/admin/team/{{team.external_id.hex}}/members/{{ member_id }}" method="get">
+                      <button>Edit</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form action="/admin/team/{{team.external_id.hex}}/delete" method="get">
+        <button>Delete Team</button>
+    </form>
+
+    <form action="{{ url_for('admin_api.teams_dashboard') }}" method="get">
+        <button>Cancel</button>
+    </form>
+  </body>
+</html>  

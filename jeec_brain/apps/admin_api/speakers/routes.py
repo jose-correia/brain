@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.speakers_handler import SpeakersHandler
 from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.values.api_error_value import APIErrorValue
 
 
 @bp.route('/speakers', methods=['GET'])

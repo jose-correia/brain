@@ -14,46 +14,27 @@
   <body>
 
     <div class="section-header" >
-      <h2>Companies Management</h2>
+      <h2>Team Management</h2>
     </div>
 
     <table>
         <thead><tr>
           <th>Name</th>
-          <th>Business</th>
-          <th>Email</th>
-          <th>Website</th>
-          <th>CV Platform</th>
+          <th>Description</th>
         </tr></thead>
         <tbody>
-            {% for company in companies %}
+            {% for team in teams %}
               <tr>
-                <td>{{ company.name }}</td>
+                <td>{{ team.name }}</td>
 
                 <td>
-                  {% if company.business_area is not none %}
-                    {{ company.business_area }}
+                  {% if team.description is not none %}
+                    {{ team.description }}
                   {% endif %}
                 </td>
 
                 <td>
-                  {% if company.email is not none %}
-                    {{ company.email }}
-                  {% endif %}
-                </td>
-                
-                <td>
-                  {% if company.link is not none %}
-                    <a href="{{ company.link }}">{{ company.link }}</a>
-                  {% endif %}
-                </td>
-                
-                <td>
-                  {{ company.access_cv_platform }}
-                </td>
-
-                <td>
-                  <form action="/admin/company/{{company.external_id.hex}}" method="get">
+                  <form action="/admin/team/{{team.external_id.hex}}" method="get">
                       <button>Edit</button>
                   </form>
                 </td>
@@ -62,8 +43,8 @@
         </tbody>
     </table>
 
-    <form action="{{ url_for('admin_api.add_company_dashboard') }}" method="get">
-      <button>Add Company</button>
+    <form action="{{ url_for('admin_api.add_team_dashboard') }}" method="get">
+      <button>Add Team</button>
     </form>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
