@@ -17,5 +17,5 @@ class ColaboratorsFinder():
     
     @classmethod
     def get_all(cls):
-        return Colaborators.all()
+        return Colaborators.query.order_by(Colaborators.name)
     

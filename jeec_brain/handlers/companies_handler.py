@@ -8,7 +8,7 @@ class CompaniesHandler():
     
     @classmethod
     def create_company(cls, **kwargs):
-        return CreateCompanyService(kwargs=kwargs).call()
+        return CreateCompanyService(payload=kwargs).call()
 
     @classmethod
     def update_company(cls, company, **kwargs):
@@ -25,4 +25,4 @@ class CompaniesHandler():
     #         return True
     #     except Exception as e:
     #         logger.error(e)
-    
+

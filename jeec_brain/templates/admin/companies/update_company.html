@@ -1,0 +1,45 @@
+<html>  
+  <head>
+    <title>JEEC|Admin</title>
+    <link rel="stylesheet" href="/static/cv_platform/css/index_style.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+
+    <div class="section-header" >
+      <h2>Edit a Company</h2>
+    </div>
+
+    <form method="post">
+        Name:<br>
+        <input type="text" name="name" value="{{ company.name }}"><br>
+        Website link:<br>
+        <input type="text" name="link" value="{{ company.link }}"><br>
+        Email:<br>
+        <input type="text" name="email" value="{{ company.email }}"><br>
+        Business area:<br>
+        <input type="text" name="business_area" value="{{ company.business_area }}"><br>
+        Has acces to CVs:<br>
+        {% if company.access_cv_platform is sameas true %}
+            <input type="radio" name="access_cv_platform" value="True" checked>Yes<br>
+            <input type="radio" name="access_cv_platform" value="False">No<br>
+        {% else %}
+            <input type="radio" name="access_cv_platform" value="True">Yes<br>
+            <input type="radio" name="access_cv_platform" value="False" checked>No<br>
+        {% endif %}
+        
+        <input type="submit" value="Save">
+    </form>
+
+    <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
+        <button>Cancel</button>
+    </form>
+  </body>
+</html>  

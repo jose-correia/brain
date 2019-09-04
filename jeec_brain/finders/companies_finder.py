@@ -17,7 +17,7 @@ class CompaniesFinder():
     
     @classmethod
     def get_all(cls):
-        return Companies.all()
+        return Companies.query.order_by(Companies.name)
     
     @classmethod
     def get_all_with_cv_access(cls):

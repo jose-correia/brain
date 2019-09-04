@@ -13,5 +13,5 @@ class SpeakersFinder():
     
     @classmethod
     def get_all(cls):
-        return Speakers.all()
+        return Speakers.query.order_by(Speakers.name)
     

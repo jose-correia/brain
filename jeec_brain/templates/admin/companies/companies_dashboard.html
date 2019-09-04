@@ -20,24 +20,48 @@
     <table>
         <thead><tr>
           <th>Name</th>
-          <th>Email</th>
-          <th>CV Platform</th>
           <th>Business</th>
+          <th>Email</th>
+          <th>Website</th>
+          <th>CV Platform</th>
         </tr></thead>
         <tbody>
             {% for company in companies %}
               <tr>
-                <td><a href="/testresult?query={{ d }}">{{ company.name }}</td></a>
-                <td>{{ company.email }}</td>
-                <td>{{ company.access_cv_platform }}</td>
-                <td>{{ company.business_area }}</td>
+                <td><a href="company/{{ company.external_id }}">{{ company.name }}</a></td>
+
+                <td>
+                  {% if company.business_area is not none %}
+                    {{ company.business_area }}
+                  {% endif %}
+                </td>
+
+                <td>
+                  {% if company.email is not none %}
+                    {{ company.email }}
+                  {% endif %}
+                </td>
+                
+                <td>
+                  {% if company.link is not none %}
+                    <a href="{{ company.link }}">{{ company.link }}</a>
+                  {% endif %}
+                </td>
+                
+                <td>
+                  {{ company.access_cv_platform }}
+                </td>
               </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <form action="/action_page.php" method="get">
-      <button name="subject" type="submit">Add Company</button>
+    <form action="{{ url_for('admin_api.add_company_dashboard') }}" method="get">
+      <button>Add Company</button>
+    </form>
+
+    <form action="{{ url_for('admin_api.dashboard') }}" method="get">
+        <button>Go back</button>
     </form>
   </body>
 </html>  

@@ -1,5 +1,5 @@
 from .. import bp
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 
 # parsers
 from jeec_brain.apps.admin_api.companies.parsers import create_comapny_parser, update_comapny_parser
@@ -25,40 +25,79 @@ def companies_dashboard():
     return render_template('admin/companies/companies_dashboard.html', companies=companies_list)
 
 
-@bp.route('/companies', methods=['POST'])
+@bp.route('/new-company', methods=['GET'])
+@require_admin_login
+def add_company_dashboard():
+    return render_template('admin/companies/add_company.html')
+
+
+@bp.route('/new-company', methods=['POST'])
 @require_admin_login
 def create_company():
-    payload = create_comapny_parser.parse_args()
+    name = request.form.get('name')
+    link = request.form.get('link')
+    email = request.form.get('email')
+    business_area = request.form.get('business_area')
+    access_cv_platform = request.form.get('access_cv_platform')
+    
+    if access_cv_platform == 'True':
+        access_cv_platform = True
+    else:
+        access_cv_platform = False
 
     company = CompaniesHandler.create_company(
-                                    name=payload['name'],
-                                    email=payload['email'],
-                                    business_area=payload['business_are'],
-                                    link=['link']
-                                )
+        name=name,
+        email=email,
+        business_area=business_area,
+        link=link,
+        access_cv_platform=access_cv_platform
+    )
     
     if company is None:
         return APIErrorValue('Company creation failed').json(500)
 
-    return CompanyValue(company, details=False).json(200)
+    return redirect(url_for('admin_api.companies_dashboard'))
 
+@bp.route('/company/<string:company_external_id>', methods=['GET'])
+@require_admin_login
+def get_company(company_external_id):
+    company = CompaniesFinder.get_from_external_id(company_external_id)
 
-@bp.route('/companies/<string:company_external_id>', methods=['PUT'])
+    return render_template('admin/companies/update_company.html', company=company)
+
+@bp.route('/company/<string:company_external_id>', methods=['POST'])
 @require_admin_login
 def update_company(company_external_id):
-    payload = update_comapny_parser.parse_args()
 
     company = CompaniesFinder.get_from_external_id(company_external_id)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)
 
-    updated_company = CompaniesHandler.update_company(payload)
+    name = request.form.get('name')
+    link = request.form.get('link')
+    email = request.form.get('email')
+    business_area = request.form.get('business_area')
+    access_cv_platform = request.form.get('access_cv_platform')
+    
+    if access_cv_platform == 'True':
+        access_cv_platform = True
+    else:
+        access_cv_platform = False
+
+    updated_company = CompaniesHandler.update_company(
+        company=company,
+        name=name,
+        email=email,
+        business_area=business_area,
+        link=link,
+        access_cv_platform=access_cv_platform
+    )
     
     if updated_company is None:
         return APIErrorValue('Company update failed').json(500)
 
-    return CompanyValue(company, details=True).json(200)
+    return redirect(url_for('admin_api.companies_dashboard'))
 
 
 @bp.route('/companies/<string:company_external_id>', methods=['DELETE'])

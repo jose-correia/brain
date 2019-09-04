@@ -13,5 +13,5 @@ class TeamsFinder():
     
     @classmethod
     def get_all(cls):
-        return Teams.all()
+        return Teams.query.order_by(Teams.name)
     
