@@ -35,7 +35,11 @@ def create_company():
     email = request.form.get('email')
     business_area = request.form.get('business_area')
     access_cv_platform = request.form.get('access_cv_platform')
-    
+    partnership_tier = request.form.get('partnership_tier')
+
+    if partnership_tier == "":
+        partnership_tier = None
+
     if access_cv_platform == 'True':
         access_cv_platform = True
     else:
@@ -46,7 +50,8 @@ def create_company():
         email=email,
         business_area=business_area,
         link=link,
-        access_cv_platform=access_cv_platform
+        access_cv_platform=access_cv_platform,
+        partnership_tier=partnership_tier
     )
     
     if company is None:
@@ -75,7 +80,11 @@ def update_company(company_external_id):
     email = request.form.get('email')
     business_area = request.form.get('business_area')
     access_cv_platform = request.form.get('access_cv_platform')
-    
+    partnership_tier = request.form.get('partnership_tier')
+
+    if partnership_tier == "":
+        partnership_tier = None
+
     if access_cv_platform == 'True':
         access_cv_platform = True
     else:
@@ -87,7 +96,8 @@ def update_company(company_external_id):
         email=email,
         business_area=business_area,
         link=link,
-        access_cv_platform=access_cv_platform
+        access_cv_platform=access_cv_platform,
+        partnership_tier=partnership_tier
     )
     
     if updated_company is None:

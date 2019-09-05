@@ -45,6 +45,7 @@
             <th>Business</th>
             <th>Email</th>
             <th>Website</th>
+            <th>Partnership</th>
             <th>CV Platform</th>
           </tr></thead>
           <tbody>
@@ -67,6 +68,16 @@
                   <td>
                     {% if company.link is not none %}
                       <a href="{{ company.link }}">{{ company.link }}</a>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    {% if company.partnership_tier == 'gold' %}
+                      <div class="tier-indicator gold"></div>
+                    {% elif company.partnership_tier=='silver' %}
+                      <div class="tier-indicator silver"></div>
+                    {% elif company.partnership_tier=='bronze' %}
+                      <div class="tier-indicator bronze"></div>
                     {% endif %}
                   </td>
                   

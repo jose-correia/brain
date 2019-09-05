@@ -142,6 +142,24 @@ button:hover {
     font-weight: 600;
 }
 
+.tier-indicator {
+    width: 50px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.gold {
+    background-color: #FFD700;
+}
+
+.silver {
+    background-color: #C0C0C0;
+}
+
+.bronze {
+    background-color: #CD7F32;
+}
+
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {
     button {

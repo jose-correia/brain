@@ -12,7 +12,7 @@ class Companies(db.Model, ModelMixin):
 
     link = db.Column(db.String(100))
 
-    tier = db.Column(db.String(20))
+    partnership_tier = db.Column(db.String(20))
 
     password_hash = db.Column(db.String(128))
 

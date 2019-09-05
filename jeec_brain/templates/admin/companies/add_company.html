@@ -4,7 +4,10 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -12,15 +15,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
     <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
   </head>
   <body>
-    <script>
-        $(document).ready(function(){
-          $('select').formSelect();
-        });
-    </script>
-
     <div class="nav-bar">
         <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
 
@@ -85,8 +81,15 @@
                 <input class="with-gap" name="access_cv_platform" type="radio" value="False" checked />
                 <span>No</span>
             </label>
+
+
+              <select name="partnership_tier" class="browser-default" style="margin-left: 100px;width: 200px;display: inline-block;">
+                <option value="" disabled selected>Partnership</option>
+                <option value="gold">Gold</option>
+                <option value="silver">Silver</option>
+                <option value="bronze">Bronze</option>
+              </select>
           </p>
-          
           <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Company</button>
       </form>
     </div>

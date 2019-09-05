@@ -13,6 +13,7 @@ class CreateCompanyService():
         self.link = payload.get('link')
         self.access_cv_platform = payload.get('access_cv_platform')
         self.business_area = payload.get('business_area')
+        self.partnership_tier = payload.get('partnership_tier')
 
     def call(self) -> Optional[Companies]:
         
@@ -20,6 +21,7 @@ class CreateCompanyService():
             name=self.name,
             email=self.email,
             link=self.link,
+            partnership_tier=self.partnership_tier,
             access_cv_platform=self.access_cv_platform,
             business_area=self.business_area
         )
