@@ -41,7 +41,7 @@
           {{ error }}
         </blockquote>
       {% endif %}
-      
+
       <form class="col s12" action="{{ url_for('admin_api.create_team') }}" method="post">
           <div class="row">
             <div class="input-field col s12">
@@ -52,7 +52,7 @@
 
           <div class="row">
             <div class="input-field col s8">
-              <textarea id="description" class="materialize-textarea"></textarea>
+              <textarea name="description" id="description" class="materialize-textarea"></textarea>
               <label for="description">Description of the team</label>
             </div>
           </div>
