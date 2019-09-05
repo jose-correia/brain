@@ -15,6 +15,12 @@
     
   </head>
   <body>
+    <script>
+        $(document).ready(function(){
+          $('select').formSelect();
+        });
+    </script>
+
     <div class="nav-bar">
         <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
 
@@ -39,7 +45,7 @@
           {{ error }}
         </blockquote>
       {% endif %}
-      
+
       <form class="col s12" action="{{ url_for('admin_api.create_company') }}" method="post">
           <div class="row">
             <div class="input-field col s12">
@@ -80,7 +86,7 @@
                 <span>No</span>
             </label>
           </p>
-
+          
           <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Company</button>
       </form>
     </div>
