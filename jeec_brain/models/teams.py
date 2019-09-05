@@ -9,7 +9,7 @@ class Teams(db.Model, ModelMixin):
     name = db.Column(db.String(100), unique=True)
     description = db.Column(db.String(300))
     
-    members = relationship("Colaborators", back_populates='team', lazy='dynamic')
+    members = relationship("Colaborators", back_populates='team', lazy='dynamic', cascade="all,delete")
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)

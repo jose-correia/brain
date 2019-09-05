@@ -20,9 +20,12 @@ class Config(object):
 
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024 #16Mb
 
+    ALLOWED_IMAGES = ['png']
     ALLOWED_EXTENSIONS = ['pdf']
+
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
+
     CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN')
-    MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH'))
 
     ACTIVITIES = ['Workshops', 'Speakers', 'Tech Talks', 'Panel Discussions', 'Job Fair', 'Matchmaking']
 

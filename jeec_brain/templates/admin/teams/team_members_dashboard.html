@@ -65,6 +65,9 @@
       </blockquote>
     {% else %}
     <div class="list">
+        <div class="counter right">
+            total: {{ team.members.all()|length }}
+        </div>
         <table class="striped">
             <thead><tr>
             <th>Name</th>

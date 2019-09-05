@@ -1,5 +1,5 @@
 from .. import bp
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, current_app
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.speakers_handler import SpeakersHandler
 from jeec_brain.apps.auth.wrappers import require_admin_login
@@ -56,9 +56,17 @@ def create_speaker():
         bio=bio,
         linkedin_url=linkedin_url
     )
-    
+
     if speaker is None:
         return render_template('admin/speakers/add_speaker.html', error="Failed to create speaker!")
+
+    if 'file' in request.files:
+        file = request.files['file']
+        result, msg = SpeakersHandler.upload_image(file, name)
+
+        if result == False:
+            SpeakersHandler.delete_speaker(speaker)
+            return render_template('admin/speakers/add_speaker.html', error=msg)
 
     return redirect(url_for('admin_api.speakers_dashboard'))
 

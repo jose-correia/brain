@@ -65,6 +65,10 @@
       </blockquote>
     {% else %}
       <div class="list">
+        <div class="counter right">
+          total: {{ companies|length }}
+        </div>
+
         <table class="striped">
             <thead><tr>
               <th>Name</th>
