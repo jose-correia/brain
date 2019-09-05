@@ -18,6 +18,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'] + os.environ['APP_DB'] + "?client_encoding=utf8"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024 #16Mb
+
     ALLOWED_EXTENSIONS = ['pdf']
     CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN')
     MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH'))

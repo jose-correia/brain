@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -24,6 +27,7 @@
 
     <div class="section-header" >
       <h2>Team Management</h2>
+      <p>Add, edit or delete teams and members</p>
     </div>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
@@ -38,32 +42,61 @@
         List of Teams
     </div>
 
-    <div class="list">
-      <table class="striped">
-          <thead><tr>
-            <th>Name</th>
-            <th>Description</th>
-          </tr></thead>
-          <tbody>
-              {% for team in teams %}
-                <tr>
-                  <td><b>{{ team.name }}</b></td>
-  
-                  <td>
-                    {% if team.description is not none %}
-                      {{ team.description }}
-                    {% endif %}
-                  </td>
-  
-                  <td>
-                    <form action="/admin/team/{{team.external_id.hex}}" method="get">
-                      <button class="waves-effect waves-light btn-small"><i class="material-icons left">edit</i>Edit</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-          </tbody>
-      </table>
+    <div class="search-bar">
+      <form class="col s12" method="post">
+        <div class="row">
+          <div class="input-field col s8">
+            <input class="col s12" id="name" name="name" type="text" class="validate" required>
+            
+            <label for="name">{% if search is not none %}{{ search }}{% else %}Name{% endif %}</label>
+          </div>
+          <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
+        </div>
+      </form>
+
+      {% if search %}
+        <a class="clear-search" href="{{ url_for('admin_api.teams_dashboard') }}">clear search results</a>
+      {% endif %}
     </div>
+
+    {% if error is not none %}
+      <blockquote class="create-error">
+        {{ error }}
+      </blockquote>
+    {% else %}
+      <div class="list">
+        <table class="striped">
+            <thead><tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr></thead>
+            <tbody>
+                {% for team in teams %}
+                  <tr>
+                    <td><b>{{ team.name }}</b></td>
+    
+                    <td>
+                      {% if team.description is not none %}
+                        {{ team.description }}
+                      {% endif %}
+                    </td>
+    
+                    <td>
+                      <form action="/admin/team/{{team.external_id.hex}}" method="get">
+                        <button title="Edit team" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                      </form>
+                    </td>
+
+                    <td>
+                      <form action="/admin/team/{{team.external_id.hex}}/members" method="get">
+                        <button title="Edit members" class="waves-effect light-blue darken-1 btn-floating"><i class="material-icons left">person</i>Members</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    {% endif %}
   </body>
 </html>  

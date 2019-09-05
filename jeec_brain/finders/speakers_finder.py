@@ -8,10 +8,11 @@ class SpeakersFinder():
         return Speakers.query().filter_by(external_id=external_id).first()
 
     @classmethod
-    def get_from_name(cls, name):
-        return Speakers.query().filter_by(name=name).first()
+    def search_by_name(cls, name):
+        search = "%{}%".format(name)
+        return Speakers.query().filter(Speakers.name.ilike(search)).all()
     
     @classmethod
     def get_all(cls):
-        return Speakers.query().order_by(Speakers.name)
+        return Speakers.query().order_by(Speakers.name).all()
     

@@ -18,7 +18,24 @@ from jeec_brain.apps.auth.wrappers import require_admin_login
 def companies_dashboard():
     companies_list = CompaniesFinder.get_all()
 
-    return render_template('admin/companies/companies_dashboard.html', companies=companies_list)
+    if len(companies_list) == 0:
+        error = 'No results found'
+        return render_template('admin/companies/companies_dashboard.html', companies=None, error=error, search=None)
+
+    return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=None)
+
+
+@bp.route('/companies', methods=['POST'])
+@require_admin_login
+def search_company():
+    name = request.form.get('name')
+    companies_list = CompaniesFinder.search_by_name(name)
+
+    if len(companies_list) == 0:
+        error = 'No results found'
+        return render_template('admin/companies/companies_dashboard.html', companies=None, error=error, search=name)
+
+    return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=name)
 
 
 @bp.route('/new-company', methods=['GET'])
@@ -59,12 +76,14 @@ def create_company():
 
     return redirect(url_for('admin_api.companies_dashboard'))
 
+
 @bp.route('/company/<string:company_external_id>', methods=['GET'])
 @require_admin_login
 def get_company(company_external_id):
     company = CompaniesFinder.get_from_external_id(company_external_id)
 
     return render_template('admin/companies/update_company.html', company=company, error=None)
+
 
 @bp.route('/company/<string:company_external_id>', methods=['POST'])
 @require_admin_login

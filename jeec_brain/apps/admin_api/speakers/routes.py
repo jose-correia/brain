@@ -11,7 +11,25 @@ from jeec_brain.values.api_error_value import APIErrorValue
 def speakers_dashboard():
     speakers_list = SpeakersFinder.get_all()
 
-    return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list)
+    if len(speakers_list) == 0:
+        error = 'No results found'
+        return render_template('admin/speakers/speakers_dashboard.html', speakers=None, error=error, search=None)
+
+
+    return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=None)
+
+
+@bp.route('/speakers', methods=['POST'])
+@require_admin_login
+def search_speaker():
+    name = request.form.get('name')
+    speakers_list = SpeakersFinder.search_by_name(name)
+
+    if len(speakers_list) == 0:
+        error = 'No results found'
+        return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=error, search=name)
+
+    return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=name)
 
 
 @bp.route('/new-speaker', methods=['GET'])

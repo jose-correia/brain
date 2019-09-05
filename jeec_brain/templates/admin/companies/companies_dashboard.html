@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -24,6 +27,7 @@
 
     <div class="section-header">
       <h2>Companies Management</h2>
+      <p>Add, edit or delete companies</p>
     </div>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
@@ -38,66 +42,89 @@
         List of Companies
     </div>
 
-    <div class="list">
-      <table class="striped">
-          <thead><tr>
-            <th>Name</th>
-            <th>Business</th>
-            <th>Email</th>
-            <th>Website</th>
-            <th>Partnership</th>
-            <th>CV Platform</th>
-          </tr></thead>
-          <tbody>
-              {% for company in companies %}
-                <tr>
-                  <td><b>{{ company.name }}</b></td>
+    <div class="search-bar">
+      <form class="col s12" method="post">
+        <div class="row">
+          <div class="input-field col s8">
+            <input class="col s12" id="name" name="name" type="text" class="validate" required>
+            
+            <label for="name">{% if search is not none %}{{ search }}{% else %}Name{% endif %}</label>
+          </div>
+          <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
+        </div>
+      </form>
 
-                  <td>
-                    {% if company.business_area is not none %}
-                      {{ company.business_area }}
-                    {% endif %}
-                  </td>
-
-                  <td>
-                    {% if company.email is not none %}
-                      {{ company.email }}
-                    {% endif %}
-                  </td>
-                  
-                  <td>
-                    {% if company.link is not none %}
-                      <a href="{{ company.link }}">{{ company.link }}</a>
-                    {% endif %}
-                  </td>
-
-                  <td>
-                    {% if company.partnership_tier == 'gold' %}
-                      <div class="tier-indicator gold"></div>
-                    {% elif company.partnership_tier=='silver' %}
-                      <div class="tier-indicator silver"></div>
-                    {% elif company.partnership_tier=='bronze' %}
-                      <div class="tier-indicator bronze"></div>
-                    {% endif %}
-                  </td>
-                  
-                  <td>
-                    {% if company.access_cv_platform is sameas true %}
-                      <i class="material-icons icon-green">check</i>
-                    {% else %}
-                      <i class="material-icons icon-red">clear</i>
-                    {% endif %}
-                  </td>
-
-                  <td>
-                    <form action="/admin/company/{{company.external_id.hex}}" method="get">
-                        <button class="waves-effect waves-light btn-small"><i class="material-icons left">edit</i>Edit</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-          </tbody>
-      </table>
+      {% if search %}
+        <a class="clear-search" href="{{ url_for('admin_api.companies_dashboard') }}">clear search results</a>
+      {% endif %}
     </div>
+
+    {% if error is not none %}
+      <blockquote class="create-error">
+        {{ error }}
+      </blockquote>
+    {% else %}
+      <div class="list">
+        <table class="striped">
+            <thead><tr>
+              <th>Name</th>
+              <th>Business</th>
+              <th>Email</th>
+              <th>Website</th>
+              <th>Partnership</th>
+              <th>CV Platform</th>
+            </tr></thead>
+            <tbody>
+                {% for company in companies %}
+                  <tr>
+                    <td><b>{{ company.name }}</b></td>
+
+                    <td>
+                      {% if company.business_area is not none %}
+                        {{ company.business_area }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if company.email is not none %}
+                        {{ company.email }}
+                      {% endif %}
+                    </td>
+                    
+                    <td>
+                      {% if company.link is not none %}
+                        <a href="{{ company.link }}">{{ company.link }}</a>
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if company.partnership_tier == 'gold' %}
+                        <div class="tier-indicator gold"></div>
+                      {% elif company.partnership_tier=='silver' %}
+                        <div class="tier-indicator silver"></div>
+                      {% elif company.partnership_tier=='bronze' %}
+                        <div class="tier-indicator bronze"></div>
+                      {% endif %}
+                    </td>
+                    
+                    <td>
+                      {% if company.access_cv_platform is sameas true %}
+                        <i class="material-icons icon-green">check</i>
+                      {% else %}
+                        <i class="material-icons icon-red">clear</i>
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      <form action="/admin/company/{{company.external_id.hex}}" method="get">
+                        <button title="Edit team" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    {% endif %}
   </body>
 </html>  

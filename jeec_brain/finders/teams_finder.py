@@ -4,8 +4,9 @@ from jeec_brain.models.teams import Teams
 class TeamsFinder():
 
     @classmethod
-    def get_from_name(cls, name):
-        return Teams.query.filter_by(name=name).first()
+    def search_by_name(cls, name):
+        search = "%{}%".format(name)
+        return Teams.query.filter(Teams.name.ilike(search)).all()
 
     @classmethod
     def get_from_external_id(cls, external_id):
@@ -13,5 +14,5 @@ class TeamsFinder():
     
     @classmethod
     def get_all(cls):
-        return Teams.query.order_by(Teams.name)
+        return Teams.query.order_by(Teams.name).all()
     

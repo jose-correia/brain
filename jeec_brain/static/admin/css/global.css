@@ -140,6 +140,7 @@ button:hover {
     bottom: 10px;
     font-size: 16px;
     font-weight: 600;
+    margin-left: 30px;
 }
 
 .tier-indicator {
@@ -158,6 +159,23 @@ button:hover {
 
 .bronze {
     background-color: #CD7F32;
+}
+
+.search-bar {
+    margin-left: 35vw;
+    margin-right: 20vw;
+}
+
+.search-btn {
+    margin-top: 20px;
+}
+
+.clear-search {
+    color: rgb(119, 119, 119);
+}
+
+.clear-search:hover {
+    color: rgb(172, 172, 172);
 }
 
 /* On screens that are 500px wide*/

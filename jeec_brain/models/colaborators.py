@@ -7,7 +7,7 @@ class Colaborators(ModelMixin, db.Model):
     __tablename__ = 'colaborators'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
-    ist_id = db.Column(db.String(10), unique=True)
+    ist_id = db.Column(db.String(10))
     email = db.Column(db.String(100))
 
     team = relationship('Teams', back_populates="members", uselist=False)

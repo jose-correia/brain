@@ -26,10 +26,11 @@
     </div>
 
     <div class="section-header" >
-      <h2>Add a new team member</h2>
+      <h2>{{ team.name }}</h2>
+      <p>Add a new member</p>
     </div>
 
-    <form action="/admin/team/{{team.external_id.hex}}" method="get">
+    <form action="/admin/team/{{team.external_id.hex}}/members" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 

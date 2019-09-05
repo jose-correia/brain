@@ -7,12 +7,30 @@ from jeec_brain.apps.auth.wrappers import require_admin_login
 from jeec_brain.values.api_error_value import APIErrorValue
 
 
+# Team management
 @bp.route('/teams', methods=['GET'])
 @require_admin_login
 def teams_dashboard():
     teams_list = TeamsFinder.get_all()
 
-    return render_template('admin/teams/teams_dashboard.html', teams=teams_list)
+    if len(teams_list) == 0:
+        error = 'No results found'
+        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=None)
+
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=None)
+
+
+@bp.route('/teams', methods=['POST'])
+@require_admin_login
+def search_team():
+    name = request.form.get('name')
+    teams_list = TeamsFinder.search_by_name(name)
+
+    if len(teams_list) == 0:
+        error = 'No results found'
+        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=name)
+
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=name)
 
 
 @bp.route('/new-team', methods=['GET'])
@@ -84,6 +102,40 @@ def delete_team(team_external_id):
         return render_template('admin/teams/update_team.html', team=team, error="Failed to delete team!")
 
 
+# Members management
+@bp.route('/team/<string:team_external_id>/members', methods=['GET'])
+@require_admin_login
+def team_members_dashboard(team_external_id):
+    team = TeamsFinder.get_from_external_id(team_external_id)
+
+    if team is None:
+        return APIErrorValue('Couldnt find team').json(500)
+
+    if len(team.members.all()) == 0:
+        error = 'No results found'
+        return render_template('admin/teams/team_members_dashboard.html', team=team, members=None, error=error, search=None)
+
+    return render_template('admin/teams/team_members_dashboard.html', team=team, members=team.members, error=None, search=None)
+
+
+@bp.route('/team/<string:team_external_id>/members', methods=['POST'])
+@require_admin_login
+def search_team_members(team_external_id):
+    team = TeamsFinder.get_from_external_id(team_external_id)
+
+    if team is None:
+        return APIErrorValue('Couldnt find team').json(500)
+
+    name = request.form.get('name')
+    members_list = ColaboratorsFinder.search_by_name(name)
+
+    if len(members_list) == 0:
+        error = 'No results found'
+        return render_template('admin/teams/team_members_dashboard.html', team=team, members=None, error=error, search=name)
+
+    return render_template('admin/teams/team_members_dashboard.html', team=team, members=members_list, error=None, search=name)
+
+
 @bp.route('/team/<string:team_external_id>/new-member', methods=['GET'])
 @require_admin_login
 def add_team_member_dashboard(team_external_id):
@@ -119,7 +171,7 @@ def create_team_member(team_external_id):
     if member is None:
         return render_template('admin/teams/add_team_member.html', team=team, error="Failed to create team member!")
 
-    return redirect(url_for('admin_api.update_team', team_external_id=team_external_id))
+    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
 
 
 @bp.route('/team/<string:team_external_id>/members/<string:member_external_id>', methods=['GET'])
@@ -184,7 +236,7 @@ def delete_team_member(team_external_id, member_external_id):
         return APIErrorValue('Couldnt find team member').json(500)
         
     if TeamsHandler.delete_team_member(member):
-        return redirect(url_for('admin_api.update_team', team_external_id=team_external_id))
+        return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
 
     else:
         return render_template('admin/teams/update_team_member.html', member=member, error="Failed to delete team member!")
