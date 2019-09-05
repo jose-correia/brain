@@ -29,7 +29,7 @@
       <h2>{{ team.name }} Team</h2>
     </div>
 
-    <form action="/admin/team/{{team.external_id.hex}}" method="get">
+    <form action="{{ url_for('admin_api.teams_dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
