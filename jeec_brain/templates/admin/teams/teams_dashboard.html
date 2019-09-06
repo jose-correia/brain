@@ -73,6 +73,7 @@
             <thead><tr>
               <th>Name</th>
               <th>Description</th>
+              <th>Members</th>
             </tr></thead>
             <tbody>
                 {% for team in teams %}
@@ -83,6 +84,10 @@
                       {% if team.description is not none %}
                         {{ team.description }}
                       {% endif %}
+                    </td>
+
+                    <td>
+                        {{ team.members.all()|length }}
                     </td>
     
                     <td>
