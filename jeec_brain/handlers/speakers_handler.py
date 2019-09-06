@@ -36,7 +36,7 @@ class SpeakersHandler():
         if file and allowed_image(file.filename):
             filename = speaker_name.lower().replace(' ', '_') + '.png'
             try:
-                file.save(os.path.join(current_app.root_path, 'storage', 'speakers', filename))
+                file.save(os.path.join(current_app.root_path, 'static', 'speakers', filename))
                 return True, None
             
             except Exception as e:
@@ -46,10 +46,23 @@ class SpeakersHandler():
         return False, 'File extension is not allowed'
 
     @staticmethod
-    def delete_image(filename):
+    def delete_image(speaker_name):
+        filename = speaker_name.lower().replace(' ', '_') + '.png'
+
         try:
-            os.remove(os.path.join(current_app.root_path, 'storage', 'speakers', filename))
+            os.remove(os.path.join(current_app.root_path, 'static', 'speakers', filename))
             return True
         except Exception as e:
             return False
 
+    @staticmethod
+    def find_image(speaker_name):
+        image_filename = speaker_name.lower().replace(' ', '_') + '.png'
+        image_path = f'/static/speakers/{image_filename}'
+
+        if not os.path.isfile(os.path.join(current_app.root_path, 'static', 'speakers', image_filename)): 
+            image_path = None
+        else:
+            return image_path
+
+    

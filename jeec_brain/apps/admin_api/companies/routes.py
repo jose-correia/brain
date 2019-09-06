@@ -1,5 +1,5 @@
 from .. import bp
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, current_app
 
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
@@ -74,6 +74,14 @@ def create_company():
     if company is None:
         return render_template('admin/companies/add_company.html', error="Failed to create company! Maybe it already exists :)")
 
+    if 'file' in request.files:
+        file = request.files['file']
+        result, msg = CompaniesHandler.upload_image(file, name)
+
+        if result == False:
+            CompaniesHandler.delete_company(company)
+            return render_template('admin/companies/add_company.html', error=msg)
+
     return redirect(url_for('admin_api.companies_dashboard'))
 
 
@@ -82,7 +90,9 @@ def create_company():
 def get_company(company_external_id):
     company = CompaniesFinder.get_from_external_id(company_external_id)
 
-    return render_template('admin/companies/update_company.html', company=company, error=None)
+    image_path = CompaniesHandler.find_image(company.name)
+
+    return render_template('admin/companies/update_company.html', company=company, image=image_path, error=None)
 
 
 @bp.route('/company/<string:company_external_id>', methods=['POST'])
@@ -109,6 +119,8 @@ def update_company(company_external_id):
     else:
         access_cv_platform = False
 
+    image_path = CompaniesHandler.find_image(name)
+
     updated_company = CompaniesHandler.update_company(
         company=company,
         name=name,
@@ -120,7 +132,15 @@ def update_company(company_external_id):
     )
     
     if updated_company is None:
-        return render_template('admin/companies/update_company.html', company=company, error="Failed to update company!")
+        return render_template('admin/companies/update_company.html', company=company, image=image_path, error="Failed to update company!")
+
+    if 'file' in request.files:
+        file = request.files['file']
+
+        result, msg = CompaniesHandler.upload_image(file, name)
+
+        if result == False:
+            return render_template('admin/companies/update_company.html', company=updated_company, image=image_path, error=msg)
 
     return redirect(url_for('admin_api.companies_dashboard'))
 
@@ -134,10 +154,12 @@ def delete_company(company_external_id):
         return APIErrorValue('Couldnt find company').json(500)
         
     if CompaniesHandler.delete_company(company):
+        SpeakersHandler.delete_image(name)
         return redirect(url_for('admin_api.companies_dashboard'))
 
     else:
-        return render_template('admin/companies/update_company.html', company=company, error="Failed to delete company!")
+        image_path = CompaniesHandler.find_image(name)
+        return render_template('admin/companies/update_company.html', company=company, image=image_path, error="Failed to delete company!")
 
 
 # @bp.route('/companies/<string:company_external_id>/activities', methods=['GET'])

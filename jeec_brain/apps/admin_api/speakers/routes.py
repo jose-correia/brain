@@ -15,7 +15,6 @@ def speakers_dashboard():
         error = 'No results found'
         return render_template('admin/speakers/speakers_dashboard.html', speakers=None, error=error, search=None)
 
-
     return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=None)
 
 
@@ -76,7 +75,9 @@ def create_speaker():
 def get_speaker(speaker_external_id):
     speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
 
-    return render_template('admin/speakers/update_speaker.html', speaker=speaker)
+    image_path = SpeakersHandler.find_image(name)
+
+    return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error=None)
 
 
 @bp.route('/speaker/<string:speaker_external_id>', methods=['POST'])
@@ -95,6 +96,8 @@ def update_speaker(speaker_external_id):
     bio = request.form.get('bio')
     linkedin_url = request.form.get('linkedin_url')
 
+    image_path = SpeakersHandler.find_image(name)
+
     updated_speaker = SpeakersHandler.update_speaker(
         speaker=speaker,
         name=name,
@@ -106,7 +109,15 @@ def update_speaker(speaker_external_id):
     )
     
     if updated_speaker is None:
-        return render_template('admin/speakers/update_speaker.html', speaker=speaker, error="Failed to update speaker!")
+        return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error="Failed to update speaker!")
+
+    if 'file' in request.files:
+        file = request.files['file']
+
+        result, msg = SpeakersHandler.upload_image(file, name)
+
+        if result == False:
+            return render_template('admin/speakers/update_speaker.html', speaker=updated_speaker, image=image_path, error=msg)
 
     return redirect(url_for('admin_api.speakers_dashboard'))
 
@@ -118,10 +129,14 @@ def delete_speaker(speaker_external_id):
 
     if speaker is None:
         return APIErrorValue('Couldnt find speaker').json(500)
+
+    name = speaker.name
         
     if SpeakersHandler.delete_speaker(speaker):
+        SpeakersHandler.delete_image(name)
         return redirect(url_for('admin_api.speakers_dashboard'))
 
     else:
-        return render_template('admin/speakers/update_speaker.html', speaker=speaker, error="Failed to delete speaker!")
+        image_path = SpeakersHandler.find_image(name)
+        return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error="Failed to delete speaker!")
 

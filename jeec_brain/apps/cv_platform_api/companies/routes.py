@@ -40,7 +40,7 @@ def get_company_login_form():
 def company_dashboard():
     logger.info('entered dashboard!')
     company_name = session['name']
-    company_logo = '/static/partner-logos/' + company_name.lower() + '.png'
+    company_logo = '/static/companies/' + company_name.lower() + '.png'
 
     return render_template('company_dashboard.html', name=company_name, logo=company_logo)
         

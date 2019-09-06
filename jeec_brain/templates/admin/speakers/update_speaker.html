@@ -10,6 +10,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
     <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
@@ -33,7 +34,7 @@
     <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
-
+   
     <br>
 
     <div class="create-form">
@@ -43,7 +44,27 @@
         </blockquote>
       {% endif %}
       
-      <form class="col s12" method="post">
+      <form class="col s12" method="post" enctype="multipart/form-data">
+          <br>
+          {% if image is not sameas none %}
+            <img src="{{ image }}" width="200" height="200">
+          {% else %}
+            <blockquote class="create-error">
+              Speaker image missing! Please, upload one
+            </blockquote> 
+          {% endif %}
+
+          <div class="file-field input-field" style="width:500px;">
+            <div class="btn">
+              <i class="material-icons left">add_a_photo</i>
+              <span>{% if image is not sameas none %}change image{% else %}add image{% endif %}</span>
+              <input type="file" name="file">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="use a round .png with <500kB">
+            </div>
+          </div>
+
           <div class="row">
             <div class="input-field col s12">
               <input class="col s4" id="name" name="name" type="text" class="validate" value="{{ speaker.name }}" required>
