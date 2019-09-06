@@ -41,7 +41,7 @@ class SpeakersHandler():
             
             except Exception as e:
                 logger.error(e)
-                return False, e
+                return False, 'Image upload failed'
 
         return False, 'File extension is not allowed'
 
