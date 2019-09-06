@@ -208,8 +208,9 @@ button:hover {
 }
 
 .company-logo {
-    max-height: 100px;
-    max-width: 150px;
+    max-height: 150px;
+    max-width: 300px;
+    margin-bottom: 40px;
 }
 
 .centered-image {

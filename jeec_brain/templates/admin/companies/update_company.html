@@ -46,7 +46,7 @@
       <form class="col s12" method="post" enctype="multipart/form-data">
           <br>
           {% if image is not sameas none %}
-            <img src="{{ image }}" class="company-logo">
+            <img src="{{ image }}" class="company-logo centered-image">
           {% else %}
             <blockquote class="create-error">
               Company image missing! Please, upload one
@@ -76,7 +76,7 @@
           <div class="row">
             <div class="input-field col s6">
               <input id="business_area" name="business_area" type="text" value="{{ company.business_area }}">
-              <label for="business_are">Business area</label>
+              <label for="business_area">Business area</label>
             </div>
           </div>
           

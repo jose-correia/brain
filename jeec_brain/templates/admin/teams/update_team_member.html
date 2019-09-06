@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -53,20 +56,24 @@
           <div class="row">
             <div class="input-field col s5">
               <input id="name" name="name" type="text" class="validate" value="{{ member.name }}" required>
+              <label for="name">Name</label>
             </div>
   
             <div class="input-field col s1">
               <input id="ist_id" name="ist_id" type="text" value="{{ member.ist_id }}">
+              <label for="ist_id">IST id</label>
             </div>
           </div>
 
           <div class="row">
             <div class="input-field col s3">
               <input id="email" name="email" type="text" class="validate" value="{{ member.email }}">
+              <label for="email">Email</label>
             </div>
   
             <div class="input-field col s3">
               <input id="linkedin_url" name="linkedin_url" type="text" value="{{ member.linkedin_url }}">
+              <label for="linkedin_url">LinkedIn</label>
             </div>
           </div>
 
