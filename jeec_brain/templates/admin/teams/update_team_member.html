@@ -40,7 +40,16 @@
         </blockquote>
       {% endif %}
 
-      <form class="col s12" method="post">
+      <form class="col s12" method="post" enctype="multipart/form-data">
+          {% if image is not sameas none %}
+            <img src="{{ image }}" class="centered-image" height="200px">
+          {% else %}
+            <br>
+            <blockquote class="create-error">
+              Member image missing! Please, upload one
+            </blockquote> 
+          {% endif %}
+        
           <div class="row">
             <div class="input-field col s5">
               <input id="name" name="name" type="text" class="validate" value="{{ member.name }}" required>
@@ -58,6 +67,17 @@
   
             <div class="input-field col s3">
               <input id="linkedin_url" name="linkedin_url" type="text" value="{{ member.linkedin_url }}">
+            </div>
+          </div>
+
+          <div class="file-field input-field" style="width:500px;">
+            <div class="btn">
+              <i class="material-icons left">add_a_photo</i>
+              <span>{% if image is not sameas nosne %}change image{% else %}add image{% endif %}</span>
+              <input type="file" name="file">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
             </div>
           </div>
 

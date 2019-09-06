@@ -171,6 +171,14 @@ def create_team_member(team_external_id):
     if member is None:
         return render_template('admin/teams/add_team_member.html', team=team, error="Failed to create team member!")
 
+    if 'file' in request.files:
+        file = request.files['file']
+        result, msg = TeamsHandler.upload_member_image(file, name)
+
+        if result == False:
+            TeamsHandler.delete_team_member(member)
+            return render_template('admin/teams/add_team_member.html', team=team, error=msg)
+
     return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
 
 
@@ -187,7 +195,9 @@ def get_team_member(team_external_id, member_external_id):
     if member is None:
         return APIErrorValue('Couldnt find team member').json(500)
 
-    return render_template('admin/teams/update_team_member.html', member=member)
+    image_path = TeamsHandler.find_member_image(member.name)
+
+    return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error=None)
 
 
 @bp.route('/team/<string:team_external_id>/members/<string:member_external_id>', methods=['POST'])
@@ -215,11 +225,21 @@ def update_team_member(team_external_id, member_external_id):
         email=email,
         linkedin_url=linkedin_url
     )
+
+    image_path = TeamsHandler.find_member_image(name)
     
     if updated_member is None:
-        return render_template('admin/teams/update_team_member.html', member=member, error="Failed to update team member!")
+        return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error="Failed to update team member!")
 
-    return render_template('admin/teams/update_team.html', team=team, member=member)
+    if 'file' in request.files:
+        file = request.files['file']
+
+        result, msg = TeamsHandler.upload_member_image(file, name)
+
+        if result == False:
+            return render_template('admin/teams/update_team_member.html', member=update_team_member, image=image_path, error=msg)
+
+    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
 
 
 @bp.route('/team/<string:team_external_id>/members/<string:member_external_id>/delete', methods=['GET'])
@@ -234,9 +254,13 @@ def delete_team_member(team_external_id, member_external_id):
 
     if member is None:
         return APIErrorValue('Couldnt find team member').json(500)
-        
+    
+    name = member.name
+
     if TeamsHandler.delete_team_member(member):
+        TeamsHandler.delete_member_image(name)
         return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
 
     else:
-        return render_template('admin/teams/update_team_member.html', member=member, error="Failed to delete team member!")
+        image_path = TeamsHandler.find_member_image(name)
+        return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error="Failed to delete team member!")

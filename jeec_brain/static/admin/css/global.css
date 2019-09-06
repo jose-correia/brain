@@ -212,6 +212,12 @@ button:hover {
     max-width: 150px;
 }
 
+.centered-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {
     button {

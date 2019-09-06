@@ -43,7 +43,7 @@
         </blockquote>
       {% endif %}
 
-      <form class="col s12" action="/admin/team/{{team.external_id.hex}}/new-member" method="post">
+      <form class="col s12" action="/admin/team/{{team.external_id.hex}}/new-member" method="post" enctype="multipart/form-data">
         <div class="row">
           <div class="input-field col s5">
             <input id="name" name="name" type="text" class="validate" required>
@@ -67,8 +67,19 @@
             <label for="linkedin_url">LinkedIn</label>
           </div>
         </div>
+
+        <div class="file-field input-field" style="width:500px;">
+          <div class="btn">
+            <i class="material-icons left">add_a_photo</i>
+            <span>member image</span>
+            <input type="file" name="file">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
+          </div>
+        </div>
         
-          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Member</button>
+        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Member</button>
       </form>
     </div>
   </body>
