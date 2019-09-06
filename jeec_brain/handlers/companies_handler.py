@@ -9,6 +9,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def allowed_image(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_IMAGES']
+
+
 class CompaniesHandler():
     
     @classmethod

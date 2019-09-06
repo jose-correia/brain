@@ -43,10 +43,10 @@
         </blockquote>
       {% endif %}
       
-      <form class="col s12" method="post">
+      <form class="col s12" method="post" enctype="multipart/form-data">
           <br>
           {% if image is not sameas none %}
-            <img src="{{ image }}" width="200" height="200">
+            <img src="{{ image }}" class="company-logo">
           {% else %}
             <blockquote class="create-error">
               Company image missing! Please, upload one
@@ -60,7 +60,7 @@
               <input type="file" name="file">
             </div>
             <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="use a round .png with <500kB">
+              <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
             </div>
           </div>
           <div class="row">

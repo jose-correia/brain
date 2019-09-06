@@ -152,9 +152,11 @@ def delete_company(company_external_id):
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)
-        
+    
+    name = company.name
+    
     if CompaniesHandler.delete_company(company):
-        SpeakersHandler.delete_image(name)
+        CompaniesHandler.delete_image(name)
         return redirect(url_for('admin_api.companies_dashboard'))
 
     else:

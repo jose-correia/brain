@@ -75,7 +75,7 @@ def create_speaker():
 def get_speaker(speaker_external_id):
     speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
 
-    image_path = SpeakersHandler.find_image(name)
+    image_path = SpeakersHandler.find_image(speaker.name)
 
     return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error=None)
 

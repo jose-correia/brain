@@ -42,7 +42,7 @@
         </blockquote>
       {% endif %}
 
-      <form class="col s12" action="{{ url_for('admin_api.create_company') }}" method="post">
+      <form class="col s12" action="{{ url_for('admin_api.create_company') }}" method="post" enctype="multipart/form-data">
           <div class="row">
             <div class="input-field col s12">
               <input class="col s3" id="name" name="name" type="text" class="validate" required>
@@ -98,7 +98,7 @@
               <input type="file" name="file">
             </div>
             <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="use a round .png with <500kB">
+              <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
             </div>
           </div>
     

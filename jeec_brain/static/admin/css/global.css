@@ -207,6 +207,11 @@ button:hover {
     background-color: red;
 }
 
+.company-logo {
+    max-height: 100px;
+    max-width: 150px;
+}
+
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {
     button {
