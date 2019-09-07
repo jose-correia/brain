@@ -4,20 +4,21 @@
 * [What is this?](#what-is-this)
 * [Tech Stack](#tech-stack)
 * [Instructions to deploy locally](#instructions-to-deploy-locally)
-* [Production Environment](#production-environment)
+* [Database Model](#database-model)
+* [Running migrations](#running-migrations)
 * [Useful links](#useful-links)
 
 ## What is this?
 Welcome to the JEEC Brain! This system serves the purpose of managing
 all the technological services of the JEEC event. 
 
-## Tech Stack and key concepts
+## Tech Stack
 *   Python 3.6
 *   Flask
 *   PostgreSQL
 
 
-## Instruction to deploy locally
+## Instructions to deploy locally
 1. Clone this repository;
 2. Install PostreSQL;
 3. Create virtual environment and install required dependencies with:
