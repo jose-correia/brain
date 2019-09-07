@@ -35,7 +35,7 @@ all the technological services of the JEEC event.
     - `python manage.py db migrate`
     - `python manage.py db upgrade`
 9. Deploy the Flask application with:
-    - `python manage runserver`
+    - `python manage.py runserver`
 
 
 The application runs on port **8081**.
