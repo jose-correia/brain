@@ -45,7 +45,7 @@ The application runs on port **8081**.
 
 
 ## Running migrations
-Data migrations are ran using the commands:
+1. Data migrations are ran using the commands:
     - `python manage.py db migrate`
     - `python manage.py db upgrade`
 
