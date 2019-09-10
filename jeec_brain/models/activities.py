@@ -13,22 +13,16 @@ class Activities(ModelMixin, db.Model):
     description = db.Column(db.String(300))
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
-    datetime = db.Column(TIMESTAMP)
+    day = db.Column(db.String(20))
+    time = db.Column(db.String(10))
 
     type = db.Column(db.Enum(ActivityTypeEnum), nullable=False)
-    
-    company = relationship('Companies', back_populates="activities", uselist=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-
-    speaker = relationship('Speakers', back_populates="activities", uselist=False)
-    speaker_id = db.Column(db.Integer, db.ForeignKey('speakers.id'))
 
     registration_open = db.Column(db.Boolean, default=False)
     registration_link = db.Column(db.String(100))
-
    
     def __repr__(self):
-        return 'Username: {}  |  Name: {}'.format(self.username, self.name)
+        return 'Type: {}  |  Name: {}'.format(self.type, self.name)
 
     def open_registration(self):
         self.registration_open = True

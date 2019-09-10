@@ -4,8 +4,8 @@ from jeec_brain.models.companies import Companies
 class CompaniesFinder():
 
     @classmethod
-    def get_from_username(cls, username):
-        return Companies.query.filter_by(username=username).first()
+    def get_from_name(cls, name):
+        return Companies.query.filter_by(name=name).first()
 
     @classmethod
     def get_from_external_id(cls, external_id):

@@ -1,6 +1,9 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
+from jeec_brain.models.speaker_activities import SpeakerActivities
+from jeec_brain.models.activities import Activities
 from sqlalchemy.orm import relationship
+from sqlalchemy import sql
 
 
 class Speakers(ModelMixin, db.Model):
@@ -16,8 +19,10 @@ class Speakers(ModelMixin, db.Model):
     bio = db.Column(db.String(200))
 
     linkedin_url = db.Column(db.String(100))
-
-    activities = relationship("Activities", back_populates='speaker', lazy='dynamic')
     
+    activities = relationship("Activities",
+        secondary="speaker_activities",
+        secondaryjoin=sql.and_(SpeakerActivities.activity_id == Activities.id))
+
     def __repr__(self):
         return 'Name: {}'.format(self.name)

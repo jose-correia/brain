@@ -1,7 +1,10 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
+from jeec_brain.models.company_activities import CompanyActivities
+from jeec_brain.models.activities import Activities
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
+from sqlalchemy import sql
 
 
 class Companies(db.Model, ModelMixin):
@@ -20,9 +23,11 @@ class Companies(db.Model, ModelMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     access_cv_platform = db.Column(db.Boolean, default=False)
-    
-    activities = relationship("Activities", back_populates='company', lazy='dynamic')
-    
+
+    activities = relationship("Activities",
+        secondary="company_activities",
+        secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id))
+
     business_area = db.Column(db.String(100))
 
 

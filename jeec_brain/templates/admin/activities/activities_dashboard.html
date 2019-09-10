@@ -26,20 +26,41 @@
     </div>
 
     <div class="section-header">
-      <h2>Companies Management</h2>
-      <p>Add, edit or delete companies</p>
+      <h2>Activities Management</h2>
+      <p>Add, edit or delete activities</p>
     </div>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
     
-    <form action="{{ url_for('admin_api.add_company_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Company</button>
-    </form>
+    <a href="/admin/new-activity?type=workshop">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Workshop</button>
+    </a>
+
+    <a href="/admin/new-activity?type=presentation">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Presentation</button>
+    </a>
+
+    <a href="/admin/new-activity?type=tech_talk">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Tech Talk</button>
+    </a>
+
+    <a href="/admin/new-activity?type=job_fair">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Job Fair</button>
+    </a>
+
+    <a href="/admin/new-activity?type=matchmaking">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Matchmaking</button>
+    </a>
+
+    <a href="/admin/new-activity?type=panel_discussion">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Panel Discussion</button>
+    </a>
+
 
     <div class="section-title center-align" style="margin-top:90px;">
-        List of Companies
+        List of Activities
     </div>
 
     <div class="search-bar">
@@ -55,7 +76,7 @@
       </form>
 
       {% if search %}
-        <a class="clear-search" href="{{ url_for('admin_api.companies_dashboard') }}">clear search results</a>
+        <a class="clear-search" href="{{ url_for('admin_api.activities_dashboard') }}">clear search results</a>
       {% endif %}
     </div>
 
@@ -66,62 +87,48 @@
     {% else %}
       <div class="list">
         <div class="counter right">
-          Companies: {{ companies|length }}
+          Activities: {{ activities|length }}
         </div>
 
         <table class="striped">
             <thead><tr>
               <th>Name</th>
-              <th>Business</th>
-              <th>Email</th>
-              <th>Website</th>
-              <th>Partnership</th>
-              <th>CV Platform</th>
+              <th>Type</th>
+              <th>Day</th>
+              <th>Time</th>
+              <th>Description</th>
             </tr></thead>
             <tbody>
-                {% for company in companies %}
+                {% for activity in activities %}
                   <tr>
-                    <td><b>{{ company.name }}</b></td>
+                    <td><b>{{ activity.name }}</b></td>
 
                     <td>
-                      {% if company.business_area is not none %}
-                        {{ company.business_area }}
-                      {% endif %}
+                        {{ activity.type.name }}
                     </td>
 
                     <td>
-                      {% if company.email is not none %}
-                        {{ company.email }}
-                      {% endif %}
-                    </td>
-                    
-                    <td>
-                      {% if company.link is not none %}
-                        <a href="{{ company.link }}">{{ company.link }}</a>
+                      {% if activity.day is not none %}
+                        {{ activity.day }}
                       {% endif %}
                     </td>
 
                     <td>
-                      {% if company.partnership_tier == 'gold' %}
-                        <div class="tier-indicator gold"></div>
-                      {% elif company.partnership_tier=='silver' %}
-                        <div class="tier-indicator silver"></div>
-                      {% elif company.partnership_tier=='bronze' %}
-                        <div class="tier-indicator bronze"></div>
-                      {% endif %}
-                    </td>
-                    
-                    <td>
-                      {% if company.access_cv_platform is sameas true %}
-                        <i class="material-icons icon-green">check</i>
-                      {% else %}
-                        <i class="material-icons icon-red">clear</i>
+                      {% if activity.time is not none %}
+                        {{ activity.time }}
                       {% endif %}
                     </td>
 
                     <td>
-                      <form action="/admin/company/{{company.external_id.hex}}" method="get">
-                        <button title="Edit company" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                      {% if activity.description is not none %}
+                        {{ activity.description }}
+                      {% endif %}
+                    </td>
+
+
+                    <td>
+                      <form action="/admin/activity/{{activity.external_id.hex}}" method="get">
+                        <button title="Edit activity" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
                       </form>
                     </td>
                   </tr>
