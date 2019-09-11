@@ -219,6 +219,15 @@ button:hover {
     margin-right: auto;
 }
 
+.add-activity-buttons {
+    margin-top: 20px;
+}
+
+.search-activity-buttons {
+    margin-top: 20px;
+}
+
+
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {
     button {

@@ -12,56 +12,39 @@ from jeec_brain.apps.auth.wrappers import require_admin_login
 @bp.route('/activities', methods=['GET'])
 @require_admin_login
 def activities_dashboard():
-    activities_list = ActivitiesFinder.get_all()
-
     activity_types = GetActivityTypesService.call()
-
-    if len(activities_list) == 0:
-        error = 'No results found'
-        return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=None)
-
-    return render_template('admin/activities/activities_dashboard.html',\
-        activities=activities_list, \
-        activity_types=activity_types, \
-        error=None, \
-        search=None)
-
-
-@bp.route('/activities', methods=['POST'])
-@require_admin_login
-def search_activities():
-    activity_types = GetActivityTypesService.call()
+    search_parameters = request.args
+    name = request.args.get('name')
 
     # handle search bar requests
-    if request.form.get('name') is not None:
-        name = request.form.get('name')
+    if name is not None:
+        search = name
         activities_list = ActivitiesFinder.search_by_name(name)
-
-        if len(activities_list) == 0:
-            error = 'No results found'
-            return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=name)
-
-        return render_template('admin/activities/activities_dashboard.html', activities=activities_list, activity_types=activity_types, error=None, search=name)
-
-    else:
-        # handle parameter requests
+    
+    # handle parameter requests
+    elif len(search_parameters) != 0:
         search_parameters = request.args
+        search = None
+
         activities_list = ActivitiesFinder.get_from_parameters(search_parameters)
 
-        if len(activities_list) == 0:
-                error = 'No results found'
-                return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=None)
+    # request endpoint with no parameters should return all activities
+    else:
+        search = None
+        activities_list = ActivitiesFinder.get_all()
+    
+    if activities_list is None or len(activities_list) == 0:
+        error = 'No results found'
+        return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=search)
 
-        return render_template('admin/activities/activities_dashboard.html', activities=activities_list, activity_types=activity_types, error=None, search=None)
+    return render_template('admin/activities/activities_dashboard.html', activities=activities_list, activity_types=activity_types, error=None, search=search)
 
 
 @bp.route('/new-activity', methods=['GET'])
 @require_admin_login
 def add_activity_dashboard():
     activity_type = request.args.get('type')
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.error(activity_type)
+    
     if activity_type not in GetActivityTypesService.call():
         return 'Wrong activity type provided', 404
 

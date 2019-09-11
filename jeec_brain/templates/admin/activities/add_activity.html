@@ -78,8 +78,30 @@
             <label for="registration_link">Registration url</label>
           </div>
         </div>
+
+
+        <div class="form-group">
+          <select name="company" class="form-control" id="exampleFormControlSelect2">
+            <option value="" disabled selected>Choose companies</option>
+            {% for company in companies %}
+              <option value="company.name">{{ company.name }}</option>
+            {% endfor %}
+          </select>
+          <label>Materialize Multiple Select</label>
+        </div>
+
+
+        <div class="input-field col s12">
+          <select name="speaker" class="selectpicker">
+            <option value="" disabled selected>Choose speakers</option>
+            {% for speaker in speakers %}
+              <option value="speaker.name">{{ speaker.name }}</option>
+            {% endfor %}
+          </select>
+          <label>Materialize Multiple Select</label>
+        </div>
     
-          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Activity</button>
+        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Activity</button>
       </form>
     </div>
   </body>

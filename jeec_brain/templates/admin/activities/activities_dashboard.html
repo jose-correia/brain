@@ -30,41 +30,77 @@
       <p>Add, edit or delete activities</p>
     </div>
 
-    <form action="{{ url_for('admin_api.dashboard') }}" method="get">
+    <form action="{{ url_for('admin_api.dashboard') }}" method="get" class="row s12">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
-    
-    <a href="/admin/new-activity?type=workshop">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Workshop</button>
-    </a>
 
-    <a href="/admin/new-activity?type=presentation">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Presentation</button>
-    </a>
-
-    <a href="/admin/new-activity?type=tech_talk">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Tech Talk</button>
-    </a>
-
-    <a href="/admin/new-activity?type=job_fair">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Job Fair</button>
-    </a>
-
-    <a href="/admin/new-activity?type=matchmaking">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Matchmaking</button>
-    </a>
-
-    <a href="/admin/new-activity?type=panel_discussion">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Panel Discussion</button>
-    </a>
-
-
-    <div class="section-title center-align" style="margin-top:90px;">
-        List of Activities
+    <div class="section-title center-align" style="margin-top:10px;">
+        Add new activities
     </div>
 
+    <div class="add-activity-buttons center-align">
+      <a href="/admin/new-activity?type=workshop">
+        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Workshop</button>
+      </a>
+  
+      <a href="/admin/new-activity?type=presentation">
+        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Presentation</button>
+      </a>
+  
+      <a href="/admin/new-activity?type=tech_talk">
+        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Tech Talk</button>
+      </a>
+  
+      <a href="/admin/new-activity?type=job_fair">
+        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Job Fair</button>
+      </a>
+  
+      <a href="/admin/new-activity?type=matchmaking">
+        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Matchmaking</button>
+      </a>
+  
+      <a href="/admin/new-activity?type=panel_discussion">
+        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Panel Discussion</button>
+      </a>
+    </div>
+
+    <div class="section-title center-align" style="margin-top:50px;">
+        Search
+    </div>
+
+    <div class="center-align" style="margin-top:10px;">
+        by type
+    </div>
+
+    <div class="search-activity-buttons center-align">
+        <a href="/admin/activities?type=workshop">
+          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Workshops</button>
+        </a>
+    
+        <a href="/admin/activities?type=presentation">
+          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Presentations</button>
+        </a>
+    
+        <a href="/admin/activities?type=tech_talk">
+          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Tech Talks</button>
+        </a>
+    
+        <a href="/admin/activities?type=job_fair">
+          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Job Fairs</button>
+        </a>
+    
+        <a href="/admin/activities?type=matchmaking">
+          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Matchmakings</button>
+        </a>
+    
+        <a href="/admin/activities?type=panel_discussion">
+          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Panel Discussions</button>
+        </a>
+
+      </div>
+
     <div class="search-bar">
-      <form class="col s12" method="post">
+      <form action="/admin/activities" class="col s12" method="get">
         <div class="row">
           <div class="input-field col s8">
             <input class="col s12" id="name" name="name" type="text" class="validate" required>
@@ -78,6 +114,10 @@
       {% if search %}
         <a class="clear-search" href="{{ url_for('admin_api.activities_dashboard') }}">clear search results</a>
       {% endif %}
+    </div>
+
+    <div class="section-title center-align" style="margin-top:50px;">
+        List of activities
     </div>
 
     {% if error is not none %}
