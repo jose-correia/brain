@@ -48,7 +48,7 @@
           <div class="input-field col s8">
             <input class="col s12" id="name" name="name" type="text" class="validate" required>
             
-            <label for="name">{% if search is not none %}{{ search }}{% else %}Name{% endif %}</label>
+            <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
           </div>
           <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
         </div>
@@ -59,70 +59,70 @@
       {% endif %}
     </div>
 
-    {% if error is not none %}
-      <blockquote class="create-error">
-        {{ error }}
-      </blockquote>
-    {% else %}
       <div class="list">
-        <div class="counter right">
-          Speakers: {{ speakers|length }}
-        </div>
+        {% if error is not none %}
+          <blockquote class="create-error">
+            {{ error }}
+          </blockquote>
+        {% else %}
+          <div class="counter right">
+            Speakers: {{ speakers|length }}
+          </div>
 
-        <table class="striped">
-            <thead><tr>
-              <th>Name</th>
-              <th>Company</th>
-              <th>Position</th>
-              <th>Origin</th>
-              <th>Biography</th>
-              <th>LinkedIn</th>
-            </tr></thead>
-            <tbody>
-                {% for speaker in speakers %}
-                  <tr>
-                    <td><b>{{ speaker.name }}</b></td>
-                    
-                    <td>
-                      {% if speaker.company is not none %}
-                        {{ speaker.company }}
-                      {% endif %}
-                    </td>
-    
-                    <td>
-                      {% if speaker.position is not none %}
-                        {{ speaker.position }}
-                      {% endif %}
-                    </td>
-    
-                    <td>
-                      {% if speaker.country is not none %}
-                        {{ speaker.country }}
-                      {% endif %}
-                    </td>
-    
-                    <td style="width: 20%">
-                      {% if speaker.bio is not none %}
-                        {{ speaker.bio }}
-                      {% endif %}
-                    </td>
-                    
-                    <td>
-                      {% if speaker.linkedin_url is not none %}
-                        <a href="{{ speaker.linkedin_url }}">Check profile</a>
-                      {% endif %}
-                    </td>
-    
-                    <td>
-                      <form action="/admin/speaker/{{speaker.external_id.hex}}" method="get">
-                        <button title="Edit speaker" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
-                      </form>
-                    </td>
-                  </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+          <table class="striped">
+              <thead><tr>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Position</th>
+                <th>Origin</th>
+                <th>Biography</th>
+                <th>LinkedIn</th>
+              </tr></thead>
+              <tbody>
+                  {% for speaker in speakers %}
+                    <tr>
+                      <td><b>{{ speaker.name }}</b></td>
+                      
+                      <td>
+                        {% if speaker.company is not none %}
+                          {{ speaker.company }}
+                        {% endif %}
+                      </td>
+      
+                      <td>
+                        {% if speaker.position is not none %}
+                          {{ speaker.position }}
+                        {% endif %}
+                      </td>
+      
+                      <td>
+                        {% if speaker.country is not none %}
+                          {{ speaker.country }}
+                        {% endif %}
+                      </td>
+      
+                      <td style="width: 20%">
+                        {% if speaker.bio is not none %}
+                          {{ speaker.bio }}
+                        {% endif %}
+                      </td>
+                      
+                      <td>
+                        {% if speaker.linkedin_url is not none %}
+                          <a href="{{ speaker.linkedin_url }}">Check profile</a>
+                        {% endif %}
+                      </td>
+      
+                      <td>
+                        <form action="/admin/speaker/{{speaker.external_id.hex}}" method="get">
+                          <button title="Edit speaker" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        {% endif %}
       </div>
-    {% endif %}
   </body>
 </html>  

@@ -48,7 +48,7 @@
             <div class="input-field col s8">
                 <input class="col s12" id="name" name="name" type="text" class="validate" required>
                 
-                <label for="name">{% if search is not none %}{{ search }}{% else %}Name{% endif %}</label>
+                <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
             </div>
             <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
             </div>
@@ -59,57 +59,57 @@
         {% endif %}
     </div>
 
-    {% if error is not none %}
-      <blockquote class="create-error">
-        {{ error }}
-      </blockquote>
-    {% else %}
     <div class="list">
-        <div class="counter right">
-            Members: {{ team.members.all()|length }}
-        </div>
-        <table class="striped">
-            <thead><tr>
-            <th>Name</th>
-            <th>IST_id</th>
-            <th>Email</th>
-            <th>LinkedIn</th>
-            </tr></thead>
-            <tbody>
-                {% for member in team.members %}
-                <tr>
-                    <td><b>{{ member.name }}</b></td>
-    
-                    <td>
-                    {% if member.ist_id is not none %}
-                        {{ member.ist_id }}
-                    {% endif %}
-                    </td>
-    
-                    <td>
-                    {% if member.email is not none %}
-                        {{ member.email }}
-                    {% endif %}
-                    </td>
-    
-                    <td>
-                    {% if member.linkedin_url is not none %}
-                        <a href="{{ member.linkedin_url }}">{{ member.linkedin_url }}</a>
-                    {% endif %}
-                    </td>
-                    
-    
-                    <td>
-                    {% set member_id = team.members[loop.index-1].external_id.hex %}
-                    <form action="/admin/team/{{team.external_id.hex}}/members/{{ member_id }}" method="get">
-                        <button class="waves-effect waves-light btn-small"><i class="material-icons left">edit</i>Edit</button>
-                    </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% if error is not none %}
+            <blockquote class="create-error">
+              {{ error }}
+            </blockquote>
+        {% else %}
+            <div class="counter right">
+                Members: {{ team.members.all()|length }}
+            </div>
+            <table class="striped">
+                <thead><tr>
+                <th>Name</th>
+                <th>IST_id</th>
+                <th>Email</th>
+                <th>LinkedIn</th>
+                </tr></thead>
+                <tbody>
+                    {% for member in team.members %}
+                    <tr>
+                        <td><b>{{ member.name }}</b></td>
+        
+                        <td>
+                        {% if member.ist_id is not none %}
+                            {{ member.ist_id }}
+                        {% endif %}
+                        </td>
+        
+                        <td>
+                        {% if member.email is not none %}
+                            {{ member.email }}
+                        {% endif %}
+                        </td>
+        
+                        <td>
+                        {% if member.linkedin_url is not none %}
+                            <a href="{{ member.linkedin_url }}">{{ member.linkedin_url }}</a>
+                        {% endif %}
+                        </td>
+                        
+        
+                        <td>
+                        {% set member_id = team.members[loop.index-1].external_id.hex %}
+                        <form action="/admin/team/{{team.external_id.hex}}/members/{{ member_id }}" method="get">
+                            <button class="waves-effect waves-light btn-small"><i class="material-icons left">edit</i>Edit</button>
+                        </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     </div>
-    {% endif %}
   </body>
 </html>  

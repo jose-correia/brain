@@ -49,44 +49,88 @@
           <br>
 
           <div class="row">
-            <div class="input-field col s12">
-              <input class="col s3" id="name" name="name" type="text" class="validate" value="{{ activity.name }}" required>
+            <div class="input-field col s5">
+              <input id="name" name="name" type="text" class="validate" value="{{ activity.name }}" required>
               <label for="name">Name</label>
+            </div>
+
+            <div class="col s2" style="margin-left: 30px;">
+              <select name="type" class="form-control browser-default">
+                <option value="{{ activity.type.name }}" disabled selected>{{ activity.type.name }}</option>
+                {% for type in activity_types %}
+                  <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
 
           <div class="row">
-            <div class="input-field col s12">
-              <input class="col s3" id="description" name="description" type="text" class="validate" value="{{ activity.description }}">
+            <div class="input-field col s8">
+              <input id="description" name="description" type="text" class="validate" value="{{ activity.description }}">
               <label for="description">Description</label>
             </div>
           </div>
 
-          <div class="row">
-            <div class="input-field col s4">
-              <input class="col s3" id="location" name="location" type="text" class="validate" value="{{ activity.location }}">
+          <div class="row s7">
+            <div class="input-field col s3">
+              <input id="location" name="location" type="text" class="validate" value="{{ activity.location }}">
               <label for="location">Location</label>
             </div>
 
-            <div class="input-field col s3">
-              <input class="col s3" id="day" name="day" type="text" class="validate" value="{{ activity.day }}">
+            <div class="input-field col s1">
+              <input id="day" name="day" type="text" class="validate" value="{{ activity.day }}">
               <label for="day">Day</label>
             </div>
 
-            <div class="input-field col s3">
-              <input class="col s3" id="time" name="time" type="text" class="timepicker" value="{{ activity.time }}">
+            <div class="input-field col s1">
+              <input id="time" name="time" type="text" class="timepicker" value="{{ activity.time }}">
               <label for="time">Time</label>
-            </div>
-
-            <div class="input-field col s3">
-              <input class="col s3" id="registration_link" name="registration_link" type="text" class="validate" value="{{ activity.registration_link }}">
-              <label for="registration_link">Registration url</label>
             </div>
           </div>
 
-          <br>
+          Registration Open:
+        <div class="row s10">
+          <p class="col s2">
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="registration_open" type="radio" value="True" {% if activity.registration_open is sameas true %} checked {% endif %}/>
+              <span>Yes</span>
+            </label>
+            <label>
+                <input class="with-gap" name="registration_open" type="radio" value="False" {% if activity.registration_open is sameas false %} checked {% endif %}/>
+                <span>No</span>
+            </label>
+          </p>
+              
+          <div class="col s6">
+            <div class="input-field">
+              <input id="registration_link" name="registration_link" type="url" class="validate" value="{{ activity.registration_url }}">
+              <label for="registration_link">Registration url</label>
+            </div>
+          </div>
+        </div>
 
-          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save {{ activity.type.name }}</button>
+        <div class="row">
+          <div class="col s3">
+            <select name="company" class="browser-default" id="exampleFormControlSelect2">
+              <option value="" disabled selected>Choose companies</option>
+              {% for company in companies %}
+                <option value="company.name">{{ company.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col s3">
+            <select name="speaker" class="browser-default s2">
+              <option value="" disabled selected>Choose speakers</option>
+              {% for speaker in speakers %}
+                <option value="speaker.name">{{ speaker.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+          
+        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save {{ activity.type.name }}</button>
       </form>
     </div>
     

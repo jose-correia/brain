@@ -9,14 +9,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@bp.route('/admin-login', methods=['GET'])
+@bp.route('/', methods=['GET'])
 def get_admin_login_form():
     if current_user.is_authenticated and session.get('admin'):
         return redirect(url_for('admin_api.dashboard'))
     return render_template('admin/admin_login.html')
 
 
-@bp.route('/admin-login', methods=['POST'])
+@bp.route('/', methods=['POST'])
 def admin_login():
     if session.get('admin'):
         return redirect(url_for('admin_api.dashboard'))

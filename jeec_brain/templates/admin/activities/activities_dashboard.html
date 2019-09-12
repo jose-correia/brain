@@ -34,37 +34,11 @@
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
-    <div class="section-title center-align" style="margin-top:10px;">
-        Add new activities
-    </div>
+    <form action="{{ url_for('admin_api.add_activity_dashboard') }}" method="get">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Activity</button>
+    </form>
 
-    <div class="add-activity-buttons center-align">
-      <a href="/admin/new-activity?type=workshop">
-        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Workshop</button>
-      </a>
-  
-      <a href="/admin/new-activity?type=presentation">
-        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Presentation</button>
-      </a>
-  
-      <a href="/admin/new-activity?type=tech_talk">
-        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Tech Talk</button>
-      </a>
-  
-      <a href="/admin/new-activity?type=job_fair">
-        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Job Fair</button>
-      </a>
-  
-      <a href="/admin/new-activity?type=matchmaking">
-        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Matchmaking</button>
-      </a>
-  
-      <a href="/admin/new-activity?type=panel_discussion">
-        <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">add</i>Panel Discussion</button>
-      </a>
-    </div>
-
-    <div class="section-title center-align" style="margin-top:50px;">
+    <div class="section-title center-align" style="margin-top:90px;">
         Search
     </div>
 
@@ -74,27 +48,27 @@
 
     <div class="search-activity-buttons center-align">
         <a href="/admin/activities?type=workshop">
-          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Workshops</button>
+          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Workshops</button>
         </a>
     
         <a href="/admin/activities?type=presentation">
-          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Presentations</button>
+          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Presentations</button>
         </a>
     
         <a href="/admin/activities?type=tech_talk">
-          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Tech Talks</button>
+          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Tech Talks</button>
         </a>
     
         <a href="/admin/activities?type=job_fair">
-          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Job Fairs</button>
+          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Job Fairs</button>
         </a>
     
         <a href="/admin/activities?type=matchmaking">
-          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Matchmakings</button>
+          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Matchmakings</button>
         </a>
     
         <a href="/admin/activities?type=panel_discussion">
-          <button class="waves-effect blue lighten-2 btn-small"><i class="material-icons left">search</i>Panel Discussions</button>
+          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Panel Discussions</button>
         </a>
 
       </div>
@@ -105,7 +79,7 @@
           <div class="input-field col s8">
             <input class="col s12" id="name" name="name" type="text" class="validate" required>
             
-            <label for="name">{% if search is not none %}{{ search }}{% else %}Name{% endif %}</label>
+            <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
           </div>
           <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
         </div>
@@ -120,12 +94,12 @@
         List of activities
     </div>
 
-    {% if error is not none %}
-      <blockquote class="create-error">
-        {{ error }}
-      </blockquote>
-    {% else %}
-      <div class="list">
+    <div class="list">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% else %}
         <div class="counter right">
           Activities: {{ activities|length }}
         </div>
@@ -134,9 +108,11 @@
             <thead><tr>
               <th>Name</th>
               <th>Type</th>
+              <th>Description</th>
               <th>Day</th>
               <th>Time</th>
-              <th>Description</th>
+              <th>Location</th>
+              <th>Registration Open</th>
             </tr></thead>
             <tbody>
                 {% for activity in activities %}
@@ -145,6 +121,12 @@
 
                     <td>
                         {{ activity.type.name }}
+                    </td>
+
+                    <td>
+                      {% if activity.description is not none %}
+                        {{ activity.description }}
+                      {% endif %}
                     </td>
 
                     <td>
@@ -160,8 +142,16 @@
                     </td>
 
                     <td>
-                      {% if activity.description is not none %}
-                        {{ activity.description }}
+                      {% if activity.location is not none %}
+                        {{ activity.location }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if activity.registration_open is sameas true %}
+                        <i class="material-icons icon-green">check</i>
+                      {% else %}
+                        <i class="material-icons icon-red">clear</i>
                       {% endif %}
                     </td>
 
@@ -175,7 +165,7 @@
                 {% endfor %}
             </tbody>
         </table>
-      </div>
-    {% endif %}
+      {% endif %} 
+    </div>
   </body>
 </html>  

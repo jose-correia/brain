@@ -48,7 +48,7 @@
           <div class="input-field col s8">
             <input class="col s12" id="name" name="name" type="text" class="validate" required>
             
-            <label for="name">{% if search is not none %}{{ search }}{% else %}Name{% endif %}</label>
+            <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
           </div>
           <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
         </div>
@@ -59,12 +59,12 @@
       {% endif %}
     </div>
 
-    {% if error is not none %}
-      <blockquote class="create-error">
-        {{ error }}
-      </blockquote>
-    {% else %}
-      <div class="list">
+    <div class="list">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% else %}
         <div class="counter right">
           Teams: {{ teams|length }}
 
@@ -112,7 +112,7 @@
                 {% endfor %}
             </tbody>
         </table>
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
   </body>
 </html>  

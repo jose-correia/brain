@@ -6,6 +6,7 @@ from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.services.activities.get_activity_types_service import GetActivityTypesService
 from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
 
 
 # Activities routes
@@ -24,7 +25,7 @@ def activities_dashboard():
     # handle parameter requests
     elif len(search_parameters) != 0:
         search_parameters = request.args
-        search = None
+        search = 'search name'
 
         activities_list = ActivitiesFinder.get_from_parameters(search_parameters)
 
@@ -43,16 +44,12 @@ def activities_dashboard():
 @bp.route('/new-activity', methods=['GET'])
 @require_admin_login
 def add_activity_dashboard():
-    activity_type = request.args.get('type')
-    
-    if activity_type not in GetActivityTypesService.call():
-        return 'Wrong activity type provided', 404
-
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
+    activity_types = GetActivityTypesService.call()
 
     return render_template('admin/activities/add_activity.html', \
-        type=activity_type, \
+        activity_types = activity_types, \
         companies=companies, \
         speakers=speakers, \
         error=None)
@@ -61,18 +58,20 @@ def add_activity_dashboard():
 @bp.route('/new-activity', methods=['POST'])
 @require_admin_login
 def create_activity():
-    activity_type = request.args.get('type')
-    if activity_type not in GetActivityTypesService.call():
-        return 'Wrong activity type provided', 404
-
     # extract form parameters
     name = request.form.get('name')
+    activity_type = request.form.get('type')
     description = request.form.get('description')
     location = request.form.get('location')
     day = request.form.get('day')
     time = request.form.get('time')
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
+
+    if activity_type not in GetActivityTypesService.call():
+        return 'Wrong activity type provided', 404
+    else:
+        activity_type = ActivityTypeEnum[activity_type]
 
     if registration_open == 'True':
         registration_open = True
@@ -132,9 +131,16 @@ def create_activity():
 @require_admin_login
 def get_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+    companies = CompaniesFinder.get_all()
+    speakers = SpeakersFinder.get_all()
+    activity_types = GetActivityTypesService.call()
 
-    return render_template('admin/activities/update_activity.html', activity=activity, error=None)
-
+    return render_template('admin/activities/update_activity.html', \
+        activity=activity, \
+        activity_types = activity_types, \
+        companies=companies, \
+        speakers=speakers, \
+        error=None)
 
 @bp.route('/activity/<string:activity_external_id>', methods=['POST'])
 @require_admin_login
@@ -147,12 +153,18 @@ def update_activity(activity_external_id):
 
     # extract form parameters
     name = request.form.get('name')
+    activity_type = request.form.get('type')
     description = request.form.get('description')
     location = request.form.get('location')
     day = request.form.get('day')
     time = request.form.get('time')
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
+
+    if activity_type not in GetActivityTypesService.call():
+        return 'Wrong activity type provided', 404
+    else:
+        activity_type = ActivityTypeEnum[activity_type]
 
     if registration_open == 'True':
         registration_open = True
@@ -161,6 +173,7 @@ def update_activity(activity_external_id):
 
     updated_activity = ActivitiesHandler.update_activity(
         activity=activity,
+        type=activity_type,
         name=name,
         description=description,
         location=location,
@@ -171,7 +184,12 @@ def update_activity(activity_external_id):
     )
     
     if updated_activity is None:
-        return render_template('admin/activities/update_activity.html', activity=activity, error="Failed to update activity!")
+        return render_template('admin/activities/update_activity.html', \
+            activity=activity, \
+            types=GetActivityTypesService.call(), \
+            companies=companies, \
+            speakers=speakers, \
+            error="Failed to update activity!")
 
     return redirect(url_for('admin_api.activities_dashboard'))
 
