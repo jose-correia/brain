@@ -33,3 +33,11 @@ class CompaniesFinder():
     def get_from_external_id(cls, external_id):
         return Companies.query.filter_by(external_id=external_id).first()
         
+    @classmethod
+    def get_from_parameters(cls, kwargs):
+        try:
+            companies = Companies.query.filter_by(**kwargs).all()
+        except Exception:
+            return None
+        
+        return companies

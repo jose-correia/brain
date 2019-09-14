@@ -64,5 +64,3 @@ class SpeakersHandler():
             image_path = None
         else:
             return image_path
-
-    

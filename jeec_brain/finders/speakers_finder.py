@@ -20,3 +20,11 @@ class SpeakersFinder():
     def get_all(cls):
         return Speakers.query().order_by(Speakers.name).all()
     
+    @classmethod
+    def get_from_parameters(cls, kwargs):
+        try:
+            speakers = Speakers.query().filter_by(**kwargs).all()
+        except Exception:
+            return None
+        
+        return speakers
