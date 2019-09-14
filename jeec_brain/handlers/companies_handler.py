@@ -58,9 +58,8 @@ class CompaniesHandler():
     @staticmethod
     def find_image(company_name):
         image_filename = company_name.lower().replace(' ', '_') + '.png'
-        image_path = f'/static/companies/{image_filename}'
 
         if not os.path.isfile(os.path.join(current_app.root_path, 'static', 'companies', image_filename)): 
-            image_path = None
+            return None
         else:
-            return image_path
+            return f'/static/companies/{image_filename}'

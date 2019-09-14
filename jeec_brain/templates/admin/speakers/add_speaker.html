@@ -51,7 +51,7 @@
             </div>
           </div>
 
-          Main Speaker? (will show in homepage)
+          Main Speaker? (will show in the homepage)
           <label style="margin-right: 20px;">
             <input class="with-gap" name="spotlight" type="radio" value="True"/>
             <span>Yes</span>
@@ -62,35 +62,50 @@
           </label>
 
           <div class="row">
-            <div class="input-field col s4">
-              <input id="company" name="company" type="text" class="validate">
+            <div class="input-field col s2">
+              <input id="company" name="company" type="text">
               <label for="company">Company name</label>
             </div>
 
-            <div class="input-field col s4">
+            <div class="input-field col s2">
               <input id="position" name="position" type="text">
               <label for="position">Position in the company</label>
+            </div>
+
+            <div class="input-field col s3">
+              <input id="company_link" name="company_link" type="text">
+              <label for="company_link">Company Website</label>
             </div>
           </div>
 
           <div class="row">
             <div class="input-field col s12">
               <input class="col s4" id="country" name="country" type="text">
-              <label for="country">Origin country</label>
+              <label for="country">Origin</label>
             </div>
           </div>
 
           <div class="row">
-            <div class="input-field col s8">
+            <div class="input-field col s9">
               <textarea name="bio" id="bio" class="materialize-textarea"></textarea>
               <label for="bio">Biography</label>
             </div>
           </div>
 
-          <div class="row">
-            <div class="input-field col s12">
-              <input class="col s4" id="linkedin_url" name="linkedin_url" type="text">
+          <div class="row s12">
+            <div class="input-field col s3">
+              <input id="linkedin_url" name="linkedin_url" type="text">
               <label for="linkedin_url">LinkedIn url</label>
+            </div>
+
+            <div class="input-field col s3">
+              <input id="youtube_url" name="youtube_url" type="text">
+              <label for="youtube_url">Youtube url</label>
+            </div>
+
+            <div class="input-field col s3">
+              <input id="website_url" name="website_url" type="text">
+              <label for="website_url">Website url</label>
             </div>
           </div>
 
@@ -98,10 +113,21 @@
             <div class="btn">
               <i class="material-icons left">add_a_photo</i>
               <span>speaker image</span>
-              <input type="file" name="file">
+              <input type="file" name="speaker_image">
             </div>
             <div class="file-path-wrapper">
               <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
+            </div>
+          </div>
+
+          <div class="file-field input-field" style="width:500px;">
+            <div class="btn">
+              <i class="material-icons left">add_a_photo</i>
+              <span>company logo</span>
+              <input type="file" name="company_logo">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="use .png with <200kB">
             </div>
           </div>
   

@@ -46,7 +46,7 @@
       
       <form class="col s12" method="post" enctype="multipart/form-data">
           {% if image is not sameas none %}
-            <img src="{{ image }}" class="centered-image" height="200px">
+            <img src="{{ image }}" class="centered-image speaker-img">
           {% else %}
             <br>
             <blockquote class="create-error">
@@ -54,34 +54,72 @@
             </blockquote> 
           {% endif %}
 
-          <div class="row">
-            <div class="input-field col s12">
-              <input class="col s4" id="name" name="name" type="text" class="validate" value="{{ speaker.name }}" required>
-              <label for="name">Name</label>
+          <div class="file-field input-field" style="width:500px;">
+            <div class="btn">
+              <i class="material-icons left">add_a_photo</i>
+              <span>{% if image is not sameas none %}change image{% else %}add image{% endif %}</span>
+              <input type="file" name="file">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
             </div>
           </div>
 
-          Main Speaker? (will show in homepage)
-          <label style="margin-right: 20px;">
-            <input class="with-gap" name="spotlight" type="radio" value="True" {% if speaker.spotlight is sameas true %} checked {% endif %}/>
-            <span>Yes</span>
-          </label>
-          <label>
-              <input class="with-gap" name="spotlight" type="radio" value="False" {% if speaker.spotlight is sameas false %} checked {% endif %}/>
-              <span>No</span>
-          </label>
-          <p>
+          <br>
+
+          <div class="row s12">
+            <div class="input-field col s4">
+              <input id="name" name="name" type="text" class="validate" value="{{ speaker.name }}" required>
+              <label for="name">Name</label>
+            </div>
+            
+            <div class="col" style="margin-left:30px;margin-top:20px;">
+            Main Speaker:
+              <label style="margin-right: 20px;margin-left:10px;">
+                <input class="with-gap" name="spotlight" type="radio" value="True" {% if speaker.spotlight is sameas true %} checked {% endif %}/>
+                <span>Yes</span>
+              </label>
+              <label>
+                  <input class="with-gap" name="spotlight" type="radio" value="False" {% if speaker.spotlight is sameas false %} checked {% endif %}/>
+                  <span>No</span>
+              </label>
+            </div>
+          </div>  
 
           <div class="row">
-            <div class="input-field col s4">
+            <div class="input-field col s2">
               <input id="company" name="company" type="text" value="{{ speaker.company }}">
               <label for="company">Company</label>
             </div>
   
           
-            <div class="input-field col s4">
+            <div class="input-field col s2">
               <input id="position" name="position" type="text" value="{{ speaker.position }}">
               <label for="position">Position</label>
+            </div>
+
+            <div class="input-field col s3">
+              <input id="company_link" name="company_link" type="text" value="{{ speaker.company_link }}">
+              <label for="company_link">Company Website</label>
+            </div>
+          </div>
+
+          {% if company_logo is not sameas none %}
+              <img src="{{ company_logo }}" class="company-logo">
+          {% elif speaker.company is not sameas none %}
+            <blockquote class="create-error">
+              Company logo missing! Please, upload one
+            </blockquote> 
+          {% endif %}
+
+          <div class="file-field input-field" style="width:500px;">
+            <div class="btn">
+              <i class="material-icons left">add_a_photo</i>
+              <span>{% if company_logo is not sameas none %}change company logo{% else %}add company logo{% endif %}</span>
+              <input type="file" name="company_logo">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="use a .png with <200kB">
             </div>
           </div>
 
@@ -93,27 +131,26 @@
           </div>
 
           <div class="row">
-            <div class="input-field col s8">
+            <div class="input-field col s9">
               <textarea id="bio" name="bio" class="materialize-textarea" value="{{speaker.bio}}">{{ speaker.bio }}</textarea>
               <label for="bio">Biography</label>
             </div>
           </div>
 
-          <div class="row">
-            <div class="input-field col s4">
+          <div class="row s12">
+            <div class="input-field col s3">
               <input id="linkedin_url" name="linkedin_url" type="text" value="{{ speaker.linkedin_url }}">
               <label for="linkedin_url">LinkedIn</label>
             </div>
-          </div>
 
-          <div class="file-field input-field" style="width:500px;">
-            <div class="btn">
-              <i class="material-icons left">add_a_photo</i>
-              <span>{% if image is not sameas nosne %}change image{% else %}add image{% endif %}</span>
-              <input type="file" name="file">
+            <div class="input-field col s3">
+              <input id="youtube_url" name="youtube_url" type="text" value="{{ speaker.youtube_url }}">
+              <label for="youtube_url">Youtube url</label>
             </div>
-            <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="use a round .png with <200kB">
+
+            <div class="input-field col s3">
+              <input id="website_url" name="website_url" type="text" value="{{ speaker.website_url }}">
+              <label for="website_url">Website url</label>
             </div>
           </div>
 

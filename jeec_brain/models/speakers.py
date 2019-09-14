@@ -12,13 +12,15 @@ class Speakers(ModelMixin, db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
 
     company = db.Column(db.String(100))
+    company_link = db.Column(db.String(100))
     position = db.Column(db.String(100))
 
     country = db.Column(db.String(100))
-
     bio = db.Column(db.String(200))
 
     linkedin_url = db.Column(db.String(100))
+    youtube_url = db.Column(db.String(100))
+    website_url = db.Column(db.String(100))
 
     spotlight = db.Column(db.Boolean, default=False)
     

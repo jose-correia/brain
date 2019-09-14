@@ -73,9 +73,8 @@ class TeamsHandler():
     @staticmethod
     def find_member_image(member_name):
         image_filename = member_name.lower().replace(' ', '_') + '.png'
-        image_path = f'/static/members/{image_filename}'
 
         if not os.path.isfile(os.path.join(current_app.root_path, 'static', 'members', image_filename)): 
-            image_path = None
+            return None
         else:
-            return image_path
+            return f'/static/members/{image_filename}'

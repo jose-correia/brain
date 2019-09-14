@@ -1,5 +1,6 @@
 from . import bp
 from flask import render_template, current_app, request, redirect, url_for
+from copy import deepcopy
 
 # Finders
 from jeec_brain.finders.activities_finder import ActivitiesFinder
@@ -86,7 +87,7 @@ def get_companies():
 @bp.route('/speakers', methods=['GET'])
 #@require_client_login
 def get_speakers():
-    search_parameters = request.args
+    search_parameters = request.args.to_dict()
     name = request.args.get('name')
 
     # handle search bar requests
@@ -96,8 +97,13 @@ def get_speakers():
     
     # handle parameter requests
     elif len(search_parameters) != 0:
-        search_parameters = request.args
         search = 'search name'
+
+        if 'spotlight' in search_parameters:
+            if search_parameters['spotlight'] == 'True':
+                search_parameters['spotlight'] = True
+            elif search_parameters['spotlight'] == 'False':
+                search_parameters['spotlight'] = False
 
         speakers_list = SpeakersFinder.get_from_parameters(search_parameters)
 

@@ -66,9 +66,17 @@ def create_speaker():
     if speaker is None:
         return render_template('admin/speakers/add_speaker.html', error="Failed to create speaker!")
 
-    if 'file' in request.files:
-        file = request.files['file']
+    if 'speaker_image' in request.files:
+        file = request.files['speaker_image']
         result, msg = SpeakersHandler.upload_image(file, name)
+
+        if result == False:
+            SpeakersHandler.delete_speaker(speaker)
+            return render_template('admin/speakers/add_speaker.html', error=msg)
+
+    if  speaker.company and 'company_logo' in request.files:
+        file = request.files['company_logo']
+        result, msg = SpeakersHandler.upload_company_logo(file, company)
 
         if result == False:
             SpeakersHandler.delete_speaker(speaker)
@@ -84,7 +92,15 @@ def get_speaker(speaker_external_id):
 
     image_path = SpeakersHandler.find_image(speaker.name)
 
-    return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error=None)
+    company_logo_path = None
+    if speaker.company is not None:
+        company_logo_path = SpeakersHandler.find_company_logo(speaker.company)
+
+    return render_template('admin/speakers/update_speaker.html', \
+        speaker=speaker, \
+        image=image_path, \
+        company_logo=company_logo_path, \
+        error=None)
 
 
 @bp.route('/speaker/<string:speaker_external_id>', methods=['POST'])
@@ -110,7 +126,8 @@ def update_speaker(speaker_external_id):
         spotlight = False
 
     image_path = SpeakersHandler.find_image(name)
-    
+    company_logo_path = SpeakersHandler.find_company_logo(company)
+
     updated_speaker = SpeakersHandler.update_speaker(
         speaker=speaker,
         name=name,
@@ -123,7 +140,11 @@ def update_speaker(speaker_external_id):
     )
     
     if updated_speaker is None:
-        return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error="Failed to update speaker!")
+        return render_template('admin/speakers/update_speaker.html', \
+            speaker=speaker, \
+            image=image_path, \
+            company_logo=company_logo_path, \
+            error="Failed to update speaker!")
 
     if 'file' in request.files:
         file = request.files['file']
@@ -131,7 +152,22 @@ def update_speaker(speaker_external_id):
         result, msg = SpeakersHandler.upload_image(file, name)
 
         if result == False:
-            return render_template('admin/speakers/update_speaker.html', speaker=updated_speaker, image=image_path, error=msg)
+            return render_template('admin/speakers/update_speaker.html', \
+                speaker=updated_speaker, \
+                image=image_path, \
+                company_logo=company_logo_path, \
+                error=msg)
+
+    if updated_speaker.company and 'company_logo' in request.files:
+        file = request.files['company_logo']
+        result, msg = SpeakersHandler.upload_company_logo(file, company)
+
+        if result == False:
+            return render_template('admin/speakers/update_speaker.html', \
+                speaker=updated_speaker, \
+                image=image_path, \
+                company_logo=company_logo_path, \
+                error=msg)
 
     return redirect(url_for('admin_api.speakers_dashboard'))
 
@@ -145,12 +181,21 @@ def delete_speaker(speaker_external_id):
         return APIErrorValue('Couldnt find speaker').json(500)
 
     name = speaker.name
+    company = speaker.company
         
     if SpeakersHandler.delete_speaker(speaker):
         SpeakersHandler.delete_image(name)
+
+        if company:
+            SpeakersHandler.delete_company_logo(company)
+
         return redirect(url_for('admin_api.speakers_dashboard'))
 
     else:
         image_path = SpeakersHandler.find_image(name)
-        return render_template('admin/speakers/update_speaker.html', speaker=speaker, image=image_path, error="Failed to delete speaker!")
+        return render_template('admin/speakers/update_speaker.html', \
+            speaker=speaker, \
+            image=image_path, \
+            company_logo=company_logo_path, \
+            error="Failed to delete speaker!")
 

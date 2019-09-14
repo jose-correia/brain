@@ -224,6 +224,11 @@ button:hover {
     margin-right: auto;
 }
 
+.speaker-img {
+    max-height: 200px;
+    margin-bottom: 30px;
+}
+
 .add-activity-buttons {
     margin-top: 20px;
 }
