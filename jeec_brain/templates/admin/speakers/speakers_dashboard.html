@@ -81,7 +81,11 @@
               <tbody>
                   {% for speaker in speakers %}
                     <tr>
-                      <td><b>{{ speaker.name }}</b></td>
+                      <td><b>{{ speaker.name }}
+                        {% if speaker.spotlight is sameas true %}
+                          <i class="material-icons icon-gold">star</i>
+                        {% endif %}
+                      </b></td>
                       
                       <td>
                         {% if speaker.company is not none %}

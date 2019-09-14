@@ -14,6 +14,7 @@ class CreateSpeakerService():
         self.country = payload.get('country')
         self.bio = payload.get('bio')
         self.linkedin_url = payload.get('linkedin_url')
+        self.spotlight = payload.get('spotlight')
 
     def call(self) -> Optional[Speakers]:
         
@@ -23,7 +24,8 @@ class CreateSpeakerService():
             position=self.position,
             country=self.country,
             bio=self.bio,
-            linkedin_url=self.linkedin_url
+            linkedin_url=self.linkedin_url,
+            spotlight=self.spotlight
         )
 
         if not speaker:

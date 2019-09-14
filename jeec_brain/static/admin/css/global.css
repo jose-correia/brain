@@ -124,6 +124,10 @@ button:hover {
     color: red
 }
 
+.icon-gold {
+    color: #FFD700
+}
+
 .list {
     margin-left: 30px;
     margin-right: 30px;

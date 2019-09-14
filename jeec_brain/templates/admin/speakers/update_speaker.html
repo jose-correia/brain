@@ -61,6 +61,17 @@
             </div>
           </div>
 
+          Main Speaker? (will show in homepage)
+          <label style="margin-right: 20px;">
+            <input class="with-gap" name="spotlight" type="radio" value="True" {% if speaker.spotlight is sameas true %} checked {% endif %}/>
+            <span>Yes</span>
+          </label>
+          <label>
+              <input class="with-gap" name="spotlight" type="radio" value="False" {% if speaker.spotlight is sameas false %} checked {% endif %}/>
+              <span>No</span>
+          </label>
+          <p>
+
           <div class="row">
             <div class="input-field col s4">
               <input id="company" name="company" type="text" value="{{ speaker.company }}">

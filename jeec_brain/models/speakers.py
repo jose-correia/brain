@@ -19,6 +19,8 @@ class Speakers(ModelMixin, db.Model):
     bio = db.Column(db.String(200))
 
     linkedin_url = db.Column(db.String(100))
+
+    spotlight = db.Column(db.Boolean, default=False)
     
     activities = relationship("Activities",
         secondary="speaker_activities",

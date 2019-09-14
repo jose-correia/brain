@@ -46,6 +46,12 @@ def create_speaker():
     country = request.form.get('country')
     bio = request.form.get('bio')
     linkedin_url = request.form.get('linkedin_url')
+    spotlight = request.form.get('spotlight')
+
+    if spotlight == 'True':
+        spotlight = True
+    else:
+        spotlight = False
 
     speaker = SpeakersHandler.create_speaker(
         name=name,
@@ -53,7 +59,8 @@ def create_speaker():
         position=position,
         country=country,
         bio=bio,
-        linkedin_url=linkedin_url
+        linkedin_url=linkedin_url,
+        spotlight=spotlight
     )
 
     if speaker is None:
@@ -95,9 +102,15 @@ def update_speaker(speaker_external_id):
     country = request.form.get('country')
     bio = request.form.get('bio')
     linkedin_url = request.form.get('linkedin_url')
+    spotlight = request.form.get('spotlight')
+
+    if spotlight == 'True':
+        spotlight = True
+    else:
+        spotlight = False
 
     image_path = SpeakersHandler.find_image(name)
-
+    
     updated_speaker = SpeakersHandler.update_speaker(
         speaker=speaker,
         name=name,
@@ -105,7 +118,8 @@ def update_speaker(speaker_external_id):
         position=position,
         country=country,
         bio=bio,
-        linkedin_url=linkedin_url
+        linkedin_url=linkedin_url,
+        spotlight=spotlight
     )
     
     if updated_speaker is None:
