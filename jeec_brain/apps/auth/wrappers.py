@@ -39,9 +39,9 @@ def require_admin_login(func):
     def check_admin_login(*args, **kwargs):
         try:
             if not session['admin']:
-                return redirect(url_for('admin_api.get_admin_login_form'))
+                return redirect('https://www.google.pt/')
         except Exception:
-            return redirect(url_for('admin_api.get_admin_login_form'))
+            return redirect('https://www.youtube.com/')
 
         return func(*args, **kwargs)
 
