@@ -37,13 +37,10 @@ def require_company_login(func):
 def require_admin_login(func):
     @wraps(func)
     def check_admin_login(*args, **kwargs):
-        if not current_user.is_authenticated:
+        if session.get('ADMIN') is not None and current_user.is_authenticated:
             return func(*args, **kwargs)
 
-        if session.get('ADMIN') is None:
-            return redirect(url_for('admin_api.get_admin_login_form'))
-
-        return func(*args, **kwargs)
+        return redirect(url_for('admin_api.get_admin_login_form'))
 
     return check_admin_login
 
