@@ -68,6 +68,7 @@ def require_admin_login(func):
 import logging
 logger = logging.getLogger(__name__)
 
+
 def requires_client_auth(func):
     @wraps(func)
     def decorated(*args, **kwargs):
