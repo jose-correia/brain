@@ -42,7 +42,6 @@ def create_app():
     app.config.from_object(config[env_config])
    
    # initialize login manager
-    login_manager.session_protection = 'strong'
     login_manager.login_message = 'First you must sign in.'
     login_manager.login_message_category = 'danger'
     login_manager.init_app(app)
@@ -70,7 +69,3 @@ def create_app():
 @login_manager.user_loader
 def load_user(username):
     return UsersFinder.get_user_from_username(username=username)
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return 'Unauthorized'

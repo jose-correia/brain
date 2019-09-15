@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 def get_admin_login_form():
     if current_user.is_authenticated:
         return redirect(url_for('admin_api.dashboard'))
-    session.clear()
+
+    session = requests.Session()
     return render_template('admin/admin_login.html')
 
 
@@ -25,7 +26,7 @@ def admin_login():
     if AuthHandler.login_admin(username, password) is False:
         return render_template('admin/admin_login.html', error="Invalid credentials!")
 
-    return redirect(url_for('admin_api.dashboard'))
+    return render_template('admin/dashboard.html')
 
 
 # content routes
