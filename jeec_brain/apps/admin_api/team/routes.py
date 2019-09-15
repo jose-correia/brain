@@ -258,7 +258,6 @@ def delete_team_member(team_external_id, member_external_id):
     name = member.name
 
     if TeamsHandler.delete_team_member(member):
-        TeamsHandler.delete_member_image(name)
         return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
 
     else:

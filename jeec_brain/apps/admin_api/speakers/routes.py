@@ -196,11 +196,6 @@ def delete_speaker(speaker_external_id):
     company = speaker.company
         
     if SpeakersHandler.delete_speaker(speaker):
-        SpeakersHandler.delete_image(name)
-
-        if company:
-            SpeakersHandler.delete_company_logo(company)
-
         return redirect(url_for('admin_api.speakers_dashboard'))
 
     else:
