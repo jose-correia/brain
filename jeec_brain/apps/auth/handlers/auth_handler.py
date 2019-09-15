@@ -95,7 +95,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False
 
-            session['admin'] = 'True'
+            session["ADMIN"] = user.username
             login_user(user)
             return True
         
