@@ -148,6 +148,13 @@ button:hover {
     margin-left: 30px;
 }
 
+.login-error {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: red;
+}
+
 .tier-indicator {
     width: 50px;
     height: 20px;
