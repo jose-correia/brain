@@ -37,8 +37,8 @@ def require_company_login(func):
 def require_admin_login(func):
     @wraps(func)
     def check_admin_login(*args, **kwargs):
-        if not session.get("ADMIN") is None:
-            return redirect('https://www.google.pt/')
+        if session.get('ADMIN') is None:
+            return redirect(url_for('admin_api.get_admin_login_form'))
 
         return func(*args, **kwargs)
 

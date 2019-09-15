@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 def get_admin_login_form():
     if current_user.is_authenticated:
         return redirect(url_for('admin_api.dashboard'))
+    session.clear()
     return render_template('admin/admin_login.html')
 
 
