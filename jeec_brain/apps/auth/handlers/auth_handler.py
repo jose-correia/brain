@@ -75,6 +75,7 @@ class AuthHandler(object):
                             username: {} password: {}'''.format(username, password))
             return False, None
 
+        session.permanent = True
         session['COMPANY'] = company.name
         login_user(company)
         return True, None
@@ -95,6 +96,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False
 
+            session.permanent = True
             session['ADMIN'] = user.username
             login_user(user)
             return True

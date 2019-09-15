@@ -25,7 +25,7 @@ class Config(object):
 
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
 
-    # SEND_FILE_MAX_AGE_DEFAULT = 0
+    SEND_FILE_MAX_AGE_DEFAULT = 0
 
     CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN')
 
