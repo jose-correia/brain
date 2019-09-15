@@ -38,13 +38,11 @@ def require_admin_login(func):
     @wraps(func)
     def check_admin_login(*args, **kwargs):
         try:
-            user_role = current_user.get_role()
-        except:
+            if not session['admin']:
+                return redirect(url_for('admin_api.get_admin_login_form'))
+        except Exception:
             return redirect(url_for('admin_api.get_admin_login_form'))
 
-        if user_role != "admin":
-            return Response("Access denied", status=401)
-        
         return func(*args, **kwargs)
 
     return check_admin_login

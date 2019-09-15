@@ -95,6 +95,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False
 
+            session['admin'] = True
             login_user(user)
             return True
         
@@ -118,4 +119,5 @@ class AuthHandler(object):
 
     @staticmethod
     def logout_admin():
+        session.pop('admin')
         logout_user()
