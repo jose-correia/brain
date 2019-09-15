@@ -40,8 +40,8 @@ def require_admin_login(func):
         try:
             if not session['admin']:
                 return redirect('https://www.google.pt/')
-        except Exception:
-            return redirect('https://www.youtube.com/')
+        except Exception as e:
+            raise e
 
         return func(*args, **kwargs)
 
