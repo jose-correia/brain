@@ -1,4 +1,4 @@
-from flask import request, render_template, session, redirect, url_for
+from flask import request, render_template, session, redirect, url_for, make_response
 from . import bp
 
 from flask_login import current_user
@@ -25,7 +25,10 @@ def admin_login():
     if AuthHandler.login_admin(username, password) is False:
         return render_template('admin/admin_login.html', error="Invalid credentials!")
 
-    return render_template('admin/dashboard.html')
+    # resp = make_response(render_template('sample.html'))
+    # resp.set_cookie('args', args)
+
+    return render_template(url_for('admin_api.dashboard'))
 
 
 # content routes
