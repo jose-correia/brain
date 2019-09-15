@@ -18,13 +18,13 @@ from jeec_brain.values.speakers_value import SpeakersValue
 from jeec_brain.values.teams_value import TeamsValue
 from jeec_brain.values.api_error_value import APIErrorValue
 
-#from jeec_brain.apps.auth.wrappers import require_client_login
+from jeec_brain.apps.auth.wrappers import requires_client_auth
 from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
 
 
 # Activities routes
 @bp.route('/activities', methods=['GET'])
-#@require_client_login
+@requires_client_auth
 def get_activities():
     activity_types = GetActivityTypesService.call()
     search_parameters = request.args
@@ -55,7 +55,7 @@ def get_activities():
 
 # Companies routes
 @bp.route('/companies', methods=['GET'])
-#@require_client_login
+@requires_client_auth
 def get_companies():
     search_parameters = request.args
     name = request.args.get('name')
@@ -85,7 +85,7 @@ def get_companies():
 
 # Speakers routes
 @bp.route('/speakers', methods=['GET'])
-#@require_client_login
+@requires_client_auth
 def get_speakers():
     search_parameters = request.args.to_dict()
     name = request.args.get('name')
@@ -120,7 +120,7 @@ def get_speakers():
 
 # Team routes
 @bp.route('/teams', methods=['GET'])
-#@require_client_login
+@requires_client_auth
 def get_teams():
     search_parameters = request.args
     name = request.args.get('name')
