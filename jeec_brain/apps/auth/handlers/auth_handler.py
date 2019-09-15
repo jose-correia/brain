@@ -57,7 +57,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False, e
             
-            session['student'] = 'True'
+            session['STUDENT'] = student.name
             login_user(user)
             logger.info("Student authenticated! ist_id: {}".format(user.username))
             return True, None
@@ -75,7 +75,7 @@ class AuthHandler(object):
                             username: {} password: {}'''.format(username, password))
             return False, None
 
-        session['company'] = 'True'
+        session['COMPANY'] = company.name
         login_user(company)
         return True, None
         
@@ -105,19 +105,15 @@ class AuthHandler(object):
 
     @staticmethod
     def logout_student():
-        current_user.session_token = None
-        current_user.save()
-        session.pop('student')
+        session.pop('STUDENT')
         logout_user()
 
     @staticmethod
     def logout_company():
-        current_user.session_token = None
-        current_user.save()
-        session.pop('company')
+        session.pop('COMPANY')
         logout_user()
 
     @staticmethod
     def logout_admin():
-        session.pop('admin')
+        session.pop('ADMIN')
         logout_user()
