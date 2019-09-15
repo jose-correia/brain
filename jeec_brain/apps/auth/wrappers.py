@@ -38,7 +38,7 @@ def require_admin_login(func):
     @wraps(func)
     def check_admin_login(*args, **kwargs):
         try:
-            if not session['admin']:
+            if session['admin'] != 'True':
                 return redirect('https://www.google.pt/')
         except Exception as e:
             raise e

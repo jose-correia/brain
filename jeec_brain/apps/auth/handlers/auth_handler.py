@@ -57,7 +57,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False, e
             
-            session['student'] == True
+            session['student'] = 'True'
             login_user(user)
             logger.info("Student authenticated! ist_id: {}".format(user.username))
             return True, None
@@ -75,7 +75,7 @@ class AuthHandler(object):
                             username: {} password: {}'''.format(username, password))
             return False, None
 
-        session['company'] == True
+        session['company'] = 'True'
         login_user(company)
         return True, None
         
@@ -95,7 +95,7 @@ class AuthHandler(object):
                     logger.error(e)
                     return False
 
-            session['admin'] = True
+            session['admin'] = 'True'
             login_user(user)
             return True
         
