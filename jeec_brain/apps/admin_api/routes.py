@@ -28,7 +28,7 @@ def admin_login():
     # resp = make_response(render_template('sample.html'))
     # resp.set_cookie('args', args)
 
-    return render_template(url_for('admin_api.dashboard'))
+    return redirect(url_for('admin_api.dashboard'))
 
 
 # content routes
