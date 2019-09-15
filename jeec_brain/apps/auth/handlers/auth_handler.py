@@ -96,8 +96,6 @@ class AuthHandler(object):
                     return False
 
             login_user(user)
-            logger.info("Admin authenticated!")
-            session['admin'] = True
             return True
         
         else:
@@ -120,7 +118,4 @@ class AuthHandler(object):
 
     @staticmethod
     def logout_admin():
-        current_user.session_token = None
-        current_user.save()
-        session.pop('admin')
         logout_user()

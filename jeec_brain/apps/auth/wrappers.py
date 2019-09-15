@@ -42,31 +42,12 @@ def require_admin_login(func):
         except:
             return redirect(url_for('admin_api.get_admin_login_form'))
 
-        if not session['admin'] or user_role != "admin":
+        if user_role != "admin":
             return Response("Access denied", status=401)
         
         return func(*args, **kwargs)
 
     return check_admin_login
-
-
-def require_admin_login(func):
-    @wraps(func)
-    def check_admin_login(*args, **kwargs):
-        try:
-            user_role = current_user.get_role()
-        except:
-            return redirect(url_for('admin_api.get_admin_login_form'))
-
-        if not session['admin'] or user_role != "admin":
-            return Response("Access denied", status=401)
-        
-        return func(*args, **kwargs)
-
-    return check_admin_login
-
-import logging
-logger = logging.getLogger(__name__)
 
 
 def requires_client_auth(func):

@@ -36,9 +36,8 @@ def admin_login():
 @bp.route('/admin-logout', methods=['GET'])
 @require_admin_login
 def admin_logout():
-    if session.get('admin'):
+    if current_user.is_authenticated:
         AuthHandler.logout_admin()
-
     return redirect(url_for('admin_api.get_admin_login_form'))
 
 
