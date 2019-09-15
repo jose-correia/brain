@@ -25,10 +25,7 @@ def admin_login():
     if AuthHandler.login_admin(username, password) is False:
         return render_template('admin/admin_login.html', error="Invalid credentials!")
 
-    resp = make_response(render_template('admin/dashboard.html'))
-    resp.set_cookie('ADMIN', username)
-
-    return resp
+    return redirect(url_for('admin_api.dashboard'))
 
 
 # content routes
