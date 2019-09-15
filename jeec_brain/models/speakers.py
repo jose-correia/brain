@@ -16,7 +16,7 @@ class Speakers(ModelMixin, db.Model):
     position = db.Column(db.String(100))
 
     country = db.Column(db.String(100))
-    bio = db.Column(db.String(200))
+    bio = db.Column(db.String(300))
 
     linkedin_url = db.Column(db.String(100))
     youtube_url = db.Column(db.String(100))
