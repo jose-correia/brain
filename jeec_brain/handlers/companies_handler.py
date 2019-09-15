@@ -18,7 +18,7 @@ class CompaniesHandler():
     
     @classmethod
     def create_company(cls, **kwargs):
-        return CreateCompanyService(payload=kwargs).call()
+        return CreateCompanyService(kwargs=kwargs).call()
 
     @classmethod
     def update_company(cls, company, **kwargs):

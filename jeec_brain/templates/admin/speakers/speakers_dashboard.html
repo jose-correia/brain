@@ -88,31 +88,37 @@
                       </b></td>
                       
                       <td>
-                        {% if speaker.company is not none %}
-                          {{ speaker.company }}
+                        {% if speaker.company|length %}
+                          {% if speaker.company_link|length %}
+                            <a href="{{ speaker.company_link }}">
+                              {{ speaker.company }}
+                            </a>
+                          {% else %}
+                            {{ speaker.company }}
+                          {% endif %}
                         {% endif %}
                       </td>
       
                       <td>
-                        {% if speaker.position is not none %}
+                        {% if speaker.position|length %}
                           {{ speaker.position }}
                         {% endif %}
                       </td>
       
                       <td>
-                        {% if speaker.country is not none %}
+                        {% if speaker.country|length %}
                           {{ speaker.country }}
                         {% endif %}
                       </td>
       
                       <td style="width: 20%">
-                        {% if speaker.bio is not none %}
+                        {% if speaker.bio|length %}
                           {{ speaker.bio }}
                         {% endif %}
                       </td>
                       
                       <td>
-                        {% if speaker.linkedin_url is not none %}
+                        {% if speaker.linkedin_url|length %}
                           <a href="{{ speaker.linkedin_url }}">Check profile</a>
                         {% endif %}
                       </td>

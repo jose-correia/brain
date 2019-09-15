@@ -42,10 +42,13 @@ def add_speaker_dashboard():
 def create_speaker():
     name = request.form.get('name')
     company = request.form.get('company')
+    company_link = request.form.get('company_link')
     position = request.form.get('position')
     country = request.form.get('country')
     bio = request.form.get('bio')
     linkedin_url = request.form.get('linkedin_url')
+    youtube_url = request.form.get('youtube_url')
+    website_url = request.form.get('website_url')
     spotlight = request.form.get('spotlight')
 
     if spotlight == 'True':
@@ -56,10 +59,13 @@ def create_speaker():
     speaker = SpeakersHandler.create_speaker(
         name=name,
         company=company,
+        company_link=company_link,
         position=position,
         country=country,
         bio=bio,
         linkedin_url=linkedin_url,
+        youtube_url=youtube_url,
+        website_url=website_url,
         spotlight=spotlight
     )
 
@@ -114,10 +120,13 @@ def update_speaker(speaker_external_id):
 
     name = request.form.get('name')
     company = request.form.get('company')
+    company_link = request.form.get('company_link')
     position = request.form.get('position')
     country = request.form.get('country')
     bio = request.form.get('bio')
     linkedin_url = request.form.get('linkedin_url')
+    youtube_url = request.form.get('youtube_url')
+    website_url = request.form.get('website_url')
     spotlight = request.form.get('spotlight')
 
     if spotlight == 'True':
@@ -132,10 +141,13 @@ def update_speaker(speaker_external_id):
         speaker=speaker,
         name=name,
         company=company,
+        company_link=company_link,
         position=position,
         country=country,
         bio=bio,
         linkedin_url=linkedin_url,
+        youtube_url=youtube_url,
+        website_url=website_url,
         spotlight=spotlight
     )
     

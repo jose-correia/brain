@@ -10,7 +10,7 @@ class ActivitiesHandler():
 
     @classmethod
     def create_activity(cls, **kwargs):
-        return CreateActivityService(payload=kwargs).call()
+        return CreateActivityService(kwargs=kwargs).call()
 
     @classmethod
     def update_activity(cls, activity, **kwargs):

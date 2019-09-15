@@ -15,6 +15,7 @@ def create_tables():
     from jeec_brain.models.speakers import Speakers
     from jeec_brain.models.users import Users
     from jeec_brain.models.teams import Teams
+    from jeec_brain.models.event_information import EventInformation
     db.create_all()
 
 

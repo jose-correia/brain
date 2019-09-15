@@ -8,22 +8,13 @@ logger = logging.getLogger(__name__)
 
 class CreateTeamMemberService():
 
-    def __init__(self, team: Teams, payload: Dict):
+    def __init__(self, team: Teams, kwargs: Dict):
         self.team = team
-        self.name = payload.get('name')
-        self.ist_id = payload.get('ist_id')
-        self.linkedin_url = payload.get('linkedin_url')
-        self.email = payload.get('email')
+        self.kwargs = kwargs
 
     def call(self) -> Optional[Colaborators]:
         
-        colaborator = Colaborators.create(
-            name=self.name,
-            ist_id=self.ist_id,
-            linkedin_url=self.linkedin_url,
-            email=self.email,
-            team_id=self.team.id
-        )
+        colaborator = Colaborators.create(team_id=self.team.id, **self.kwargs)
 
         if not colaborator:
             return None

@@ -7,28 +7,12 @@ logger = logging.getLogger(__name__)
 
 class CreateActivityService():
 
-    def __init__(self, payload: Dict):
-        self.name = payload.get('name')
-        self.description = payload.get('description')
-        self.location = payload.get('location')
-        self.day = payload.get('day')
-        self.time = payload.get('time')
-        self.type = payload.get('type')
-        self.registration_open = payload.get('registration_open')
-        self.registration_link = payload.get('registration_link')
+    def __init__(self, kwargs: Dict):
+        self.kwargs = kwargs
 
     def call(self) -> Optional[Activities]:
         
-        activity = Activities.create(
-            name=self.name,
-            description=self.description,
-            location=self.location,
-            day=self.day,
-            time=self.time,
-            type=self.type,
-            registration_open=self.registration_open,
-            registration_link=self.registration_link,
-        )
+        activity = Activities.create(**self.kwargs)
 
         if not activity:
             return None

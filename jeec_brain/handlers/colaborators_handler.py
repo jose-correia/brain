@@ -8,7 +8,7 @@ class ColaboratorsHandler():
 
     @classmethod
     def create_colaborator(cls, **kwargs):
-        return CreateColaboratorService(payload=kwargs).call()
+        return CreateColaboratorService(kwargs=kwargs).call()
 
     @classmethod
     def update_colaborator(cls, colaborator, **kwargs):

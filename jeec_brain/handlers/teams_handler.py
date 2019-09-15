@@ -21,7 +21,7 @@ class TeamsHandler():
 
     @classmethod
     def create_team(cls, **kwargs):
-        return CreateTeamService(payload=kwargs).call()
+        return CreateTeamService(kwargs=kwargs).call()
 
     @classmethod
     def update_team(cls, team, **kwargs):
@@ -33,7 +33,7 @@ class TeamsHandler():
 
     @classmethod
     def create_team_member(cls, team, **kwargs):
-        return CreateTeamMemberService(team=team, payload=kwargs).call()
+        return CreateTeamMemberService(team=team, kwargs=kwargs).call()
 
     @classmethod
     def update_team_member(cls, member, **kwargs):
