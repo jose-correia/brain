@@ -43,7 +43,7 @@ The application runs on port **8081**.
 
 
 ## Database Model (to be added)
-
+![er-model](resources/images/ER.png)
 
 ## Running migrations
 1. Data migrations are ran using the commands:
