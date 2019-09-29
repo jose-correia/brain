@@ -30,9 +30,11 @@ def admin_login():
 
 # content routes
 @bp.route('/admin-logout', methods=['GET'])
-@allow_all_roles
 def admin_logout():
-    AuthHandler.logout_admin_dashboard()
+    try:
+        AuthHandler.logout_admin_dashboard()
+    except:
+        pass
     return redirect(url_for('admin_api.get_admin_login_form'))
 
 
