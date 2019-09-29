@@ -23,8 +23,12 @@
         <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
 
         <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-        <button class="waves-effect waves-light btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
         </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
+        </a>
     </div>
 
     <div class="section-header" >
