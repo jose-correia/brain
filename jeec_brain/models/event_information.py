@@ -18,4 +18,4 @@ class EventInformation(ModelMixin, db.Model):
 
 
     def __repr__(self):
-        return 'Name: {} | Team: {}'.format(self.name, self.date)
+        return 'Name: {} | date: {}'.format(self.name, self.date)
