@@ -2,13 +2,16 @@ from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 from flask_login import UserMixin
 from datetime import datetime
+from jeec_brain.models.enums.roles_enum import RolesEnum
 
 
 class Users(db.Model, ModelMixin, UserMixin):
     __tablename__ = 'users'
 
     username = db.Column(db.String, unique=True, nullable=False)
-    role = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    
+    role = db.Column(db.Enum(RolesEnum), nullable=False)
 
     def __repr__(self):
         return '<User %r>' % self.username

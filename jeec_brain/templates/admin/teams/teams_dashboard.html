@@ -33,10 +33,12 @@
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
-    
+
+    {% if role in ['admin', 'teams_admin'] %}
     <form action="{{ url_for('admin_api.add_team_dashboard') }}" method="get">
         <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Team</button>
     </form>
+    {% endif %}
 
     <div class="section-title center-align" style="margin-top:90px;">
         List of Teams
@@ -96,12 +98,14 @@
                     <td>
                         {{ team.members.all()|length }}
                     </td>
-    
+                    
+                    {% if role in ['admin', 'teams_admin'] %}
                     <td>
                       <form action="/admin/team/{{team.external_id.hex}}" method="get">
                         <button title="Edit team" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
                       </form>
                     </td>
+                    {% endif %}
 
                     <td>
                       <form action="/admin/team/{{team.external_id.hex}}/members" method="get">

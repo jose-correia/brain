@@ -1,5 +1,6 @@
 from .. import bp
 from flask import render_template, request, redirect, url_for, current_app
+from flask_login import current_user
 
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
@@ -10,42 +11,42 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 # values
 from jeec_brain.values.api_error_value import APIErrorValue
 
-from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 
 
 @bp.route('/companies', methods=['GET'])
-@require_admin_login
+@allow_all_roles
 def companies_dashboard():
     companies_list = CompaniesFinder.get_all()
 
     if len(companies_list) == 0:
         error = 'No results found'
-        return render_template('admin/companies/companies_dashboard.html', companies=None, error=error, search=None)
+        return render_template('admin/companies/companies_dashboard.html', companies=None, error=error, search=None, role=current_user.role.name)
 
-    return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=None)
+    return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=None, role=current_user.role.name)
 
 
 @bp.route('/companies', methods=['POST'])
-@require_admin_login
+@allow_all_roles
 def search_company():
     name = request.form.get('name')
     companies_list = CompaniesFinder.search_by_name(name)
 
     if len(companies_list) == 0:
         error = 'No results found'
-        return render_template('admin/companies/companies_dashboard.html', companies=None, error=error, search=name)
+        return render_template('admin/companies/companies_dashboard.html', companies=None, error=error, search=name, role=current_user.role.name)
 
-    return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=name)
+    return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=name, role=current_user.role.name)
 
 
 @bp.route('/new-company', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'companies_admin'])
 def add_company_dashboard():
     return render_template('admin/companies/add_company.html', error=None)
 
 
 @bp.route('/new-company', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'companies_admin'])
 def create_company():
     name = request.form.get('name')
     link = request.form.get('link')
@@ -86,7 +87,7 @@ def create_company():
 
 
 @bp.route('/company/<string:company_external_id>', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'companies_admin'])
 def get_company(company_external_id):
     company = CompaniesFinder.get_from_external_id(company_external_id)
 
@@ -96,7 +97,7 @@ def get_company(company_external_id):
 
 
 @bp.route('/company/<string:company_external_id>', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'companies_admin'])
 def update_company(company_external_id):
 
     company = CompaniesFinder.get_from_external_id(company_external_id)
@@ -146,7 +147,7 @@ def update_company(company_external_id):
 
 
 @bp.route('/company/<string:company_external_id>/delete', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'companies_admin'])
 def delete_company(company_external_id):
     company = CompaniesFinder.get_from_external_id(company_external_id)
 

@@ -34,9 +34,11 @@
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
     
+    {% if role in ['admin', 'companies_admin'] %}
     <form action="{{ url_for('admin_api.add_company_dashboard') }}" method="get">
         <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Company</button>
     </form>
+    {% endif %}
 
     <div class="section-title center-align" style="margin-top:90px;">
         List of Companies
@@ -120,12 +122,14 @@
                         <i class="material-icons icon-red">clear</i>
                       {% endif %}
                     </td>
-
+                    
+                    {% if role in ['admin', 'companies_admin'] %}
                     <td>
                       <form action="/admin/company/{{company.external_id.hex}}" method="get">
                         <button title="Edit company" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
                       </form>
                     </td>
+                    {% endif %}
                   </tr>
                 {% endfor %}
             </tbody>

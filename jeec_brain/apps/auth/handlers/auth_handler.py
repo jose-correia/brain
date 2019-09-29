@@ -15,6 +15,8 @@ from jeec_brain.finders.students_finder import StudentsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.users_finder import UsersFinder
 
+from jeec_brain.models.enums.roles_enum import RolesEnum
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -82,27 +84,15 @@ class AuthHandler(object):
         
 
     @staticmethod
-    def login_admin(username, password):
-        if username == os.environ.get('ADMIN_USERNAME') \
-                    and password == os.environ.get('ADMIN_KEY'): 
+    def login_admin_dashboard(username, password):
+        user = UsersFinder.get_user_from_credentials(username, password)
 
-            user = UsersFinder.get_user_from_username(username)
-
-            if user is None:
-                try:
-                    user = CreateUserService(username=username, role="admin").call()
-                    logger.info("New admin added to the DB")
-                except Exception as e:
-                    logger.error(e)
-                    return False
-
-            login_user(user)
-            session['ADMIN'] = user.username
-            return True
-        
-        else:
+        if user is None:
+            logger.error(f"User tried to authenticate with credentials: {username}:{password}")
             return False
 
+        login_user(user)
+        return True
 
     @staticmethod
     def logout_student():
@@ -115,6 +105,5 @@ class AuthHandler(object):
         logout_user()
 
     @staticmethod
-    def logout_admin():
-        session.pop('ADMIN')
+    def logout_admin_dashboard():
         logout_user()

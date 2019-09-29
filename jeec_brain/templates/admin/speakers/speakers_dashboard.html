@@ -34,9 +34,11 @@
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
     
-    <form action="{{ url_for('admin_api.add_speaker_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Speaker</button>
-    </form>
+    {% if role in ['admin', 'speakers_admin'] %}
+      <form action="{{ url_for('admin_api.add_speaker_dashboard') }}" method="get">
+          <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Speaker</button>
+      </form>
+    {% endif %}
 
     <div class="section-title center-align" style="margin-top:90px;">
         List of Speakers
@@ -122,12 +124,14 @@
                           <a href="{{ speaker.linkedin_url }}">Check profile</a>
                         {% endif %}
                       </td>
-      
+                      
+                      {% if role in ['admin', 'speakers_admin'] %}
                       <td>
                         <form action="/admin/speaker/{{speaker.external_id.hex}}" method="get">
                           <button title="Edit speaker" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
                         </form>
                       </td>
+                      {% endif %}
                     </tr>
                   {% endfor %}
               </tbody>

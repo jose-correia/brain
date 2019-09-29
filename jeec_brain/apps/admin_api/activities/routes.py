@@ -5,13 +5,14 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.services.activities.get_activity_types_service import GetActivityTypesService
-from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
+from flask_login import current_user
 
 
 # Activities routes
 @bp.route('/activities', methods=['GET'])
-@require_admin_login
+@allow_all_roles
 def activities_dashboard():
     activity_types = GetActivityTypesService.call()
     search_parameters = request.args
@@ -36,13 +37,13 @@ def activities_dashboard():
     
     if activities_list is None or len(activities_list) == 0:
         error = 'No results found'
-        return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=search)
+        return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=search, role=current_user.role.name)
 
-    return render_template('admin/activities/activities_dashboard.html', activities=activities_list, activity_types=activity_types, error=None, search=search)
+    return render_template('admin/activities/activities_dashboard.html', activities=activities_list, activity_types=activity_types, error=None, search=search, role=current_user.role.name)
 
 
 @bp.route('/new-activity', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'activities_admin'])
 def add_activity_dashboard():
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
@@ -56,7 +57,7 @@ def add_activity_dashboard():
 
 
 @bp.route('/new-activity', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'activities_admin'])
 def create_activity():
     # extract form parameters
     name = request.form.get('name')
@@ -128,7 +129,7 @@ def create_activity():
 
 
 @bp.route('/activity/<string:activity_external_id>', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'activities_admin'])
 def get_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     companies = CompaniesFinder.get_all()
@@ -143,7 +144,7 @@ def get_activity(activity_external_id):
         error=None)
 
 @bp.route('/activity/<string:activity_external_id>', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'activities_admin'])
 def update_activity(activity_external_id):
 
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
@@ -195,7 +196,7 @@ def update_activity(activity_external_id):
 
 
 @bp.route('/activity/<string:activity_external_id>/delete', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'activities_admin'])
 def delete_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
 

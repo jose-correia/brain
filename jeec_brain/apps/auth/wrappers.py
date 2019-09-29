@@ -3,6 +3,7 @@ import os
 import base64
 from functools import wraps
 from flask_login import current_user
+from jeec_brain.finders.users_finder import UsersFinder
 
 
 def require_student_login(func):
@@ -34,16 +35,37 @@ def require_company_login(func):
     return check_company_login
 
 
-def require_admin_login(func):
+def allowed_roles(role_names):
+    def wrapper(view_function):
+        @wraps(view_function)
+        def decorated(*args, **kwargs):
+            if not current_user.is_authenticated:
+                return Response("Access denied", status=401)
+            
+            user = UsersFinder.get_user_from_username(current_user.username)
+
+            if user is None or current_user.role.name not in role_names:
+                return Response("Access denied", status=401)
+
+            return view_function(*args, **kwargs)
+        return decorated
+    return wrapper
+
+
+def allow_all_roles(func):
     @wraps(func)
-    def check_admin_login(*args, **kwargs):
-        if session.get('ADMIN') is not None and current_user.is_authenticated:
-            return func(*args, **kwargs)
+    def decorated(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return Response("Access denied", status=401)
+        
+        user = UsersFinder.get_user_from_username(current_user.username)
 
-        return redirect(url_for('admin_api.get_admin_login_form'))
+        if user is None:
+            return Response("Access denied", status=401)
 
-    return check_admin_login
-
+        return func(*args, **kwargs)
+    return decorated
+	
 
 def requires_client_auth(func):
     @wraps(func)

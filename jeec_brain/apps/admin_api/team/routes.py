@@ -3,44 +3,45 @@ from flask import render_template, request, redirect, url_for
 from jeec_brain.finders.teams_finder import TeamsFinder
 from jeec_brain.finders.colaborators_finder import ColaboratorsFinder
 from jeec_brain.handlers.teams_handler import TeamsHandler
-from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
+from flask_login import current_user
 
 
 # Team management
 @bp.route('/teams', methods=['GET'])
-@require_admin_login
+@allow_all_roles
 def teams_dashboard():
     teams_list = TeamsFinder.get_all()
 
     if len(teams_list) == 0:
         error = 'No results found'
-        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=None)
+        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=None, role=current_user.role.name)
 
-    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=None)
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=None, role=current_user.role.name)
 
 
 @bp.route('/teams', methods=['POST'])
-@require_admin_login
+@allow_all_roles
 def search_team():
     name = request.form.get('name')
     teams_list = TeamsFinder.search_by_name(name)
 
     if len(teams_list) == 0:
         error = 'No results found'
-        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=name)
+        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=name, role=current_user.role.name)
 
-    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=name)
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=name, role=current_user.role.name)
 
 
 @bp.route('/new-team', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def add_team_dashboard():
     return render_template('admin/teams/add_team.html')
 
 
 @bp.route('/new-team', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def create_team():
     name = request.form.get('name')
     description = request.form.get('description')
@@ -57,7 +58,7 @@ def create_team():
 
 
 @bp.route('/team/<string:team_external_id>', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def get_team(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -65,7 +66,7 @@ def get_team(team_external_id):
 
 
 @bp.route('/team/<string:team_external_id>', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def update_team(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -88,7 +89,7 @@ def update_team(team_external_id):
 
 
 @bp.route('/team/<string:team_external_id>/delete', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def delete_team(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -104,7 +105,7 @@ def delete_team(team_external_id):
 
 # Members management
 @bp.route('/team/<string:team_external_id>/members', methods=['GET'])
-@require_admin_login
+@allow_all_roles
 def team_members_dashboard(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -113,13 +114,13 @@ def team_members_dashboard(team_external_id):
 
     if len(team.members.all()) == 0:
         error = 'No results found'
-        return render_template('admin/teams/team_members_dashboard.html', team=team, members=None, error=error, search=None)
+        return render_template('admin/teams/team_members_dashboard.html', team=team, members=None, error=error, search=None, role=current_user.role.name)
 
-    return render_template('admin/teams/team_members_dashboard.html', team=team, members=team.members, error=None, search=None)
+    return render_template('admin/teams/team_members_dashboard.html', team=team, members=team.members, error=None, search=None, role=current_user.role.name)
 
 
 @bp.route('/team/<string:team_external_id>/members', methods=['POST'])
-@require_admin_login
+@allow_all_roles
 def search_team_members(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -131,13 +132,13 @@ def search_team_members(team_external_id):
 
     if len(members_list) == 0:
         error = 'No results found'
-        return render_template('admin/teams/team_members_dashboard.html', team=team, members=None, error=error, search=name)
+        return render_template('admin/teams/team_members_dashboard.html', team=team, members=None, error=error, search=name, role=current_user.role.name)
 
-    return render_template('admin/teams/team_members_dashboard.html', team=team, members=members_list, error=None, search=name)
+    return render_template('admin/teams/team_members_dashboard.html', team=team, members=members_list, error=None, search=name, role=current_user.role.name)
 
 
 @bp.route('/team/<string:team_external_id>/new-member', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def add_team_member_dashboard(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -148,7 +149,7 @@ def add_team_member_dashboard(team_external_id):
 
 
 @bp.route('/team/<string:team_external_id>/new-member', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def create_team_member(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -183,7 +184,7 @@ def create_team_member(team_external_id):
 
 
 @bp.route('/team/<string:team_external_id>/members/<string:member_external_id>', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def get_team_member(team_external_id, member_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -201,7 +202,7 @@ def get_team_member(team_external_id, member_external_id):
 
 
 @bp.route('/team/<string:team_external_id>/members/<string:member_external_id>', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def update_team_member(team_external_id, member_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 
@@ -243,7 +244,7 @@ def update_team_member(team_external_id, member_external_id):
 
 
 @bp.route('/team/<string:team_external_id>/members/<string:member_external_id>/delete', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'teams_admin'])
 def delete_team_member(team_external_id, member_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
 

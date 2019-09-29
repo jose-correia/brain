@@ -2,24 +2,25 @@ from .. import bp
 from flask import render_template, request, redirect, url_for, current_app
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.speakers_handler import SpeakersHandler
-from jeec_brain.apps.auth.wrappers import require_admin_login
+from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
+from flask_login import current_user
 
 
 @bp.route('/speakers', methods=['GET'])
-@require_admin_login
+@allow_all_roles
 def speakers_dashboard():
     speakers_list = SpeakersFinder.get_all()
 
     if len(speakers_list) == 0:
         error = 'No results found'
-        return render_template('admin/speakers/speakers_dashboard.html', speakers=None, error=error, search=None)
+        return render_template('admin/speakers/speakers_dashboard.html', speakers=None, error=error, search=None, role=current_user.role.name)
 
-    return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=None)
+    return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=None, role=current_user.role.name)
 
 
 @bp.route('/speakers', methods=['POST'])
-@require_admin_login
+@allow_all_roles
 def search_speaker():
     name = request.form.get('name')
     speakers_list = SpeakersFinder.search_by_name(name)
@@ -32,13 +33,13 @@ def search_speaker():
 
 
 @bp.route('/new-speaker', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'speakers_admin'])
 def add_speaker_dashboard():
     return render_template('admin/speakers/add_speaker.html')
 
 
 @bp.route('/new-speaker', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'speakers_admin'])
 def create_speaker():
     name = request.form.get('name')
     company = request.form.get('company')
@@ -92,7 +93,7 @@ def create_speaker():
 
 
 @bp.route('/speaker/<string:speaker_external_id>', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'speakers_admin'])
 def get_speaker(speaker_external_id):
     speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
 
@@ -110,7 +111,7 @@ def get_speaker(speaker_external_id):
 
 
 @bp.route('/speaker/<string:speaker_external_id>', methods=['POST'])
-@require_admin_login
+@allowed_roles(['admin', 'speakers_admin'])
 def update_speaker(speaker_external_id):
 
     speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
@@ -185,7 +186,7 @@ def update_speaker(speaker_external_id):
 
 
 @bp.route('/speaker/<string:speaker_external_id>/delete', methods=['GET'])
-@require_admin_login
+@allowed_roles(['admin', 'speakers_admin'])
 def delete_speaker(speaker_external_id):
     speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
 

@@ -18,17 +18,17 @@
         <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
 
         <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-        <button class="waves-effect waves-light btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+          <button class="waves-effect waves-light btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
         </form>
     </div>
 
     <div class="section-header" >
-      <h2>Event Administrator</h2>
+      <h2>JEEC Brain</h2>
       <p>Manage all the data of the event</p>
     </div>
 
-    <div class="section-title center-align" style="margin-top:100px;">
-        choose what to manage
+    <div class="center-align" style="margin-top:100px;">
+        <b>{{ role }}</b>
     </div>
 
     <div class="flexbox-btns">
@@ -39,17 +39,26 @@
         <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
             <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">business</i>Companies</button>
         </form>
-    
+
         <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
             <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">speaker_notes</i>Speakers</button>
         </form>
-    
+
         <form action="{{ url_for('admin_api.teams_dashboard') }}" method="get">
             <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">group</i>Teams</button>
         </form>
     </div>
 
-    <blockquote style="margin-left: 40px;margin-top: 150px;">
+    {% if role in ['admin'] %}
+    <div class="flexbox-btns">
+      <form action="{{ url_for('admin_api.users_dashboard') }}" method="get">
+          <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">lock</i>Users</button>
+      </form>
+    </div>
+    {% endif %}
+
+
+    <blockquote style="margin-left: 40px;margin-top: 70px;">
         <b>Caution!</b> Any change in this system will instantly affect the <b>JEEC website</b> and <b>CV platform</b>!
     </blockquote>
   </body>
