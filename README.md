@@ -81,7 +81,8 @@ and only the spotlight speakers will be requested. This **enables search queries
 2. Install PostreSQL;
 3. Create virtual environment and install required dependencies with:
     - `python3.6 -m virtualenv venv`
-    - `python3.6 -m pip install -r requirement.txt`
+    - `source venv/bin/activate`
+    - `python3.6 -m pip install -r requirements.txt`
 4. Run the database service with:
     - `sudo service postgresql start`
 5. Create a database in postgresql for the application:
