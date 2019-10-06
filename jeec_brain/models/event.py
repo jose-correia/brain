@@ -3,8 +3,8 @@ from jeec_brain.models.model_mixin import ModelMixin
 from sqlalchemy.orm import relationship
 
 
-class EventInformation(ModelMixin, db.Model):
-    __tablename__ = 'event_information'
+class Event(ModelMixin, db.Model):
+    __tablename__ = 'event'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
 
