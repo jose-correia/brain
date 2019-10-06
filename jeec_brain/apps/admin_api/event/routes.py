@@ -1,7 +1,7 @@
 from .. import bp
 from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.handlers.event_handler import EventHandler
-            from jeec_brain.services.users.get_roles_service import GetRolesService
+from jeec_brain.finders.event_finder import EventFinder
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.models.enums.roles_enum import RolesEnum
 from flask_login import current_user
@@ -37,7 +37,7 @@ def create_event():
             instagram_link=instagram_link
         )
 
-    if user is None:
+    if event is None:
         return render_template('admin/event/add_event.html', \
             error="Failed to create event!")
 
@@ -54,14 +54,14 @@ def get_event():
 
     logo = EventHandler.find_logo()
     logo_mobile = EventHandler.find_logo_mobile()
-    return render_template('admin/event/update_event.html', company=company, image=image_path, error=None)
+    return render_template('admin/event/update_event.html', event=event, image=image_path, error=None)
 
 
-@bp.route('/company/<string:company_external_id>', methods=['POST'])
-@allowed_roles(['admin', 'companies_admin'])
-def update_company(company_external_id):
+@bp.route('/event/<string:event_external_id>', methods=['POST'])
+@allowed_roles(['admin'])
+def update_event(event_external_id):
 
-    company = CompaniesFinder.get_from_external_id(company_external_id)
+    company = EventFinder.get_event()
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)
