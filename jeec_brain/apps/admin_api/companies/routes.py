@@ -1,17 +1,16 @@
 from .. import bp
 from flask import render_template, request, redirect, url_for, current_app
 from flask_login import current_user
-
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
-
 # finders
 from jeec_brain.finders.companies_finder import CompaniesFinder
-
 # values
 from jeec_brain.values.api_error_value import APIErrorValue
-
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
+# services
+from jeec_brain.services.files.rename_image_service import RenameImageService
+
 
 
 @bp.route('/companies', methods=['GET'])
@@ -121,7 +120,8 @@ def update_company(company_external_id):
         access_cv_platform = False
 
     image_path = CompaniesHandler.find_image(name)
-
+    old_company_name = company.name
+    
     updated_company = CompaniesHandler.update_company(
         company=company,
         name=name,
@@ -134,6 +134,9 @@ def update_company(company_external_id):
     
     if updated_company is None:
         return render_template('admin/companies/update_company.html', company=company, image=image_path, error="Failed to update company!")
+
+    if old_company_name != name:
+        RenameImageService('static/companies', old_company_name, name).call()
 
     if 'file' in request.files:
         file = request.files['file']

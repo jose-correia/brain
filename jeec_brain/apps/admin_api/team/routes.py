@@ -6,6 +6,7 @@ from jeec_brain.handlers.teams_handler import TeamsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
 from flask_login import current_user
+from jeec_brain.services.files.rename_image_service import RenameImageService
 
 
 # Team management
@@ -219,6 +220,8 @@ def update_team_member(team_external_id, member_external_id):
     email = request.form.get('email')
     linkedin_url = request.form.get('linkedin_url')
 
+    old_member_name = member.name
+
     updated_member = TeamsHandler.update_team_member(
         member=member,
         name=name,
@@ -231,6 +234,9 @@ def update_team_member(team_external_id, member_external_id):
     
     if updated_member is None:
         return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error="Failed to update team member!")
+
+    if old_member_name != name:
+        RenameImageService('static/members', old_member_name, name).call()
 
     if 'file' in request.files:
         file = request.files['file']

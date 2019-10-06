@@ -5,6 +5,7 @@ from jeec_brain.handlers.speakers_handler import SpeakersHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
 from flask_login import current_user
+from jeec_brain.services.files.rename_image_service import RenameImageService
 
 
 @bp.route('/speakers', methods=['GET'])
@@ -138,6 +139,9 @@ def update_speaker(speaker_external_id):
     image_path = SpeakersHandler.find_image(name)
     company_logo_path = SpeakersHandler.find_company_logo(company)
 
+    old_speaker_name = speaker.name
+    old_company_name = speaker.company
+
     updated_speaker = SpeakersHandler.update_speaker(
         speaker=speaker,
         name=name,
@@ -159,6 +163,11 @@ def update_speaker(speaker_external_id):
             company_logo=company_logo_path, \
             error="Failed to update speaker!")
 
+
+    # Handle Speaker image ------------------------------------
+    if old_speaker_name != name:
+        RenameImageService('static/speakers', old_speaker_name, name).call()
+
     if 'file' in request.files:
         file = request.files['file']
 
@@ -170,6 +179,11 @@ def update_speaker(speaker_external_id):
                 image=image_path, \
                 company_logo=company_logo_path, \
                 error=msg)
+                
+
+    # Handle Speaker's Company image ---------------------------
+    if old_company_name != company:
+        RenameImageService('static/speakers/companies', old_company_name, company).call()
 
     if updated_speaker.company and 'company_logo' in request.files:
         file = request.files['company_logo']
