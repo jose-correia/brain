@@ -16,3 +16,7 @@ class AuctionsFinder():
     @classmethod
     def get_auction_highest_bid(cls, auction):
         return Bids.query().filter_by(Bids.auction_id=auction.id).order_by(Bids.value.desc())
+
+    @classmethod
+    def get_company_bids(cls, auction, company):
+        return Bids.query().filter_by(Bids.auction_id=auction.id, Bids.company_id=company.id).order_by(Bids.value.desc())
