@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <title>JEEC|Brain</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="stylesheet" href="/static/admin/css/admin_login.css">
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+<body>
+    <div class="section-header">
+        <h2>JEEC BRAIN
+            <p>Manage the event</p>
+        </h2>
+    </div>
+
+    <div class="login-card center-align">
+        <form method="post">
+            <div class="input-field col s12">
+                <input type="text" placeholder="Username" class="username-input" name="username">
+            </div>
+            
+            <div class="input-field col s12">
+                <input type="password" placeholder="Password" class="password-input" name="password">
+            </div>
+
+            {% if error %}
+                <p class="login-error">{{ error }}</p>
+            {% endif %}
+
+            <button type="submit" value="Login" class="waves-effect blue lighten-2 btn-large login-button">Login</button>
+        </form>
+    </div>
+    </div>
+</body>
+
+</html>
