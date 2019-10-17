@@ -1,37 +1,35 @@
-version: '3'
+version: '3.6'
 
 services:
-  web:
-    restart: always
-    build: .
-    expose:
-      - "8081"
-    links:
-      - db
-    volumes:
-      - web-data:/usr/src/app/static
-    env_file: 
-      - .env
-    command: python manage.py runserver
-
-  db:
+  postgres:
     #   Use the Docker Image postgres. This will pull the newest release.
-    image: postgres
-    #   Give the container the name my_postgres. You can changes to something else.
-    container_name: "my_postgres"
+    image: postgres:11.4-alpine
     #   Setup the username, password, and database name. You can changes these values.
     environment:
-      - POSTGRES_USER=josecorreia
-      - POSTGRES_PASSWORD=Meneses1
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
       - POSTGRES_DB=jeec_brain_dev
     #   Maps port 54320 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
     ports:
-      - "54320:5432"
+      - "5432:5432"
     #   Set a volume some that database is not lost after shutting down the container.
     #   I used the name postgres-data but you can changed it to something else.
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    image: jeec_brain
+    entrypoint: python manage.py runserver
+    command: --host 0.0.0.0 --port 80
+    volumes:
+      - ./:/jeec_brain
+    env_file:
+      - '.env'
+    depends_on:
+      - postgres
+    ports:
+      - "8081:80"
 
 volumes:
-  db-data:
-  web-data:
+  db_data:
