@@ -10,8 +10,9 @@ class Auctions(ModelMixin, db.Model):
     description = db.Column(db.String(300))
 
     minimum_value = db.Column(db.Float())
-    bids = relationship("Bids", back_populates='team', lazy='dynamic', cascade="all,delete")
 
+    bids = relationship("Bids", back_populates='team', lazy='dynamic', cascade="all,delete")
+    participants = relationship("Companies", back_populates='auctions', lazy='dynamic', cascade="all,delete")
    
     def __repr__(self):
         return 'Name: {}'.format(self.name)
