@@ -5,14 +5,15 @@ from jeec_brain.handlers.file_handler import FileHandler
 
 
 @bp.route('/auction', methods=['GET'])
-@require_company_login
+#@require_company_login
 def auction_dashboard():
     # TODO
-    return render_template('companies/auction/auction_dashboard.html', companies=companies_list, error=None, search=None, role=current_user.role.name)
+    # 
+    return render_template('companies/auction/auction_dashboard.html', error=None, search=None)
 
 
 @bp.route('/auction/bid', methods=['POST'])
-@require_company_login
+#@require_company_login
 def auction_bid():
     # TODO
     zip_file = FileHandler.get_files_zip()
