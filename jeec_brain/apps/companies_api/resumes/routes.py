@@ -1,11 +1,11 @@
 from jeec_brain.apps.companies_api import bp
-from flask import Response, send_file
+from flask import Response, send_file, render_template
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.handlers.file_handler import FileHandler
 
 
 @bp.route('/resumes', methods=['GET'])
-@require_company_login
+#@require_company_login
 def resumes_dashboard():
     # TODO
     # students_interested = StudentsFinder
@@ -15,7 +15,7 @@ def resumes_dashboard():
 
 
 @bp.route('/resumes/download', methods=['GET'])
-@require_company_login
+#@require_company_login
 def download_resumes():
     # TODO
     zip_file = FileHandler.get_files_zip()

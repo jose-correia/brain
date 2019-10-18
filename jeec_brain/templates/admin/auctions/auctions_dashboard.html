@@ -1,0 +1,103 @@
+<html>  
+  <head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div class="nav-bar">
+        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+        </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
+        </a>
+    </div>
+
+    <div class="section-header" >
+      <h2>Auctions Management</h2>
+      <p>Add or delete auctions</p>
+    </div>
+
+    <form action="{{ url_for('admin_api.dashboard') }}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+    </form>
+    
+    {% if current_user.role.name in ['admin'] %}
+    <form action="{{ url_for('admin_api.add_auction_dashboard') }}" method="get">
+        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Auction</button>
+    </form>
+    {% endif %}
+
+    <div class="section-title center-align" style="margin-top:90px;">
+        List of Auctions
+    </div>
+
+    <div class="list">
+      {% if error is not none %}
+        <blockquote class="create-error">
+          {{ error }}
+        </blockquote>
+      {% else %}
+        <div class="counter right">
+          Auctions: {{ auctions|length }}
+        </div>
+
+        <table class="striped">
+            <thead><tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Minimum bid value</th>
+              <th>Open</th>
+            </tr></thead>
+            <tbody>
+                {% for auction in auctions %}
+                  <tr>
+                    <td><b>
+                      {{ auction.name }}
+                    </b></td>
+
+                    <td>
+                        {{ auction.description }}
+                    </td>
+
+                    <td>
+                        {{ auction.minimum_value }} €
+                    </td>
+                    
+                    <td>
+                        {% if auction.is_open is sameas true %}
+                          <i class="material-icons icon-green">check</i>
+                        {% else %}
+                          <i class="material-icons icon-red">clear</i>
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                      <form action="/admin/auctions/{{auction.external_id.hex}}" method="get">
+                        <button title="Edit auction" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      {% endif %}
+    </div>
+  </body>
+</html>  

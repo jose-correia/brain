@@ -1,0 +1,59 @@
+<html>  
+  <head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div class="nav-bar">
+        <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+        <form action="{{ url_for('companies_api.company_logout') }}" method="get">
+          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+        </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
+        </a>
+    </div>
+
+    <div class="section-header">
+      <h2>Main Sponsor Auction</h2>
+      <p>Bid for the position of JEEC|19 Main Sponsor</p>
+    </div>
+
+    <form action="{{ url_for('companies_api.dashboard') }}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+    </form>
+
+    Current highest bid
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <span class="card-title">Card Title</span>
+                <p>1500 €</p>
+            </div>
+            <div class="card-action">
+                <a href="#">This is a link</a>
+                <a href="#">This is a link</a>
+            </div>
+            </div>
+        </div>
+    </div>
+             
+
+  </body>
+</html>  

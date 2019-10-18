@@ -4,6 +4,7 @@ from jeec_brain.apps.companies_api import bp
 from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
+from jeec_brain.finders.auctions_finder import AuctionsFinder
 
 
 @bp.route('/', methods=['GET'])
@@ -35,7 +36,8 @@ def company_logout():
 
 
 @bp.route('/dashboard', methods=['GET'])
-@require_company_login
+# @require_company_login
 def dashboard():
+    auction = AuctionsFinder.get_auction_by_name('Main Sponsor auction')
     return render_template('companies/dashboard.html')
 

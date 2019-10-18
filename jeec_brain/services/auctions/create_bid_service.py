@@ -14,9 +14,9 @@ class CreateBidService():
         self.company = company
         self.kwargs = kwargs
 
-    def call(self) -> Optional[Bid]:
+    def call(self) -> Optional[Bids]:
         
-        bid = Bid.create(auction_id=self.auction.id, company_id=self.company.id, **self.kwargs)
+        bid = Bids.create(auction_id=self.auction.id, company_id=self.company.id, **self.kwargs)
 
         if not bid:
             return None

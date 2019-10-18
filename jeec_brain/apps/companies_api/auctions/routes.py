@@ -33,10 +33,10 @@ def auction_dashboard(auction_external_id):
         highest_bid = 0
 
     # TODO
-    if highest_bid.is_anonymous is True:
+    #if highest_bid.is_anonymous is True:
         # highest_bidder_logo = jeec_logo
         # highest_bidder_name = Anonymous
-    else:
+    #else:
         # get company_logo
         # highest_bidder_logo = company_logo
         # highest_bidder_name = company.name
@@ -88,7 +88,7 @@ def auction_bid(auction_external_id):
         return render_template('companies/auction/auction_dashboard.html', error="Value must be higher than the current highest bid!")
 
     bid = AuctionsHandler.create_auction_bid(
-        auction=auction
+        auction=auction,
         company=company,
         value=value,
         is_anonymous=is_anonymous

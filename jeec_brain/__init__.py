@@ -53,7 +53,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'storage')
 
     initialize_admin_api_blueprint(app)
-    # initialize_companies_api_blueprint(app)
+    initialize_companies_api_blueprint(app)
     initialize_website_api_blueprint(app)
 
     app.app_context().push()
