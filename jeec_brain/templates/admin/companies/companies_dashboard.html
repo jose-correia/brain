@@ -83,6 +83,7 @@
               <th>Website</th>
               <th>Partnership</th>
               <th>CV Platform</th>
+              <th>Show in Website</th>
             </tr></thead>
             <tbody>
                 {% for company in companies %}
@@ -103,7 +104,7 @@
                     
                     <td>
                       {% if company.link is not none %}
-                        <a href="{{ company.link }}">{{ company.link }}</a>
+                        <a href="{{ company.link }}">visit website</a>
                       {% endif %}
                     </td>
 
@@ -121,6 +122,14 @@
                     
                     <td>
                       {% if company.access_cv_platform is sameas true %}
+                        <i class="material-icons icon-green">check</i>
+                      {% else %}
+                        <i class="material-icons icon-red">clear</i>
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if company.show_in_website is sameas true %}
                         <i class="material-icons icon-green">check</i>
                       {% else %}
                         <i class="material-icons icon-red">clear</i>
