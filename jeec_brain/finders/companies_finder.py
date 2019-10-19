@@ -27,7 +27,7 @@ class CompaniesFinder():
     
     @classmethod
     def get_all_with_cv_access(cls):
-        return Companies.query.filter_by(access_cv_platform=True)
+        return Companies.query.filter_by(access_cv_platform=True).all()
 
     @classmethod
     def get_from_external_id(cls, external_id):
@@ -44,4 +44,4 @@ class CompaniesFinder():
 
     @classmethod
     def get_website_companies(cls):
-        return Companies.query.filter_by(show_in_website=True)
+        return Companies.query.filter_by(show_in_website=True).all()
