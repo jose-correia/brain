@@ -45,5 +45,5 @@ class CompaniesFinder():
     @classmethod
     def get_website_company(cls, name):
         search = "%{}%".format(name)
-        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website=True).all()
+        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website.ilike(True)).all()
     
