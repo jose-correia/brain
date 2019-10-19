@@ -36,7 +36,7 @@ class CompaniesFinder():
     @classmethod
     def get_website_companies(cls, kwargs):
         try:
-            companies = Companies.query.filter_by(show_in_website, **kwargs).all()
+            companies = Companies.query.filter_by(show_in_website=True, **kwargs).all()
         except Exception:
             return None
         
