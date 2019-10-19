@@ -34,14 +34,16 @@ class CompaniesFinder():
         return Companies.query.filter_by(external_id=external_id).first()
         
     @classmethod
-    def get_from_parameters(cls, kwargs):
+    def get_website_companies(cls, kwargs):
         try:
-            companies = Companies.query.filter_by(**kwargs).all()
+            companies = Companies.query.filter_by(show_in_website, **kwargs).all()
         except Exception:
             return None
         
         return companies
-
+    
     @classmethod
-    def get_website_companies(cls):
-        return Companies.query.filter_by(show_in_website=True).all()
+    def get_website_company(cls, name):
+        search = "%{}%".format(name)
+        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website=True).all()
+    

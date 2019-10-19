@@ -57,7 +57,25 @@ def get_activities():
 @bp.route('/companies', methods=['GET'])
 @requires_client_auth
 def get_companies():
-    companies_list = CompaniesFinder.get_website_companies()
+    search_parameters = request.args
+    name = request.args.get('name')
+
+    # handle search bar requests
+    if name is not None:
+        search = name
+        companies_list = CompaniesFinder.get_website_company(name)
+    
+    # handle parameter requests
+    elif len(search_parameters) != 0:
+        search_parameters = request.args
+        search = 'search name'
+
+        companies_list = CompaniesFinder.get_website_companies(search_parameters)
+
+    # request endpoint with no parameters should return all companies
+    else:
+        search = None
+        companies_list = CompaniesFinder.get_all()
     
     if companies_list is None or len(companies_list) == 0:
         return APIErrorValue('No results found').json(400)
