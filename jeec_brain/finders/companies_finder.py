@@ -41,3 +41,7 @@ class CompaniesFinder():
             return None
         
         return companies
+
+    @classmethod
+    def get_website_companies(cls):
+        return Companies.query.filter_by(show_in_website=True)
