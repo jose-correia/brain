@@ -18,6 +18,8 @@ class Companies(db.Model, ModelMixin):
     partnership_tier = db.Column(db.String(20))
     access_cv_platform = db.Column(db.Boolean, default=False)
 
+    show_in_website = db.Column(db.Boolean, default=True)
+
     activities = relationship("Activities",
         secondary="company_activities",
         secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id))

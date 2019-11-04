@@ -32,16 +32,16 @@ class CompaniesFinder():
     
     @classmethod
     def get_all_with_cv_access(cls):
-        return Companies.query.filter_by(access_cv_platform=True)
+        return Companies.query.filter_by(access_cv_platform=True).all()
 
     @classmethod
     def get_from_external_id(cls, external_id):
         return Companies.query.filter_by(external_id=external_id).first()
         
     @classmethod
-    def get_from_parameters(cls, kwargs):
+    def get_website_companies(cls, kwargs):
         try:
-            companies = Companies.query.filter_by(**kwargs).all()
+            companies = Companies.query.filter_by(show_in_website=True, **kwargs).all()
         except Exception:
             return None
         
@@ -63,3 +63,9 @@ class CompaniesFinder():
                     auctions.id=company_auctions.auction_id;"""
         )
         return db_session.execute(command, {"company_id": company.id,}).fetchall()
+  
+    @classmethod
+    def get_website_company(cls, name):
+        search = "%{}%".format(name)
+        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website.ilike(True)).all()
+    

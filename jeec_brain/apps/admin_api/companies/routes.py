@@ -52,6 +52,7 @@ def create_company():
     email = request.form.get('email')
     business_area = request.form.get('business_area')
     access_cv_platform = request.form.get('access_cv_platform')
+    show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
 
     if partnership_tier == "":
@@ -62,12 +63,18 @@ def create_company():
     else:
         access_cv_platform = False
 
+    if show_in_website == 'True':
+        show_in_website = True
+    else:
+        show_in_website = False
+
     company = CompaniesHandler.create_company(
         name=name,
         email=email,
         business_area=business_area,
         link=link,
         access_cv_platform=access_cv_platform,
+        show_in_website=show_in_website,
         partnership_tier=partnership_tier
     )
     
@@ -109,6 +116,7 @@ def update_company(company_external_id):
     email = request.form.get('email')
     business_area = request.form.get('business_area')
     access_cv_platform = request.form.get('access_cv_platform')
+    show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
 
     if partnership_tier == "":
@@ -118,6 +126,11 @@ def update_company(company_external_id):
         access_cv_platform = True
     else:
         access_cv_platform = False
+
+    if show_in_website == 'True':
+        show_in_website = True
+    else:
+        show_in_website = False
 
     image_path = CompaniesHandler.find_image(name)
     old_company_name = company.name
@@ -129,6 +142,7 @@ def update_company(company_external_id):
         business_area=business_area,
         link=link,
         access_cv_platform=access_cv_platform,
+        show_in_website=show_in_website,
         partnership_tier=partnership_tier
     )
     

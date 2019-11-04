@@ -63,14 +63,14 @@ def get_companies():
     # handle search bar requests
     if name is not None:
         search = name
-        companies_list = CompaniesFinder.search_by_name(name)
+        companies_list = CompaniesFinder.get_website_company(name)
     
     # handle parameter requests
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
 
-        companies_list = CompaniesFinder.get_from_parameters(search_parameters)
+        companies_list = CompaniesFinder.get_website_companies(search_parameters)
 
     # request endpoint with no parameters should return all companies
     else:
