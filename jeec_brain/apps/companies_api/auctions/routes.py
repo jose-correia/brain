@@ -92,11 +92,14 @@ def auction_bid(auction_external_id):
 
     # get auction highest bid
     highest_bid = AuctionsFinder.get_auction_highest_bid(auction)
+    
     if highest_bid is None:
-        highest_bid = 0
+        highest_bid_value = 0
+    else:
+        highest_bid_value = highest_bid.value
 
     # check if value is bigger than current highest bid
-    if value <= highest_bid.value:
+    if value <= highest_bid_value:
         company_bids = AuctionsFinder.get_company_bids(auction, company)
         return render_template('companies/auction/auction_dashboard.html', \
         auction=auction, \
