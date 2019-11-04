@@ -30,6 +30,7 @@ def auction_dashboard(auction_external_id):
     if highest_bid is None:
         highest_bid = 0
 
+    # if highest bid is anonymous retrieve anonymous logo
     if highest_bid.is_anonymous is True:
         highest_bidder_logo = '/static/jeec_logo_mobile.svg'
         highest_bidder_name = 'Anonymous bidder'
@@ -42,13 +43,21 @@ def auction_dashboard(auction_external_id):
     # get all company bids
     company_bids = AuctionsFinder.get_company_bids(auction, current_user.company)
 
+    # get all logos of companies in the auction
+    participant_logos = []
+    for participant in auction.participants:
+        participant_logo = CompaniesHandler.find_image(participant.name)
+        participant_logos.append(participant_logo)
+
     return render_template('companies/auction/auction_dashboard.html', \
         auction=auction, \
         highest_bid=highest_bid, \
-        highest_bidder_name=highest_bidder_name,
-        highest_bidder_logo=highest_bidder_logo,
+        highest_bidder_name=highest_bidder_name, \
+        highest_bidder_logo=highest_bidder_logo, \
         company_bids=company_bids, \
+        participant_logos=participant_logos, \
         error=None, \
+        user=current_user,
         search=None)
 
 
