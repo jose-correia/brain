@@ -40,7 +40,10 @@
     
     {% if current_user.role.name in ['admin'] %}
     <form action="{{ url_for('admin_api.add_user_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>User</button>
+        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Management User</button>
+    </form>
+    <form action="{{ url_for('admin_api.add_company_user_dashboard') }}" method="get">
+        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Company User</button>
     </form>
     {% endif %}
 

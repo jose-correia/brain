@@ -31,7 +31,7 @@
 
     <div class="section-header" >
       <h2>Auctions Management</h2>
-      <p>Add or delete auctions</p>
+      <p>Add or edit auctions</p>
     </div>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
@@ -62,6 +62,7 @@
             <thead><tr>
               <th>Name</th>
               <th>Description</th>
+              <th>Highest bid value</th>
               <th>Minimum bid value</th>
               <th>Open</th>
             </tr></thead>
@@ -91,6 +92,12 @@
                     <td>
                       <form action="/admin/auctions/{{auction.external_id.hex}}" method="get">
                         <button title="Edit auction" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                      </form>
+                    </td>
+
+                    <td>
+                      <form action="/admin/auctions/{{auction.external_id.hex}}/participants" method="get">
+                        <button title="Edit members" class="waves-effect light-blue darken-1 btn-floating"><i class="material-icons left">person_add</i>Participants</button>
                       </form>
                     </td>
                   </tr>

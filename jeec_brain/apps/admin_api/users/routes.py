@@ -1,6 +1,7 @@
 from .. import bp
 from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.finders.users_finder import UsersFinder
+from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.services.users.get_roles_service import GetRolesService
 from jeec_brain.apps.auth.wrappers import allowed_roles
@@ -50,13 +51,35 @@ def add_user_dashboard():
         error=None)
 
 
+@bp.route('/new-organization-suser', methods=['GET'])
+@allowed_roles(['admin'])
+def add_company_user_dashboard():
+    roles = GetRolesService.call()
+
+    companies = CompaniesFinder.get_all()
+
+    return render_template('admin/users/add_company_user.html', \
+        companies=companies, \
+        error=None)
+
+
 @bp.route('/new-user', methods=['POST'])
 @allowed_roles(['admin'])
 def create_user():
     # extract form parameters
     username = request.form.get('username')
+    email = request.form.get('email', None)
     password = request.form.get('password')
-    role = request.form.get('role')
+    role = request.form.get('role', None)
+    # check if is creating company user
+    company_external_id = request.form.get('company_external_id')
+
+    if company_external_id is not None:
+        role = 'company'
+        company = CompaniesFinder.get_from_external_id(company_external_id)
+        company_id = company.id
+    else:
+        company_id = None
 
     if role not in GetRolesService.call():
         return 'Wrong role type provided', 404
@@ -66,8 +89,10 @@ def create_user():
     # create new user
     user = UsersHandler.create_user(
             username=username,
+            email=email,
+            company_id=company_id,
             password=password,
-            role=role
+            role=role,
         )
 
     if user is None:
@@ -88,3 +113,23 @@ def delete_user(user_external_id):
         
     UsersHandler.delete_user(user)
     return redirect(url_for('admin_api.users_dashboard'))
+
+
+
+@bp.route('/user/<string:user_external_id>/credentials', methods=['GET'])
+@allowed_roles(['admin'])
+def generate_user_credentials(user_external_id):
+    user = UsersFinder.get_from_external_id(user_external_id)
+
+    if user is None:
+        return APIErrorValue('Couldnt find user').json(500)
+        
+    name = company.name
+    
+    if UsersHandler.generate_new_user_credentials(user=user):
+        return redirect(url_for('admin_api.companies_dashboard'))
+
+    else:
+        image_path = CompaniesHandler.find_image(name)
+        return render_template('admin/companies/update_company.html', company=company, image=image_path, error="Failed to delete company!")
+

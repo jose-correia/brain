@@ -70,16 +70,17 @@ class AuthHandler(object):
     
     @staticmethod
     def login_company(username, password):
-        company = CompaniesFinder.get_from_username(username=username)
+        user = UsersFinder.get_user_from_credentials(username, password)
 
-        if company is None or not company.check_password(password):
-            logger.error('''Company tried to login with invalid credentials!
-                            username: {} password: {}'''.format(username, password))
-            return False, None
+        if user is None:
+            logger.warning(f"User tried to authenticate with credentials: {username}:{password}")
+            return False
 
-        session.permanent = True
-        session['COMPANY'] = company.name
-        login_user(company)
+        if user.role.name != 'company' or user.company is None:
+            logger.warning(f'''User without company role, tried to login as company! username: {username}''')
+            return False
+
+        login_user(user)
         return True, None
         
 
@@ -88,22 +89,15 @@ class AuthHandler(object):
         user = UsersFinder.get_user_from_credentials(username, password)
 
         if user is None:
-            logger.error(f"User tried to authenticate with credentials: {username}:{password}")
+            logger.warning(f"User tried to authenticate with credentials: {username}:{password}")
             return False
 
-        login_user(user)
-        return True
+        if user.role.name in ['admin', 'companies_admin', 'speakers_admin', 'teams_admin', 'activities_admin', 'viewer']:
+            login_user(user)
+            return True
+        return False
+
 
     @staticmethod
-    def logout_student():
-        session.pop('STUDENT')
-        logout_user()
-
-    @staticmethod
-    def logout_company():
-        session.pop('COMPANY')
-        logout_user()
-
-    @staticmethod
-    def logout_admin_dashboard():
+    def logout_user():
         logout_user()

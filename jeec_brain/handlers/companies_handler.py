@@ -29,10 +29,10 @@ class CompaniesHandler():
             return True
         return False
 
-    @staticmethod
-    def upload_image(file, company_name):
+    @classmethod
+    def upload_image(cls, file, company_name):
         return UploadImageService(file, company_name, 'static/companies').call()
 
-    @staticmethod
-    def find_image(company_name):
+    @classmethod
+    def find_image(cls, company_name):
         return FindImageService(company_name, 'static/companies').call()

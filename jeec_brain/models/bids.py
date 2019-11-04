@@ -8,7 +8,7 @@ class Bids(ModelMixin, db.Model):
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), index=True)
     is_anonymous = db.Column(db.Boolean, default=False)
 
-    value = db.Column(db.Float())
+    value = db.Column(db.Float(), nullable=False)
     
     auction = db.relationship('Auctions', back_populates="bids", uselist=False)
     auction_id = db.Column(db.Integer, db.ForeignKey('auctions.id'))

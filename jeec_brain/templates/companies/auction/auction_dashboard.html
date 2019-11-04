@@ -38,22 +38,90 @@
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
-    Current highest bid
+    
     <div class="row">
-        <div class="col s12 m6">
-            <div class="card blue-grey darken-1">
+        <div class="col s8 m5 l5 center">
+            <div class="card teal darken-4" style="border-radius: 10px;">
             <div class="card-content white-text">
-                <span class="card-title">Card Title</span>
-                <p>1500 €</p>
+                {% if auction.bids.count() == 0 %}
+                  <span class="card-title">0 bids were made</span>
+                  <p>Minimum bid: {{ auction.minimum_value }} €</p>
+                {% else %}
+                  <span class="card-title"><b>{{ highest_bid.value }} €</b></span>
+                  <p>Current highest bid</p>
+                  <p>{{ highest_bid.created_at.strftime("%d-%b-%Y at %H:%M") }}</p>
+                {% endif %}
             </div>
-            <div class="card-action">
-                <a href="#">This is a link</a>
-                <a href="#">This is a link</a>
+
+            <div class="card-action white-text">
+                {% if error is not none %}
+                  <blockquote class="create-error">
+                    {{ error }}
+                  </blockquote>
+                {% endif %}
+                {% if auction.is_open is not sameas true %}
+                  <blockquote class="create-error">
+                    Auction is closed for bidding
+                  </blockquote>
+                {% else %}
+                  <form action="/companies/auction/{{ auction.external_id }}/bid" method="post">
+                    
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <input id="value" name="value" type="number">
+                        <label for="value">Minimum of xxx (€)</label>                        
+                      </div>
+                      <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">money</i>Submit Bid</button>
+                    </div>
+                  </form>
+                {% endif %}
             </div>
             </div>
         </div>
     </div>
-             
+
+    <div class="section-title center-align" style="margin-top:10px;">
+        Bids made by your company:
+    </div>
+            
+    <div class="list">
+        {% if company_bids.count() == 0 %}
+            <blockquote class="create-error">
+              You have made 0 bids
+            </blockquote>
+        {% else %}
+            <div class="counter right">
+                Bids: {{ company_bids.count() }}
+            </div>
+            <table class="striped">
+                <thead><tr>
+                <th>Value</th>
+                <th>Anonymous bid</th>
+                <th>Date</th>
+                <th>Time</th>
+                </tr></thead>
+                <tbody>
+                    {% for bid in company_bids %}
+                    <tr>
+                        <td><b>{{ bid.value }} €</b></td>
+
+                        <td>
+                          {% if bid.is_anonymous is sameas true %}
+                            <i class="material-icons icon-green">check</i>
+                          {% else %}
+                            <i class="material-icons icon-red">clear</i>
+                          {% endif %}
+                        </td>
+        
+                        <td>{{ bid.created_at.strftime("%d-%b-%Y") }}</td>
+                        
+                        <td>{{ bid.created_at.strftime("%H:%M") }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
 
   </body>
 </html>  

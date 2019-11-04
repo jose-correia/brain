@@ -53,14 +53,12 @@
         </form>
     </div>
 
-    {% if role in ['admin'] %}
+    {% if role in ['admin'] %} 
     <div class="flexbox-btns">
       <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
-          <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">lock</i>Auctions</button>
+          <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">attach_money</i>Auctions</button>
       </form>
-    </div>    
 
-    <div class="flexbox-btns">
       <form action="{{ url_for('admin_api.users_dashboard') }}" method="get">
           <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">lock</i>Users</button>
       </form>

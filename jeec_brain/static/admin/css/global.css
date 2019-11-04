@@ -101,6 +101,7 @@ button:hover {
 }
 
 .back-btn {
+    position: initial;
     margin-left: 40px;
     margin-top: 10px;
 }
@@ -223,6 +224,19 @@ button:hover {
     max-height: 150px;
     max-width: 300px;
     margin-bottom: 40px;
+}
+
+.company-logo-company-side {
+    max-height: 150px;
+    max-width: 300px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.company-dash-username {
+    margin-top: 16px;
+    font-size: 17px;
+    margin-right: 40px;
 }
 
 .centered-image {
