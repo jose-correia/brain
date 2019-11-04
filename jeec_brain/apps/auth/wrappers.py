@@ -55,9 +55,7 @@ def allow_all_roles(func):
         if not current_user.is_authenticated:
             return Response("Access denied", status=401)
         
-        user = UsersFinder.get_user_from_username(current_user.username)
-
-        if user is None:
+        if current_user.role.name not in ['admin', 'companies_admin', 'speakers_admin', 'teams_admin', 'activities_admin', 'viewer']:
             return Response("Access denied", status=401)
 
         return func(*args, **kwargs)

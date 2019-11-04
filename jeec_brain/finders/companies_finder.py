@@ -5,6 +5,10 @@ from sqlalchemy import text
 class CompaniesFinder():
 
     @classmethod
+    def get_from_id(cls, id):
+        return Companies.query.filter_by(id=id).first()
+
+    @classmethod
     def get_from_name(cls, name):
         return Companies.query.filter_by(name=name).first()
 

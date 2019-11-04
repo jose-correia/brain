@@ -40,16 +40,21 @@
 
     
     <div class="row">
-        <div class="col s8 m5 l5 center">
-            <div class="card teal darken-4" style="border-radius: 10px;">
-            <div class="card-content white-text">
+        <div class="col s8 m5 l7 center" style="margin-left:90px;">
+            <div class="card blue lighten-5" style="border-radius: 10px;">
+            <div class="card-content">
                 {% if auction.bids.count() == 0 %}
                   <span class="card-title">0 bids were made</span>
                   <p>Minimum bid: {{ auction.minimum_value }} €</p>
                 {% else %}
                   <span class="card-title"><b>{{ highest_bid.value }} €</b></span>
                   <p>Current highest bid</p>
+                  <br>
                   <p>{{ highest_bid.created_at.strftime("%d-%b-%Y at %H:%M") }}</p>
+                  <br>
+                  <p>by</p>
+                  <p><b>{{ highest_bidder_name }}</b></p>
+                  <img src="{{ highest_bidder_logo }}" class="bidder-logo">
                 {% endif %}
             </div>
 
@@ -71,6 +76,10 @@
                         <input id="value" name="value" type="number">
                         <label for="value">Minimum of xxx (€)</label>                        
                       </div>
+                      <label>
+                          <input type="checkbox" name="is_anonymous" value="True"/>
+                          <span>Anonymous bid</span>
+                      </label>
                       <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">money</i>Submit Bid</button>
                     </div>
                   </form>
