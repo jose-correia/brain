@@ -28,7 +28,7 @@ def auction_dashboard(auction_external_id):
     # get auction highest bid
     highest_bid = AuctionsFinder.get_auction_highest_bid(auction)
     if highest_bid is None:
-        highest_bid = 0
+        highest_bid = None
         highest_bidder_logo = None
         highest_bidder_name = None
     else:

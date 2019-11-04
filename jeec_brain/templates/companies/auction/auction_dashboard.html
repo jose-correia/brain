@@ -72,7 +72,11 @@
                     <div class="row">
                       <div class="input-field col s6">
                         <input id="value" name="value" type="number" required>
-                        <label for="value">Minimum of {{ highest_bid.value + 200}} €</label>                        
+                        {% if auction.bids.count() == 0 %}
+                          <label for="value">Minimum of {{ auction.minimum_value }} €</label>
+                        {% else %}
+                          <label for="value">Minimum of {{ highest_bid.value + 200 }} €</label>
+                        {% endif %}                      
                       </div>
 
                       <label>
