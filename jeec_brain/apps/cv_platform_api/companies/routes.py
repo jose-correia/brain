@@ -45,16 +45,3 @@ def company_dashboard():
     return render_template('company_dashboard.html', name=company_name, logo=company_logo)
         
 
-# content routes
-@bp.route('/company_dashboard/download', methods=['GET', 'POST'])
-@require_company_login
-def download_files():
-    zip_file = FileHandler.get_files_zip()
-        
-    if not zip_file:
-        return Response(response="Invalid zip file", status="400")
-
-    return send_file(
-        zip_file,
-        as_attachment=True,
-        attachment_filename='curriculos_JEEC19.zip')

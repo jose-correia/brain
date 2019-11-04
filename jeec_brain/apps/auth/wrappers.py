@@ -25,13 +25,10 @@ def require_student_login(func):
 def require_company_login(func):
     @wraps(func)
     def check_company_login(*args, **kwargs):
-        user_role = current_user.get_role()
-
-        if not session['company'] or user_role != "company":
+        if not current_user.is_authenticated or current_user.role.name is not 'company':
             return Response("Access denied", status=401)
 
         return func(*args, **kwargs)
-
     return check_company_login
 
 
@@ -58,9 +55,7 @@ def allow_all_roles(func):
         if not current_user.is_authenticated:
             return Response("Access denied", status=401)
         
-        user = UsersFinder.get_user_from_username(current_user.username)
-
-        if user is None:
+        if current_user.role.name not in ['admin', 'companies_admin', 'speakers_admin', 'teams_admin', 'activities_admin', 'viewer']:
             return Response("Access denied", status=401)
 
         return func(*args, **kwargs)

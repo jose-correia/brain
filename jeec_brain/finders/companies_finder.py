@@ -1,7 +1,12 @@
 from jeec_brain.models.companies import Companies
-
+from jeec_brain.database import db_session
+from sqlalchemy import text
 
 class CompaniesFinder():
+
+    @classmethod
+    def get_from_id(cls, id):
+        return Companies.query.filter_by(id=id).first()
 
     @classmethod
     def get_from_name(cls, name):
@@ -41,7 +46,24 @@ class CompaniesFinder():
             return None
         
         return companies
-    
+
+    @classmethod
+    def get_company_auctions(cls, company):
+        command = text (
+            """
+                SELECT
+                    auctions.external_id, auctions.name
+                FROM
+                    auctions
+                INNER JOIN
+                    company_auctions
+                ON
+                    company_auctions.company_id=:company_id
+                AND 
+                    auctions.id=company_auctions.auction_id;"""
+        )
+        return db_session.execute(command, {"company_id": company.id,}).fetchall()
+  
     @classmethod
     def get_website_company(cls, name):
         search = "%{}%".format(name)

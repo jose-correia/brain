@@ -14,7 +14,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
     <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
   </head>
   <body>
     <div class="nav-bar">
@@ -30,11 +29,11 @@
     </div>
 
     <div class="section-header" >
-      <h2>Management User</h2>
-      <p>Add a new internal user</p>
+      <h2>Auctions Management</h2>
+      <p>Add a new auction</p>
     </div>
 
-    <form action="{{ url_for('admin_api.users_dashboard') }}" method="get">
+    <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
@@ -47,31 +46,54 @@
         </blockquote>
       {% endif %}
 
-      <form class="col s12" action="{{ url_for('admin_api.create_user') }}" method="post">
-          <div class="row">
-            <div class="input-field col s12">
-              <input class="col s4" id="username" name="username" type="text" class="validate" required>
-              <label for="username">Username</label>
-            </div>
+      <form class="col s12" action="/admin/new-auction" method="post">
+        <div class="row">
+          <div class="input-field col s4">
+            <input id="name" name="name" type="text" class="validate" required>
+            <label for="name">Name</label>
           </div>
 
           <div class="row">
             <div class="input-field col s2">
-              <input id="password" name="password" type="text">
-              <label for="password">Password</label>
-            </div>
-
-            <div class="col s2" style="margin-left: 30px;">
-              <select name="role" class="form-control browser-default">
-                <option value="" disabled selected>User role</option>
-                {% for role in roles %}
-                  <option value="{{ role }}">{{ role }}</option>
-                {% endfor %}
-              </select>
+              <input id="minimum_value" name="minimum_value" type="number">
+              <label for="minimum_value">Minimum bid amount (€)</label>
             </div>
           </div>
-  
-          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save User</button>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s8">
+            <textarea name="description" id="bio" class="materialize-textarea" maxlength="300"></textarea>
+            <label for="description">Description</label>
+          </div>
+        </div>
+
+        Auction is open:
+        <div class="row s10">
+          <p class="col s2">
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="registration_open" type="radio" value="True"/>
+              <span>Yes</span>
+            </label>
+            <label>
+                <input class="with-gap" name="registration_open" type="radio" value="False" checked/>
+                <span>No</span>
+            </label>
+          </p>
+        </div>
+        <!--
+        <div class="row">
+          <div class="col s3">
+            <select name="company" class="browser-default" id="exampleFormControlSelect2">
+              <option value="" disabled selected>Choose participants</option>
+              {% for company in companies %}
+                <option value="company.name">{{ company.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>-->
+    
+        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Auction</button>
       </form>
     </div>
   </body>

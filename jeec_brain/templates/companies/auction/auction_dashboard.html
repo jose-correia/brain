@@ -1,0 +1,152 @@
+<html>  
+  <head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div class="nav-bar">
+        <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+        
+        <div class="company-dash-username right" style="color:black">{{user.username}}</div>
+
+        <form action="{{ url_for('companies_api.company_logout') }}" method="get">
+          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+        </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
+        </a>
+    </div>
+
+    <div class="section-header">
+      <h2>Main Sponsor Auction</h2>
+      <p>Bid for the position of JEEC|19 Main Sponsor</p>
+    </div>
+
+    <form action="{{ url_for('companies_api.dashboard') }}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+    </form>
+
+    <div class="row">
+        <div class="col s9 m6 l7 center" style="margin-left:10vw">
+            <div class="card teal lighten-5" style="border-radius: 10px;">
+            <div class="card-content">
+                {% if auction.bids.count() == 0 %}
+                  <span class="card-title">0 bids were made</span>
+                  <p>Minimum bid: {{ auction.minimum_value }} €</p>
+                {% else %}
+                  <span class="card-title"><b>{{ highest_bid.value }} €</b></span>
+                  <p>Current highest bid</p>
+                  <br>
+                  <p>{{ highest_bid.created_at.strftime("%d-%b-%Y at %H:%M") }}</p>
+                  <br>
+                  <p>by</p>
+                  <p><b>{{ highest_bidder_name }}</b></p>
+                  <img src="{{ highest_bidder_logo }}" class="bidder-logo">
+                {% endif %}
+            </div>
+
+            <div class="card-action" style="padding-left: 50px;padding-right:50px;">
+                {% if error is not none %}
+                  <blockquote class="create-error">
+                    {{ error }}
+                  </blockquote>
+                {% endif %}
+                {% if auction.is_open is not sameas true %}
+                    <p><b>Auction is closed for bidding</b></p>
+                {% else %}
+                  <form action="/companies/auction/{{ auction.external_id }}/bid" method="post">
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <input id="value" name="value" type="number" required>
+                        <label for="value">Minimum of {{ highest_bid.value + 200}} €</label>                        
+                      </div>
+
+                      <label>
+                          <input type="checkbox" name="is_anonymous" value="True"/>
+                          <span class="black-text right" style="margin-top:25px;">Anonymous bid</span>
+                      </label>
+                    </div>
+
+                    <button type="submit" class="waves-effect blue lighten-2 btn"><i class="material-icons left">check</i>Submit Bid</button>
+                  </form>
+                {% endif %}
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider" style="margin-left: 6vw; margin-right: 6vw;"></div>
+    
+    <div class="section-title center-align" style="margin-top:30px;">
+        Participants:
+    </div>
+
+    <div class="participants-flex">
+        {% for logo in participant_logos %}
+          <div>
+                <img class="participant-logo" src="{{ logo }}">
+          </div>
+        {% endfor %}
+    </div>
+
+    <div class="divider" style="margin-left: 6vw; margin-right: 6vw;"></div>
+
+    <div class="section-title center-align" style="margin-top:30px;">
+        Bids by {{ user.company.name }}:
+    </div>
+            
+    <div class="list" style="margin-top: 10px">
+        {% if company_bids.count() == 0 %}
+            <blockquote class="create-error">
+              You have made 0 bids
+            </blockquote>
+        {% else %}
+            <div class="counter right">
+                Bids: {{ company_bids.count() }}
+            </div>
+            <table class="striped">
+                <thead><tr>
+                <th>Value</th>
+                <th>Anonymous bid</th>
+                <th>Date</th>
+                <th>Time</th>
+                </tr></thead>
+                <tbody>
+                    {% for bid in company_bids %}
+                    <tr>
+                        <td><b>{{ bid.value }} €</b></td>
+
+                        <td>
+                          {% if bid.is_anonymous is sameas true %}
+                            <i class="material-icons icon-green">check</i>
+                          {% else %}
+                            <i class="material-icons icon-red">clear</i>
+                          {% endif %}
+                        </td>
+        
+                        <td>{{ bid.created_at.strftime("%d-%b-%Y") }}</td>
+                        
+                        <td>{{ bid.created_at.strftime("%H:%M") }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+
+  </body>
+</html>  

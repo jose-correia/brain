@@ -101,6 +101,7 @@ button:hover {
 }
 
 .back-btn {
+    position: initial;
     margin-left: 40px;
     margin-top: 10px;
 }
@@ -225,6 +226,25 @@ button:hover {
     margin-bottom: 40px;
 }
 
+.bidder-logo {
+    margin-top: 20px;
+    max-height: 150px;
+    max-width: 200px;
+}
+
+.company-logo-company-side {
+    max-height: 150px;
+    max-width: 300px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.company-dash-username {
+    margin-top: 16px;
+    font-size: 17px;
+    margin-right: 40px;
+}
+
 .centered-image {
     display: block;
     margin-left: auto;
@@ -264,3 +284,24 @@ button:hover {
     }
 }
 
+.participants-flex {
+    display: -webkit-box;  /* iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* IE 10 */
+    display: -webkit-flex; /* Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;         /*Firefox, Chrome, Opera */
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding-top: 20px;
+    padding-bottom: 15px;
+    padding-left: 3vw;
+    padding-right: 3vw;
+  }
+
+.participant-logo {
+    justify-content: center;
+    max-height: 100px;
+    max-width: 100px;
+    margin: 10px 25px;
+}

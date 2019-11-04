@@ -1,10 +1,10 @@
 import os
-from flask import current_app, session
-from werkzeug.utils import secure_filename
-from jeec_brain.apps.cv_platform_api.services.compress_files_service import CompressFilesService
+from flask import current_app
+from jeec_brain.services.files.compress_files_service import CompressFilesService
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class FileHandler(object):
 

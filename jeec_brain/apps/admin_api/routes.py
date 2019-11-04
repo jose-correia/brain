@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 @bp.route('/', methods=['GET'])
 def get_admin_login_form():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and current_user.role.name in ['admin', 'companies_admin', 'speakers_admin', 'teams_admin', 'activities_admin', 'viewer']:
         return redirect(url_for('admin_api.dashboard'))
 
     return render_template('admin/admin_login.html')
@@ -32,7 +32,7 @@ def admin_login():
 @bp.route('/admin-logout', methods=['GET'])
 def admin_logout():
     try:
-        AuthHandler.logout_admin_dashboard()
+        AuthHandler.logout_user()
     except:
         pass
     return redirect(url_for('admin_api.get_admin_login_form'))

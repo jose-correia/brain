@@ -30,8 +30,8 @@
     </div>
 
     <div class="section-header" >
-      <h2>Management User</h2>
-      <p>Add a new internal user</p>
+      <h2>Company User</h2>
+      <p>Add a new user</p>
     </div>
 
     <form action="{{ url_for('admin_api.users_dashboard') }}" method="get">
@@ -53,6 +53,11 @@
               <input class="col s4" id="username" name="username" type="text" class="validate" required>
               <label for="username">Username</label>
             </div>
+
+            <div class="input-field col s2">
+                <input id="email" name="email" type="text" required>
+                <label for="email">Email</label>
+              </div>
           </div>
 
           <div class="row">
@@ -62,12 +67,16 @@
             </div>
 
             <div class="col s2" style="margin-left: 30px;">
-              <select name="role" class="form-control browser-default">
-                <option value="" disabled selected>User role</option>
-                {% for role in roles %}
-                  <option value="{{ role }}">{{ role }}</option>
-                {% endfor %}
+              {% if companies|length == 0 %}
+                  <p class="right">Please create a company profile first!</p>
+              {% else %}
+              <select name="company_external_id" class="select-css right" style="width: 200px; display: block;">
+                  <option>Select company</option>
+                  {% for company in companies %}
+                      <option value="{{ company.external_id }}">{{ company.name }}</option>
+                  {% endfor %}
               </select>
+              {% endif %}
             </div>
           </div>
   
