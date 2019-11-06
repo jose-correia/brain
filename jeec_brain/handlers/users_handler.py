@@ -23,7 +23,7 @@ class UsersHandler():
             }
             updated = UpdateUserService(user=user, kwargs=data).call()
         except:
-            return None
+            return False
 
         if updated is None:
             return False

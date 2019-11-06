@@ -12,7 +12,7 @@ class Users(db.Model, ModelMixin, UserMixin):
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String(100))
 
-    password = db.Column(db.String, nullable=False)
+    password = db.Column(db.String)
     
     role = db.Column(db.Enum(RolesEnum), nullable=False)
 
