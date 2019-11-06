@@ -6,6 +6,7 @@ from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
 from jeec_brain.finders.auctions_finder import AuctionsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
+from jeec_brain.handlers.users_handler import UsersHandler
 
 
 @bp.route('/', methods=['GET'])
@@ -39,9 +40,19 @@ def company_logout():
 @bp.route('/dashboard', methods=['GET'])
 @require_company_login
 def dashboard():
+    if not current_user.accepted_terms:
+        return render_template('companies/terms_conditions.html', user=current_user)
+
     company_auctions = CompaniesFinder.get_company_auctions(current_user.company)
 
     company_logo = CompaniesHandler.find_image(current_user.company.name)
 
     return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, user=current_user)
 
+
+@bp.route('/dashboard', methods=['POST'])
+@require_company_login
+def accept_terms():
+    UsersHandler.update_user(user=current_user, accepted_terms=True)
+
+    return redirect(url_for('companies_api.dashboard'))

@@ -22,6 +22,8 @@ class Users(db.Model, ModelMixin, UserMixin):
     sent_authentication_to_email = db.Column(db.Boolean, default=False)
     last_auth_email_destination = db.Column(db.String(100))
 
+    accepted_terms = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return '<User %r>' % self.username
 

@@ -16,6 +16,10 @@ class UsersHandler():
         return DeleteUserService(user=user).call()
 
     @classmethod
+    def update_user(cls, user, **kwargs):
+        return UpdateUserService(user=user, kwargs=kwargs).call()
+
+    @classmethod
     def generate_new_user_credentials(cls, user):
         try:            
             data = {

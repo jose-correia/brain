@@ -232,13 +232,6 @@ button:hover {
     max-width: 200px;
 }
 
-.company-logo-company-side {
-    max-height: 150px;
-    max-width: 300px;
-    margin-top: 40px;
-    margin-bottom: 60px;
-}
-
 .company-dash-username {
     margin-top: 16px;
     font-size: 17px;
