@@ -7,8 +7,9 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 
 from jeec_brain.database import db, create_tables
-
 from jeec_brain.finders.users_finder import UsersFinder
+
+from applicationinsights.flask.ext import AppInsights
 
 csrf = CSRFProtect()
 login_manager = LoginManager()
@@ -61,6 +62,15 @@ def create_app():
     @app.route('/', methods=['GET'])
     def index():
         return redirect(url_for('companies_api.get_company_login_form'))
+
+    # enable azure insights integration
+    appinsights = AppInsights(app)
+    
+    # force flushing application insights handler after each request
+    @app.after_request
+    def after_request(response):
+        appinsights.flush()
+        return response
 
     app.app_context().push()
     return app
