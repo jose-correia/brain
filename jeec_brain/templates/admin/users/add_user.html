@@ -39,6 +39,7 @@
     </form>
 
     <br>
+    <br>
 
     <div class="create-form">
       {% if error is not none %}
@@ -49,18 +50,13 @@
 
       <form class="col s12" action="{{ url_for('admin_api.create_user') }}" method="post">
           <div class="row">
-            <div class="input-field col s12">
+            <div class="input-field col s12" style="margin-left: 30px;">
               <input class="col s4" id="username" name="username" type="text" class="validate" required>
               <label for="username">Username</label>
             </div>
           </div>
 
           <div class="row">
-            <div class="input-field col s2">
-              <input id="password" name="password" type="text">
-              <label for="password">Password</label>
-            </div>
-
             <div class="col s2" style="margin-left: 30px;">
               <select name="role" class="form-control browser-default">
                 <option value="" disabled selected>User role</option>
@@ -70,7 +66,7 @@
               </select>
             </div>
           </div>
-  
+
           <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save User</button>
       </form>
     </div>

@@ -39,6 +39,7 @@
     </form>
 
     <br>
+    <br>
 
     <div class="create-form">
       {% if error is not none %}
@@ -49,28 +50,23 @@
 
       <form class="col s12" action="{{ url_for('admin_api.create_user') }}" method="post">
           <div class="row">
-            <div class="input-field col s12">
+            <div class="input-field col s12" style="margin-left: 30px;">
               <input class="col s4" id="username" name="username" type="text" class="validate" required>
               <label for="username">Username</label>
             </div>
 
-            <div class="input-field col s2">
+            <div class="input-field col s2" style="margin-left: 30px;">
                 <input id="email" name="email" type="text" required>
                 <label for="email">Email</label>
               </div>
           </div>
 
           <div class="row">
-            <div class="input-field col s2">
-              <input id="password" name="password" type="text">
-              <label for="password">Password</label>
-            </div>
-
             <div class="col s2" style="margin-left: 30px;">
               {% if companies|length == 0 %}
                   <p class="right">Please create a company profile first!</p>
               {% else %}
-              <select name="company_external_id" class="select-css right" style="width: 200px; display: block;">
+              <select name="company_external_id" class="select-css right" style="width: 170px; display: block;">
                   <option>Select company</option>
                   {% for company in companies %}
                       <option value="{{ company.external_id }}">{{ company.name }}</option>

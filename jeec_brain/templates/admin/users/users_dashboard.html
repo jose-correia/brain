@@ -81,9 +81,10 @@
           <table class="striped">
               <thead><tr>
                 <th>Username</th>
-                <th>Password</th>
                 <th>Role</th>
+                <th>Email</th>
                 <th>Company</th>
+                <th>Password</th>
               </tr></thead>
               <tbody>
                   {% for user in users %}
@@ -93,17 +94,20 @@
                       </b></td>
 
                       <td>
-                          {{ user.password }}
-                      </td>
-
-                      <td>
                           {{ user.role.name }}
                       </td>
 
                       <td>
-                          {{ user.company.name }}
+                          {{ user.email }}
+                      </td>
+
+                      <td>
+                          {{ user.company.name}}
                       </td>
                       
+                      <td>
+                          {{ user.password }}
+                      </td>
                       
                       <td>
                         {% if (user.username != current_user.username) and (user.role.name != 'admin') and  (current_user.role.name == 'admin')%}

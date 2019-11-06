@@ -46,6 +46,10 @@ def users_dashboard():
 def add_user_dashboard():
     roles = GetRolesService.call()
 
+    if 'company' and 'student' in roles: 
+        roles.remove('company')
+        roles.remove('student')
+
     return render_template('admin/users/add_user.html', \
         roles = roles, \
         error=None)
@@ -54,8 +58,6 @@ def add_user_dashboard():
 @bp.route('/new-organization-suser', methods=['GET'])
 @allowed_roles(['admin'])
 def add_company_user_dashboard():
-    roles = GetRolesService.call()
-
     companies = CompaniesFinder.get_all()
 
     return render_template('admin/users/add_company_user.html', \
@@ -69,8 +71,8 @@ def create_user():
     # extract form parameters
     username = request.form.get('username')
     email = request.form.get('email', None)
-    password = request.form.get('password')
     role = request.form.get('role', None)
+    
     # check if is creating company user
     company_external_id = request.form.get('company_external_id')
 
@@ -91,7 +93,6 @@ def create_user():
             username=username,
             email=email,
             company_id=company_id,
-            password=password,
             role=role,
         )
 
@@ -99,6 +100,8 @@ def create_user():
         return render_template('admin/users/add_user.html', \
             roles=GetRolesService.call(), \
             error="Failed to create user!")
+
+    UsersHandler.generate_new_user_credentials(user=user)
 
     return redirect(url_for('admin_api.users_dashboard'))
 
@@ -123,13 +126,6 @@ def generate_user_credentials(user_external_id):
 
     if user is None:
         return APIErrorValue('Couldnt find user').json(500)
-        
-    name = company.name
-    
-    if UsersHandler.generate_new_user_credentials(user=user):
-        return redirect(url_for('admin_api.companies_dashboard'))
-
-    else:
-        image_path = CompaniesHandler.find_image(name)
-        return render_template('admin/companies/update_company.html', company=company, image=image_path, error="Failed to delete company!")
-
+            
+    UsersHandler.generate_new_user_credentials(user=user)
+    return redirect(url_for('admin_api.companies_dashboard'))
