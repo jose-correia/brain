@@ -1,6 +1,6 @@
 import os
 from config import config, Config
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
@@ -48,13 +48,19 @@ def create_app():
     # enable CSRF protection
     csrf.init_app(app)
 
-    CORS(app) # enable Cross-Origin Resource Sharing
+    # enable Cross-Origin Resource Sharing
+    CORS(app)
     
     app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'storage')
 
     initialize_admin_api_blueprint(app)
     initialize_companies_api_blueprint(app)
     initialize_website_api_blueprint(app)
+
+    # set up index route
+    @app.route('/', methods=['GET'])
+    def index():
+        return redirect(url_for('companies_api.get_company_login_form'))
 
     app.app_context().push()
     return app
