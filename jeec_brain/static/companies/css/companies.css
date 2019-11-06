@@ -1,0 +1,44 @@
+
+.accept-container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.accept-button + label {
+    color:  #2c3e50;
+    font-family: 'Lato';
+    font-size: 22px;
+    border: 2px solid  rgb(140, 180, 245);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+  
+.text-container {
+    padding-left: 10vw;
+    padding-right: 10vw;
+    font-size: 13px;
+    line-height: 17px;
+    font-family: 'Lato';
+    text-align: justify;
+}
+
+.text-section {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.terms-warning {
+  text-align: center; 
+  padding-top: 20px;
+  font-size: 16px;
+}
+
+.company-logo-company-side {
+  max-height: 150px;
+  max-width: 300px;
+  margin-top: 100px;
+  margin-bottom: 60px;
+}

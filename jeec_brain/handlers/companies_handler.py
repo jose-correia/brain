@@ -25,14 +25,14 @@ class CompaniesHandler():
         if DeleteCompanyService(company=company).call():
             for extension in current_app.config['ALLOWED_IMAGES']:
                 filename = company_name.lower().replace(' ', '_') + '.' + extension
-                DeleteImageService(filename, 'static/companies').call()
+                DeleteImageService(filename, 'static/companies/images').call()
             return True
         return False
 
     @classmethod
     def upload_image(cls, file, company_name):
-        return UploadImageService(file, company_name, 'static/companies').call()
+        return UploadImageService(file, company_name, 'static/companies/images').call()
 
     @classmethod
     def find_image(cls, company_name):
-        return FindImageService(company_name, 'static/companies').call()
+        return FindImageService(company_name, 'static/companies/images').call()
