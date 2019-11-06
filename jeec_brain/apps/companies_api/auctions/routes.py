@@ -69,7 +69,7 @@ def auction_bid(auction_external_id):
     try:
         value = float(request.form.get('value'))
     except:
-        return APIErrorValue('Insert a valid value').json(400)
+        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
 
     is_anonymous = request.form.get('is_anonymous')
     
@@ -100,27 +100,14 @@ def auction_bid(auction_external_id):
 
     # check if value is bigger than current highest bid
     if value <= highest_bid_value:
-        company_bids = AuctionsFinder.get_company_bids(auction, company)
-        return render_template('companies/auction/auction_dashboard.html', \
-        auction=auction, \
-        highest_bid=highest_bid, \
-        company_bids=company_bids, \
-        error="Bid value must be higher than the current highest bid!")
+        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
 
-    bid = AuctionsHandler.create_auction_bid(
+    AuctionsHandler.create_auction_bid(
         auction=auction,
         company=company,
         value=value,
         is_anonymous=is_anonymous
     )
-    
-    if bid is None:
-        company_bids = AuctionsFinder.get_company_bids(auction, company)
-        return render_template('companies/auction/auction_dashboard.html', \
-        auction=auction, \
-        highest_bid=highest_bid, \
-        company_bids=company_bids, \
-        error="Failed to create bid!")
 
     return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
 
