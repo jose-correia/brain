@@ -1,6 +1,6 @@
 import os
 from config import config, Config
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
@@ -71,6 +71,14 @@ def create_app():
     def after_request(response):
         appinsights.flush()
         return response
+
+    # force https access by redirecting the client 
+    @app.before_request
+    def before_request():
+        if request.url.startswith('http://'):
+            url = request.url.replace('http://', 'https://', 1)
+            code = 301
+            return redirect(url, code=code)
 
     app.app_context().push()
     return app
