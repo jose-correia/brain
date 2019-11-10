@@ -46,7 +46,7 @@
         {% if not_participants|length == 0 %}
             <p class="right">All companies are participating in the auction!</p>
         {% else %}
-            <select name="company_external_id" class="select-css right" style="width: 200px; display: block;">
+            <select name="company_external_id" class="select-css right" style="width: 200px; display: block;" required>
                 <option>Select new participant</option>
                 {% for company in not_participants %}
                     <option value="{{ company.external_id }}">{{ company.name }}</option>
