@@ -22,6 +22,11 @@ def company_login():
     username = request.form.get('username')
     password = request.form.get('password')
 
+    # if credentials are sent in json (for stress testing purposes)
+    if not username and not password:
+        username = request.json.get('username')
+        password = request.json.get('password')
+
     if AuthHandler.login_company(username, password) is False:
         return render_template('companies/companies_login.html', error="Invalid credentials!")
 

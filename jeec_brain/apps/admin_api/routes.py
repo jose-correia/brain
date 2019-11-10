@@ -22,6 +22,11 @@ def admin_login():
     username = request.form.get('username')
     password = request.form.get('password')
 
+    # if credentials are sent in json (for stress testing purposes)
+    if not username and not password:
+        username = request.json.get('username')
+        password = request.json.get('password')
+
     if AuthHandler.login_admin_dashboard(username, password) is False:
         return render_template('admin/admin_login.html', error="Invalid credentials!")
 
