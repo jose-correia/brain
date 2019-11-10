@@ -58,6 +58,11 @@ def create_app():
     initialize_companies_api_blueprint(app)
     initialize_website_api_blueprint(app)
 
+    # add health-check route
+    @app.route('/health', methods=['GET'])
+    def health():
+        return 200
+
     # set up index route
     @app.route('/', methods=['GET'])
     def index():
@@ -65,8 +70,6 @@ def create_app():
 
     # enable azure insights integration
     appinsights = AppInsights(app)
-    
-    # force flushing application insights handler after each request
     @app.after_request
     def after_request(response):
         appinsights.flush()
