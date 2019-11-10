@@ -61,7 +61,7 @@ def create_app():
     # add health-check route
     @app.route('/health', methods=['GET'])
     def health():
-        return jsonify(success=True)
+        return jsonify(message="I am alive!")
 
     # set up index route
     @app.route('/', methods=['GET'])
