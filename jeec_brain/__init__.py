@@ -1,6 +1,6 @@
 import os
 from config import config, Config
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, jsonify
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
@@ -61,7 +61,7 @@ def create_app():
     # add health-check route
     @app.route('/health', methods=['GET'])
     def health():
-        return 200
+        return jsonify(success=True)
 
     # set up index route
     @app.route('/', methods=['GET'])
