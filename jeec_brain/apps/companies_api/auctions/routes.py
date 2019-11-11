@@ -99,7 +99,7 @@ def auction_bid(auction_external_id):
         highest_bid_value = highest_bid.value
 
     # check if value is bigger than current highest bid
-    if value <= highest_bid_value:
+    if value <= highest_bid_value or value < auction.minimum_value:
         return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
 
     AuctionsHandler.create_auction_bid(
