@@ -41,12 +41,12 @@
     <div class="flexbox-btns">
         {% for auction in auctions %}
           <form action="/companies/auction/{{auction.external_id.hex}}" method="get">
-              <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">money</i>{{ auction.name }}</button>
+              <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ auction.name }}</button>
           </form>
         {% endfor %}
 
         <form action="" method="">
-            <button class="waves-effect blue lighten-2 btn-large dashboard-btn" disabled><i class="large material-icons left">business</i>Resumes</button>
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn" disabled><i class="large material-icons left">person_outline</i>Resumes</button>
         </form>
     </div>
 

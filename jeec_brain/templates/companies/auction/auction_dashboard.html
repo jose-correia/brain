@@ -80,7 +80,7 @@
                         {% if auction.bids.count() == 0 %}
                           <label for="value">Minimum of {{ auction.minimum_value }} €</label>
                         {% else %}
-                          <label for="value">Minimum of {{ highest_bid.value + 200 }} €</label>
+                          <label for="value">Minimum of {{ highest_bid.value + 1 }} €</label>
                         {% endif %}                      
                       </div>
 
