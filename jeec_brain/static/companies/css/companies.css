@@ -1,3 +1,44 @@
+.section-header {
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  margin-top: 0px;
+}
+
+.section-header h2 {
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+font-size: 36px;
+text-transform: uppercase;
+text-align: center;
+font-family: Avenir,Helvetica,Arial,sans-serif;
+color: #2c3e50;
+font-weight: 700;
+margin-bottom: 10px;
+}
+
+.section-header p {
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+text-align: center;
+padding: 0;
+margin: 0;
+font-size: 20px;
+font-family: 'Karla';
+font-weight: 500;
+color: #9195a2;
+}
+
+.section-header::before {
+content: '';
+position: absolute;
+display: block;
+width: 100px;
+height: 2px;
+background: #4089ff;
+bottom: 0;
+left: calc(50% - 50px);
+}
 
 .accept-container {
     margin-top: 50px;
@@ -41,4 +82,80 @@
   max-width: 300px;
   margin-top: 100px;
   margin-bottom: 60px;
+}
+
+.jeec-logo-login {
+  width: 110px;
+  margin-top: 80px;
+}
+
+.brain-logo-login {
+  width: 110px;
+  margin-left: 30px;
+}
+
+.login-card {
+  margin-left: 30vw;
+  margin-right: 30vw;
+  border-radius: 30px;
+  padding-top: 10px;
+  padding-bottom: 50px;
+}
+
+.username-input {
+  width: 400px;
+  height: 50px;
+  border-radius: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: 'Lato';
+  text-align: center;
+  outline: none;
+}
+
+input {
+  outline: none;
+  border-width: 0px;
+}
+
+.password-input {
+  width: 400px;
+  height: 50px;
+  border-radius: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: 'Lato';
+  text-align: center;
+  outline: none;
+}
+
+.login-button {
+  margin-top: 30px;
+  width: 150px;
+}
+  
+.error {
+  font-size: 23px;
+  font-family: 'Lato';
+  color: rgb(214, 60, 60);
+}
+
+/* On screens that are 700px wide*/
+@media only screen and (max-width: 750px) {
+.login-card {
+  margin-left: 20vw;
+  margin-right: 20vw;
+}
+
+.section-header p {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  padding: 0;
+  margin-top: 30px;
+  font-size: 18px;
+  font-family: 'Karla';
+  font-weight: 500;
+  color: #9195a2;
+  }
 }
