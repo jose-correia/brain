@@ -101,9 +101,9 @@ button:hover {
 }
 
 .back-btn {
-    position: initial;
     margin-left: 40px;
     margin-top: 10px;
+    position: absolute;
 }
 
 .add-btn {

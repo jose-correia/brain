@@ -31,25 +31,30 @@
         </a>
     </div>
 
+    <div style="position: absolute;">
+      <form action="{{ url_for('companies_api.dashboard') }}" method="get">
+          <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+      </form>
+    </div>
+    
     <div class="section-header">
-      <h2>Main Sponsor Auction</h2>
-      <p>Bid for the position of JEEC|19 Main Sponsor</p>
+      <h2>{{ auction.name }}</h2>
+      <p>{{ auction.description }}</p>
     </div>
 
-    <form action="{{ url_for('companies_api.dashboard') }}" method="get">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
-    </form>
-
-    <div class="row">
-        <div class="col s9 m6 l7 center" style="margin-left:10vw">
+   
+    <div class="row" style="margin: auto;width: 50%;">
+        <div class="col s12 m12 l12 center" >
             <div class="card teal lighten-5" style="border-radius: 10px;">
             <div class="card-content">
                 {% if auction.bids.count() == 0 %}
                   <span class="card-title">0 bids were made</span>
                   <p>Minimum bid: {{ auction.minimum_value }} €</p>
                 {% else %}
-                  <span class="card-title"><b>{{ highest_bid.value }} €</b></span>
                   <p>Current highest bid</p>
+                  <br>
+                  <span class="card-title"><b>{{ highest_bid.value }} €</b></span>
+
                   <br>
                   <p>{{ highest_bid.created_at.strftime("%d-%b-%Y at %H:%M") }}</p>
                   <br>
@@ -91,7 +96,14 @@
             </div>
             </div>
         </div>
+        
+        <div class="center">
+          <p><b>Closing date:</b></p>
+          <p>{{ auction.closing_date }}</p>
+        </div>
     </div>
+
+    <br>
 
     <div class="divider" style="margin-left: 6vw; margin-right: 6vw;"></div>
     
@@ -100,11 +112,11 @@
     </div>
 
     <div class="participants-flex">
-        {% for logo in participant_logos %}
-          <div>
-                <img class="participant-logo" src="{{ logo }}">
-          </div>
-        {% endfor %}
+      {% for logo in participant_logos %}
+        <div>
+              <img class="participant-logo" src="{{ logo }}">
+        </div>
+      {% endfor %}
     </div>
 
     <div class="divider" style="margin-left: 6vw; margin-right: 6vw;"></div>

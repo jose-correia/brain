@@ -34,6 +34,7 @@ def create_auction():
     name = request.form.get('name')
     description = request.form.get('description')
     is_open = request.form.get('is_open')
+    closing_date = request.form.get('closing_date')
 
     try:
         minimum_value = float(request.form.get('minimum_value'))
@@ -50,7 +51,8 @@ def create_auction():
             name=name,
             description=description,
             is_open=is_open,
-            minimum_value=minimum_value
+            minimum_value=minimum_value,
+            closing_date=closing_date
         )
 
     if auction is None:
@@ -84,6 +86,7 @@ def update_auction(auction_external_id):
 
     name = request.form.get('name')
     description = request.form.get('description')
+    closing_date = request.form.get('closing_date')
 
     try:
         minimum_value = float(request.form.get('minimum_value'))
@@ -102,7 +105,8 @@ def update_auction(auction_external_id):
         name=name,
         description=description,
         minimum_value=minimum_value,
-        is_open=is_open
+        is_open=is_open,
+        closing_date=closing_date
     )
     
     if updated_auction is None:

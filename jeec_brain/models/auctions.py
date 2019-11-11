@@ -12,6 +12,8 @@ class Auctions(ModelMixin, db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300))
 
+    closing_date = db.Column(db.String(200))
+
     minimum_value = db.Column(db.Float())
     is_open = db.Column(db.Boolean, default=False)
 

@@ -64,6 +64,7 @@
               <th>Description</th>
               <th>Minimum bid value</th>
               <th>Open</th>
+              <th>Closing Date</th>
             </tr></thead>
             <tbody>
                 {% for auction in auctions %}
@@ -87,7 +88,11 @@
                           <i class="material-icons icon-red">clear</i>
                         {% endif %}
                     </td>
-                    
+
+                    <td>
+                      {{ auction.closing_date }}
+                    </td>
+                  
                     <td>
                       <form action="/admin/auctions/{{auction.external_id.hex}}" method="get">
                         <button title="Edit auction" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
