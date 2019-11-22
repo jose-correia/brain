@@ -62,12 +62,12 @@ This is were the requests to the administration endpoints are managed, which foc
 - search users
 
 Available admin platform **user roles**:
-    - `admin`: has permission to access, add, edit and delete every data in the platform;
-    - `companies_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove companies;
-    - `speakers_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove speakers;
-    - `teams_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove teams;
-    - `activities_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove activities;
-    - `viewer`: only has permission to view activities, teams, speakers and companies.
+- `admin`: has permission to access, add, edit and delete every data in the platform;
+- `companies_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove companies;
+- `speakers_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove speakers;
+- `teams_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove teams;
+- `activities_admin`: has permission to access activities, teams, speakers and companies, but only edit, add and remove activities;
+- `viewer`: only has permission to view activities, teams, speakers and companies.
 
 
 ## Companies App
