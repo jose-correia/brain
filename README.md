@@ -29,6 +29,11 @@ The system consists of **3 main REST API's**
 ## Administration App
 This is were the requests to the administration endpoints are managed, which focuses on the creation, editing, deletion and listing of data related to the event.
 
+<kbd>
+<img src="resources/images/admin_dashboard.png"/>
+</kbd>
+
+#### Features:
 **Companies**: 
 - `list/add/edit/delete` companies;
 - search companies;
@@ -73,6 +78,11 @@ Available admin platform **user roles**:
 ## Companies App
 This API serves the companies app.
 
+<kbd>
+<img src="resources/images/companies_dashboard.png"/>
+</kbd>
+
+#### Features:
 **Auctions**
 Companies are able to access auctions that they are registered in.
 This dashboard allows to bet in the auction, check the participants and list the bets that this company made.
