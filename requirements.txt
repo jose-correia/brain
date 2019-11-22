@@ -5,7 +5,7 @@ chardet==3.0.4
 Click==7.0
 fenixedu==1.0.0
 Flask==1.0.2
-flask_script
+Flask-Script==2.0.6
 Flask-Login
 Flask-WTF
 Flask-Cors==3.0.7
