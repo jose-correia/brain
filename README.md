@@ -84,10 +84,12 @@ This API serves the companies app.
 
 #### Features:
 **Auctions**
+
 Companies are able to access auctions that they are registered in.
 This dashboard allows to bet in the auction, check the participants and list the bets that this company made.
 
 **Resumes**
+
 Companies have access to the resumes submited by students. This dashboard allows to download them.
 
 
@@ -187,10 +189,10 @@ The **Administration API** and the **Companies API** use session Authentication,
 **Users must be created in the database**, and then provide their username and password to acess the system.
 
 #### Authentication in Admin platform:
-- **Roles:**
-Each user has a role in the system. For instance, if your are an `admin` you will have permission to do everything in the administration pages (add/edit/delete/list data). **But other roles, can be used to restrict the user actions**. The role `company-admin`, for example, will be able to see all the data, but only add and edit companies. 
+Management users are added in the admin users dashboard. Passwords are generated automatically.
 
-This role's feature is very useful if you want to spread the usage of the platform throughout the team, without everyone being able to mess with the valuable data.
+- **Roles:**
+Each user has a role in the system, which will define the actions that this user is allowed to perform.
 
 #### Authentication in Companies App:
 Company users must be added in the Admin platform. The company of the user must be provided, as long as the username. Passwords are automatically generated.
@@ -201,3 +203,4 @@ When it comes to **Website API**, the autentication used is **BasicAuth**. So, w
 ## Useful links
 * Flask Documentation - http://flask.pocoo.org/docs/1.0/
 * The most complete Flask Tutorial ever - https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+* Article about the Single Responsability Principal which is the main design pattern that this code follows - https://medium.com/unbabel/refactoring-a-python-codebase-using-the-single-responsibility-principle-ed1367baefd6
