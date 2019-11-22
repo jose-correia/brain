@@ -4,16 +4,18 @@ services:
   postgres:
     #   Use the Docker Image postgres. This will pull the newest release.
     image: postgres:11.4-alpine
+
     #   Setup the username, password, and database name. You can changes these values.
     environment:
-      - POSTGRES_USER=
+      - POSTGRES_USER=josecorreia
       - POSTGRES_PASSWORD=
       - POSTGRES_DB=jeec_brain_dev
+
     #   Maps port 54320 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
     ports:
       - "5432:5432"
-    #   Set a volume some that database is not lost after shutting down the container.
-    #   I used the name postgres-data but you can changed it to something else.
+
+    #   Set a volume so that database is not lost after shutting down the container.
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -30,6 +32,13 @@ services:
       - postgres
     ports:
       - "8081:80"
+    environment:
+      # If running in windows or linux replace comments DATABASE URL
+      # replace your role name before the @ 
+      # - DATABASE_URL=postgres://josecorreia@localhost:5432/
+      - DATABASE_URL=postgres://josecorreia@docker.for.mac.localhost:5432/
+      - APP_DB=jeec_brain_dev
+
 
 volumes:
   db_data:
