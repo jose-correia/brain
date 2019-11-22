@@ -90,9 +90,9 @@ def create_user():
 
     # create new user
     user = UsersHandler.create_user(
+            company_id=company_id,
             username=username,
             email=email,
-            company_id=company_id,
             role=role,
         )
 
