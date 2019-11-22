@@ -166,7 +166,11 @@ and only the spotlight speakers will be requested. This **enables search queries
         - Add `import sqlalchemy_utils` in the top of the file;
         - Search for `length=16` in the file, and delete all ocurrences
 
-10. Deploy the Flask application with:
+10. Create a new amin user:
+    - `python3.6 manage.py create_user --username johndoe --role admin`
+    - The script then prints the password of the user.
+
+11. Deploy the Flask application with:
     - `python3.6 manage.py runserver`
 
 
