@@ -201,6 +201,6 @@ Company users must be added in the Admin platform. The company of the user must 
 When it comes to **Website API**, the autentication used is **BasicAuth**. So, we set the credentials in the .env file, and the website must provide this credentials in the headers of the requests, in order to get authenticated and be able to access the data.
 
 ## Useful links
+* Article about the Single Responsability Principle which is the main design pattern that this code follows - https://medium.com/unbabel/refactoring-a-python-codebase-using-the-single-responsibility-principle-ed1367baefd6
 * Flask Documentation - http://flask.pocoo.org/docs/1.0/
 * The most complete Flask Tutorial ever - https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
-* Article about the Single Responsability Principal which is the main design pattern that this code follows - https://medium.com/unbabel/refactoring-a-python-codebase-using-the-single-responsibility-principle-ed1367baefd6
