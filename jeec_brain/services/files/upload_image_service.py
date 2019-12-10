@@ -4,6 +4,8 @@ from flask import current_app
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -19,7 +21,6 @@ class UploadImageService(object):
 
         if self.file and self.__allowed_image(self.file.filename):
             extension = self.__get_extension(self.file.filename)
-
             filename = self.name.lower().replace(' ', '_') + '.' + extension
             try:
                 self.file.save(os.path.join(current_app.root_path, self.folder, filename))
@@ -38,8 +39,8 @@ class UploadImageService(object):
         return False, 'File extension is not allowed'
 
     def __allowed_image(self, filename):
-        return '.' in filename and \
-            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_IMAGES']
+            return '.' in filename and \
+                filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_IMAGES']
     
     def __get_extension(self, filename): 
         return filename.rsplit('.', 1)[1].lower()

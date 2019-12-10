@@ -134,14 +134,20 @@ def get_teams():
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
-
         teams_list = TeamsFinder.get_from_parameters(search_parameters)
 
     # request endpoint with no parameters should return all activities
     else:
         search = None
         teams_list = TeamsFinder.get_all()
-    
+        for i in range(len(teams_list)):
+            if teams_list[i].name.lower() == "coordination":
+                print(teams_list[i].name)
+                break
+        # Swap function 
+        teams_list[0], teams_list[i] = teams_list[i], teams_list[0]
+        print(teams_list) 
+
     if teams_list is None or len(teams_list) == 0:
         return APIErrorValue('No results found').json(400)
 
