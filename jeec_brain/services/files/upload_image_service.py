@@ -5,7 +5,6 @@ from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -44,3 +43,5 @@ class UploadImageService(object):
     
     def __get_extension(self, filename): 
         return filename.rsplit('.', 1)[1].lower()
+
+            

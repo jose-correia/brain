@@ -7,6 +7,8 @@ from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
 from flask_login import current_user
 from jeec_brain.services.files.rename_image_service import RenameImageService
+import os
+
 
 
 # Team management
@@ -175,8 +177,16 @@ def create_team_member(team_external_id):
 
     if 'file' in request.files:
         file = request.files['file']
-        result, msg = TeamsHandler.upload_member_image(file, name)
+        #moves pointer to final position
+        file.seek(0, os.SEEK_END)
+        #tells pointer position
+        file_lenght = file.tell()
 
+        if int(file_lenght) < 200000:
+            result, msg = TeamsHandler.upload_member_image(file, name)
+        else:
+            image_path = TeamsHandler.find_member_image(name)
+            return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error="Image is too BIG! Please < 200KB")
         if result == False:
             TeamsHandler.delete_team_member(member)
             return render_template('admin/teams/add_team_member.html', team=team, error=msg)
@@ -240,9 +250,16 @@ def update_team_member(team_external_id, member_external_id):
 
     if 'file' in request.files:
         file = request.files['file']
+        #moves pointer to final position
+        file.seek(0, os.SEEK_END)
+        #tells pointer position
+        file_lenght = file.tell()
 
-        result, msg = TeamsHandler.upload_member_image(file, name)
-
+        if int(file_lenght) < 200000:
+            result, msg = TeamsHandler.upload_member_image(file, name)
+        else:
+            image_path = TeamsHandler.find_member_image(name)
+            return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error="Image is too BIG! Please < 200KB")
         if result == False:
             return render_template('admin/teams/update_team_member.html', member=update_team_member, image=image_path, error=msg)
 
