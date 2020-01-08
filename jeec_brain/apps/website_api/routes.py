@@ -140,15 +140,16 @@ def get_teams():
     else:
         search = None
         teams_list = TeamsFinder.get_all()
+        final_teams_list = []
         for i in range(len(teams_list)):
             if teams_list[i].name.lower() == "coordination":
-                print(teams_list[i].name)
+                final_teams_list.append(teams_list[i])
+                del(teams_list[i])
                 break
-        # Swap function 
-        teams_list[0], teams_list[i] = teams_list[i], teams_list[0]
-        print(teams_list) 
 
-    if teams_list is None or len(teams_list) == 0:
+    final_teams_list += teams_list
+
+    if final_teams_list is None or len(final_teams_list) == 0:
         return APIErrorValue('No results found').json(400)
 
-    return TeamsValue(teams_list).json(200)
+    return TeamsValue(final_teams_list).json(200)
