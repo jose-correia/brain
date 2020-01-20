@@ -144,4 +144,6 @@ def get_teams():
     if teams_list is None or len(teams_list) == 0:
         return APIErrorValue('No results found').json(400)
 
+    teams_list.sort(key=lambda x: x.website_priority, reverse=True)
+
     return TeamsValue(teams_list).json(200)
