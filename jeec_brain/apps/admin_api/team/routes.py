@@ -48,10 +48,15 @@ def add_team_dashboard():
 def create_team():
     name = request.form.get('name')
     description = request.form.get('description')
+    website_priority = request.form.get('website_priority')
+
+    if not website_priority:
+        website_priority = 0
 
     team = TeamsHandler.create_team(
         name=name,
-        description=description
+        description=description,
+        website_priority=website_priority
     )
     
     if team is None:
@@ -78,11 +83,13 @@ def update_team(team_external_id):
 
     name = request.form.get('name')
     description = request.form.get('description')
+    website_priority = request.form.get('website_priority')
 
     updated_team = TeamsHandler.update_team(
         team=team,
         name=name,
-        description=description
+        description=description,
+        website_priority=website_priority
     )
     
     if updated_team is None:

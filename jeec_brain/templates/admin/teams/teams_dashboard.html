@@ -86,6 +86,7 @@
             <thead><tr>
               <th>Name</th>
               <th>Description</th>
+              <th>Priority</th>
               <th>Members</th>
             </tr></thead>
             <tbody>
@@ -97,6 +98,10 @@
                       {% if team.description is not none %}
                         {{ team.description }}
                       {% endif %}
+                    </td>
+
+                    <td>
+                      {{ team.website_priority }}
                     </td>
 
                     <td>
