@@ -119,7 +119,7 @@
 
             <br>
 
-            <form action="/admin/team/{{team.external_id.hex}}/erase " method="get" class="right">
+            <form action="/admin/team/{{team.external_id.hex}}/erase " method="get" class="right" onsubmit="return confirm('Are you sure you want to delete all the members in this team?');">
                 <button class="waves-effect red btn-small"><i class="material-icons left">delete</i>Delete all</button>
             </form>
         {% endif %}
