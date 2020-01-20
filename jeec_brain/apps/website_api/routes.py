@@ -134,7 +134,6 @@ def get_teams():
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
-
         teams_list = TeamsFinder.get_from_parameters(search_parameters)
 
     # request endpoint with no parameters should return all activities

@@ -21,6 +21,7 @@ class Config(object):
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024 #16Mb
 
     ALLOWED_IMAGES = ['png', 'svg', 'jpg']
+    MAX_IMG_SIZE = 200000
     ALLOWED_EXTENSIONS = ['pdf']
 
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
