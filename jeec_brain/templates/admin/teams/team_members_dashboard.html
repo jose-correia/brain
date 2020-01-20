@@ -116,6 +116,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <br>
+
+            <form action="/admin/team/{{team.external_id.hex}}/erase " method="get" class="right">
+                <button class="waves-effect red btn-small"><i class="material-icons left">delete</i>Delete all</button>
+            </form>
         {% endif %}
     </div>
   </body>

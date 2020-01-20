@@ -147,6 +147,24 @@ def search_team_members(team_external_id):
     return render_template('admin/teams/team_members_dashboard.html', team=team, members=members_list, error=None, search=name, role=current_user.role.name)
 
 
+@bp.route('/team/<string:team_external_id>/erase', methods=['get'])
+@allowed_roles(['admin', 'teams_admin'])
+def delete_all_team_members(team_external_id):
+    team = TeamsFinder.get_from_external_id(team_external_id)
+
+    if team is None:
+        return APIErrorValue('Couldnt find team').json(500)
+
+    members = ColaboratorsFinder.get_all_from_team(team)
+
+    if not members:
+        return APIErrorValue('Couldnt find team members').json(500)
+    
+    for member in members:
+        TeamsHandler.delete_team_member(member)
+    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
+
+
 @bp.route('/team/<string:team_external_id>/new-member', methods=['GET'])
 @allowed_roles(['admin', 'teams_admin'])
 def add_team_member_dashboard(team_external_id):
