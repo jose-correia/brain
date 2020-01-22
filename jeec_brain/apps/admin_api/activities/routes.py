@@ -5,6 +5,7 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.services.activities.get_activity_types_service import GetActivityTypesService
+from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
 from flask_login import current_user
@@ -111,7 +112,7 @@ def create_activity():
             if company is None:
                 return APIErrorValue('Couldnt find company').json(500)
 
-            company_activity = CompaniesHandler.add_activity(company, activity)
+            company_activity = ActivitiesHandler.add_company_activity(company, activity)
             if company_activity is None:
                 return APIErrorValue('Failed to create company activity').json(500)
 
@@ -121,7 +122,7 @@ def create_activity():
             if speaker is None:
                 return APIErrorValue('Couldnt find speaker').json(500)
 
-            speaker_activity = SpeakersHandler.add_activity(speaker, activity)
+            speaker_activity = ActivitiesHandler.add_speaker_activity(speaker, activity)
             if speaker_activity is None:
                 return APIErrorValue('Failed to create speaker activity').json(500)
 
