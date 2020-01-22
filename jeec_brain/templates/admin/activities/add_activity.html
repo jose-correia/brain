@@ -60,13 +60,13 @@
             <label for="name">Name</label>
           </div>
           
-          <div class="col s2" style="margin-left: 30px;">
+          <div class="input-field col s2" style="margin-left: 30px;">
             <select name="type" class="form-control">
-              <option value="" disabled selected>Activity type</option>
               {% for type in activity_types %}
                 <option value="{{ type }}">{{ type }}</option>
               {% endfor %}
             </select>
+            <label>Activity type</label>
           </div>
         </div>
 
