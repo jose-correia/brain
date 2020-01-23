@@ -1,13 +1,27 @@
+import logging
 from jeec_brain.models.students import Students
+from typing import Optional
 
-class CreateStudentService(object):
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
+logger = logging.getLogger(__name__)
 
-    def call(self):
-        student = Students(**self.kwargs)
+
+class CreateStudentService():
+
+    def __init__(self, name, ist_id, user_id):
+        self.name = name
+        self.ist_id = ist_id
+        self.user_id = user_id
+
+    def call(self) -> Optional[Students]:
         
-        student.create()
-        student.reload()
-        
+        student = Students.create(
+            name=self.name,
+            ist_id=self.ist_id,
+            user_id=self.user_id
+        )
+
+        if not student:
+            return None
+
         return student
+

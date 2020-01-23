@@ -9,16 +9,10 @@ from jeec_brain.finders.users_finder import UsersFinder
 def require_student_login(func):
     @wraps(func)
     def check_student_login(*args, **kwargs):
-        # Check to see if it's in their sessio
-        user_role = current_user.get_role()
-
-        if not session['student'] or user_role != "student":
-            # If it isn't return our access denied message (you can also return a redirect or render_template)
+        if not current_user.is_authenticated or current_user.role.name is not 'student':
             return Response("Access denied", status=401)
 
-        # Otherwise just send them where they wanted to go
         return func(*args, **kwargs)
-
     return check_student_login
 
 
