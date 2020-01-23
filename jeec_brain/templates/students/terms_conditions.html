@@ -1,0 +1,113 @@
+<html>  
+  <head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/students/css/students.css">
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="/static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+</head>
+  <body>
+    <div class="nav-bar">
+        <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
+
+        <div class="company-dash-username right" style="color:black">{{user.username}}</div>
+
+        <form action="{{ url_for('students_api.student_logout') }}" method="get">
+            <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+        </form>
+    </div>
+
+    <div class="section-header" >
+        <h2>JEEC Brain</h2>
+        <p>Terms and Conditions</p>
+    </div>
+
+    <div class="text-container">
+        <p class="terms-warning">
+            You must accept the following terms, before proceeding to the dashboard!
+        </p>
+        <br><p>
+            These Website Standard Terms and Conditions written on this webpage shall manage your use of our websites, JEECIST Website and Platform accessible at https://jeec.ist and https://jeec.jose-correia.com/.
+            These Terms will be applied fully and affect to your use of this Website. By using this Website, you agreed to accept all terms and conditions written in here. You must not use this Website if you disagree with any of these Website Standard Terms and Conditions.
+        </p><p class="text-section">
+            Intellectual Property Rights
+        </p><p>
+            Other than the content you own, under these Terms, JEECIST and/or its licensors own all the intellectual property rights and materials contained in this Website.
+            <p>
+                You are granted limited license only for purposes of viewing the material contained on this Website.
+            </p>
+        </p><p class="text-section">
+            Restrictions:
+        </p><p>
+            You are specifically restricted from all the following:
+                <p>- using this Website in any way that is or may be damaging to this Website;</p>
+                <p>- using this Website in any way that impacts user access to this Website;</p>
+                <p>- using this Website contrary to applicable laws and regulations, or in any way may cause harm to the Website, or to any person or business entity;</p>
+                <p>- engaging in any data mining, data harvesting, data extracting or any other similar activity in relation to this Website;</p>
+                Certain areas of this Website are restricted from being access by you and JEECIST may further restrict access by you to any areas of this Website, at any time, in absolute discretion. Any user ID and password you may have for this Website are confidential and you must maintain confidentiality as well. JEECIST may un-sync, reset or terminate JEECIST Passwords in its sole discretion or any reason. JEECIST cannot and will not be liable for any loss or damage arising from your failure to comply with the above.
+            </p><p class="text-section">
+        Your Content
+        </p><p>
+            In these Website Standard Terms and Conditions, "Your Content" shall mean any audio, video text, images or other material you choose to display on this Website. By displaying Your Content, you grant JEECIST a non-exclusive, worldwide irrevocable, sub licensable license to use, reproduce, adapt, publish, translate and distribute it in any and all media.        
+        </p><p>Your Content must be your own and must not be invading any third-party’s rights. JEECIST reserves the right to remove any of Your Content from this Website at any time without notice.
+        </p><p class="text-section">
+            Links To Other Web Sites
+        </p><p>
+                Our Service may contain links to third-party web sites or services that are not owned or controlled by JEECIST.
+
+                JEECIST has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third-party web sites or services. You further acknowledge and agree that JEECIST shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
+                
+                We strongly advise you to read the terms and conditions and privacy policies of any third-party web sites or services that you visit.
+        </p><p class="text-section">
+            Linking to this Web Site
+        </p><p>
+            You may provide links to this Site, provided that (a) you do not remove or obscure, by framing or otherwise, any portion of this Site, including any advertisements, terms of use or service, copyright notice, and other notices on this Site, (b) you immediately deactivate and discontinue providing links to this Site if requested by JEECIST, and (c) JEECIST may deactivate any link(s) at its discretion.
+        </p><p class="text-section">
+            No warranties
+        </p><p>
+            This Website is provided "as is," with all faults, and JEECIST express no representations or warranties, of any kind related to this Website or the materials contained on this Website. Also, nothing contained on this Website shall be interpreted as advising you.
+        </p><p class="text-section">
+            Indemnification
+        </p><p>
+            You hereby indemnify to the fullest extent JEECIST from and against any and/or all liabilities, costs, demands, causes of action, damages and expenses arising in any way related to your breach of any of the provisions of these Terms.
+        </p><p class="text-section">
+            Assignment
+        </p><p>
+            The JEECIST is allowed to assign, transfer, and subcontract its rights and/or obligations under these Terms without any notification. However, you are not allowed to assign, transfer, or subcontract any of your rights and/or obligations under these Terms.
+        </p><p class="text-section">
+            Entire Agreement
+        </p><p>
+            These Terms constitute the entire agreement between JEECIST and you in relation to your use of this Website, and supersede all prior agreements and understandings.
+        </p><p class="text-section">
+            Governing Law
+        </p><p>
+            These Terms shall be governed and construed in accordance with the laws of Portugal, without regard to its conflict of law provisions.
+        </p><p class="text-section">
+            Severability
+        </p><p>
+            Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service.
+        </p><p class="text-section">
+            Contact Us
+        </p><p>
+            For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e-mail at 
+            <b>contacto@jeec.ist</b> or by mail using the details provided below:
+        </p><p>
+            <b>NEECIST, Rua Alves Redol 1, Lisboa, 11, 1049-001, Portugal</b>
+        </p>
+    </div>
+
+    <div class="accept-container">
+        <form method=post>
+            <button class="waves-effect waves-light btn-large"><i class="large material-icons left">check</i>Accept Terms & Conditions</button>
+        </form>
+    </div>
+  </body>
+</html>  
