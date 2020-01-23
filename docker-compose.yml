@@ -37,7 +37,7 @@ services:
       # replace your role name before the @ 
       # - DATABASE_URL=postgres://josecorreia@localhost:5432/
       - DATABASE_URL=postgres://josecorreia@docker.for.mac.localhost:5432/
-      - APP_DB=jeec_brain_dev
+      - APP_DB=jeec_brain
 
 
 volumes:
