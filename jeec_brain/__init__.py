@@ -16,7 +16,7 @@ login_manager = LoginManager()
 
 
 def initialize_admin_api_blueprint(app):
-    from jeec_brain.apps.admin_api  import bp as admin_api_bp
+    from jeec_brain.apps.admin_api import bp as admin_api_bp
     app.register_blueprint(admin_api_bp, url_prefix='/admin')
     csrf.exempt(admin_api_bp)
 
@@ -26,9 +26,14 @@ def initialize_companies_api_blueprint(app):
     csrf.exempt(companies_api_bp)
 
 def initialize_website_api_blueprint(app):
-    from jeec_brain.apps.website_api  import bp as website_api_bp
+    from jeec_brain.apps.website_api import bp as website_api_bp
     app.register_blueprint(website_api_bp, url_prefix='/website')
     csrf.exempt(website_api_bp)
+
+def initialize_students_api_blueprint(app):
+    from jeec_brain.apps.students_api import bp as students_api_bp
+    app.register_blueprint(students_api_bp, url_prefix='/students')
+    csrf.exempt(students_api_bp)
 
 
 def create_app():
@@ -56,6 +61,7 @@ def create_app():
 
     initialize_admin_api_blueprint(app)
     initialize_companies_api_blueprint(app)
+    initialize_students_api_blueprint(app)
     initialize_website_api_blueprint(app)
 
     # add health-check route
