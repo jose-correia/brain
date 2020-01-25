@@ -16,7 +16,6 @@ class Companies(db.Model, ModelMixin):
     business_area = db.Column(db.String(100))
 
     partnership_tier = db.Column(db.String(20))
-    access_cv_platform = db.Column(db.Boolean, default=False)
 
     show_in_website = db.Column(db.Boolean, default=True)
 
@@ -29,11 +28,3 @@ class Companies(db.Model, ModelMixin):
 
     def __repr__(self):
         return 'Name: {} | CV_Platform access: {}'.format(self.name, self.access_cv_platform)
-
-    def give_cv_access(self):
-        self.access_cv_platform = True
-        db.session.commit()
-    
-    def remove_cv_access(self):
-        self.access_cv_platform = False
-        db.session.commit()

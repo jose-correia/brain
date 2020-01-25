@@ -1,10 +1,9 @@
 from .. import bp
-from flask import render_template, current_app, request, redirect, url_for
+from flask import render_template, request, redirect, url_for
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.auctions_finder import AuctionsFinder
 from jeec_brain.handlers.auctions_handler import AuctionsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles
-from flask_login import current_user
 from jeec_brain.values.api_error_value import APIErrorValue
 
 

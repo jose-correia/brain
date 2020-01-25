@@ -84,17 +84,7 @@
             </div>
           </div>
           
-          Has acces to CV Platform:
           <p>
-            <label style="margin-right: 20px;">
-                <input class="with-gap" name="access_cv_platform" type="radio" value="True" {% if company.access_cv_platform is sameas true %} checked {% endif %}/>
-              <span>Yes</span>
-            </label>
-            <label>
-              <input class="with-gap" name="access_cv_platform" type="radio" value="False" {% if company.access_cv_platform is sameas false %} checked {% endif %}/>
-              <span>No</span>
-            </label>
-
             <select name="partnership_tier" class="browser-default" style="margin-left: 100px;width: 200px;display: inline-block;">
               <option value="" disabled {% if company.partnership_tier is sameas none %} selected {% endif %}>Partnership</option>
               <option value="gold" {% if company.partnership_tier=='gold' %} selected {% endif %}>Gold</option>
