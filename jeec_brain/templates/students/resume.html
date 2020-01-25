@@ -1,0 +1,74 @@
+<html>  
+  <head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/students/css/students.css">
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="/static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div class="nav-bar">
+        <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
+
+        <div class="company-dash-username right" style="color:black">{{ist_id}}</div>
+
+        <form action="{{ url_for('students_api.student_logout') }}" method="get">
+          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+        </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
+        </a>
+    </div>
+
+    <div class="section-header" >
+      <h2>Resume</h2>
+      <p>Submit your CV to the companies</p>
+    </div>
+
+    Has uploaded:
+    {{ user_has_uploaded }}
+
+    {{ error }}
+
+    <div class="dashboard-card">
+      {% if user_has_uploaded == true %}
+          <h3 class="upload-msg">Your CV has been uploaded!</h3>
+          <form action="/students/resume/file" method=get class="submited-file-form">
+              <div class="check-container">
+                  <input type="submit" name=submit value="Check" id="check" class="check-button">
+                  <label for="check"><img class="check-logo" src="/static/check.svg">Check CV</label>
+              </div>
+              
+              <div class="delete-container">
+                  <input type="submit" name=submit value="Delete" id="delete" class="delete-button">
+                  <label for="delete"><img class="delete-logo" src="/static/delete.svg">Delete CV</label>
+              </div>
+          </form>
+      {% else %}
+          <h3 class="upload-msg">Upload your CV!</h3>
+          <div class="size-warning">Maximum file size: 8 Mb</div>
+          <form method=post enctype=multipart/form-data>
+              <div class="inputfile-container">
+                  <input type=file accept=".pdf" name=file id="file" class="inputfile">
+                  <label for="file" id="file-label">Choose a file</label>
+              </div>
+              <div class="upload-container">
+                  <input type=submit name=submit value="Upload" id="submit" class="upload-button">
+                  <label for="submit"><img class="upload-logo" src="/static/upload.svg">Upload</label>
+              </div>
+          </form>
+      {% endif %}
+  </div>
+
+  </body>
+</html>
