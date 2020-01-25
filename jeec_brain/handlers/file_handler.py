@@ -32,4 +32,6 @@ class FileHandler(object):
         except Exception as e:
             logger.error(e)
 
-
+    @staticmethod
+    def check_if_exists(filename):
+        return os.path.exists(os.path.join(current_app.root_path, 'storage', filename))
