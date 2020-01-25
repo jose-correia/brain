@@ -29,11 +29,11 @@
     </div>
 
     <div class="section-header" >
-      <h2>Auctions Management</h2>
-      <p>Add a new auction</p>
+      <h2>Submissions Management</h2>
+      <p>Add a new resume submission</p>
     </div>
 
-    <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
+    <form action="{{ url_for('admin_api.resume_submissions_dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
@@ -46,51 +46,43 @@
         </blockquote>
       {% endif %}
 
-      <form class="col s12" action="/admin/new-auction" method="post">
+      <form class="col s12" action="/admin/resume_submissions/new" method="post">
         <div class="row">
           <div class="input-field col s4">
             <input id="name" name="name" type="text" class="validate" required>
             <label for="name">Name</label>
           </div>
-
-          <div class="row">
-            <div class="input-field col s2">
-              <input id="minimum_value" name="minimum_value" type="number" required>
-              <label for="minimum_value">Minimum bid amount (€)</label>
-            </div>
-          </div>
         </div>
 
-        <div class="row">
-          <div class="input-field col s8">
-            <textarea name="description" id="bio" class="materialize-textarea" maxlength="300"></textarea>
-            <label for="description">Description</label>
-          </div>
-        </div>
-
-        Auction is open:
+        Allow submission:
         <div class="row s10">
           <p class="col s2">
             <label style="margin-right: 20px;">
-              <input class="with-gap" name="registration_open" type="radio" value="True"/>
+              <input class="with-gap" name="allow_submission" type="radio" value="True"/>
               <span>Yes</span>
             </label>
             <label>
-                <input class="with-gap" name="registration_open" type="radio" value="False" checked/>
+                <input class="with-gap" name="allow_submission" type="radio" value="False" checked/>
                 <span>No</span>
             </label>
           </p>
         </div>
 
-        
-        <div class="row">
-          <div class="input-field col s3">
-            <input id="closing_date" name="closing_date" type="text" class="validate" required>
-            <label for="closing_date">Closing Date</label>
-          </div>
+        Allow download:
+        <div class="row s10">
+          <p class="col s2">
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="allow_download" type="radio" value="True"/>
+              <span>Yes</span>
+            </label>
+            <label>
+                <input class="with-gap" name="allow_download" type="radio" value="False" checked/>
+                <span>No</span>
+            </label>
+          </p>
         </div>
-    
-        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Auction</button>
+        
+        <button type="submit" method="post" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Submission</button>
       </form>
     </div>
   </body>
