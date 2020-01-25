@@ -38,14 +38,12 @@ def student_logout():
 
 
 @bp.route('/dashboard', methods=['GET'])
-@require_student_login
+#@require_student_login
 def dashboard():
-    if not current_user.accepted_terms:
-        return render_template('students/terms_conditions.html', user=current_user)
+    #if not current_user.accepted_terms:
+        #return render_template('students/terms_conditions.html', user=current_user)
 
-    student_img = TecnicoHandler.find_image(current_user.company.name)
-
-    return render_template('students/dashboard.html', student_img=student_img, user=current_user)
+    return render_template('students/dashboard.html', user=current_user)
 
 
 @bp.route('/dashboard', methods=['POST'])
