@@ -184,7 +184,11 @@ def update_activity(activity_external_id):
         registration_link=registration_link,
         registration_open=registration_open
     )
-    
+
+    # extract company names and speaker names from parameters
+    companies = request.form.getlist('company')
+    speakers = request.form.getlist('speaker')
+
     if updated_activity is None:
         return render_template('admin/activities/update_activity.html', \
             activity=activity, \
