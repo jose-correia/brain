@@ -149,6 +149,8 @@ def get_activity(activity_external_id):
 def update_activity(activity_external_id):
 
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
 
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
@@ -185,16 +187,45 @@ def update_activity(activity_external_id):
         registration_open=registration_open
     )
 
+    if company_activities:
+        for company_activity in company_activities:
+            ActivitiesHandler.delete_company_activities(company_activity)
+
+    if speaker_activities:
+        for speaker_activity in speaker_activities:
+            ActivitiesHandler.delete_speaker_activities(speaker_activity)
+
     # extract company names and speaker names from parameters
     companies = request.form.getlist('company')
     speakers = request.form.getlist('speaker')
 
+    # if company names where provided
+    if companies:
+        for name in companies:
+            company = CompaniesFinder.get_from_name(name)
+            if company is None:
+                return APIErrorValue('Couldnt find company').json(500)
+
+            company_activity = ActivitiesHandler.add_company_activity(company, activity)
+            if company_activity is None:
+                return APIErrorValue('Failed to create company activity').json(500)
+
+    if speakers:
+        for name in speakers:
+            speaker = SpeakersFinder.get_from_name(name)
+            if speaker is None:
+                return APIErrorValue('Couldnt find speaker').json(500)
+
+            speaker_activity = ActivitiesHandler.add_speaker_activity(speaker, activity)
+            if speaker_activity is None:
+                return APIErrorValue('Failed to create speaker activity').json(500)
+                
     if updated_activity is None:
         return render_template('admin/activities/update_activity.html', \
             activity=activity, \
             types=GetActivityTypesService.call(), \
-            companies=companies, \
-            speakers=speakers, \
+            companies=CompaniesFinder.get_all(), \
+            speakers=SpeakersFinder.get_all(), \
             error="Failed to update activity!")
 
     return redirect(url_for('admin_api.activities_dashboard'))
@@ -204,10 +235,20 @@ def update_activity(activity_external_id):
 @allowed_roles(['admin', 'activities_admin'])
 def delete_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
 
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
         
+    if company_activities:
+        for company_activity in company_activities:
+            ActivitiesHandler.delete_company_activities(company_activity)
+
+    if speaker_activities:
+        for speaker_activity in speaker_activities:
+            ActivitiesHandler.delete_speaker_activities(speaker_activity)
+
     if ActivitiesHandler.delete_activity(activity):
         return redirect(url_for('admin_api.activities_dashboard'))
 
