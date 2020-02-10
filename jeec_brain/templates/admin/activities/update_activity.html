@@ -4,10 +4,9 @@
     <link rel="stylesheet" href="/static/admin/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <script   src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,6 +16,11 @@
 
     <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
     
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $('select').formSelect();
+      });
+    </script>
   </head>
   <body>
       <div class="nav-bar">
@@ -58,13 +62,13 @@
               <label for="name">Name</label>
             </div>
 
-            <div class="col s2" style="margin-left: 30px;">
-              <select name="type" class="form-control browser-default">
-                <option value="{{ activity.type.name }}" disabled selected>{{ activity.type.name }}</option>
+            <div class="input-field col s2" style="margin-left: 30px;">
+              <select name="type" class="form-control">
                 {% for type in activity_types %}
                   <option value="{{ type }}">{{ type }}</option>
                 {% endfor %}
               </select>
+              <label>Activity type</label>
             </div>
           </div>
 
@@ -114,25 +118,24 @@
         </div>
 
         <div class="row">
-          <div class="col s3">
-            <select name="company" class="browser-default" id="exampleFormControlSelect2">
-              <option value="" disabled selected>Choose companies</option>
+          <div class="input-field col s3">
+            <select multiple name="company">
               {% for company in companies %}
-                <option value="company.name">{{ company.name }}</option>
+                <option value="{{ company.name }}">{{ company.name }}</option>
               {% endfor %}
             </select>
+            <label>Choose companies</label>
           </div>
-
-          <div class="col s3">
-            <select name="speaker" class="browser-default s2">
-              <option value="" disabled selected>Choose speakers</option>
+  
+          <div class="input-field col s3">
+            <select multiple name="speaker">
               {% for speaker in speakers %}
-                <option value="speaker.name">{{ speaker.name }}</option>
+                <option value="{{ speaker.name }}">{{ speaker.name }}</option>
               {% endfor %}
             </select>
+            <label>Choose speakers</label>
           </div>
         </div>
-
           
         <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save {{ activity.type.name }}</button>
       </form>
