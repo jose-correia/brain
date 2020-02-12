@@ -65,7 +65,7 @@
             <div class="input-field col s2" style="margin-left: 30px;">
               <select name="type" class="form-control">
                 {% for type in activity_types %}
-                  <option value="{{ type }}">{{ type }}</option>
+                  <option value="{{ type }}" {% if activity.type.name == type %} selected {% endif %} >{{ type }}</option>
                 {% endfor %}
               </select>
               <label>Activity type</label>
@@ -74,7 +74,7 @@
 
           <div class="row">
             <div class="input-field col s8">
-              <textarea id="description" name="description" type="text" class="validate" value="{{ activity.description }}" maxlength="300"></textarea>
+              <textarea name="description" id="bio" class="materialize-textarea" maxlength="300">{{ activity.description }}</textarea>
               <label for="description">Description</label>
             </div>
           </div>
@@ -111,7 +111,7 @@
               
           <div class="col s6">
             <div class="input-field">
-              <input id="registration_link" name="registration_link" type="url" class="validate" value="{{ activity.registration_url }}">
+              <input id="registration_link" name="registration_link" type="url" class="validate" value="{{ activity.registration_link }}">
               <label for="registration_link">Registration url</label>
             </div>
           </div>
@@ -121,7 +121,7 @@
           <div class="input-field col s3">
             <select multiple name="company">
               {% for company in companies %}
-                <option value="{{ company.name }}">{{ company.name }}</option>
+                <option value="{{ company.name }}" {% if company.id in company_activities %} selected {% endif %} >{{ company.name }}</option>
               {% endfor %}
             </select>
             <label>Choose companies</label>
@@ -130,7 +130,7 @@
           <div class="input-field col s3">
             <select multiple name="speaker">
               {% for speaker in speakers %}
-                <option value="{{ speaker.name }}">{{ speaker.name }}</option>
+                <option value="{{ speaker.name }}" {% if speaker.id in speaker_activities %} selected {% endif %} >{{ speaker.name }}</option>
               {% endfor %}
             </select>
             <label>Choose speakers</label>
