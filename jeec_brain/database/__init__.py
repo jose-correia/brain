@@ -15,6 +15,16 @@ def create_tables():
     from jeec_brain.models.speakers import Speakers
     from jeec_brain.models.users import Users
     from jeec_brain.models.teams import Teams
+
+    # Auctions
+    from jeec_brain.models.auctions import Auctions
+    from jeec_brain.models.company_auctions import CompanyAuctions
+
+    # Resumes
+    from jeec_brain.models.resume_submissions import ResumeSubmissions
+    from jeec_brain.models.company_resume_submissions import CompanyResumeSubmissions
+
+    # Event
     from jeec_brain.models.event_information import EventInformation
     db.create_all()
 

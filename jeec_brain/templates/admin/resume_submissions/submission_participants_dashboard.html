@@ -1,0 +1,94 @@
+<html>  
+  <head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div class="nav-bar">
+        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+            <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
+        </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+            <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
+        </a>
+    </div>
+
+    <div class="section-header" >
+      <h2>{{ submission.name }}</h2>
+      <p>Participants</p>
+    </div>
+
+    <form action="{{ url_for('admin_api.resume_submissions_dashboard') }}" method="get">
+        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+    </form>
+
+    <br>
+    <br>
+    <br>
+
+    <form action="/admin/resume_submissions/{{submission.external_id.hex}}/add-participant" method="post" style="margin-right: 100px;">
+        {% if not_participants|length == 0 %}
+            <p class="right">All companies are participating in this resume submission phase!</p>
+        {% else %}
+            <select name="company_external_id" class="select-css right" style="width: 200px; display: block;" required>
+                <option>Select new participant</option>
+                {% for company in not_participants %}
+                    <option value="{{ company.external_id }}">{{ company.name }}</option>
+                {% endfor %}
+            </select>
+
+            <br>
+            <br>
+            <br>   
+
+            <button type="submit" class="waves-effect blue lighten-2 btn-small right"><i class="material-icons left">save</i>Save participant</button>
+        {% endif %}
+    </form>
+    
+    <br>
+    
+    <div class="section-title center-align" style="margin-top:30px;">
+        Companies able to access this submission phase:
+    </div>
+
+    <div class="list">
+        {% if error is not none %}
+            <blockquote class="create-error">
+              {{ error }}
+            </blockquote>
+        {% else %}
+            <div class="counter right">
+                Participants: {{ submission.participants|length }}
+            </div>
+            <table class="striped">
+                <thead><tr>
+                <th>Name</th>
+                </tr></thead>
+                <tbody>
+                    {% for participant in submission.participants %}
+                    <tr>
+                        <td><b>{{ participant.name }}</b></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+  </body>
+</html>  

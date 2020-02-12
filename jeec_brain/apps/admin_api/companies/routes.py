@@ -51,17 +51,11 @@ def create_company():
     link = request.form.get('link')
     email = request.form.get('email')
     business_area = request.form.get('business_area')
-    access_cv_platform = request.form.get('access_cv_platform')
     show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
 
     if partnership_tier == "":
         partnership_tier = None
-
-    if access_cv_platform == 'True':
-        access_cv_platform = True
-    else:
-        access_cv_platform = False
 
     if show_in_website == 'True':
         show_in_website = True
@@ -73,7 +67,6 @@ def create_company():
         email=email,
         business_area=business_area,
         link=link,
-        access_cv_platform=access_cv_platform,
         show_in_website=show_in_website,
         partnership_tier=partnership_tier
     )
@@ -115,17 +108,11 @@ def update_company(company_external_id):
     link = request.form.get('link')
     email = request.form.get('email')
     business_area = request.form.get('business_area')
-    access_cv_platform = request.form.get('access_cv_platform')
     show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
 
     if partnership_tier == "":
         partnership_tier = None
-
-    if access_cv_platform == 'True':
-        access_cv_platform = True
-    else:
-        access_cv_platform = False
 
     if show_in_website == 'True':
         show_in_website = True
@@ -141,7 +128,6 @@ def update_company(company_external_id):
         email=email,
         business_area=business_area,
         link=link,
-        access_cv_platform=access_cv_platform,
         show_in_website=show_in_website,
         partnership_tier=partnership_tier
     )

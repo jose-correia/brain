@@ -29,10 +29,6 @@ class CompaniesFinder():
     @classmethod
     def get_all(cls):
         return Companies.query.order_by(Companies.name).all()
-    
-    @classmethod
-    def get_all_with_cv_access(cls):
-        return Companies.query.filter_by(access_cv_platform=True).all()
 
     @classmethod
     def get_from_external_id(cls, external_id):
@@ -61,6 +57,23 @@ class CompaniesFinder():
                     company_auctions.company_id=:company_id
                 AND 
                     auctions.id=company_auctions.auction_id;"""
+        )
+        return db_session.execute(command, {"company_id": company.id,}).fetchall()
+
+    @classmethod
+    def get_resumes_auctions(cls, company):
+        command = text (
+            """
+                SELECT
+                    resumes.external_id, resumes.name
+                FROM
+                    resumes
+                INNER JOIN
+                    company_resumes
+                ON
+                    company_resumes.company_id=:company_id
+                AND 
+                    resumes.id=company_resumes.resumes_id;"""
         )
         return db_session.execute(command, {"company_id": company.id,}).fetchall()
   
