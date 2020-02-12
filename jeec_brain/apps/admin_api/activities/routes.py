@@ -230,8 +230,6 @@ def update_activity(activity_external_id):
             types=GetActivityTypesService.call(), \
             companies=CompaniesFinder.get_all(), \
             speakers=SpeakersFinder.get_all(), \
-            company_activities=company_activities, \
-            speaker_activities=speaker_activities, \
             error="Failed to update activity!")
 
     return redirect(url_for('admin_api.activities_dashboard'))
