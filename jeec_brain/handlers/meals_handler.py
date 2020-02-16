@@ -15,7 +15,7 @@ class MealsHandler():
 
     @classmethod
     def add_company_meal(cls, company, meal, max_dish_quantity):
-        return AddCompanyMealService(company.id, meal.id, max_dish_quantity)
+        return AddCompanyMealService(company.id, meal.id, max_dish_quantity).call()
 
     @classmethod
     def add_company_dish(cls, company, dish):
