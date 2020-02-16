@@ -16,4 +16,4 @@ class Meals(ModelMixin, db.Model):
     type = db.Column(db.Enum(MealTypeEnum), nullable=False)
 
     def __repr__(self):
-        return 'Meal: {} | Day: {}'.format(self.type, self.day)
+        return 'Meal: {} | Day: {}'.format(self.type.name, self.day)
