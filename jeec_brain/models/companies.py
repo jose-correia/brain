@@ -3,6 +3,10 @@ from jeec_brain.models.model_mixin import ModelMixin
 from jeec_brain.models.users import Users
 from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.models.activities import Activities
+from jeec_brain.models.company_meals import CompanyMeals
+from jeec_brain.models.meals import Meals
+from jeec_brain.models.company_dishes import CompanyDishes
+from jeec_brain.models.dishes import Dishes
 from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
@@ -22,6 +26,14 @@ class Companies(db.Model, ModelMixin):
     activities = relationship("Activities",
         secondary="company_activities",
         secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id))
+
+    dishes = relationship("Dishes",
+        secondary="company_dishes",
+        secondaryjoin=sql.and_(CompanyDishes.dish_id == Dishes.id))
+
+    meals = relationship("Meals",
+        secondary="company_meals",
+        secondaryjoin=sql.and_(CompanyMeals.meal_id == Meals.id))
 
     users = relationship("Users", back_populates='company', lazy='dynamic', cascade="all,delete")
     

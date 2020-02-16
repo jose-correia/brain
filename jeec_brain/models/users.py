@@ -2,7 +2,10 @@ from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 from flask_login import UserMixin
 from datetime import datetime
+from jeec_brain.models.meals import Meals
 from jeec_brain.models.enums.roles_enum import RolesEnum
+from sqlalchemy.orm import relationship
+from sqlalchemy import sql
 # from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -23,6 +26,8 @@ class Users(db.Model, ModelMixin, UserMixin):
     last_auth_email_destination = db.Column(db.String(100))
 
     accepted_terms = db.Column(db.Boolean, default=False)
+
+    food_manager = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<User %r>' % self.username
