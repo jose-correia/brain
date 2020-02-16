@@ -136,12 +136,16 @@ def get_activity(activity_external_id):
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
     activity_types = GetActivityTypesService.call()
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
 
     return render_template('admin/activities/update_activity.html', \
         activity=activity, \
-        activity_types = activity_types, \
+        activity_types=activity_types, \
         companies=companies, \
         speakers=speakers, \
+        company_activities=[company.company_id for company in company_activities], \
+        speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
         error=None)
 
 @bp.route('/activity/<string:activity_external_id>', methods=['POST'])
