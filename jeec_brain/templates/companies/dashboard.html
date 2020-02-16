@@ -1,57 +1,68 @@
-<html>  
-  <head>
-    <title>JEEC|Brain</title>
-    <link rel="stylesheet" href="/static/companies/css/companies.css">
-    <link rel="stylesheet" href="/static/admin/css/global.css">
+<html>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="/static/j_logo.png">
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/companies/css/companies.css">
+  <link rel="stylesheet" href="/static/admin/css/global.css">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
-  </head>
-  <body>
-    <div class="nav-bar">
-        <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/j_logo.png">
 
-        <div class="company-dash-username right" style="color:black">{{user.username}}</div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
-        <form action="{{ url_for('companies_api.company_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+</head>
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+<body>
+  <div class="nav-bar">
+    <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
 
-    <div class="section-header" >
-      <h2>JEEC Brain</h2>
-      <p>Access the features related to the event</p>
-    </div>
+    <div class="company-dash-username right" style="color:black">{{user.username}}</div>
 
-    <img src="{{ company_logo }}" class="company-logo-company-side centered-image">
+    <form action="{{ url_for('companies_api.company_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
+    </form>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>JEEC Brain</h2>
+    <p>Access the features related to the event</p>
+  </div>
+
+  <img src="{{ company_logo }}" class="company-logo-company-side centered-image">
 
 
-    <div class="flexbox-btns">
-        {% for auction in auctions %}
-          <form action="/companies/auction/{{auction.external_id.hex}}" method="get">
-              <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ auction.name }}</button>
-          </form>
-        {% endfor %}
+  <div class="flexbox-btns">
+    {% for auction in auctions %}
+    <form action="/companies/auction/{{auction.external_id.hex}}" method="get">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ auction.name }}</button>
+    </form>
+    {% endfor %}
 
-        <form action="" method="">
-            <button class="waves-effect blue lighten-2 btn-large dashboard-btn" disabled><i class="large material-icons left">person_outline</i>Resumes</button>
-        </form>
-    </div>
+    <form action="/companies/meals" method="get">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+          class="large material-icons left">restaurant</i>Meals</button>
+    </form>
 
-    <blockquote style="margin-left: 40px;margin-top: 70px;">
-        <b>Disclaimer!</b> Usage of this platform implies the acceptance of the <b>Terms and Conditions</b>!
-    </blockquote>
-  </body>
-</html>  
+    <form action="" method="">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn" disabled><i
+          class="large material-icons left">person_outline</i>Resumes</button>
+    </form>
+  </div>
+
+  <blockquote style="margin-left: 40px;margin-top: 70px;">
+    <b>Disclaimer!</b> Usage of this platform implies the acceptance of the <b>Terms and Conditions</b>!
+  </blockquote>
+</body>
+
+</html>
