@@ -2,6 +2,7 @@ from jeec_brain.models.meals import Meals
 from jeec_brain.models.company_meals import CompanyMeals
 from jeec_brain.models.dishes import Dishes
 from jeec_brain.models.company_dishes import CompanyDishes
+from jeec_brain.models.companies import Companies
 
 
 class MealsFinder():
@@ -30,8 +31,12 @@ class MealsFinder():
         return CompanyMeals.query.join(Meals, Meals.id == CompanyMeals.meal_id).filter(Meals.external_id == external_id).all()
 
     @classmethod
-    def get_company_dishes_from_dish_id(cls, external_id):
-        return CompanyDishes.query.join(Meals, Meals.id == CompanyMeals.meal_id).filter(Meals.external_id == external_id).all()
+    def get_companies_from_meal_id(cls, meal_id):
+        return Companies.query.join(CompanyMeals, CompanyMeals.company_id == Companies.id).filter(CompanyMeals.meal_id == meal_id).all()
+
+    @classmethod
+    def get_company_dishes_from_meal_id_and_company_id(cls, external_id, company_id):
+        return CompanyDishes.query.join(Meals, Meals.id == CompanyMeals.meal_id).filter(Meals.external_id == external_id).filter(CompanyDishes.company_id == company_id).all()
 
     @classmethod
     def get_dishes_from_meal_id(cls, external_id):
