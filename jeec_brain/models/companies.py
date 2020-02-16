@@ -39,4 +39,4 @@ class Companies(db.Model, ModelMixin):
     
 
     def __repr__(self):
-        return 'Name: {} | CV_Platform access: {}'.format(self.name, self.access_cv_platform)
+        return 'Name: {}'.format(self.name)
