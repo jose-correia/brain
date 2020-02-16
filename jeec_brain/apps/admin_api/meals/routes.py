@@ -47,7 +47,6 @@ def meals_dashboard():
 def add_meal_dashboard():
     companies = CompaniesFinder.get_all()
     meal_types = GetMealTypesService.call()
-    print('type ', meal_types)
     return render_template('admin/meals/add_meal.html', \
         meal_types = meal_types, \
         companies=companies, \
@@ -204,7 +203,7 @@ def update_meal(meal_external_id):
             try:
                 max_dish_quantity = max_dish_quantities[index]
             except:
-                pass
+                max_dish_quantity = 2
 
             company_meal = MealsHandler.add_company_meal(company, meal, max_dish_quantity)
             if company_meal is None:
