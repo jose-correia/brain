@@ -17,7 +17,7 @@
   <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
   <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-
+  
   <script type="text/javascript">
     $(document).ready(function () {
       $('select').formSelect();
@@ -69,20 +69,20 @@
           </select>
           <label>Meal type</label>
         </div>
-      </div>
 
-      <div class="row s7">
         <div class="input-field col s3">
           <input id="location" name="location" type="text" class="validate" value="{{ meal.location }}">
           <label for="location">Location</label>
         </div>
+      </div>
 
-        <div class="input-field col s1">
+      <div class="row s7">
+        <div class="input-field col s2">
           <input id="day" name="day" type="text" class="validate" value="{{ meal.day }}">
           <label for="day">Day</label>
         </div>
 
-        <div class="input-field col s1">
+        <div class="input-field col s2">
           <input id="time" name="time" type="text" class="timepicker" value="{{ meal.time }}">
           <label for="time">Time</label>
         </div>
@@ -106,7 +106,7 @@
         <div class="input-field col s3">
           <select multiple name="company">
             {% for company in companies %}
-            <option value="{{ company.name }}" {% if company.id in company_activities %} selected {% endif %}>
+            <option value="{{ company.name }}" {% if company.id in company_meals %} selected {% endif %}>
               {{ company.name }}</option>
             {% endfor %}
           </select>
@@ -114,9 +114,10 @@
         </div>
       </div>
 
+      Insert the meal dishes:<br>
       <div id="dishes">
-        {% for dish in dishes %}
-        <div class="row">
+        {% for dish in dishes|reverse %}
+        <div class="row" id="dish{{ loop.index0 }}">
           <div class="input-field col s3">
             <input id="dish_name" name="dish_name" type="text" class="validate" value="{{ dish.name }}">
             <label for="dish_name">Dish Name</label>
@@ -154,8 +155,7 @@
 
 
   <form action="/admin/meal/{{meal.external_id.hex}}/delete" method="get">
-    <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete
-      {{ meal.type.name }}</button>
+    <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete {{ meal.type.name }}</button>
   </form>
   </div>
 
@@ -163,6 +163,8 @@
     (function ($) {
       $(function () {
 
+        $('#day').datepicker();
+        $('#registration_day').datepicker();
         $('.timepicker').timepicker();
         $('.parallax').parallax();
 
@@ -170,14 +172,17 @@
     })(jQuery);
 
     $(document).ready(function(){
-      var i = 1;
+      var i = "{{ dishes|length }}" - 1;
       $('#add').click(function(){
         i++;
         $('#dishes').append('<div class="row" id="dish'+i+'"><div class="input-field col s3"><input id="dish_name'+i+'" name="dish_name" type="text" class="validate" required><label for="dish_name'+i+'">Dish Name</label></div><div class="input-field col s3"><input id="dish_description'+i+'" name="dish_description" type="text" class="validate"><label for="dish_description'+i+'">Dish Discription</label></div></div>');
       });
       $('#remove').click(function(){
-        $("#dish"+ i +"").remove();
-        i--;
+        if(i > 0)
+        {
+          $("#dish"+ i +"").remove();
+          i--;
+        }
       });
     });
   </script>
