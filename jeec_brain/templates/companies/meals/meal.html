@@ -56,26 +56,49 @@
       {{ error }}
     </blockquote>
     {% else %}
-    <div class="counter right">
-      Dishes: {{ dishes|length }}
-    </div>
 
-    <form class="col s12" action="/companies/meal" method="post">
-      {% for dish in dishes %}
-      <div class="row">
-        <div class="col s3">
-          {{ dish.name }} / {{dish.description}}
-        </div>
-
-        <div class="input-field col s2">
-          <input id="quantity{{ loop.index0 }}" name="quantity" type="number" class="validate">
-          <label for="quantity{{ loop.index0 }}">Number of dishes:</label>
-        </div>
+    <form class="col s12" action="/companies/meal/{{ meal.external_id.hex }}" method="post">
+      <div class="sub_section-title left-align" style="margin-bottom: 20px;">
+        Number of Dishes Available: {{ max_dish_quantity }}
       </div>
-      {% endfor %}
+      <table class="striped">
+        <thead>
+          <tr>
+            <th>Dish</th>
+            <th>Description</th>
+            <th>Number of Dishes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dish in dishes %}
+          <tr>
+            <td>
+              {{ dish.name }}
+            </td>
+  
+            <td>
+              {{ dish.description }}
+            </td>
+  
+            <td>
+              <input id="dish_quantity{{ loop.index0 }}" name="dish_quantity" type="number" class="validate s2">
+              <input type="hidden" name="dish" value="{{ dish.external_id }}">
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn left"><i class="material-icons left">save</i>Save</button>
     </form>
     {% endif %}
   </div>
+
+  <script>
+    $(document).ready(function(){
+      var max_dishes = "{{ max_dish_quantity }}";
+      
+    });
+  </script>
 </body>
 
 </html>

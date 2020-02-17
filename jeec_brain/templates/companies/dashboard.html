@@ -49,11 +49,13 @@
     </form>
     {% endfor %}
 
+    {% if user.food_manager is sameas true %}
     <form action="/companies/meals" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
           class="large material-icons left">restaurant</i>Meals</button>
     </form>
-
+    {% endif %}
+    
     <form action="" method="">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn" disabled><i
           class="large material-icons left">person_outline</i>Resumes</button>

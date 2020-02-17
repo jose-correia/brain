@@ -116,7 +116,7 @@
 
       Insert the meal dishes:<br>
       <div id="dishes">
-        {% for dish in dishes|reverse %}
+        {% for dish in dishes %}
         <div class="row" id="dish{{ loop.index0 }}">
           <div class="input-field col s3">
             <input id="dish_name" name="dish_name" type="text" class="validate" value="{{ dish.name }}">
