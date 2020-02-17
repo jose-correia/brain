@@ -37,12 +37,19 @@ def get_meal(meal_external_id):
     if meal is None:
         return APIErrorValue('Couldnt find meal').json(400)
 
-    # get dishes from meal
-    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
-
     # check if company is allowed in meal
     if current_user.company not in MealsFinder.get_companies_from_meal_id(meal.id):
         return APIErrorValue('Company not allowed in this meal').json(400)
+
+    # get dishes from meal
+    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+
+    if dishes is None:
+        return render_template('companies/meals/meal.html', \
+            meal=meal, \
+            dishes=None,
+            error='No dishes found.', \
+            user=current_user)
 
     return render_template('companies/meals/meal.html', \
         meal=meal, \
