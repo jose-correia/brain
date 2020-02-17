@@ -22,7 +22,7 @@ def meals_dashboard():
     if day is not None:
         search = day
         meals_list = MealsFinder.get_meals_from_day(day)
-    
+
     # handle parameter requests
     elif len(search_parameters) != 0:
         search_parameters = request.args
@@ -34,7 +34,7 @@ def meals_dashboard():
     else:
         search = None
         meals_list = MealsFinder.get_all_meals()
-    
+
     if meals_list is None or len(meals_list) == 0:
         error = 'No results found'
         return render_template('admin/meals/meals_dashboard.html', meals=None, meal_types=meal_types, error=error, search=search, role=current_user.role.name)
@@ -265,3 +265,23 @@ def delete_meal(meal_external_id):
 
     else:
         return render_template('admin/meals/update_meal.html', meal=meal, error="Failed to delete meal!")
+
+
+@bp.route('/meal/<string:meal_external_id>/dishes', methods=['GET'])
+@allowed_roles(['admin', 'companies_admin'])
+def meal_dishes(meal_external_id):
+    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
+
+    if meal is None:
+        return APIErrorValue('Couldnt find meal').json(500)
+
+    company_meals = MealsFinder.get_company_meals_from_meal_id(meal_external_id)
+    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+    company_dishes = MealsFinder.get_company_dishes_from_meal_id(meal.id)
+
+    return render_template('admin/meals/meal_dishes.html', \
+        meal=meal, \
+        companies=companies, \
+        company_meals=[company.company_id for company in company_meals], \
+        dishes=dishes, \
+        error=None)
