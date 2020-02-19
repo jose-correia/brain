@@ -67,8 +67,7 @@
           <th>Day</th>
           <th>Time</th>
           <th>Location</th>
-          <th>Registration Day</th>
-          <th>Registration Time</th>
+          <th>Choose Dishes</th>
         </tr>
       </thead>
       <tbody>
@@ -97,20 +96,16 @@
           </td>
 
           <td>
-            {% if meal.registration_day is not none %}
-            {{ meal.registration_day }}
-            {% endif %}
-          </td>
-
-          <td>
-            {% if meal.registration_time is not none %}
-            {{ meal.registration_time }}
+            {% if open_registrations[loop.index0] is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
             {% endif %}
           </td>
 
           <td>
             <form action="/companies/meal/{{meal.external_id.hex}}" method="get">
-              <button title="Choose Dishes" class="waves-effect waves-light btn-floating"><i
+              <button title="Choose Dishes" class="waves-effect waves-light btn-floating" {% if open_registrations[loop.index0] is sameas false %}disabled{% endif %}><i
                   class="material-icons left">room_service</i>Choose Dishes</button>
             </form>
           </td>
