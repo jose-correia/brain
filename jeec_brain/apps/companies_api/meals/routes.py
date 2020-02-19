@@ -18,11 +18,21 @@ def meals_dashboard():
 
     meals_list = current_user.company.meals
 
+    open_registrations = []
+
     if meals_list is None or len(meals_list) == 0:
         error = 'No meals found'
-        return render_template('admin/meals/meals_dashboard.html', meals=None, error=error, company=current_user.company)
+        return render_template('admin/meals/meals_dashboard.html', meals=None, open_registrations=None, error=error, company=current_user.company)
 
-    return render_template('companies/meals/meals_dashboard.html', meals=meals_list, error=None, company=current_user.company)
+    for meal in meals_list:
+        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+
+        if registration_time < datetime.now():
+            open_registrations.append(False)
+        else:
+            open_registrations.append(True)
+
+    return render_template('companies/meals/meals_dashboard.html', meals=meals_list, open_registrations=open_registrations, error=None, company=current_user.company)
 
 
 @bp.route('/meal/<string:meal_external_id>', methods=['GET'])
@@ -50,18 +60,23 @@ def get_meal(meal_external_id):
     # get dishes from meal
     dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
 
+    # get company dishes
+    company_dishes = MealsFinder.get_company_dishes_from_meal_id_and_company_id(meal.id, current_user.company_id)
+
     if dishes is None:
         return render_template('companies/meals/meal.html', \
             meal=meal, \
             max_dish_quantity=None, \
             dishes=None, \
+            company_dishes=None, \
             error='No dishes found.', \
             user=current_user)
 
     return render_template('companies/meals/meal.html', \
         meal=meal, \
         max_dish_quantity=company_meal.max_dish_quantity, \
-        dishes=dishes,
+        dishes=dishes, \
+        company_dishes=company_dishes, \
         error=None, \
         user=current_user)
 
@@ -74,10 +89,11 @@ def choose_dishes(meal_external_id):
     
     # get meal
     meal = MealsFinder.get_meal_from_external_id(meal_external_id)
+    
     registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
 
     # check if date past registration date
-    if registration_time > datetime.now():
+    if registration_time < datetime.now():
         return APIErrorValue('Past registration time. Cant choose meal.').json(400)
 
     # eliminate previous company dishes
