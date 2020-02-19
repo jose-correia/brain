@@ -8,6 +8,7 @@ from jeec_brain.services.meals.delete_dish_service import DeleteDishService
 from jeec_brain.services.meals.delete_meal_service import DeleteMealService
 from jeec_brain.services.meals.update_company_meals_service import UpdateCompanyMealsService
 from jeec_brain.services.meals.update_meal_service import UpdateMealService
+from jeec_brain.services.meals.update_dish_service import UpdateDishService
 from jeec_brain.services.meals.delete_company_dishes_service import DeleteCompanyDishesService
 
 
@@ -52,3 +53,7 @@ class MealsHandler():
     @classmethod
     def update_meal(cls, meal, **kwargs):
         return UpdateMealService(meal, kwargs).call()
+
+    @classmethod
+    def update_dish(cls, dish, **kwargs):
+        return UpdateMealService(dish, kwargs).call()

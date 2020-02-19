@@ -7,6 +7,7 @@ from jeec_brain.services.meals.get_meal_types_service import GetMealTypesService
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.models.enums.meal_type_enum import MealTypeEnum
+from datetime import datetime
 from flask_login import current_user
 
 
@@ -61,8 +62,8 @@ def create_meal():
     location = request.form.get('location')
     day = request.form.get('day')
     time = request.form.get('time')
-    registration_day = request.form.get('day')
-    registration_time = request.form.get('time')
+    registration_day = request.form.get('registration_day')
+    registration_time = request.form.get('registration_time')
 
     if meal_type not in GetMealTypesService.call():
         return 'Wrong meal type provided', 404
@@ -99,7 +100,7 @@ def create_meal():
             try:
                 max_dish_quantity = max_dish_quantities[index]
             except:
-                pass
+                max_dish_quantity = 2
 
             company_meal = MealsHandler.add_company_meal(company, meal, max_dish_quantity)
             if company_meal is None:
@@ -163,8 +164,8 @@ def update_meal(meal_external_id):
     location = request.form.get('location')
     day = request.form.get('day')
     time = request.form.get('time')
-    registration_day = request.form.get('day')
-    registration_time = request.form.get('time')
+    registration_day = request.form.get('registration_day')
+    registration_time = request.form.get('registration_time')
 
     if meal_type not in GetMealTypesService.call():
         return 'Wrong meal type provided', 404
@@ -181,17 +182,17 @@ def update_meal(meal_external_id):
         registration_time=registration_time
     )
 
+    previous_companies = [company_meal.company_id for company_meal in company_meals]
+
     if company_meals:
         for company_meal in company_meals:
             MealsHandler.delete_company_meal(company_meal)
 
-    if dishes:
-        for dish in dishes:
-            MealsHandler.delete_dish(dish)
-
     # extract company names and max dish quantities from parameters
     companies = request.form.getlist('company')
     max_dish_quantities = request.form.getlist('max_dish_quantity')
+
+    updated_companies = []
 
     # if company names where provided
     if companies:
@@ -199,6 +200,8 @@ def update_meal(meal_external_id):
             company = CompaniesFinder.get_from_name(name)
             if company is None:
                 return APIErrorValue('Couldnt find company').json(500)
+
+            updated_companies.append(company.id)
 
             try:
                 max_dish_quantity = max_dish_quantities[index]
@@ -208,10 +211,24 @@ def update_meal(meal_external_id):
             company_meal = MealsHandler.add_company_meal(company, meal, max_dish_quantity)
             if company_meal is None:
                 return APIErrorValue('Failed to create company meal').json(500)
-    
+
+    # delete dishes from deleted companies
+    for company_id in previous_companies:
+        if company_id not in updated_companies:
+            company_dishes = MealsFinder.get_company_dishes_from_meal_id_and_company_id(meal.id, company_id)
+
+            if company_dishes:
+                for company_dish in company_dishes:
+                    MealsHandler.delete_company_dish(company_dish)
+
     # extract dish names and descriptions from parameters
     dish_names = request.form.getlist('dish_name')
     dish_descriptions = request.form.getlist('dish_description')
+
+    previous_dish_names = [dish.name for dish in dishes]
+    previous_dish_descriptions = [dish.description for dish in dishes]
+
+    updated_dishes = []
 
     # if dishes names where provided
     if dish_names:
@@ -223,15 +240,51 @@ def update_meal(meal_external_id):
                 dish_description = dish_descriptions[index]
             except:
                 pass
-
-            meal_dish = MealsHandler.create_dish(
+            
+            #if dish name already exists
+            if name in previous_dish_names:
+                #if dish already exists do nothing
+                if dish_description == previous_dish_descriptions[previous_dish_names.index(name)]:
+                    updated_dishes.append(dishes[previous_dish_names.index(name)])
+                    continue
+                
+                #if descrition is changed, update it
+                updated_dish = MealsHandler.update_dish(
+                    dish=dishes[previous_dish_names.index(name)],
+                    name = name,
+                    description = dish_description,
+                    meal_id = meal.id
+                )
+                if updated_dish is None:
+                    return APIErrorValue('Failed to update dish').json(500)
+                
+                updated_dishes.append(updated_dish)
+                continue
+            
+            #if dish doesnt exist, create it
+            created_dish = MealsHandler.create_dish(
                 name = name,
                 description = dish_description,
                 meal_id = meal.id
             )
-            if meal_dish is None:
+
+            if created_dish is None:
                 return APIErrorValue('Failed to create dish').json(500)
-                
+
+    #delete non updated dishes
+    if dishes:
+        for dish in dishes:
+            if(dish in updated_dishes):
+                continue
+
+            company_dishes = MealsFinder.get_company_dishes_from_dish_id(dish.id)
+
+            if company_dishes:
+                for company_dish in company_dishes:
+                    MealsHandler.delete_company_dish(company_dish)
+
+            MealsHandler.delete_dish(dish)
+
     if updated_meal is None:
         return render_template('admin/meals/update_meal.html', \
             meal=meal, \
@@ -258,6 +311,12 @@ def delete_meal(meal_external_id):
 
     if dishes:
         for dish in dishes:
+            company_dishes = MealsFinder.get_company_dishes_from_dish_id(dish.id)
+
+            if company_dishes:
+                for company_dish in company_dishes:
+                    MealsHandler.delete_company_dish(company_dish)
+
             MealsHandler.delete_dish(dish)
 
     if MealsHandler.delete_meal(meal):
@@ -275,13 +334,33 @@ def meal_dishes(meal_external_id):
     if meal is None:
         return APIErrorValue('Couldnt find meal').json(500)
 
-    company_meals = MealsFinder.get_company_meals_from_meal_id(meal_external_id)
+    company_dishes = MealsFinder.get_dishes_per_company_from_meal_id(meal.id)
     dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
-    company_dishes = MealsFinder.get_company_dishes_from_meal_id(meal.id)
+    dishes_per_companies = {}
+
+    for company_dish in company_dishes:
+        try:
+            dishes_per_companies[company_dish[0]].append([company_dish[1], company_dish[2]])
+        except KeyError:
+            dishes_per_companies.update({company_dish[0]:[]})
+            dishes_per_companies[company_dish[0]].append([company_dish[1], company_dish[2]])
+
+    total_dishes = []
+
+    for dish in dishes:
+        choosen_dishes = MealsFinder.get_company_dishes_from_dish_id(dish.id)
+        total_dishes.append(sum([choosen_dish.dish_quantity for choosen_dish in choosen_dishes]))
+
+    registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+    closed = False
+
+    # check if date past registration date
+    if registration_time < datetime.now():
+        closed = True
 
     return render_template('admin/meals/meal_dishes.html', \
         meal=meal, \
-        companies=companies, \
-        company_meals=[company.company_id for company in company_meals], \
         dishes=dishes, \
-        error=None)
+        dishes_per_companies=dishes_per_companies, \
+        total_dishes=total_dishes, \
+        closed=closed)

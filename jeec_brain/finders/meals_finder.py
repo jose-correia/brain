@@ -3,6 +3,8 @@ from jeec_brain.models.company_meals import CompanyMeals
 from jeec_brain.models.dishes import Dishes
 from jeec_brain.models.company_dishes import CompanyDishes
 from jeec_brain.models.companies import Companies
+from jeec_brain.database import db_session
+from sqlalchemy import text
 
 
 class MealsFinder():
@@ -43,8 +45,12 @@ class MealsFinder():
         return CompanyDishes.query.join(Dishes, CompanyDishes.dish_id == Dishes.id).filter(Dishes.meal_id == meal_id).filter(CompanyDishes.company_id == company_id).all()
 
     @classmethod
-    def get_company_dishes_from_meal_id(cls, meal_id)
+    def get_company_dishes_from_meal_id(cls, meal_id):
         return CompanyDishes.join(Dishes, Dishes.id == CompanyDishes.dish_id).filter(Dishes.meal_id == meal_id)
+    
+    @classmethod
+    def get_company_dishes_from_dish_id(cls, dish_id):
+        return CompanyDishes.query.filter(CompanyDishes.dish_id == dish_id)
     
     @classmethod
     def get_dishes_from_meal_id(cls, external_id):
@@ -53,3 +59,15 @@ class MealsFinder():
     @classmethod
     def get_dishes_from_dish_external_id(cls, external_id):
         return Dishes.query().filter_by(external_id=external_id).first()
+
+    @classmethod
+    def get_dishes_per_company_from_meal_id(cls, meal_id):
+        command = text (
+            """
+                SELECT c.name, d.name, SUM(cd.dish_quantity) as number_of_dishes
+                FROM companies as c, dishes as d, company_dishes as cd
+                WHERE c.id = cd.company_id AND d.id = cd.dish_id AND d.meal_id=:meal_id
+                GROUP BY c.name, d.name
+                ORDER BY c.name, d.name;"""
+        )
+        return db_session.execute(command, {"meal_id": meal_id,}).fetchall()
