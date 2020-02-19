@@ -154,7 +154,7 @@
   </div>
 
 
-  <form action="/admin/meal/{{meal.external_id.hex}}/delete" method="get">
+  <form action="/admin/meal/{{meal.external_id.hex}}/delete" method="get" onsubmit="return confirm('Are you sure you want to delete this meal?');">
     <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete {{ meal.type.name }}</button>
   </form>
   </div>

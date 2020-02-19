@@ -1,169 +1,106 @@
-<html>  
-  <head>
-    <title>JEEC|Brain</title>
-    <link rel="stylesheet" href="/static/admin/css/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<html>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
-  </head>
-  <body>
-    <div class="nav-bar">
-        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
-    <div class="section-header">
-      <h2>Meals Management</h2>
-      <p>Add, edit or delete meals</p>
-    </div>
+</head>
 
-    <form action="{{ url_for('admin_api.dashboard') }}" method="get" class="row s12">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
     </form>
 
-    {% if role in ['admin', 'companies_admin'] %}
-    <form action="{{ url_for('admin_api.add_meal_dashboard') }}" method="get">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Meal</button>
-    </form>
-    {% endif %}
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
 
-    <div class="section-title center-align" style="margin-top:90px;">
-        Search
-    </div>
+  <div class="section-header">
+    <h2>Meals Management</h2>
+    <p>Dishes choosen by the companies</p>
+  </div>
 
-    <div class="center-align" style="margin-top:10px;">
-        by type
-    </div>
+  <form action="{{ url_for('admin_api.meals_dashboard') }}" method="get" class="row s12">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
 
-    <div class="search-meal-buttons center-align">
-        <a href="/admin/meals?type=Breakfast">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Breakfast</button>
-        </a>
-    
-        <a href="/admin/meals?type=Lunch">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Lunch</button>
-        </a>
-    
-        <a href="/admin/meals?type=Dinner">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Dinner</button>
-        </a>
-    
-        <a href="/admin/meals?type=Snack">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Snack</button>
-        </a>
-    </div>
+  <div class="section-title center-align" style="margin-top:50px;">
+    List of dishes per company
+  </div>
 
-    <div class="search-bar">
-      <form action="/admin/meals" class="col s12" method="get">
-        <div class="row">
-          <div class="input-field col s8">
-            <input class="col s12" id="day" name="day" type="text" class="validate" required>
-            
-            <label for="day">{% if search is not none %}{{ search }}{% else %}search day{% endif %}</label>
-          </div>
-          <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
-        </div>
-      </form>
+  {% if closed == true %}
+  <blockquote class="create-error">
+    Meal Closed
+  </blockquote>
+  {% endif %}
 
-      {% if search %}
-        <a class="clear-search" href="{{ url_for('admin_api.meals_dashboard') }}">clear search results</a>
-      {% endif %}
-    </div>
+  <div class="list">
 
-    <div class="section-title center-align" style="margin-top:50px;">
-        List of meals
-    </div>
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Company</th>
+          {% for dish in dishes %}
+          <th>{{ dish.name }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for company, company_dishes in dishes_per_companies.items() %}
+        <tr>
+          <td>
+            {{ company }}
+          </td>
 
-    <div class="list">
-      {% if error is not none %}
-        <blockquote class="create-error">
-          {{ error }}
-        </blockquote>
-      {% else %}
-        <div class="counter right">
-          Meals: {{ meals|length }}
-        </div>
+          {% set dish_found = {'test': False} %}
+          {% for dish in dishes %}
+          <td>
+            {% if dish_found.update({'test': False}) %} {% endif %}
+            {% for company_dish in company_dishes %}
+            {% if dish.name == company_dish[0] %}
+            {{ company_dish[1] }}
+            {% if dish_found.update({'test': True}) %} {% endif %}
+            {% endif %}
+            {% endfor %}
+            {% if not dish_found.test %}
+            -
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+        <tr>
+          <td>
+            <b>Total</b>
+          </td>
+          {% for total in total_dishes %}
+          <td>
+            <b>{{ total }}</b>
+          </td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
 
-        <table class="striped">
-            <thead><tr>
-              <th>Type</th>
-              <th>Day</th>
-              <th>Time</th>
-              <th>Location</th>
-              <th>Registration Day</th>
-              <th>Registration Time</th>
-            </tr></thead>
-            <tbody>
-                {% for meal in meals %}
-                  <tr>
-                    <td>
-                        {{ meal.type.name }}
-                    </td>
-
-                    <td>
-                      {% if meal.day is not none %}
-                        {{ meal.day }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if meal.time is not none %}
-                        {{ meal.time }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if meal.location is not none %}
-                        {{ meal.location }}
-                      {% endif %}
-                    </td>
-                    
-                    <td>
-                      {% if meal.registration_day is not none %}
-                        {{ meal.registration_day }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if meal.registration_time is not none %}
-                        {{ meal.registration_time }}
-                      {% endif %}
-                    </td>
-
-                    {% if role in ['admin', 'companies_admin'] %}
-                    <td>
-                      <form action="/admin/meal/{{meal.external_id.hex}}" method="get">
-                        <button title="Edit meal" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
-                      </form>
-                    </td>
-                    {% endif %}
-                    <td>
-                      <form action="/admin/meal/{{meal.external_id.hex}}" method="get">
-                        <button title="Dishes info" class="waves-effect waves-light btn-floating"><i class="material-icons left">room_service</i>Info</button>
-                      </form>
-                    </td>
-                  </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      {% endif %} 
-    </div>
-  </body>
-</html>  
+</html>
