@@ -1,13 +1,15 @@
 from .. import bp
+import uuid
 from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.finders.activities_finder import ActivitiesFinder
+from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
+from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
-from jeec_brain.services.activities.get_activity_types_service import GetActivityTypesService
+from jeec_brain.handlers.activity_types_handler import ActivityTypesHandler
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
-from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
 from flask_login import current_user
 
 
@@ -15,9 +17,15 @@ from flask_login import current_user
 @bp.route('/activities', methods=['GET'])
 @allow_all_roles
 def activities_dashboard():
-    activity_types = GetActivityTypesService.call()
     search_parameters = request.args
     name = request.args.get('name')
+
+    # get default event
+    event = EventsFinder.get_from_parameters({"default": True})
+
+    if event is None or len(event) == 0:
+        error = 'No default event found! Please set a default event in the menu "Events"'
+        return render_template('admin/activities/activities_dashboard.html', event=None, activities=None, error=error, search=search, role=current_user.role.name)
 
     # handle search bar requests
     if name is not None:
@@ -28,19 +36,105 @@ def activities_dashboard():
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
-
-        activities_list = ActivitiesFinder.get_from_parameters(search_parameters)
+        
+        if 'type' in search_parameters:
+            type_external_id = search_parameters['type']
+            activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(type_external_id))
+            activities_list = ActivitiesFinder.get_all_from_type(activity_type)
 
     # request endpoint with no parameters should return all activities
     else:
         search = None
-        activities_list = ActivitiesFinder.get_all()
+        activities_list = event[0].activities
     
-    if activities_list is None or len(activities_list) == 0:
+    if not activities_list:
         error = 'No results found'
-        return render_template('admin/activities/activities_dashboard.html', activities=None, activity_types=activity_types, error=error, search=search, role=current_user.role.name)
+        return render_template('admin/activities/activities_dashboard.html', event=event[0], activities=None, error=error, search=search, role=current_user.role.name)
 
-    return render_template('admin/activities/activities_dashboard.html', activities=activities_list, activity_types=activity_types, error=None, search=search, role=current_user.role.name)
+    return render_template('admin/activities/activities_dashboard.html', event=event[0], activities=activities_list, error=None, search=search, role=current_user.role.name)
+
+
+# Activities Types routes
+@bp.route('/activities/types', methods=['GET'])
+@allow_all_roles
+def activity_types_dashboard():
+    event = EventsFinder.get_from_parameters({"default": True})
+    
+    if event is None or len(event) == 0:
+        error = 'No default event found! Please set a default event in the menu "Events"'
+        return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
+    
+    return render_template('admin/activities/activity_types_dashboard.html', event=event[0], error=None, role=current_user.role.name)
+
+
+@bp.route('/new-activity-type', methods=['GET'])
+@allowed_roles(['admin', 'activities_admin'])
+def add_activity_type_dashboard():
+    event = EventsFinder.get_from_parameters({"default": True})
+    if event is None:
+        return APIErrorValue('No default event found! Please set a default event in the menu "Events"').json(500)
+
+    return render_template('admin/activities/add_activity_type.html', event=event[0], error=None)
+
+
+@bp.route('/new-activity-type', methods=['POST'])
+@allowed_roles(['admin', 'activities_admin'])
+def create_activity_type():
+    name = request.form.get('name')
+    description = request.form.get('description')
+    price = request.form.get('price')
+
+    event = EventsFinder.get_from_parameters({"default": True})
+    if event is None:
+        return APIErrorValue('No default event found! Please set a default event in the menu "Events"').json(500)
+
+    activity_type = ActivityTypesHandler.create_activity_type(
+            event=event[0],
+            name=name,
+            description=description,
+            price=price
+        )
+
+    if activity_type is None:
+        return render_template('admin/activities/add_activity_type.html',
+            event=event,
+            error="Failed to create activity type! Maybe it already exists :)")
+
+    return redirect(url_for('admin_api.activity_types_dashboard'))
+
+
+@bp.route('/activities/types/<string:activity_type_external_id>', methods=['GET'])
+@allowed_roles(['admin', 'activities_admin'])
+def get_activity_type(activity_type_external_id):
+    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+
+    return render_template('admin/activities/update_activity_type.html', \
+        activity_type=activity_type,
+        error=None)
+
+
+@bp.route('/activities/types/<string:activity_type_external_id>', methods=['POST'])
+@allowed_roles(['admin', 'activities_admin'])
+def update_activity_type(activity_type_external_id):
+    name = request.form.get('name')
+    description = request.form.get('description')
+    price = request.form.get('price')
+
+    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+
+    updated_activity_type = ActivityTypesHandler.update_activity_type(
+        activity_type=activity_type,
+        name=name,
+        description=description,
+        price=price
+    )
+
+    if updated_activity_type is None:
+        return render_template('admin/activities/update_activity_type.html',
+            activity_type=activity_type,
+            error="Failed to update activity type!")
+
+    return redirect(url_for('admin_api.activity_types_dashboard'))
 
 
 @bp.route('/new-activity', methods=['GET'])
@@ -48,7 +142,14 @@ def activities_dashboard():
 def add_activity_dashboard():
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
-    activity_types = GetActivityTypesService.call()
+
+    event = EventsFinder.get_from_parameters({"default": True})
+    
+    if event is None or len(event) == 0:
+        error = 'No default event found! Please set a default event in the menu "Events"'
+        return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
+    
+    activity_types = event[0].activity_types
 
     return render_template('admin/activities/add_activity.html', \
         activity_types = activity_types, \
@@ -60,9 +161,7 @@ def add_activity_dashboard():
 @bp.route('/new-activity', methods=['POST'])
 @allowed_roles(['admin', 'activities_admin'])
 def create_activity():
-    # extract form parameters
     name = request.form.get('name')
-    activity_type = request.form.get('type')
     description = request.form.get('description')
     location = request.form.get('location')
     day = request.form.get('day')
@@ -70,21 +169,19 @@ def create_activity():
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
 
-    if activity_type not in GetActivityTypesService.call():
-        return 'Wrong activity type provided', 404
-    else:
-        activity_type = ActivityTypeEnum[activity_type]
-
     if registration_open == 'True':
         registration_open = True
     else:
         registration_open = False
 
-    # create new activity
+    activity_type_external_id = request.form.get('type')
+    activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
+
     activity = ActivitiesHandler.create_activity(
             name=name,
             description=description,
-            type=activity_type,
+            activity_type=activity_type,
+            event=activity_type.event,
             location=location,
             day=day,
             time=time,
@@ -135,7 +232,13 @@ def get_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
-    activity_types = GetActivityTypesService.call()
+
+    event = EventsFinder.get_from_parameters({"default": True})
+    if event is None or len(event) == 0:
+        error = 'No default event found! Please set a default event in the menu "Events"'
+        return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
+    
+    activity_types = event[0].activity_types
     company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
     speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
 
@@ -148,10 +251,10 @@ def get_activity(activity_external_id):
         speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
         error=None)
 
+
 @bp.route('/activity/<string:activity_external_id>', methods=['POST'])
 @allowed_roles(['admin', 'activities_admin'])
 def update_activity(activity_external_id):
-
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
     speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
@@ -159,9 +262,7 @@ def update_activity(activity_external_id):
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
 
-    # extract form parameters
     name = request.form.get('name')
-    activity_type = request.form.get('type')
     description = request.form.get('description')
     location = request.form.get('location')
     day = request.form.get('day')
@@ -169,19 +270,17 @@ def update_activity(activity_external_id):
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
 
-    if activity_type not in GetActivityTypesService.call():
-        return 'Wrong activity type provided', 404
-    else:
-        activity_type = ActivityTypeEnum[activity_type]
-
     if registration_open == 'True':
         registration_open = True
     else:
         registration_open = False
 
+    activity_type_external_id = request.form.get('type')
+    activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
+
     updated_activity = ActivitiesHandler.update_activity(
         activity=activity,
-        type=activity_type,
+        activity_type=activity_type,
         name=name,
         description=description,
         location=location,
@@ -225,9 +324,17 @@ def update_activity(activity_external_id):
                 return APIErrorValue('Failed to create speaker activity').json(500)
                 
     if updated_activity is None:
+        event = EventsFinder.get_from_parameters({"default": True})
+    
+        if event is None or len(event) == 0:
+            error = 'No default event found! Please set a default event in the menu "Events"'
+            return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
+        
+        activity_types = event[0].activity_types
+
         return render_template('admin/activities/update_activity.html', \
             activity=activity, \
-            types=GetActivityTypesService.call(), \
+            types=activity_types, \
             companies=CompaniesFinder.get_all(), \
             speakers=SpeakersFinder.get_all(), \
             error="Failed to update activity!")

@@ -13,12 +13,12 @@ from jeec_brain.services.activities.delete_speaker_activities_service import Del
 class ActivitiesHandler():
 
     @classmethod
-    def create_activity(cls, **kwargs):
-        return CreateActivityService(kwargs=kwargs).call()
+    def create_activity(cls, event, activity_type, **kwargs):
+        return CreateActivityService(event=event, activity_type=activity_type, kwargs=kwargs).call()
 
     @classmethod
-    def update_activity(cls, activity, **kwargs):
-        return UpdateActivityService(activity=activity, kwargs=kwargs).call()
+    def update_activity(cls, activity, activity_type, **kwargs):
+        return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs=kwargs).call()
 
     @classmethod
     def delete_activity(cls, activity):

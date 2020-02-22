@@ -1,6 +1,5 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
-from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -16,13 +15,14 @@ class Activities(ModelMixin, db.Model):
     day = db.Column(db.String(20))
     time = db.Column(db.String(10))
 
-    type = db.Column(db.Enum(ActivityTypeEnum), nullable=False)
-
     registration_open = db.Column(db.Boolean, default=False)
     registration_link = db.Column(db.String(100))
+
+    activity_type = relationship('ActivityTypes', back_populates="activities", uselist=False)
+    activity_type_id = db.Column(db.Integer, db.ForeignKey('activity_types.id'))
+
+    event = relationship('Events', back_populates="activities", uselist=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
    
     def __repr__(self):
         return 'Type: {}  |  Name: {}'.format(self.type, self.name)
-
-    def open_registration(self):
-        self.registration_open = True

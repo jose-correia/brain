@@ -30,22 +30,22 @@
     </div>
 
     <div class="section-header">
-      <h2>Companies Management</h2>
-      <p>Add, edit or delete companies</p>
+      <h2>Events Management</h2>
+      <p>Add or edit event editions</p>
     </div>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
     
-    {% if role in ['admin', 'companies_admin'] %}
-    <form action="{{ url_for('admin_api.add_company_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Company</button>
+    {% if role in ['admin'] %}
+    <form action="{{ url_for('admin_api.add_event_dashboard') }}" method="get">
+        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Event</button>
     </form>
     {% endif %}
 
     <div class="section-title center-align" style="margin-top:90px;">
-        List of Companies
+        List of Events
     </div>
 
     <div class="search-bar">
@@ -61,7 +61,7 @@
       </form>
 
       {% if search %}
-        <a class="clear-search" href="{{ url_for('admin_api.companies_dashboard') }}">clear search results</a>
+        <a class="clear-search" href="{{ url_for('admin_api.events_dashboard') }}">clear search results</a>
       {% endif %}
     </div>
 
@@ -72,67 +72,66 @@
         </blockquote>
       {% else %}
         <div class="counter right">
-          Companies: {{ companies|length }}
+          Events: {{ events|length }}
         </div>
 
         <table class="striped">
             <thead><tr>
               <th>Name</th>
-              <th>Business</th>
+              <th>Start date</th>
+              <th>End date</th>
               <th>Email</th>
-              <th>Website</th>
-              <th>Partnership</th>
-              <th>Show in Website</th>
+              <th>Location</th>
+              <th>Facebook event</th>
+              <th>Default event</th>
             </tr></thead>
             <tbody>
-                {% for company in companies %}
+                {% for event in events %}
                   <tr>
-                    <td><b>{{ company.name }}</b></td>
+                    <td><b>{{ event.name }}</b></td>
 
                     <td>
-                      {% if company.business_area %}
-                        {{ company.business_area }}
+                      {% if event.start_date %}
+                        {{ event.start_date }}
                       {% endif %}
                     </td>
 
                     <td>
-                      {% if company.email %}
-                        {{ company.email }}
+                      {% if event.end_date %}
+                        {{ event.end_date }}
                       {% endif %}
                     </td>
                     
                     <td>
-                      {% if company.link %}
-                        <a href="{{ company.link }}">visit website</a>
+                      {% if event.email %}
+                        {{ event.email }}
                       {% endif %}
                     </td>
 
                     <td>
-                      {% if company.partnership_tier == 'gold' %}
-                        <div class="tier-indicator gold"></div>
-                      {% elif company.partnership_tier=='silver' %}
-                        <div class="tier-indicator silver"></div>
-                      {% elif company.partnership_tier=='bronze' %}
-                        <div class="tier-indicator bronze"></div>
-                      {% elif company.partnership_tier=='main_sponsor' %}
-                        <div class="tier-indicator icon-red"><i class="material-icons">star</i></div>
-                      {% elif company.partnership_tier=='sponsor' %}
-                        <div class="tier-indicator icon-red"><i class="material-icons">attach_money</i></div>
+                      {% if event.location %}
+                        {{ event.location }}
+                      {% endif %}
+                    </td>
+                    
+                    <td>
+                      {% if event.facebook_event_link %}
+                        <a href="{{ event.facebook_event_link }}">Facebook event</a>
                       {% endif %}
                     </td>
 
                     <td>
-                      {% if company.show_in_website is sameas true %}
+                      {% if event.default is sameas true %}
                         <i class="material-icons icon-green">check</i>
                       {% else %}
                         <i class="material-icons icon-red">clear</i>
                       {% endif %}
                     </td>
                     
-                    {% if role in ['admin', 'companies_admin'] %}
+                    {% if role in ['admin'] %}
                     <td>
-                      <form action="/admin/company/{{company.external_id.hex}}" method="get">
-                        <button title="Edit company" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                      <form action="/admin/events/{{event.external_id.hex}}" method="get">
+                        <button title="Edit event" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
                       </form>
                     </td>
                     {% endif %}

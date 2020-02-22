@@ -87,19 +87,19 @@
                         <td><b>{{ member.name }}</b></td>
         
                         <td>
-                        {% if member.ist_id is not none %}
+                        {% if member.ist_id %}
                             {{ member.ist_id }}
                         {% endif %}
                         </td>
         
                         <td>
-                        {% if member.email is not none %}
+                        {% if member.email %}
                             {{ member.email }}
                         {% endif %}
                         </td>
         
                         <td>
-                        {% if member.linkedin_url is not none %}
+                        {% if member.linkedin_url %}
                             <a href="{{ member.linkedin_url }}">{{ member.linkedin_url }}</a>
                         {% endif %}
                         </td>

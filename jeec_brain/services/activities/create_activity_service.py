@@ -1,5 +1,7 @@
 import logging
 from jeec_brain.models.activities import Activities
+from jeec_brain.models.activity_types import ActivityTypes
+from jeec_brain.models.events import Events
 from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
@@ -7,8 +9,10 @@ logger = logging.getLogger(__name__)
 
 class CreateActivityService():
 
-    def __init__(self, kwargs: Dict):
+    def __init__(self, event: Events, activity_type: ActivityTypes, kwargs: Dict):
         self.kwargs = kwargs
+        self.event = event
+        self.activity_type = activity_type
 
     def call(self) -> Optional[Activities]:
         
@@ -17,5 +21,18 @@ class CreateActivityService():
         if not activity:
             return None
 
-        return activity
+        try:
+            self.activity_type.activities.append(activity)
+            self.activity_type.save()
+        except Exception:
+            logger.exception('Failed to add new activity to type')
+            return None
 
+        try:
+            self.event.activities.append(activity)
+            self.event.save()
+        except Exception:
+            logger.exception('Failed to add new activity to event')
+            return None
+
+        return activity

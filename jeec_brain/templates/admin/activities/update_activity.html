@@ -36,7 +36,7 @@
     </div>
 
     <div class="section-header" >
-        <h2>{{ activity.type.name }}</h2>
+        <h2>{{ activity.activity_type.name }}</h2>
         <p>Edit information</p>
     </div>
 
@@ -65,7 +65,7 @@
             <div class="input-field col s2" style="margin-left: 30px;">
               <select name="type" class="form-control">
                 {% for type in activity_types %}
-                  <option value="{{ type }}" {% if activity.type.name == type %} selected {% endif %} >{{ type }}</option>
+                  <option value="{{ type.external_id }}" {% if activity.activity_type is sameas type %} selected="selected" {% endif %}>{{ type.name }}</option>
                 {% endfor %}
               </select>
               <label>Activity type</label>
@@ -74,7 +74,7 @@
 
           <div class="row">
             <div class="input-field col s8">
-              <textarea name="description" id="bio" class="materialize-textarea" maxlength="300">{{ activity.description }}</textarea>
+              <textarea name="description" id="description" class="materialize-textarea" maxlength="300" value="{{ activity.description }}">{{ activity.description }}</textarea>
               <label for="description">Description</label>
             </div>
           </div>
@@ -137,13 +137,13 @@
           </div>
         </div>
           
-        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save {{ activity.type.name }}</button>
+        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Activity</button>
       </form>
     </div>
     
 
     <form action="/admin/activity/{{activity.external_id.hex}}/delete" method="get">
-      <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete {{ activity.type.name }}</button>
+      <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete Activity</button>
     </form>
     <script>
       (function($){
