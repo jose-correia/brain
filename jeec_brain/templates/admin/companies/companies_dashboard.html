@@ -114,8 +114,10 @@
                         <div class="tier-indicator silver"></div>
                       {% elif company.partnership_tier=='bronze' %}
                         <div class="tier-indicator bronze"></div>
-                        {% elif company.partnership_tier=='main_sponsor' %}
+                      {% elif company.partnership_tier=='main_sponsor' %}
                         <div class="tier-indicator icon-red"><i class="material-icons">star</i></div>
+                      {% elif company.partnership_tier=='sponsor' %}
+                        <div class="tier-indicator icon-red"><i class="material-icons">attach_money</i></div>
                       {% endif %}
                     </td>
 

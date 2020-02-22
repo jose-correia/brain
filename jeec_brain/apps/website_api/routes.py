@@ -8,9 +8,6 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.finders.teams_finder import TeamsFinder
 
-# Services
-from jeec_brain.services.activities.get_activity_types_service import GetActivityTypesService
-
 # Values
 from jeec_brain.values.activities_value import ActivitiesValue
 from jeec_brain.values.companies_value import CompaniesValue
@@ -19,14 +16,12 @@ from jeec_brain.values.teams_value import TeamsValue
 from jeec_brain.values.api_error_value import APIErrorValue
 
 from jeec_brain.apps.auth.wrappers import requires_client_auth
-from jeec_brain.models.enums.activity_type_enum import ActivityTypeEnum
 
 
 # Activities routes
 @bp.route('/activities', methods=['GET'])
 @requires_client_auth
 def get_activities():
-    activity_types = GetActivityTypesService.call()
     search_parameters = request.args
     name = request.args.get('name')
 
