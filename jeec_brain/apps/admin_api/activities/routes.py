@@ -234,18 +234,21 @@ def get_activity(activity_external_id):
     speakers = SpeakersFinder.get_all()
 
     event = EventsFinder.get_from_parameters({"default": True})
-    
     if event is None or len(event) == 0:
         error = 'No default event found! Please set a default event in the menu "Events"'
         return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
     
     activity_types = event[0].activity_types
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
 
     return render_template('admin/activities/update_activity.html', \
         activity=activity, \
-        activity_types = activity_types, \
+        activity_types=activity_types, \
         companies=companies, \
         speakers=speakers, \
+        company_activities=[company.company_id for company in company_activities], \
+        speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
         error=None)
 
 
