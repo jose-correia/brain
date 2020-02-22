@@ -94,7 +94,7 @@
                       </b></td>
                       
                       <td>
-                        {% if speaker.company is not none %}
+                        {% if speaker.company %}
                           {% if speaker.company_link is not none %}
                             <a href="{{ speaker.company_link }}">
                               {{ speaker.company }}
@@ -106,13 +106,13 @@
                       </td>
       
                       <td>
-                        {% if speaker.position is not none %}
+                        {% if speaker.position %}
                           {{ speaker.position }}
                         {% endif %}
                       </td>
       
                       <td>
-                        {% if speaker.country is not none %}
+                        {% if speaker.country %}
                           {{ speaker.country }}
                         {% endif %}
                       </td>
@@ -124,7 +124,7 @@
                       </td>
                       
                       <td>
-                        {% if speaker.linkedin_url is not none %}
+                        {% if speaker.linkedin_url %}
                           <a href="{{ speaker.linkedin_url }}">Check profile</a>
                         {% endif %}
                       </td>
