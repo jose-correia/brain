@@ -54,7 +54,7 @@ class MealsFinder():
     
     @classmethod
     def get_dishes_from_meal_id(cls, external_id):
-        return Dishes.query().join(Meals, Meals.id == Dishes.meal_id).filter(Meals.external_id == external_id).all()
+        return Dishes.query().join(Meals, Meals.id == Dishes.meal_id).filter(Meals.external_id == external_id).order_by(Dishes.type).all()
 
     @classmethod
     def get_dishes_from_dish_external_id(cls, external_id):
