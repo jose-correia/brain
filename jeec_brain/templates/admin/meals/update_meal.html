@@ -127,6 +127,14 @@
             <input id="dish_description" name="dish_description" type="text" class="validate" value="{{ dish.description }}">
             <label for="dish_description">Dish Discription</label>
           </div>
+
+          <div class="input-field col s3" id="dish_type_select">
+            <select name="dish_type" class="browser-default">
+              {% for dish_type in dish_types %}
+              <option value="{{ dish_type }}" {% if dish_type == dish.type.name %}selected{% endif %}>{{ dish_type }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
         {% else %}
         <div class="row">
@@ -139,6 +147,14 @@
             <input id="dish_description" name="dish_description" type="text" class="validate">
             <label for="dish_description">Dish Discription</label>
           </div>
+        </div>
+
+        <div class="input-field col s3" id="dish_type_select">
+          <select name="dish_type" class="browser-default">
+            {% for dish_type in dish_types %}
+            <option value="{{ dish_type }}" {% if dish_type == 'MainCourse' %}selected{% endif %}>{{ dish_type }}</option>
+            {% endfor %}
+          </select>
         </div>
         {% endfor %}
       </div>
@@ -176,6 +192,7 @@
       $('#add').click(function(){
         i++;
         $('#dishes').append('<div class="row" id="dish'+i+'"><div class="input-field col s3"><input id="dish_name'+i+'" name="dish_name" type="text" class="validate" required><label for="dish_name'+i+'">Dish Name</label></div><div class="input-field col s3"><input id="dish_description'+i+'" name="dish_description" type="text" class="validate"><label for="dish_description'+i+'">Dish Discription</label></div></div>');
+        $('#dish'+i).append($('#dish_type_select:first').clone().prop('id', 'dish_type_select'+i));
       });
       $('#remove').click(function(){
         if(i > 0)

@@ -102,7 +102,7 @@
 
       <div class="row">
         <div class="input-field col s3">
-          <select multiple name="company">
+          <select multiple id="company_select" name="company">
             {% for company in companies %}
             <option value="{{ company.name }}">{{ company.name }}</option>
             {% endfor %}
@@ -123,14 +123,27 @@
             <input id="dish_description" name="dish_description" type="text" class="validate">
             <label for="dish_description">Dish Discription</label>
           </div>
+
+          <div class="input-field col s3" id="dish_type_select">
+            <select name="dish_type" class="browser-default">
+              {% for dish_type in dish_types %}
+              <option value="{{ dish_type }}" {% if dish_type == 'MainCourse' %}selected{% endif %}>{{ dish_type }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
       </div>
 
-      <div class="row" style="margin-left: 5px">
-        <button id="add" type="button" title="add_dish" class="waves-effect green waves-light btn-floating"><i class="material-icons left">add</i>Add dish</button>
-        <button id="remove" type="button" title="remove_dish" class="waves-effect red waves-light btn-floating"><i class="material-icons left">remove</i>Remove dish</button>
-      </div>
+      <button id="add" type="button" title="add_dish" class="waves-effect green waves-light btn-floating"><i class="material-icons left">add</i>Add dish</button>
+      <button id="remove" type="button" title="remove_dish" class="waves-effect red waves-light btn-floating"><i class="material-icons left">remove</i>Remove dish</button>
       
+      <div id="selected_companies">
+        <tr>
+          <th>Company</th>
+          <th>Maximum number of dishes</th>
+        </tr>
+      </div>
+
       <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Meal</button>
     </form>
   </div>
@@ -149,12 +162,39 @@
 
     $(document).ready(function(){
       var i = 1;
+      var j = 0;
+      var companies = [];
+      var previous_companies = [];
+
+      $("#company_select").on('change', function() {
+        companies = $('#company_select').formSelect('getSelectedValues');
+
+        for(j=0;j<companies.length;j++)
+        {
+          if(!previous_companies.includes(companies[j]))
+          {
+            console.log('add' + companies[j]);
+            $('#selected_companies').append("<tr id=quantity_"+companies[j].replace(" ","_")+"><th>"+companies[j]+'</th><th><input id="'+j+'" name="max_dish_quantity" type="number" min="0" class="validate"></th></tr>');
+          }
+        }
+        for(j=0;j<previous_companies.length;j++)
+        {
+          if(!companies.includes(previous_companies[j]))
+          {
+            console.log('remove' + previous_companies[j]);
+            $("#quantity_"+previous_companies[j].replace(" ","_")).remove();
+          }
+        }
+        previous_companies = companies;
+      });
+
       $('#add').click(function(){
         i++;
         $('#dishes').append('<div class="row" id="dish'+i+'"><div class="input-field col s3"><input id="dish_name'+i+'" name="dish_name" type="text" class="validate" required><label for="dish_name'+i+'">Dish Name</label></div><div class="input-field col s3"><input id="dish_description'+i+'" name="dish_description" type="text" class="validate"><label for="dish_description'+i+'">Dish Discription</label></div></div>');
+        $('#dish'+i).append($('#dish_type_select').clone().prop('id', 'dish_type_select'+i));
       });
       $('#remove').click(function(){
-        $("#dish"+ i +"").remove();
+        $("#dish"+ i).remove();
         i--;
       });
     });
