@@ -59,20 +59,22 @@
     </blockquote>
     {% else %}
 
-    <form class="col s12" action="/companies/meal/{{ meal.external_id.hex }}" method="post">
+    <form id="dish_form" class="col s12" action="/companies/meal/{{ meal.external_id.hex }}" method="post">
       <div class="sub_section-title left-align" style="margin-bottom: 20px;">
-        Number of Dishes Available: <a>{{ max_dish_quantity }}</a>
+        Number of Dishes Available: {{ max_dish_quantity }}
       </div>
-      <table class="striped">
+      {% for dish_type in dish_types %}
+      <table class="striped" id="table_{{ dish_type }}">
         <thead>
           <tr>
-            <th>Dish</th>
+            <th>{% if dish_type == 'MainCourse' %}Main Course{% else %}{{ dish_type }}{% endif %}</th>
             <th>Description</th>
-            <th>Number of Dishes</th>
+            <th>Quantity</th>
           </tr>
         </thead>
         <tbody>
           {% for dish in dishes %}
+          {% if dish.type.name == dish_type %}
           <tr>
             <td>
               {{ dish.name }}
@@ -83,14 +85,19 @@
             </td>
   
             <td>
-              <input id="dish_quantity{{ loop.index0 }}" name="dish_quantity" type="number" min="0" value="{% for company_dish in company_dishes %}{% if company_dish.dish_id == dish.id %}{{ company_dish.dish_quantity }}{% endif %}{% endfor %}" class="validate s2">
-              <input type="hidden" name="dish" value="{{ dish.external_id }}">
+              <input id="dish_quantity{{ loop.index0 }}" name="dish_quantity_{{ dish_type }}" type="number" min="0" value="{% for company_dish in company_dishes %}{% if company_dish.dish_id == dish.id %}{{ company_dish.dish_quantity }}{% endif %}{% endfor %}" class="validate s2">
+              <input type="hidden" name="dish_{{ dish_type }}" value="{{ dish.external_id }}">
             </td>
           </tr>
+          {% endif %}
           {% endfor %}
         </tbody>
       </table>
-      <button type="submit" class="waves-effect blue lighten-2 btn add-btn left"><i class="material-icons left">save</i>Save</button>
+      {% if not loop.last %}
+      <br><br>
+      {% endif %}
+      {% endfor %}
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn left" ><i class="material-icons left">save</i>Save</button>
     </form>
     {% endif %}
   </div>
@@ -98,14 +105,44 @@
   <script>
     $(document).ready(function(){
       var max_dishes = "{{ max_dish_quantity }}";
+      var dish_types = [];
+      var dishes_type_size = "{{ dish_types|length }}"; 
+      var error = new Array(parseInt(dishes_type_size)).fill(0);
+      
+      {% for dish_type in dish_types %}
+      dish_types.push("{{ dish_type }}");
+      {% endfor %}
 
-      for(i=0;i<max_dishes;i++)
-      {
-        $("#dish_quantity"+i).on("input", function() {
-          alert("Change to " + this.value);
-        });
-      }
+      $("#dish_form").submit(function(e){
+        var sum = 0;
+        var number = 0;
+        var i = 0;
+
+        for(i=0;i<dish_types.length;i++)
+        {
+          sum = 0;
+          console.log(dish_types[i]);
+          $('#table_'+dish_types[i]+' input[name ="dish_quantity"]').each(function(){
+            number = $(this).val();
+            if(!isNaN(parseInt(number)))
+            {
+              sum += parseInt(number);
+            }
+          });
+          if(sum > max_dishes)
+          {
+            console.log('error');
+            if(error[i] == 0)
+            {
+              error[i] = 1;
+              $('#table_'+dish_types[i]).append('<blockquote class="create-error">Number of ' + dish_types[i] + 's must be smaller then ' + max_dishes + '!</blockquote>');
+            }
+            e.preventDefault();
+          }
+        }
+      });
     });
+
   </script>
 </body>
 
