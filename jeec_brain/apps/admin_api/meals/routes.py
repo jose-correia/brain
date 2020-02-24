@@ -103,7 +103,7 @@ def create_meal():
             try:
                 max_dish_quantity = int(max_dish_quantities[index])                    
             except:
-                max_dish_quantity = 2
+                max_dish_quantity = None
 
             company_meal = MealsHandler.add_company_meal(company, meal, max_dish_quantity)
             if company_meal is None:
@@ -223,7 +223,7 @@ def update_meal(meal_external_id):
             try:
                 max_dish_quantity = max_dish_quantities[index]
             except:
-                max_dish_quantity = 2
+                max_dish_quantity = None
 
             company_meal = MealsHandler.add_company_meal(company, meal, max_dish_quantity)
             if company_meal is None:

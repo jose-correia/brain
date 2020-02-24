@@ -60,9 +60,12 @@
     {% else %}
 
     <form id="dish_form" class="col s12" action="/companies/meal/{{ meal.external_id.hex }}" method="post">
+      {% if max_dish_quantity is not none %}
       <div class="sub_section-title left-align" style="margin-bottom: 20px;">
         Number of Dishes Available: {{ max_dish_quantity }}
       </div>
+      {% endif %}
+
       {% for dish_type in dish_types %}
       <table class="striped" id="table_{{ dish_type }}">
         <thead>
@@ -129,7 +132,7 @@
               sum += parseInt(number);
             }
           });
-          if(sum > max_dishes)
+          if(sum > max_dishes && !isNaN(parseInt(max_dishes)))
           {
             console.log('error');
             if(error[i] == 0)

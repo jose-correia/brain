@@ -26,12 +26,15 @@ def meals_dashboard():
         return render_template('admin/meals/meals_dashboard.html', meals=None, open_registrations=None, error=error, company=current_user.company)
 
     for meal in meals_list:
-        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+        try:
+            registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
 
-        if registration_time < datetime.now():
+            if registration_time < datetime.now():
+                open_registrations.append(False)
+            else:
+                open_registrations.append(True)
+        except:
             open_registrations.append(False)
-        else:
-            open_registrations.append(True)
 
     return render_template('companies/meals/meals_dashboard.html', meals=meals_list, open_registrations=open_registrations, error=None, company=current_user.company)
 
@@ -98,12 +101,15 @@ def choose_dishes(meal_external_id):
     # get meal
     meal = MealsFinder.get_meal_from_external_id(meal_external_id)
     
-    registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+    try:
+        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
 
-    # check if date past registration date
-    if registration_time < datetime.now():
+        # check if date past registration date
+        if registration_time < datetime.now():
+            return APIErrorValue('Past registration time. Cant choose meal.').json(400)
+    except:
         return APIErrorValue('Past registration time. Cant choose meal.').json(400)
-
+        
     # eliminate previous company dishes
     company_dishes = MealsFinder.get_company_dishes_from_meal_id_and_company_id(meal.id, current_user.company_id)
 
@@ -125,15 +131,24 @@ def choose_dishes(meal_external_id):
         dish_ids_by_type = request.form.getlist('dish_'+dish_type)
         dish_quantities_by_type = request.form.getlist('dish_quantity_'+dish_type)
 
-        try:
-            if sum(list(map(int, filter(None, dish_quantities_by_type)))) > company_meal.max_dish_quantity:
-                return APIErrorValue('Number of ' + dish_type + 's over maximum value!').json(500)
-        except Exception as e:
-            return APIErrorValue('Quantities type not int' + str(e))
+        if dish_ids_by_type is None or dish_quantities_by_type is None:
+            continue
+        
+        if company_meal.max_dish_quantity is not None:
+            try:
+                if sum(list(map(int, filter(None, dish_quantities_by_type)))) > company_meal.max_dish_quantity:
+                    return APIErrorValue('Number of ' + dish_type + 's over maximum value!').json(500)
+            except Exception as e:
+                return APIErrorValue('Quantities type not int, '+str(e)).json(500)
+            
+            for dish_quantity_by_type in dish_quantities_by_type:
+                if dish_quantity_by_type is not None and not isinstance(dish_quantity_by_type,int):
+                    return APIErrorValue('Quantities type not int').json(500)
 
         dish_ids += dish_ids_by_type
         dish_quantities += dish_quantities_by_type
-        
+
+
     if dish_ids:
         for index, dish_id in enumerate(dish_ids):
             dish = MealsFinder.get_dishes_from_dish_external_id(dish_id)
