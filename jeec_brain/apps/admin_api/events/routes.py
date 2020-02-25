@@ -2,7 +2,9 @@ from .. import bp
 from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.handlers.events_handler import EventsHandler
 from jeec_brain.finders.events_finder import EventsFinder
+from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles
+from jeec_brain.services.files.delete_image_service import DeleteImageService
 from flask_login import current_user
 
 
@@ -99,8 +101,10 @@ def create_event():
                 EventsHandler.update_event(event=default_event, default=False)
 
     if request.files:
-        image_file = request.files['event_image']
-        mobile_image_file =request.files['event_mobile_image']
+        image_file = request.files['event_image'] if request.files.get('event_image') else None
+        mobile_image_file = request.files['event_mobile_image'] if request.files.get('event_mobile_image') else None
+        blueprint_file = request.files['event_blueprint'] if request.files.get('event_blueprint') else None
+        schedule_file = request.files['event_schedule'] if request.files.get('event_schedule') else None
 
         if image_file:
             result, msg = EventsHandler.upload_image(image_file, str(event.external_id))
@@ -115,12 +119,24 @@ def create_event():
 
             if result == False:
                 EventsHandler.delete_event(event)
-
-                for extension in current_app.config['ALLOWED_IMAGES']:
-                    image_name = name.lower().replace(' ', '_') + f'.{extension}'
-                    DeleteImageService(image_name, 'static/events/images').call()
-
                 return render_template('admin/events/add_event.html', error=msg)
+
+        if blueprint_file:
+            image_name = f'{event.external_id}_blueprint'
+            result, msg = EventsHandler.upload_image(blueprint_file, image_name)
+
+            if result == False:
+                EventsHandler.delete_event(event)
+                return render_template('admin/events/add_event.html', error=msg)
+
+        if schedule_file:
+            image_name = f'{event.external_id}_schedule'
+            result, msg = EventsHandler.upload_image(blueprint_file, image_name)
+
+            if result == False:
+                EventsHandler.delete_event(event)
+                return render_template('admin/events/add_event.html', error=msg)
+
     return redirect(url_for('admin_api.events_dashboard'))
 
 
@@ -135,8 +151,12 @@ def get_event(event_external_id):
     logo = EventsHandler.find_image(image_name=str(event.external_id))
     mobile_image_name = f'{event.external_id}_mobile'
     logo_mobile = EventsHandler.find_image(image_name=mobile_image_name)
-    return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, error=None)
+    schedule_name = f'{event.external_id}_schedule'
+    schedule = EventsHandler.find_image(image_name=schedule_name)
+    blueprint_name = f'{event.external_id}_blueprint'
+    blueprint = EventsHandler.find_image(image_name=blueprint_name)
 
+    return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=None)
 
 @bp.route('/events/<string:event_external_id>', methods=['POST'])
 @allowed_roles(['admin'])
@@ -150,7 +170,6 @@ def update_event(event_external_id):
     start_date = request.form.get('start_date')
     end_date = request.form.get('end_date')
     default = request.form.get('default')
-    date = request.form.get('date')
     email = request.form.get('email')
     location = request.form.get('location')
     facebook_event_link = request.form.get('facebook_event_link')
@@ -180,9 +199,13 @@ def update_event(event_external_id):
     logo = EventsHandler.find_image(image_name=str(event.external_id))
     mobile_image_name = f'{event.external_id}_mobile'
     logo_mobile = EventsHandler.find_image(image_name=mobile_image_name)
-    
+    schedule_name = f'{event.external_id}_schedule'
+    schedule = EventsHandler.find_image(image_name=schedule_name)
+    blueprint_name = f'{event.external_id}_blueprint'
+    blueprint = EventsHandler.find_image(image_name=blueprint_name)
+
     if updated_event is None:
-        return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, error=None)
+        return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
 
     # there can only be one default
     if default:
@@ -194,18 +217,32 @@ def update_event(event_external_id):
     current_app.logger.error(request.files)
 
     if request.files:
-        image_file = request.files['event_image']
-        mobile_image_file =request.files['event_mobile_image']
+        image_file = request.files['event_image'] if request.files.get('event_image') else None
+        mobile_image_file = request.files['event_mobile_image'] if request.files.get('event_mobile_image') else None
+        blueprint_file = request.files['event_blueprint'] if request.files.get('event_blueprint') else None
+        schedule_file = request.files['event_schedule'] if request.files.get('event_schedule') else None
 
         if image_file:
             result, msg = EventsHandler.upload_image(image_file, str(updated_event.external_id))
             if result == False:
-                return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, error=msg)
+                return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
 
         if mobile_image_file:
             image_name = f'{updated_event.external_id}_mobile'
             result, msg = EventsHandler.upload_image(mobile_image_file, image_name)
             if result == False:
-                return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, error=msg)
+                return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
+
+        if blueprint_file:
+            image_name = f'{updated_event.external_id}_blueprint'
+            result, msg = EventsHandler.upload_image(blueprint_file, image_name)
+            if result == False:
+                return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
+
+        if schedule_file:
+            image_name = f'{updated_event.external_id}_schedule'
+            result, msg = EventsHandler.upload_image(schedule_file, image_name)
+            if result == False:
+                return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
 
     return redirect(url_for('admin_api.events_dashboard'))
