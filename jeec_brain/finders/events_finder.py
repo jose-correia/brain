@@ -29,3 +29,7 @@ class EventsFinder():
         search = "%{}%".format(name)
         return Events.query().filter(Events.name.ilike(search)).all()
     
+    @classmethod
+    def get_default_event(cls):
+        return Events.query().filter_by(default=True).first()
+    
