@@ -63,6 +63,7 @@
               <th>Name</th>
               <th>Description</th>
               <th>Minimum bid value</th>
+              <th>Highest bid</th>
               <th>Open</th>
               <th>Closing Date</th>
             </tr></thead>
@@ -79,6 +80,14 @@
 
                     <td>
                         {{ auction.minimum_value }} €
+                    </td>
+
+                    <td>
+                      {% if auction.highest_bid is sameas none %}
+                      No bids
+                      {% else %}
+                      {{ auction.highest_bid }} €
+                      {% endif %}
                     </td>
                     
                     <td>

@@ -12,6 +12,9 @@ from jeec_brain.values.api_error_value import APIErrorValue
 @allowed_roles(['admin'])
 def auctions_dashboard():
     auctions_list = AuctionsFinder.get_all()
+
+    for auction in auctions_list:
+        auction.highest_bid = AuctionsFinder.get_auction_highest_bid(auction)
     
     if auctions_list is None:
         error = 'No results found'
