@@ -27,24 +27,24 @@ class EventsHandler():
                 event_name = event_name.lower().replace(' ', '_')
 
                 filename = f'{event_name}.{extension}'
-                DeleteImageService(filename, 'static/events').call()
+                DeleteImageService(filename, 'static/events/images').call()
 
                 filename = f'{event_name}_mobile.{extension}'
-                DeleteImageService(filename, 'static/events').call()
+                DeleteImageService(filename, 'static/events/images').call()
 
                 filename = f'{event_name}_blueprint.{extension}'
-                DeleteImageService(filename, 'static/events').call()
+                DeleteImageService(filename, 'static/events/images').call()
 
                 filename = f'{event_name}_schedule.{extension}'
-                DeleteImageService(filename, 'static/events').call()
+                DeleteImageService(filename, 'static/events/images').call()
             
             return DeleteEventService(event)
         return False
 
     @classmethod
     def upload_image(cls, file, image_name):
-        return UploadImageService(file, image_name, 'static/events').call()
+        return UploadImageService(file, image_name, 'static/events/images').call()
 
     @classmethod
     def find_image(cls, image_name):
-        return FindImageService(image_name, 'static/events').call()
+        return FindImageService(image_name, 'static/events/images').call()

@@ -15,6 +15,7 @@ from jeec_brain.values.companies_value import CompaniesValue
 from jeec_brain.values.speakers_value import SpeakersValue
 from jeec_brain.values.teams_value import TeamsValue
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.values.events_value import EventsValue
 
 # Handlers
 from jeec_brain.handlers.events_handler import EventsHandler
@@ -147,22 +148,9 @@ def get_teams():
 
     return TeamsValue(teams_list).json(200)
 
-@bp.route('/blueprint', methods=['GET'])
+@bp.route('/event', methods=['GET'])
 @requires_client_auth
-def get_blueprint():
+def get_event():
     event = EventsFinder.get_default_event()
 
-    blueprint_name = f'{event.external_id}_blueprint'
-    blueprint = EventsHandler.find_image(image_name=blueprint_name)
-
-    return blueprint
-
-@bp.route('/schedule', methods=['GET'])
-@requires_client_auth
-def get_schedule():
-    event = EventsFinder.get_default_event()
-
-    schedule_name = f'{event.external_id}_schedule'
-    schedule = EventsHandler.find_image(image_name=schedule_name)
-
-    return schedule
+    return EventsValue(event).json(200)

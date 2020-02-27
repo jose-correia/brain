@@ -101,10 +101,10 @@ def create_event():
                 EventsHandler.update_event(event=default_event, default=False)
 
     if request.files:
-        image_file = request.files['event_image'] if request.files.get('event_image') else None
-        mobile_image_file = request.files['event_mobile_image'] if request.files.get('event_mobile_image') else None
-        blueprint_file = request.files['event_blueprint'] if request.files.get('event_blueprint') else None
-        schedule_file = request.files['event_schedule'] if request.files.get('event_schedule') else None
+        image_file = request.files.get('event_image', None) 
+        mobile_image_file = request.files.get('event_mobile_image', None)
+        blueprint_file = request.files.get('event_blueprint', None)
+        schedule_file = request.files.get('event_schedule', None)
 
         if image_file:
             result, msg = EventsHandler.upload_image(image_file, str(event.external_id))
@@ -217,10 +217,10 @@ def update_event(event_external_id):
     current_app.logger.error(request.files)
 
     if request.files:
-        image_file = request.files['event_image'] if request.files.get('event_image') else None
-        mobile_image_file = request.files['event_mobile_image'] if request.files.get('event_mobile_image') else None
-        blueprint_file = request.files['event_blueprint'] if request.files.get('event_blueprint') else None
-        schedule_file = request.files['event_schedule'] if request.files.get('event_schedule') else None
+        image_file = request.files.get('event_image', None) 
+        mobile_image_file = request.files.get('event_mobile_image', None)
+        blueprint_file = request.files.get('event_blueprint', None)
+        schedule_file = request.files.get('event_schedule', None)
 
         if image_file:
             result, msg = EventsHandler.upload_image(image_file, str(updated_event.external_id))
