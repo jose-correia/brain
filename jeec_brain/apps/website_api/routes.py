@@ -153,4 +153,4 @@ def get_teams():
 def get_event():
     event = EventsFinder.get_default_event()
 
-    return EventsValue(event).json(200)
+    return EventsValue([event]).json(200)
