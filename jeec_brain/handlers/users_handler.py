@@ -8,13 +8,14 @@ from jeec_brain.services.users.generate_credentials_service import GenerateCrede
 class UsersHandler():
 
     @classmethod
-    def create_user(cls, username, role, company_id=None, email=None, password=None):
+    def create_user(cls, username, role, company_id=None, email=None, password=None, food_manager=None):
         return CreateUserService(
             company_id=company_id,
             username=username,
             email=email,
             password=password,
-            role=role
+            role=role,
+            food_manager=food_manager
         ).call()
 
     @classmethod

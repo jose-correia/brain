@@ -1,0 +1,205 @@
+<html>
+
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('select').formSelect();
+    });
+  </script>
+</head>
+
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
+    </form>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Meals Management</h2>
+    <p>Add a new meal</p>
+  </div>
+
+  <form action="{{ url_for('admin_api.meals_dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  <br>
+
+  <div class="create-form">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% endif %}
+
+    <form class="col s12" action="/admin/new-meal" method="post">
+      <div class="row">
+        <div class="input-field col s2">
+          <select name="type" class="form-control">
+            {% for type in meal_types %}
+            <option value="{{ type }}">{{ type }}</option>
+            {% endfor %}
+          </select>
+          <label>Meal type</label>
+        </div>
+
+        <div class="input-field col s3">
+          <input id="location" name="location" type="text" class="validate">
+          <label for="location">Location</label>
+        </div>
+      </div>
+
+      <div class="row s7">
+        <div class="input-field col s2">
+          <input id="day" name="day" type="text" class="validate">
+          <label for="day">Day</label>
+        </div>
+
+        <div class="input-field col s2">
+          <input id="time" name="time" type="text" class="timepicker">
+          <label for="time">Time</label>
+        </div>
+      </div>
+
+      <div class="row s7">
+        <div class="input-field col s2">
+          <input id="registration_day" name="registration_day" type="text" class="validate">
+          <label for="registration_day">Registration Day</label>
+        </div>
+
+        <div class="input-field col s2">
+          <input id="registration_time" name="registration_time" type="text" class="timepicker">
+          <label for="registration_time">Registration Time</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s3">
+          <select multiple id="company_select" name="company">
+            {% for company in companies %}
+            <option value="{{ company.name }}">{{ company.name }}</option>
+            {% endfor %}
+          </select>
+          <label>Choose companies</label>
+        </div>
+      </div>
+
+      Insert the meal dishes:
+      <div id="dishes">
+        <div class="row">
+          <div class="input-field col s3">
+            <input id="dish_name" name="dish_name" type="text" class="validate">
+            <label for="dish_name">Dish Name</label>
+          </div>
+
+          <div class="input-field col s3">
+            <input id="dish_description" name="dish_description" type="text" class="validate">
+            <label for="dish_description">Dish Discription</label>
+          </div>
+
+          <div class="input-field col s3" id="dish_type_select">
+            <select name="dish_type" class="browser-default">
+              {% for dish_type in dish_types %}
+              <option value="{{ dish_type }}" {% if dish_type == 'MainCourse' %}selected{% endif %}>{{ dish_type }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button id="add" type="button" title="add_dish" class="waves-effect green waves-light btn-floating"><i class="material-icons left">add</i>Add dish</button>
+      <button id="remove" type="button" title="remove_dish" class="waves-effect red waves-light btn-floating"><i class="material-icons left">remove</i>Remove dish</button>
+      
+      <!-- <div id="selected_companies">
+        <tr>
+          <th>Company</th>
+          <th>Maximum number of dishes</th>
+        </tr>
+      </div> -->
+
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Meal</button>
+    </form>
+  </div>
+
+  <script>
+    (function ($) {
+      $(function () {
+
+        $('#day').datepicker();
+        $('#registration_day').datepicker();
+        $('.timepicker').timepicker();
+        $('.parallax').parallax();
+
+      }); // end of document ready
+    })(jQuery);
+
+    $(document).ready(function(){
+      var i = 1;
+      
+      // var j = 0;
+      // var companies = [];
+      // var previous_companies = [];
+
+      // $("#company_select").on('change', function() {
+      //   companies = $('#company_select').formSelect('getSelectedValues');
+
+      //   for(j=0;j<companies.length;j++)
+      //   {
+      //     if(!previous_companies.includes(companies[j]))
+      //     {
+      //       console.log('add' + companies[j]);
+      //       $('#selected_companies').append("<tr id=quantity_"+companies[j].replace(" ","_")+"><th>"+companies[j]+'</th><th><input id="'+j+'" name="max_dish_quantity" type="number" min="0" class="validate"></th></tr>');
+      //     }
+      //   }
+      //   for(j=0;j<previous_companies.length;j++)
+      //   {
+      //     if(!companies.includes(previous_companies[j]))
+      //     {
+      //       console.log('remove' + previous_companies[j]);
+      //       $("#quantity_"+previous_companies[j].replace(" ","_")).remove();
+      //     }
+      //   }
+      //   previous_companies = companies;
+      // });
+
+      $('#add').click(function(){
+        i++;
+        $('#dishes').append('<div class="row" id="dish'+i+'"><div class="input-field col s3"><input id="dish_name'+i+'" name="dish_name" type="text" class="validate" required><label for="dish_name'+i+'">Dish Name</label></div><div class="input-field col s3"><input id="dish_description'+i+'" name="dish_description" type="text" class="validate"><label for="dish_description'+i+'">Dish Discription</label></div></div>');
+        $('#dish'+i).append($('#dish_type_select').clone().prop('id', 'dish_type_select'+i));
+      });
+      $('#remove').click(function(){
+        $("#dish"+ i).remove();
+        i--;
+      });
+    });
+  </script>
+</body>
+
+</html>

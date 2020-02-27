@@ -24,6 +24,8 @@ class Users(db.Model, ModelMixin, UserMixin):
 
     accepted_terms = db.Column(db.Boolean, default=False)
 
+    food_manager = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return '<User %r>' % self.username
 

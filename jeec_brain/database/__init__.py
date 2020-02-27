@@ -32,6 +32,15 @@ def create_tables():
     from jeec_brain.models.resume_submissions import ResumeSubmissions
     from jeec_brain.models.company_resume_submissions import CompanyResumeSubmissions
 
+    # Meals
+    from jeec_brain.models.meals import Meals
+    from jeec_brain.models.dishes import Dishes
+    from jeec_brain.models.company_meals import CompanyMeals
+    from jeec_brain.models.company_dishes import CompanyDishes
+    
+    # Event
+    from jeec_brain.models.event_information import EventInformation
+
     db.create_all()
 
 

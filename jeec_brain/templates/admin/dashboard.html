@@ -44,6 +44,10 @@
             <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">business</i>Companies</button>
         </form>
 
+        <form action="{{ url_for('admin_api.meals_dashboard') }}" method="get">
+          <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">restaurant</i>Meals</button>
+        </form>
+        
         <form action="{{ url_for('admin_api.speakers_dashboard') }}" method="get">
             <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">speaker_notes</i>Speakers</button>
         </form>

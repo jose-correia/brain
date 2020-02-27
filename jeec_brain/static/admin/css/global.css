@@ -46,6 +46,12 @@
     font-weight: 600;
 }
 
+.sub_section-title {
+    font-size: 18px;
+    font-family: 'Karla';
+    font-weight: 600;
+}
+
 .flexbox-btns {
     display: -webkit-box;  /* iOS 6-, Safari 3.1-6, BB7 */
     display: -ms-flexbox;  /* IE 10 */
@@ -259,6 +265,10 @@ button:hover {
 }
 
 .search-activity-buttons {
+    margin-top: 20px;
+}
+
+.search-meal-buttons {
     margin-top: 20px;
 }
 

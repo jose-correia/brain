@@ -29,10 +29,6 @@ class CompaniesFinder():
     @classmethod
     def get_all(cls):
         return Companies.query.order_by(Companies.name).all()
-
-    @classmethod
-    def get_from_external_id(cls, external_id):
-        return Companies.query.filter_by(external_id=external_id).first()
         
     @classmethod
     def get_website_companies(cls, kwargs):

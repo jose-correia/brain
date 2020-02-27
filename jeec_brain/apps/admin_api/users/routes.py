@@ -6,6 +6,7 @@ from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.services.users.get_roles_service import GetRolesService
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.models.enums.roles_enum import RolesEnum
+from jeec_brain.values.api_error_value import APIErrorValue
 from flask_login import current_user
 
 
@@ -88,12 +89,23 @@ def create_user():
     else:
         role = RolesEnum[role]
 
+    # extract food_manager from parameters
+    food_manager = request.form.get('food_manager')
+
+    if food_manager == 'True':
+        food_manager = True
+    elif food_manager == 'False':
+        food_manager = False
+    else:
+        food_manager = None
+
     # create new user
     user = UsersHandler.create_user(
             company_id=company_id,
             username=username,
             email=email,
             role=role,
+            food_manager=food_manager
         )
 
     if user is None:
