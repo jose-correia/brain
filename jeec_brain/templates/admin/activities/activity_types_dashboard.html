@@ -29,24 +29,20 @@
         </a>
     </div>
 
-    <div class="section-header" >
-      <h2>Auctions Management</h2>
-      <p>Add or edit auctions</p>
+    <div class="section-header">
+      <h2>Activity Types Management</h2>
+      <p>Manage activity types of {{ event.name }}</p>
     </div>
 
-    <form action="{{ url_for('admin_api.dashboard') }}" method="get">
+    <form action="{{ url_for('admin_api.activities_dashboard') }}" method="get" class="row s12">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
-    
-    {% if current_user.role.name in ['admin'] %}
-    <form action="{{ url_for('admin_api.add_auction_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Auction</button>
+
+    {% if role in ['admin', 'activities_admin'] %}
+    <form action="{{ url_for('admin_api.add_activity_type_dashboard') }}" method="get">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Activity Type</button>
     </form>
     {% endif %}
-
-    <div class="section-title center-align" style="margin-top:90px;">
-        List of Auctions
-    </div>
 
     <div class="list">
       {% if error is not none %}
@@ -54,70 +50,42 @@
           {{ error }}
         </blockquote>
       {% else %}
-        <div class="counter right">
-          Auctions: {{ auctions|length }}
-        </div>
 
         <table class="striped">
             <thead><tr>
               <th>Name</th>
               <th>Description</th>
-              <th>Minimum bid value</th>
-              <th>Highest bid</th>
-              <th>Open</th>
-              <th>Closing Date</th>
+              <th>Price (€)</th>
             </tr></thead>
             <tbody>
-                {% for auction in auctions %}
+                {% for activity_type in event.activity_types %}
                   <tr>
-                    <td><b>
-                      {{ auction.name }}
-                    </b></td>
+                    <td><b>{{ activity_type.name }}</b></td>
 
                     <td>
-                        {{ auction.description }}
-                    </td>
-
-                    <td>
-                        {{ auction.minimum_value }} €
-                    </td>
-
-                    <td>
-                      {% if auction.highest_bid is sameas none %}
-                      No bids
-                      {% else %}
-                      {{ auction.highest_bid.value }} €
+                      {% if activity_type.description is not none %}
+                        {{ activity_type.description }}
                       {% endif %}
                     </td>
-                    
-                    <td>
-                        {% if auction.is_open is sameas true %}
-                          <i class="material-icons icon-green">check</i>
-                        {% else %}
-                          <i class="material-icons icon-red">clear</i>
-                        {% endif %}
-                    </td>
 
                     <td>
-                      {{ auction.closing_date }}
-                    </td>
-                  
-                    <td>
-                      <form action="/admin/auctions/{{auction.external_id.hex}}" method="get">
-                        <button title="Edit auction" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
-                      </form>
+                      {% if activity_type.price is not none %}
+                        {{ activity_type.price }}
+                      {% endif %}
                     </td>
 
+                    {% if role in ['admin', 'activities_admin'] %}
                     <td>
-                      <form action="/admin/auctions/{{auction.external_id.hex}}/participants" method="get">
-                        <button title="Edit members" class="waves-effect light-blue darken-1 btn-floating"><i class="material-icons left">person_add</i>Participants</button>
+                      <form action="/admin/activities/types/{{activity_type.external_id.hex}}" method="get">
+                        <button title="Edit activity type" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
                       </form>
                     </td>
+                    {% endif %}
                   </tr>
                 {% endfor %}
             </tbody>
         </table>
-      {% endif %}
+      {% endif %} 
     </div>
   </body>
 </html>  

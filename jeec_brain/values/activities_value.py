@@ -1,4 +1,7 @@
 from jeec_brain.values.value_composite import ValueComposite
+from jeec_brain.values.speakers_value import SpeakersValue
+from jeec_brain.values.companies_value import CompaniesValue
+from jeec_brain.finders.activities_finder import ActivitiesFinder
 
 
 class ActivitiesValue(ValueComposite):
@@ -6,15 +9,21 @@ class ActivitiesValue(ValueComposite):
 		super(ActivitiesValue, self).initialize({})
 		activities_array = []
 		for activity in activities:
+			
+			activity_speakers = ActivitiesFinder.get_activity_speakers(activity)
+			activity_companies = ActivitiesFinder.get_activity_companies(activity)
+
 			activity_value = {
 				"name": activity.name,
 				"description": activity.description,
 				"location": activity.location,
 				"day": activity.day,
 				"time": activity.time,
-				"type": activity.type.name,
+				"type": activity.activity_type.name,
                 "registration_open": activity.registration_open,
-                "registration_link": activity.registration_link
+                "registration_link": activity.registration_link,
+				"speakers": SpeakersValue(activity_speakers).to_dict(),
+				"companies": CompaniesValue(activity_companies).to_dict()
 			}
 			activities_array.append(activity_value)
 		self.serialize_with(data=activities_array)

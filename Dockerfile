@@ -8,6 +8,7 @@ RUN mkdir -p /jeec/jeec_brain/static/members
 RUN mkdir -p /jeec/jeec_brain/static/companies/images
 RUN mkdir -p /jeec/jeec_brain/static/speakers/companies
 RUN mkdir -p /jeec/jeec_brain/static/speakers
+RUN mkdir -p /jeec/jeec_brain/static/events/images
 
 WORKDIR /jeec/jeec_brain
 

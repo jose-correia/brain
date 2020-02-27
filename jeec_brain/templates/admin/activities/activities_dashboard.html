@@ -31,148 +31,143 @@
 
     <div class="section-header">
       <h2>Activities Management</h2>
-      <p>Add, edit or delete activities</p>
+      <p>Set the default event for this page in "Events" menu</p>
     </div>
 
     <form action="{{ url_for('admin_api.dashboard') }}" method="get" class="row s12">
         <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
     </form>
 
+    <div class="center-align">
+      <p>Event: <b>{{ event.name }}</b></p>
+    </div>
+
     {% if role in ['admin', 'activities_admin'] %}
-    <form action="{{ url_for('admin_api.add_activity_dashboard') }}" method="get">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Activity</button>
+    <form action="{{ url_for('admin_api.activity_types_dashboard') }}" method="get">
+      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">edit</i>Activity Types</button>
     </form>
     {% endif %}
 
-    <div class="section-title center-align" style="margin-top:90px;">
-        Search
-    </div>
-
-    <div class="center-align" style="margin-top:10px;">
-        by type
-    </div>
-
-    <div class="search-activity-buttons center-align">
-        <a href="/admin/activities?type=workshop">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Workshops</button>
-        </a>
-    
-        <a href="/admin/activities?type=presentation">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Presentations</button>
-        </a>
-    
-        <a href="/admin/activities?type=tech_talk">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Tech Talks</button>
-        </a>
-    
-        <a href="/admin/activities?type=job_fair">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Job Fairs</button>
-        </a>
-    
-        <a href="/admin/activities?type=matchmaking">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Matchmakings</button>
-        </a>
-    
-        <a href="/admin/activities?type=panel_discussion">
-          <button class="waves-effect blue lighten-2 btn-small search-type-btn">Panel Discussions</button>
-        </a>
-
+    {% if event.activity_types.count() == 0 %}
+    <blockquote class="create-error">
+      You haven't created any activity types in this event! Please create one before adding activities
+    </blockquote>
+    {% else %}
+      <div class="section-title center-align" style="margin-top:90px;">
+          Search
+      </div>
+      <div class="center-align" style="margin-top:10px;">
+          by activity type
       </div>
 
-    <div class="search-bar">
-      <form action="/admin/activities" class="col s12" method="get">
-        <div class="row">
-          <div class="input-field col s8">
-            <input class="col s12" id="name" name="name" type="text" class="validate" required>
-            
-            <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
+      <div class="search-activity-buttons center-align">
+        {% for activity_type in event.activity_types %}
+          <a href="/admin/activities?type={{activity_type.external_id}}">
+            <button class="waves-effect blue lighten-2 btn-small search-type-btn">{{ activity_type.name }}</button>
+          </a>
+        {% endfor %}
+      </div>
+
+      <div class="search-bar">
+        <form action="/admin/activities" class="col s12" method="get">
+          <div class="row">
+            <div class="input-field col s8">
+              <input class="col s12" id="name" name="name" type="text" class="validate" required>
+              
+              <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
+            </div>
+            <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
           </div>
-          <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
-        </div>
+        </form>
+
+        {% if search %}
+          <a class="clear-search" href="{{ url_for('admin_api.activities_dashboard') }}">clear search results</a>
+        {% endif %}
+      </div>
+
+      {% if role in ['admin', 'activities_admin'] %}
+      <form action="{{ url_for('admin_api.add_activity_dashboard') }}" method="get">
+        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Activity</button>
       </form>
-
-      {% if search %}
-        <a class="clear-search" href="{{ url_for('admin_api.activities_dashboard') }}">clear search results</a>
       {% endif %}
-    </div>
 
-    <div class="section-title center-align" style="margin-top:50px;">
-        List of activities
-    </div>
+      <br>
 
-    <div class="list">
-      {% if error is not none %}
-        <blockquote class="create-error">
-          {{ error }}
-        </blockquote>
-      {% else %}
-        <div class="counter right">
-          Activities: {{ activities|length }}
-        </div>
+      <div class="section-title center-align" style="margin-top:50px;">
+          List of activities
+      </div>
 
-        <table class="striped">
-            <thead><tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Day</th>
-              <th>Time</th>
-              <th>Location</th>
-              <th>Registration Open</th>
-            </tr></thead>
-            <tbody>
-                {% for activity in activities %}
-                  <tr>
-                    <td><b>{{ activity.name }}</b></td>
+      <div class="list">
+        {% if error is not none %}
+          <blockquote class="create-error">
+            {{ error }}
+          </blockquote>
+        {% else %}
 
-                    <td>
-                        {{ activity.type.name }}
-                    </td>
+          <table class="striped">
+              <thead><tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Registration Open</th>
+              </tr></thead>
+              <tbody>
+                  {% for activity in activities %}
+                    <tr>
+                      <td><b>{{ activity.name }}</b></td>
 
-                    <td>
-                      {% if activity.description is not none %}
-                        {{ activity.description }}
+                      <td>
+                          {{ activity.activity_type.name }}
+                      </td>
+
+                      <td>
+                        {% if activity.description is not none %}
+                          {{ activity.description }}
+                        {% endif %}
+                      </td>
+
+                      <td>
+                        {% if activity.day is not none %}
+                          {{ activity.day }}
+                        {% endif %}
+                      </td>
+
+                      <td>
+                        {% if activity.time is not none %}
+                          {{ activity.time }}
+                        {% endif %}
+                      </td>
+
+                      <td>
+                        {% if activity.location is not none %}
+                          {{ activity.location }}
+                        {% endif %}
+                      </td>
+
+                      <td>
+                        {% if activity.registration_open is sameas true %}
+                          <i class="material-icons icon-green">check</i>
+                        {% else %}
+                          <i class="material-icons icon-red">clear</i>
+                        {% endif %}
+                      </td>
+
+                      {% if role in ['admin', 'activities_admin'] %}
+                      <td>
+                        <form action="/admin/activity/{{activity.external_id.hex}}" method="get">
+                          <button title="Edit activity" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
+                        </form>
+                      </td>
                       {% endif %}
-                    </td>
-
-                    <td>
-                      {% if activity.day is not none %}
-                        {{ activity.day }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if activity.time is not none %}
-                        {{ activity.time }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if activity.location is not none %}
-                        {{ activity.location }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if activity.registration_open is sameas true %}
-                        <i class="material-icons icon-green">check</i>
-                      {% else %}
-                        <i class="material-icons icon-red">clear</i>
-                      {% endif %}
-                    </td>
-
-                    {% if role in ['admin', 'activities_admin'] %}
-                    <td>
-                      <form action="/admin/activity/{{activity.external_id.hex}}" method="get">
-                        <button title="Edit activity" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
-                      </form>
-                    </td>
-                    {% endif %}
-                  </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      {% endif %} 
-    </div>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        {% endif %} 
+      </div>
+    {% endif %}
   </body>
 </html>  
