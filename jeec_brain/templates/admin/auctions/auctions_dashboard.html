@@ -86,7 +86,7 @@
                       {% if auction.highest_bid is sameas none %}
                       No bids
                       {% else %}
-                      {{ auction.highest_bid }} €
+                      {{ auction.highest_bid.value }} €
                       {% endif %}
                     </td>
                     
