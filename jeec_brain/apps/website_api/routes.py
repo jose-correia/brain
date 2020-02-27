@@ -29,6 +29,10 @@ from jeec_brain.apps.auth.wrappers import requires_client_auth
 def get_activities():
     search_parameters = request.args
     name = request.args.get('name')
+    speaker = request.args.get('speaker')
+    company = request.args.get('company')
+    
+    activities_list = []
 
     # handle search bar requests
     if name is not None:
@@ -36,6 +40,20 @@ def get_activities():
         activities_list = ActivitiesFinder.search_by_name(name)
     
     # handle parameter requests
+    elif speaker is not None:
+        search = speaker
+        speaker = SpeakersFinder.get_from_name(search)
+
+        if speaker:
+            activities_list = speaker.activities
+
+    elif company is not None:
+        search = company
+        company = CompaniesFinder.get_from_name(search)
+        
+        if company:
+            activities_list = company.activities
+
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
