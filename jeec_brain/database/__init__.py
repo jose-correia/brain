@@ -37,9 +37,6 @@ def create_tables():
     from jeec_brain.models.dishes import Dishes
     from jeec_brain.models.company_meals import CompanyMeals
     from jeec_brain.models.company_dishes import CompanyDishes
-    
-    # Event
-    from jeec_brain.models.event_information import EventInformation
 
     db.create_all()
 
