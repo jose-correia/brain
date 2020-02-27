@@ -7,6 +7,7 @@ from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.finders.teams_finder import TeamsFinder
+from jeec_brain.finders.events_finder import EventsFinder
 
 # Values
 from jeec_brain.values.activities_value import ActivitiesValue
@@ -14,6 +15,10 @@ from jeec_brain.values.companies_value import CompaniesValue
 from jeec_brain.values.speakers_value import SpeakersValue
 from jeec_brain.values.teams_value import TeamsValue
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.values.events_value import EventsValue
+
+# Handlers
+from jeec_brain.handlers.events_handler import EventsHandler
 
 from jeec_brain.apps.auth.wrappers import requires_client_auth
 
@@ -142,3 +147,10 @@ def get_teams():
     teams_list.sort(key=lambda x: x.website_priority, reverse=True)
 
     return TeamsValue(teams_list).json(200)
+
+@bp.route('/event', methods=['GET'])
+@requires_client_auth
+def get_event():
+    event = EventsFinder.get_default_event()
+
+    return EventsValue([event]).json(200)

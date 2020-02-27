@@ -157,7 +157,53 @@
               </div>
             </div>
           </div>
-    
+          
+          <br>
+
+          Schedule:
+          {% if schedule is not sameas none %}
+            <img src="{{ schedule }}" class="company-logo centered-image">
+          {% else %}
+            <blockquote class="create-error">
+              Schedule missing! Please, upload one
+            </blockquote> 
+          {% endif %}
+
+          <div class="file-field input-field" style="width:500px;">
+            <div class="btn">
+              <i class="material-icons left">schedule</i>
+              <span>{% if schedule is not sameas none %}change schedule{% else %}add schedule{% endif %}</span>
+              <input type="file" name="event_schedule">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="use .png with <200kB">
+            </div>
+          </div>
+
+          <br>
+
+          Blueprint:
+          {% if blueprint is not sameas none %}
+            <img src="{{ blueprint }}" class="company-logo centered-image">
+          {% else %}
+            <blockquote class="create-error">
+              Blueprint missing! Please, upload one
+            </blockquote> 
+          {% endif %}
+
+          <div class="row">
+            <div class="file-field input-field" style="width:500px;">
+              <div class="btn">
+                <i class="material-icons left">smartphone</i>
+                <span>{% if blueprint is not sameas none %}change blueprint{% else %}add blueprint{% endif %}</span>
+                <input type="file" name="event_blueprint">
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" placeholder="use .png with <200kB">
+              </div>
+            </div>
+          </div>
+
           <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Event</button>
       </form>
     </div>

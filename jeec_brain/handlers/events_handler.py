@@ -31,7 +31,14 @@ class EventsHandler():
 
                 filename = f'{event_name}_mobile.{extension}'
                 DeleteImageService(filename, 'static/events/images').call()
-            return True
+
+                filename = f'{event_name}_blueprint.{extension}'
+                DeleteImageService(filename, 'static/events/images').call()
+
+                filename = f'{event_name}_schedule.{extension}'
+                DeleteImageService(filename, 'static/events/images').call()
+            
+            return DeleteEventService(event)
         return False
 
     @classmethod
