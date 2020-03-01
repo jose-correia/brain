@@ -21,7 +21,7 @@ class Events(ModelMixin, db.Model):
     youtube_link = db.Column(db.String(100))
     instagram_link = db.Column(db.String(100))
 
-    activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete")
+    activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="ActivityTypes.name")
     activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete")
 
     def __repr__(self):
