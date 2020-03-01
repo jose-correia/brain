@@ -56,7 +56,7 @@
       <form class="col s12" action="/admin/new-activity" method="post">
         <div class="row">
           <div class="input-field col s5">
-            <input id="name" name="name" type="text" class="validate" required>
+            <input id="name" name="name" type="text" class="validate">
             <label for="name">Name</label>
           </div>
           
@@ -141,8 +141,9 @@
     <script>
       (function($){
         $(function(){
-
-          $('.timepicker').timepicker();
+          
+          $('#day').datepicker({ format: "dd mmm yyyy, ddd", minDate: new Date("{{ minDate }}"), maxDate: new Date("{{ maxDate }}")});
+          $('.timepicker').timepicker({ twelveHour: false });
           $('.parallax').parallax();
 
         }); // end of document ready

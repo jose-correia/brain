@@ -11,7 +11,7 @@ class Teams(db.Model, ModelMixin):
 
     website_priority = db.Column(db.Integer(), default=0) # for sorting the teams in the website
     
-    members = relationship("Colaborators", back_populates='team', lazy='dynamic', cascade="all,delete")
+    members = relationship("Colaborators", back_populates='team', lazy='dynamic', cascade="all,delete", order_by="Colaborators.name")
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)

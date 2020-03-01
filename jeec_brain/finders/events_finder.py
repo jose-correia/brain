@@ -1,6 +1,5 @@
 from jeec_brain.models.events import Events
 
-
 class EventsFinder():
 
     @classmethod

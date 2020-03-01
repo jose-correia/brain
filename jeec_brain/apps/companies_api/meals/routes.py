@@ -27,7 +27,7 @@ def meals_dashboard():
 
     for meal in meals_list:
         try:
-            registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+            registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%d %m %Y, %a %H:%M')
 
             if registration_time < datetime.now():
                 open_registrations.append(False)
@@ -102,7 +102,7 @@ def choose_dishes(meal_external_id):
     meal = MealsFinder.get_meal_from_external_id(meal_external_id)
     
     try:
-        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%d %m %Y, %a %H:%M')
 
         # check if date past registration date
         if registration_time < datetime.now():

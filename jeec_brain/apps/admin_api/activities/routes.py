@@ -11,6 +11,7 @@ from jeec_brain.handlers.activity_types_handler import ActivityTypesHandler
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from flask_login import current_user
+from datetime import datetime
 
 
 # Activities routes
@@ -136,6 +137,36 @@ def update_activity_type(activity_type_external_id):
 
     return redirect(url_for('admin_api.activity_types_dashboard'))
 
+@bp.route('/activities/types/<string:activity_type_external_id>/delete', methods=['GET'])
+@allowed_roles(['admin', 'activities_admin'])
+def delete_activity_type(activity_type_external_id):
+    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+
+    if activity_type.activities:
+        for activity in activity_type.activities:
+            if activity is None:
+                return APIErrorValue('Couldnt find activity').json(500)
+            
+            company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity.external_id)
+            speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity.external_id)
+
+            if company_activities:
+                for company_activity in company_activities:
+                    ActivitiesHandler.delete_company_activities(company_activity)
+
+            if speaker_activities:
+                for speaker_activity in speaker_activities:
+                    ActivitiesHandler.delete_speaker_activities(speaker_activity)
+
+            if not ActivitiesHandler.delete_activity(activity):
+                return APIErrorValue('Couldnt delete activity').json(500)
+                
+    if ActivityTypesHandler.delete_activity_type(activity_type):
+        return redirect(url_for('admin_api.activity_types_dashboard'))
+
+    return render_template('admin/activities/update_activity_type.html',
+            activity_type=activity_type,
+            error="Failed to update activity type!")
 
 @bp.route('/new-activity', methods=['GET'])
 @allowed_roles(['admin', 'activities_admin'])
@@ -155,6 +186,8 @@ def add_activity_dashboard():
         activity_types = activity_types, \
         companies=companies, \
         speakers=speakers, \
+        minDate=datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+        maxDate=datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
         error=None)
 
 
@@ -176,12 +209,17 @@ def create_activity():
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
+    event = activity_type.event
+
+    if event is None:
+        error = 'No default event found! Please set a default event in the menu "Events"'
+        return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
 
     activity = ActivitiesHandler.create_activity(
             name=name,
             description=description,
             activity_type=activity_type,
-            event=activity_type.event,
+            event=event,
             location=location,
             day=day,
             time=time,
@@ -192,10 +230,13 @@ def create_activity():
     if activity is None:
         companies = CompaniesFinder.get_all()
         speakers = SpeakersFinder.get_all()
+
         return render_template('admin/activities/add_activity.html', \
             type=activity_type, \
             companies=companies, \
             speakers=speakers, \
+            minDate=datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+            maxDate=datetime.strptime(event.end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
             error="Failed to create activity! Maybe it already exists :)")
 
     # extract company names and speaker names from parameters
@@ -249,6 +290,8 @@ def get_activity(activity_external_id):
         speakers=speakers, \
         company_activities=[company.company_id for company in company_activities], \
         speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
+        minDate=datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+        maxDate=datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
         error=None)
 
 
@@ -337,6 +380,8 @@ def update_activity(activity_external_id):
             types=activity_types, \
             companies=CompaniesFinder.get_all(), \
             speakers=SpeakersFinder.get_all(), \
+            minDate=datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+            maxDate=datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
             error="Failed to update activity!")
 
     return redirect(url_for('admin_api.activities_dashboard'))

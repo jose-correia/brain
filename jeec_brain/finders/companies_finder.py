@@ -19,12 +19,12 @@ class CompaniesFinder():
     @classmethod
     def search_by_name(cls, name):
         search = "%{}%".format(name)
-        return Companies.query.filter(Companies.name.ilike(search)).all()
+        return Companies.query.filter(Companies.name.ilike(search)).order_by(Companies.name).all()
     
     @classmethod
     def search_by_email(cls, email):
         search = "%{}%".format(email)
-        return Companies.query.filter(Companies.email.ilike(search)).all()
+        return Companies.query.filter(Companies.email.ilike(search)).order_by(Companies.name).all()
         
     @classmethod
     def get_all(cls):
@@ -33,7 +33,7 @@ class CompaniesFinder():
     @classmethod
     def get_website_companies(cls, kwargs):
         try:
-            companies = Companies.query.filter_by(show_in_website=True, **kwargs).all()
+            companies = Companies.query.filter_by(show_in_website=True, **kwargs).order_by(Companies.name).all()
         except Exception:
             return None
         
@@ -76,5 +76,5 @@ class CompaniesFinder():
     @classmethod
     def get_website_company(cls, name):
         search = "%{}%".format(name)
-        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website.ilike(True)).all()
+        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website.ilike(True)).order_by(Companies.name).all()
     

@@ -17,23 +17,23 @@ class ActivitiesFinder():
 
     @classmethod
     def get_all_from_type(cls, activity_type):
-        return Activities.query().filter_by(activity_type=activity_type).all()
+        return Activities.query().filter_by(activity_type=activity_type).order_by(Activities.day, Activities.time).all()
     
     @classmethod
     def get_all(cls):
-        return Activities.query().order_by(Activities.updated_at).all()
+        return Activities.query().order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
 
     @classmethod
     def get_from_parameters(cls, kwargs):
         try:
-            return Activities.query().filter_by(**kwargs).all()
+            return Activities.query().filter_by(**kwargs).order_by(Activities.activity_type_id, Activities.day, Activities.time).all()
         except Exception:
             return None
 
     @classmethod
     def search_by_name(cls, name):
         search = "%{}%".format(name)
-        return Activities.query().filter(Activities.name.ilike(search)).all()
+        return Activities.query().filter(Activities.name.ilike(search)).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
     
     @classmethod
     def get_company_activities_from_activity_id(cls, external_id):
