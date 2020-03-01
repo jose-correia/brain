@@ -1,14 +1,13 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 from sqlalchemy.dialects.postgresql import TIMESTAMP
-from datetime import datetime
 from sqlalchemy.orm import relationship
 
 
 class Activities(ModelMixin, db.Model):
     __tablename__ = 'activities'
     
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100))
     description = db.Column(db.String(300))
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
