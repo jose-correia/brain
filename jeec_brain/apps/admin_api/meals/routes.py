@@ -383,7 +383,7 @@ def meal_dishes(meal_external_id):
         total_dishes.append(sum([choosen_dish.dish_quantity for choosen_dish in choosen_dishes]))
 
     try:
-        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%b %d, %Y %I:%M %p')
+        registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%d %m %Y, %a %H:%M')
         closed = False
 
         # check if date past registration date

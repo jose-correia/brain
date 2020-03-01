@@ -179,9 +179,9 @@
     (function ($) {
       $(function () {
 
-        $('#day').datepicker();
-        $('#registration_day').datepicker();
-        $('.timepicker').timepicker();
+        $('#day').datepicker({ format: "dd mm yyyy, ddd"});
+        $('#registration_day').datepicker({ format: "dd mm yyyy, ddd"});
+        $('.timepicker').timepicker({ twelveHour: false });
         $('.parallax').parallax();
 
       }); // end of document ready

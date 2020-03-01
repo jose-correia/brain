@@ -141,8 +141,9 @@
     <script>
       (function($){
         $(function(){
-
-          $('.timepicker').timepicker();
+          
+          $('#day').datepicker({ format: "dd mmm yyyy, ddd", minDate: new Date("{{ minDate }}"), maxDate: new Date("{{ maxDate }}")});
+          $('.timepicker').timepicker({ twelveHour: false });
           $('.parallax').parallax();
 
         }); // end of document ready
