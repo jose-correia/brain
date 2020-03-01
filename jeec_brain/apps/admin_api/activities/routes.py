@@ -182,12 +182,19 @@ def add_activity_dashboard():
     
     activity_types = event[0].activity_types
 
+    try:
+        minDate = datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+        maxDate = datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+    except:
+        minDate = None
+        maxDate = None
+
     return render_template('admin/activities/add_activity.html', \
         activity_types = activity_types, \
         companies=companies, \
         speakers=speakers, \
-        minDate=datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
-        maxDate=datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+        minDate=minDate, \
+        maxDate=maxDate, \
         error=None)
 
 
@@ -231,12 +238,19 @@ def create_activity():
         companies = CompaniesFinder.get_all()
         speakers = SpeakersFinder.get_all()
 
+        try:
+            minDate = datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+            maxDate = datetime.strptime(event.end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+        except:
+            minDate = None
+            maxDate = None
+
         return render_template('admin/activities/add_activity.html', \
             type=activity_type, \
             companies=companies, \
             speakers=speakers, \
-            minDate=datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
-            maxDate=datetime.strptime(event.end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+            minDate=minDate, \
+            maxDate=maxDate, \
             error="Failed to create activity! Maybe it already exists :)")
 
     # extract company names and speaker names from parameters
@@ -283,6 +297,13 @@ def get_activity(activity_external_id):
     company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
     speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
 
+    try:
+        minDate = datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+        maxDate = datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+    except:
+        minDate = None
+        maxDate = None
+
     return render_template('admin/activities/update_activity.html', \
         activity=activity, \
         activity_types=activity_types, \
@@ -290,8 +311,8 @@ def get_activity(activity_external_id):
         speakers=speakers, \
         company_activities=[company.company_id for company in company_activities], \
         speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
-        minDate=datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
-        maxDate=datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+        minDate=minDate, \
+        maxDate=maxDate, \
         error=None)
 
 
@@ -375,13 +396,20 @@ def update_activity(activity_external_id):
         
         activity_types = event[0].activity_types
 
+        try:
+            minDate = datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+            maxDate = datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+        except:
+            minDate = None
+            maxDate = None
+
         return render_template('admin/activities/update_activity.html', \
             activity=activity, \
             types=activity_types, \
             companies=CompaniesFinder.get_all(), \
             speakers=SpeakersFinder.get_all(), \
-            minDate=datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
-            maxDate=datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d"), \
+            minDate=minDate, \
+            maxDate=maxDate, \
             error="Failed to update activity!")
 
     return redirect(url_for('admin_api.activities_dashboard'))
