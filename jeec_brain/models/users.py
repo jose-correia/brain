@@ -1,7 +1,6 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 from flask_login import UserMixin
-from datetime import datetime
 from jeec_brain.models.enums.roles_enum import RolesEnum
 # from werkzeug.security import generate_password_hash, check_password_hash
 

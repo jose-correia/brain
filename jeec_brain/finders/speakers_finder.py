@@ -14,7 +14,7 @@ class SpeakersFinder():
     @classmethod
     def search_by_name(cls, name):
         search = "%{}%".format(name)
-        return Speakers.query().filter(Speakers.name.ilike(search)).all()
+        return Speakers.query().filter(Speakers.name.ilike(search)).order_by(Speakers.name).all()
     
     @classmethod
     def get_all(cls):
@@ -23,7 +23,7 @@ class SpeakersFinder():
     @classmethod
     def get_from_parameters(cls, kwargs):
         try:
-            speakers = Speakers.query().filter_by(**kwargs).all()
+            speakers = Speakers.query().filter_by(**kwargs).order_by(Speakers.name).all()
         except Exception:
             return None
         
