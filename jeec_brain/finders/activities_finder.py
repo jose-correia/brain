@@ -26,7 +26,7 @@ class ActivitiesFinder():
     @classmethod
     def get_from_parameters(cls, kwargs):
         try:
-            return Activities.query().filter_by(**kwargs).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
+            return Activities.query().filter_by(**kwargs).order_by(Activities.activity_type_id, Activities.day, Activities.time).all()
         except Exception:
             return None
 
