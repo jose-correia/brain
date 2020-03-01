@@ -52,8 +52,12 @@ class EventsHandler():
     @classmethod
     def get_event_dates(cls, event):
         event_dates = []
-        start_date = datetime.strptime(event.start_date, '%d %b %Y, %a')
-        end_date = datetime.strptime(event.end_date, '%d %b %Y, %a')
+
+        try:
+            start_date = datetime.strptime(event.start_date, '%d %b %Y, %a')
+            end_date = datetime.strptime(event.end_date, '%d %b %Y, %a')
+        except:
+            return None
 
         date = start_date
 
