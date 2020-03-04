@@ -8,6 +8,7 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.finders.teams_finder import TeamsFinder
 from jeec_brain.finders.events_finder import EventsFinder
+from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 
 # Values
 from jeec_brain.values.activities_value import ActivitiesValue
@@ -55,8 +56,14 @@ def get_activities():
             activities_list = company.activities
 
     elif len(search_parameters) != 0:
-        search_parameters = request.args
         search = 'search name'
+
+        try:
+            search_parameters = request.args.to_dict()
+            search_parameters['type'] = ActivityTypesFinder.get_from_name(search_parameters['type']).id
+            search_parameters['activity_type_id'] = search_parameters.pop('type')
+        except:
+            pass
 
         activities_list = ActivitiesFinder.get_from_parameters(search_parameters)
 
