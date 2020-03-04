@@ -38,6 +38,9 @@ def create_tables():
     from jeec_brain.models.company_meals import CompanyMeals
     from jeec_brain.models.company_dishes import CompanyDishes
 
+    # News
+    from jeec_brain.models.news import News
+    
     db.create_all()
 
 

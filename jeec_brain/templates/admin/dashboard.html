@@ -55,6 +55,10 @@
         <form action="{{ url_for('admin_api.teams_dashboard') }}" method="get">
             <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">group</i>Teams</button>
         </form>
+
+        <form action="{{ url_for('admin_api.news_dashboard') }}" method="get">
+          <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">cast</i>News</button>
+        </form>
     </div>
 
     {% if role in ['admin'] %} 
@@ -63,12 +67,12 @@
           <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">attach_money</i>Auctions</button>
       </form>
 
-      <form action="{{ url_for('admin_api.resume_submissions_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">folder_shared</i>Resumes</button>
-      </form>
-
       <form action="{{ url_for('admin_api.events_dashboard') }}" method="get">
         <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">event</i>Events</button>
+      </form>
+
+      <form action="{{ url_for('admin_api.resume_submissions_dashboard') }}" method="get">
+        <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i class="large material-icons left">folder_shared</i>Resumes</button>
       </form>
 
       <form action="{{ url_for('admin_api.users_dashboard') }}" method="get">
