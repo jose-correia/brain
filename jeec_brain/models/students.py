@@ -4,6 +4,13 @@ from sqlalchemy import sql
 from jeec_brain.models.model_mixin import ModelMixin
 from jeec_brain.models.student_companies import StudentCompanies
 from jeec_brain.models.companies import Companies
+from jeec_brain.models.squads import Squads
+from jeec_brain.models.tags import Tags
+from jeec_brain.models.students_tags import StudentsTags
+from jeec_brain.models.companies import Companies
+from jeec_brain.models.student_companies import StudentCompanies
+from jeec_brain.models.rewards import Rewards
+from jeec_brain.models.students_rewards import StudentsRewards
 
 
 class Students(ModelMixin, db.Model):
@@ -20,6 +27,21 @@ class Students(ModelMixin, db.Model):
     stared_companies = relationship("Companies",
                                          secondary="student_companies",
                                          secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id))
+
+    squad = relationship('Squads', back_populates="members", uselist=False)
+    squad_id = db.Column(db.Integer, db.ForeignKey('squads.id'))
+
+    tags = relationship("Tags",
+        secondary="students_tags",
+        secondaryjoin=sql.and_(StudentsTags.tag_id == Tags.id))
+
+    companies = relationship("Companies",
+        secondary="student_companies",
+        secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id))
+
+    rewards = relationship("Rewards",
+        secondary="students_rewards",
+        secondaryjoin=sql.and_(StudentsRewards.reward_id == Rewards.id))
 
     def __repr__(self):
         return 'Email:: {}  |  Name: {}'.format(self.name, self.ist_id)

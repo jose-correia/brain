@@ -7,6 +7,8 @@ from jeec_brain.models.company_meals import CompanyMeals
 from jeec_brain.models.meals import Meals
 from jeec_brain.models.company_dishes import CompanyDishes
 from jeec_brain.models.dishes import Dishes
+from jeec_brain.models.tags import Tags
+from jeec_brain.models.companies_tags import CompaniesTags
 from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
@@ -35,8 +37,11 @@ class Companies(db.Model, ModelMixin):
         secondary="company_meals",
         secondaryjoin=sql.and_(CompanyMeals.meal_id == Meals.id))
 
+    tags = relationship("Tags",
+        secondary="companies_tags",
+        secondaryjoin=sql.and_(CompaniesTags.tag_id == Tags.id))
+
     users = relationship("Users", back_populates='company', lazy='dynamic', cascade="all,delete")
-    
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)
