@@ -29,7 +29,7 @@ class UsersFinder():
         return Users.query.filter(Users.username.ilike(search)).all()
 
     @classmethod
-    def get_from_parameters(cls, kwargs):
+    def get_from_parameters(cls, **kwargs):
         try:
             users = Users.query.filter_by(**kwargs).all()
         except Exception:

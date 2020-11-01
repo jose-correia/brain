@@ -5,10 +5,11 @@ from jeec_brain.apps.auth import fenix_client
 
 # handlers
 from jeec_brain.apps.auth.handlers.tecnico_client_handler import TecnicoClientHandler
+from jeec_brain.handlers.users_handler import UsersHandler
+from jeec_brain.handlers.students_handler import StudentsHandler
 
 # services
-from jeec_brain.services.students.create_student_service import CreateStudentService
-from jeec_brain.services.users.create_user_service import CreateUserService
+from jeec_brain.apps.auth.services.create_jwt_service import CreateJwtService
 
 # finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -29,43 +30,43 @@ class AuthHandler(object):
     
     @staticmethod
     def login_student(fenix_auth_code):
-        if fenix_auth_code is not None:            
-            user = TecnicoClientHandler.get_user(fenix_client, fenix_auth_code)
+        if fenix_auth_code is not None:
+            user = TecnicoClientHandler.get_user(fenix_client, fenix_auth_code)          
             person = TecnicoClientHandler.get_person(fenix_client, user)
-        
-            session['name'] = person['name']
-            session['username'] = person['username']
 
-            user = UserFinder.get_user_from_username(person['username'])
+            user = UsersFinder.get_user_from_username(person['username'])
 
             if user is None:
                 try:
-                    user = CreateUserService(username=person['username'], role="student").call()
-                    logger.info("New user added to the DB")    
+                    user = UsersHandler.create_user(person['username'], person['email'], 'student')
+                    logger.info("New user added to the DB")
 
-                    student = CreateStudentService(ist_id=person['username'], name=person['name']).call()
-                    student.user_id = user.uuid
+                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type']).call()
                 except Exception as e:
                     logger.error(e)
-                    return False, e
+                    return False, None
 
-            student = StudentsFinder.get_from_ist_id(ist_id=person['username'])
+            else:
+                student = StudentsFinder.get_from_ist_id(ist_id=person['username'])
 
             if student is None:
                 try:
-                    student = CreateStudentService(ist_id=person['username'], name=person['name']).call()
-                    student.user_id = user.uuid
+                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type']).call()
                 except Exception as e:
                     logger.error(e)
-                    return False, e
+                    return False, None
             
-            session['STUDENT'] = student.name
-            login_user(user)
-            logger.info("Student authenticated! ist_id: {}".format(user.username))
-            return True, None
+            # login_user(user, remember=True, force=True)
+            # logger.info("Student authenticated! ist_id: {}".format(user.username))
+            jwt = CreateJwtService(user.username, user.email).call()
+
+            if(student.fenix_auth_code != fenix_auth_code):
+                StudentsHandler.update_student(student, fenix_auth_code=fenix_auth_code)
+
+            return True, jwt
                     
         else:
-            return False, "Failed to fetch Fenix_Auth_Code"
+            return False, None
 
     
     @staticmethod

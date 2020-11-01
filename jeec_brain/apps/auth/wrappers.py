@@ -4,15 +4,16 @@ import base64
 from functools import wraps
 from flask_login import current_user
 from jeec_brain.finders.users_finder import UsersFinder
+from jeec_brain.apps.auth.services.decode_jwt_service import DecodeJwtService
 
 
 def require_student_login(func):
     @wraps(func)
     def check_student_login(*args, **kwargs):
-        # Check to see if it's in their sessio
-        user_role = current_user.get_role()
 
-        if not session['student'] or user_role != "student":
+        # Check to see if it's in their session
+        print(session['name'] if session.get('name') else "None")
+        if current_user.is_anonymous:
             # If it isn't return our access denied message (you can also return a redirect or render_template)
             return Response("Access denied", status=401)
 
@@ -69,9 +70,6 @@ def requires_client_auth(func):
 
         if http_auth:
             auth_type, data = http_auth.split(' ', 1)
-
-            username = None
-            api_key = None
 
             if auth_type == 'Basic':
                 auth_string = os.environ.get('CLIENT_USERNAME') + ':' + os.environ.get('CLIENT_KEY')

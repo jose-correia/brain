@@ -2,7 +2,7 @@ import os
 from flask import send_file, Response, render_template, session, redirect, url_for, render_template, request
 from .. import bp
 
-from ..handlers.file_handler import FileHandler
+from jeec_brain.handlers.file_handler import FileHandler
 from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler

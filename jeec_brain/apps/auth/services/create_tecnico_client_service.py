@@ -1,5 +1,8 @@
 from config import Config
 import fenixedu
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CreateTecnicoClientService(object):
 

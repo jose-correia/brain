@@ -1,5 +1,5 @@
 from jeec_brain.values.value_composite import ValueComposite
-from jeec_brain.values.company_value import CompanyValue
+from jeec_brain.values.companies_value import CompaniesValue
 
 
 class StudentValue(ValueComposite):
@@ -7,13 +7,15 @@ class StudentValue(ValueComposite):
         super(StudentValue, self).initialize({})
         self.serialize_with(name=student.name)
         self.serialize_with(username=student.user.username)
-        self.serialize_with(istid=student.istid)
+        self.serialize_with(email=student.user.email)
+        self.serialize_with(photo=student.photo)
+        self.serialize_with(photo_type=student.photo_type)
 
         if details:
             favorite_companies = []
             for company in student.stared_companies:
                 favorite_companies.append({
-                    "company": CompanyValue(company, details=False).to_dict(),
+                    "company": CompaniesValue(company).to_dict(),
                 })
 
             self.serialize_with(favorite_companies=favorite_companies)

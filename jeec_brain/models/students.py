@@ -16,13 +16,19 @@ from jeec_brain.models.students_rewards import StudentsRewards
 class Students(ModelMixin, db.Model):
     __tablename__ = 'students'
     
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), unique=True, nullable=False)
     ist_id = db.Column(db.String(10), unique=True, nullable=False)
+    photo = db.Column(db.Text())
+    photo_type = db.Column(db.String(20))
+    fenix_auth_code = db.Column(db.Text())
+
+    level = db.Column(db.Integer())
+    daily_points = db.Column(db.Integer())
+    total_points = db.Column(db.Integer())
+    squad_points = db.Column(db.Integer())
 
     user = relationship('Users')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    accepted_terms = db.Column(db.Boolean, default=False)
 
     stared_companies = relationship("Companies",
                                          secondary="student_companies",

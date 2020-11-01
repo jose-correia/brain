@@ -1,13 +1,16 @@
 import os
 from config import config, Config
-from flask import Flask, redirect, url_for, request, jsonify
+from flask import Flask, redirect, url_for, request, jsonify, session
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from flask_cors import CORS
 
+from datetime import timedelta
+
 from jeec_brain.database import db, create_tables
 from jeec_brain.finders.users_finder import UsersFinder
+from jeec_brain.apps.auth.services.decode_jwt_service import DecodeJwtService
 
 from applicationinsights.flask.ext import AppInsights
 
@@ -16,7 +19,7 @@ login_manager = LoginManager()
 
 
 def initialize_admin_api_blueprint(app):
-    from jeec_brain.apps.admin_api  import bp as admin_api_bp
+    from jeec_brain.apps.admin_api import bp as admin_api_bp
     app.register_blueprint(admin_api_bp, url_prefix='/admin')
     csrf.exempt(admin_api_bp)
 
@@ -25,11 +28,20 @@ def initialize_companies_api_blueprint(app):
     app.register_blueprint(companies_api_bp, url_prefix='/companies')
     csrf.exempt(companies_api_bp)
 
+def initialize_cv_platform_api_blueprint(app):
+    from jeec_brain.apps.cv_platform_api import bp as cv_platform_api_bp
+    app.register_blueprint(cv_platform_api_bp, url_prefix='/cv-platform')
+    csrf.exempt(cv_platform_api_bp)
+
 def initialize_website_api_blueprint(app):
-    from jeec_brain.apps.website_api  import bp as website_api_bp
+    from jeec_brain.apps.website_api import bp as website_api_bp
     app.register_blueprint(website_api_bp, url_prefix='/website')
     csrf.exempt(website_api_bp)
 
+def initialize_student_api_blueprint(app):
+    from jeec_brain.apps.student_api import bp as student_api_bp
+    app.register_blueprint(student_api_bp, url_prefix='/student')
+    csrf.exempt(student_api_bp)
 
 def create_app():
     app = Flask(__name__)
@@ -56,7 +68,9 @@ def create_app():
 
     initialize_admin_api_blueprint(app)
     initialize_companies_api_blueprint(app)
+    initialize_cv_platform_api_blueprint(app)
     initialize_website_api_blueprint(app)
+    initialize_student_api_blueprint(app)
 
     # add health-check route
     @app.route('/health', methods=['GET'])
@@ -90,3 +104,18 @@ def create_app():
 @login_manager.user_loader
 def load_user(username):
     return UsersFinder.get_user_from_username(username=username)
+
+@login_manager.request_loader
+def load_remote_user(request):
+    token = request.headers.get('Authorization')
+
+    if token:
+        decoded_token = DecodeJwtService(token.replace("Bearer ", "", 1).encode('utf-8')).call()
+        try:
+            user = UsersFinder.get_from_parameters(username=decoded_token['username'], email=decoded_token['email'])[0]
+        except KeyError:
+            return None
+
+        return user
+
+    return None
