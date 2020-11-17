@@ -38,10 +38,10 @@ class AuthHandler(object):
 
             if user is None:
                 try:
-                    user = UsersHandler.create_user(person['username'], person['email'], 'student')
+                    user = UsersHandler.create_user(username=person['username'], email=person['email'], role='student')
                     logger.info("New user added to the DB")
 
-                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type']).call()
+                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type'])
                 except Exception as e:
                     logger.error(e)
                     return False, None
@@ -51,7 +51,7 @@ class AuthHandler(object):
 
             if student is None:
                 try:
-                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type']).call()
+                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type'])
                 except Exception as e:
                     logger.error(e)
                     return False, None

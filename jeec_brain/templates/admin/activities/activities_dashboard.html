@@ -112,6 +112,7 @@
                 <th>Day</th>
                 <th>Time</th>
                 <th>Location</th>
+                <th>Points</th>
                 <th>Registration Open</th>
               </tr></thead>
               <tbody>
@@ -145,6 +146,10 @@
                         {% if activity.location is not none %}
                           {{ activity.location }}
                         {% endif %}
+                      </td>
+
+                      <td>
+                        {{ activity.points }}
                       </td>
 
                       <td>

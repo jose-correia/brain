@@ -10,7 +10,7 @@ from sqlalchemy import sql
 class Activities(ModelMixin, db.Model):
     __tablename__ = 'activities'
     
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.String(300))
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
@@ -29,6 +29,8 @@ class Activities(ModelMixin, db.Model):
     tags = relationship("Tags",
         secondary="activities_tags",
         secondaryjoin=sql.and_(ActivitiesTags.tag_id == Tags.id))
+
+    points = db.Column(db.Integer())
    
     def __repr__(self):
         return 'Type: {}  |  Name: {}'.format(self.type, self.name)

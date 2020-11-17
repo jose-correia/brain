@@ -6,9 +6,9 @@ from sqlalchemy.orm import relationship
 class Squads(db.Model, ModelMixin):
     __tablename__ = 'squads'
     
-    name = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
     
-    members = relationship("Students", back_populates='squad', lazy='dynamic', cascade="all,delete", order_by="Students.name")
+    members = relationship("Students", back_populates='squad', lazy='dynamic', order_by="Students.name")
 
     daily_points = db.Column(db.Integer)
     total_points = db.Column(db.Integer)

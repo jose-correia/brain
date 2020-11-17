@@ -5,7 +5,6 @@ class StudentsFinder():
 
     @classmethod
     def get_from_ist_id(cls, ist_id):
-        #return Students.get_by(ist_id=ist_id).first()
         return Students.query().filter_by(ist_id=ist_id).first()
 
     @classmethod
@@ -23,4 +22,8 @@ class StudentsFinder():
     @classmethod
     def get_all(cls):
         return Students.all()
+
+    @classmethod
+    def get_student_activity_from_id_and_activity_id(cls, student_id, activity_id):
+        return Students.query().filter_by(student_id=student_id, activity_id=activity_id).first()
     

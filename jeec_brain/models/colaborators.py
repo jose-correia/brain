@@ -13,7 +13,7 @@ class Colaborators(ModelMixin, db.Model):
     team = relationship('Teams', back_populates="members", uselist=False)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
 
-    linkedin_url = db.Column(db.String(100))
+    linkedin_url = db.Column(db.String(150))
 
     def __repr__(self):
         return 'Name: {} | Team: {}'.format(self.name, self.team)
