@@ -48,5 +48,13 @@ class StudentsHandler():
         return cls.update_student(student, daily_points=student.daily_points, total_points=student.total_points, squad_points=student.squad_points)
 
     @classmethod
+    def add_squad_member(cls, student, squad):
+        return cls.update_student(student, squad_id=squad.id)
+
+    @classmethod
     def add_linkedin(cls, student, url):
         return cls.update_student(student, linkedin_url=url)
+    
+    # @classmethod
+    # def upload_student_cv(cls, file, username):
+    #     return UploadImageService(file, username, 'static/cv_platform/cvs').call()

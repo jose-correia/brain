@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class Speakers(ModelMixin, db.Model):
+class Speakers(db.Model, ModelMixin):
     __tablename__ = 'speakers'
     
     name = db.Column(db.String(100), unique=True, nullable=False)

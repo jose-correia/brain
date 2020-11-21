@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class ResumeSubmissions(ModelMixin, db.Model):
+class ResumeSubmissions(db.Model, ModelMixin):
     __tablename__ = 'resume_submissions'
     
     name = db.Column(db.String(100), nullable=False)

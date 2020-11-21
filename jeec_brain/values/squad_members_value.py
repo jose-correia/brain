@@ -9,9 +9,11 @@ class SquadMembersValue(ValueComposite):
 			member_value = {
 				"name": member.name,
 				"ist_id": member.ist_id,
+				"level": member.level.value,
 				"photo": member.photo,
 				"photo_type": member.photo_type,
-				"squad_points": member.squad_points
+				"squad_points": member.squad_points,
+				"is_captain": member.ist_id == member.squad.captain_ist_id
 			}
 			members_array.append(member_value)
 		self.serialize_with(data=members_array)

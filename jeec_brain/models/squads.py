@@ -7,11 +7,14 @@ class Squads(db.Model, ModelMixin):
     __tablename__ = 'squads'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
-    
+    cry = db.Column(db.String(100))
+
     members = relationship("Students", back_populates='squad', lazy='dynamic', order_by="Students.name")
 
-    daily_points = db.Column(db.Integer)
-    total_points = db.Column(db.Integer)
+    captain_ist_id = db.Column(db.String(10), unique=True, nullable=False)
+
+    daily_points = db.Column(db.Integer, default=0)
+    total_points = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)

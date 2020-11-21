@@ -1,5 +1,5 @@
 from jeec_brain.database import db
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, deferred
 from sqlalchemy import sql
 from jeec_brain.models.model_mixin import ModelMixin
 from jeec_brain.models.student_companies import StudentCompanies
@@ -16,16 +16,16 @@ from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.levels import Levels
 
 
-class Students(ModelMixin, db.Model):
+class Students(db.Model, ModelMixin):
     __tablename__ = 'students'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
     ist_id = db.Column(db.String(10), unique=True, nullable=False)
     photo = db.Column(db.Text())
     photo_type = db.Column(db.String(20))
-    fenix_auth_code = db.Column(db.Text())
-    linkedin_url = db.Column(db.String(150))
-    uploaded_cv = db.Column(db.Boolean, default=False)
+    fenix_auth_code = deferred(db.Column(db.Text()))
+    linkedin_url = deferred(db.Column(db.String(150)))
+    uploaded_cv = deferred(db.Column(db.Boolean, default=False))
 
     level = relationship('Levels')
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))

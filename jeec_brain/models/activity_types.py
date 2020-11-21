@@ -3,7 +3,7 @@ from jeec_brain.models.model_mixin import ModelMixin
 from sqlalchemy.orm import relationship
 
 
-class ActivityTypes(ModelMixin, db.Model):
+class ActivityTypes(db.Model, ModelMixin):
     __tablename__ = 'activity_types'
     
     name = db.Column(db.String(100), nullable=False)

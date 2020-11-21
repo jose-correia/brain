@@ -7,7 +7,6 @@ from jeec_brain.services.files.upload_image_service import UploadImageService
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 
-
 class SquadsHandler():
 
     @classmethod

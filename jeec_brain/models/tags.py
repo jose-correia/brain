@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class Tags(ModelMixin, db.Model):
+class Tags(db.Model, ModelMixin):
     __tablename__ = 'tags'
     
     name = db.Column(db.String(100), unique=True, nullable=False)

@@ -8,13 +8,15 @@ from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
 from jeec_brain.apps.auth.wrappers import require_student_login
 from jeec_brain.handlers.activity_codes_handler import ActivityCodesHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
+from jeec_brain.handlers.squads_handler import SquadsHandler
 
 # Finders
 from jeec_brain.finders.students_finder import StudentsFinder
 
 # Values
 from jeec_brain.values.api_error_value import APIErrorValue
-from jeec_brain.values.student_value import StudentValue
+from jeec_brain.values.students_value import StudentsValue
+from jeec_brain.values.squads_value import SquadsValue
 
 # Login routes
 @bp.route('/login')
@@ -46,7 +48,73 @@ def get_info():
     if(student is None):
         return APIErrorValue('No user found').json(401)
     
-    return StudentValue(student, details=False).json(200)
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('/colleagues', methods=['GET'])
+def get_colleagues():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No user found').json(401)
+
+    search = request.args.get('search', None)
+
+    students = StudentsFinder.get_from_search(search)
+
+    return StudentsValue(students, details=False).json(200)
+
+@bp.route('/squad', methods=['GET'])
+def get_squad():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No user found').json(401)
+
+    if(student.squad is None):
+        return APIErrorValue('No squad found').json(404)
+    
+    return SquadsValue(student.squad).json(200)
+
+@bp.route('/squad', methods=['POST'])
+def create_squad():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No user found').json(401)
+
+    name = request.form.get('name', None)
+    cry = request.form.get('cry', None)
+    
+    if name is None or cry is None:
+        return APIErrorValue('Invalid squad info').json(500)
+
+    if 'file' not in request.files:
+        return APIErrorValue('No image detected').json(500)
+
+    file = request.files['file']
+
+    if file and file.filename != '':
+        result, msg = SquadsHandler.upload_squad_image(file, name)
+    
+        if not result:
+            return APIErrorValue(msg).json(500)
+
+        squad = SquadsHandler.create_squad(name=name, cry=cry, captain_ist_id=student.ist_id)
+        StudentsHandler.add_squad_member(student, squad)
+
+    else:
+        return APIErrorValue('No image found').json(500)
+    
+    return SquadsValue(squad).json(200)
 
 @bp.route('/redeem-code', methods=['POST'])
 def redeem_code():
@@ -68,7 +136,7 @@ def redeem_code():
     if(student is None):
         return APIErrorValue('Invalid code').json(500)
 
-    return StudentValue(student, details=False).json(200)
+    return StudentsValue(student, details=True).json(200)
 
 @bp.route('/add-linkedin', methods=['POST'])
 def add_linkedin():
@@ -87,4 +155,36 @@ def add_linkedin():
 
     student = StudentsHandler.add_linkedin(student, url)
 
-    return StudentValue(student, details=False).json(200)
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('/add-cv', methods=['POST'])
+def add_cv():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No user found').json(401)
+
+    if 'cv' not in request.files:
+        return APIErrorValue('No cv found').json(500)
+
+    file = request.files['file']
+    if file.filename == '':
+        return APIErrorValue('No cv found').json(500)
+
+    if file and allowed_file(file.filename):
+        filename = 'cv-' + student.ist_id + '.pdf'
+
+        # FileHandler.upload_file(file, filename)
+        # logger.info('File uploaded sucessfuly!')
+
+    else:
+        return APIErrorValue('Wrong file extension').json(500)
+
+    return StudentsValue(student, details=True).json(200)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS

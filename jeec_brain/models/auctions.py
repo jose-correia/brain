@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class Auctions(ModelMixin, db.Model):
+class Auctions(db.Model, ModelMixin):
     __tablename__ = 'auctions'
     
     name = db.Column(db.String(100), nullable=False)

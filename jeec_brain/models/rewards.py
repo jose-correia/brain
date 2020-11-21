@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class Rewards(ModelMixin, db.Model):
+class Rewards(db.Model, ModelMixin):
     __tablename__ = 'rewards'
     
     name = db.Column(db.String(100), unique=True, nullable=False)

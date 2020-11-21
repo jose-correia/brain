@@ -3,7 +3,7 @@ from jeec_brain.models.model_mixin import ModelMixin
 from sqlalchemy.orm import relationship
 
 
-class Colaborators(ModelMixin, db.Model):
+class Colaborators(db.Model, ModelMixin):
     __tablename__ = 'colaborators'
     
     name = db.Column(db.String(100), unique=True, nullable=False)

@@ -2,7 +2,7 @@ from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 
 
-class Levels(ModelMixin, db.Model):
+class Levels(db.Model, ModelMixin):
     __tablename__ = 'levels'
     
     value = db.Column(db.Integer(), unique=True, nullable=False)

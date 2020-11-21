@@ -9,31 +9,31 @@ class ActivitiesFinder():
 
     @classmethod
     def get_from_name(cls, name):
-        return Activities.query().filter_by(name=name).first()
+        return Activities.query.filter_by(name=name).first()
 
     @classmethod
     def get_from_external_id(cls, external_id):
-        return Activities.query().filter_by(external_id=external_id).first()
+        return Activities.query.filter_by(external_id=external_id).first()
 
     @classmethod
     def get_all_from_type(cls, activity_type):
-        return Activities.query().filter_by(activity_type=activity_type).order_by(Activities.day, Activities.time).all()
+        return Activities.query.filter_by(activity_type=activity_type).order_by(Activities.day, Activities.time).all()
     
     @classmethod
     def get_all(cls):
-        return Activities.query().order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
+        return Activities.query.order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
 
     @classmethod
     def get_from_parameters(cls, kwargs):
         try:
-            return Activities.query().filter_by(**kwargs).order_by(Activities.activity_type_id, Activities.day, Activities.time).all()
+            return Activities.query.filter_by(**kwargs).order_by(Activities.activity_type_id, Activities.day, Activities.time).all()
         except Exception:
             return None
 
     @classmethod
     def search_by_name(cls, name):
         search = "%{}%".format(name)
-        return Activities.query().filter(Activities.name.ilike(search)).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
+        return Activities.query.filter(Activities.name.ilike(search)).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
     
     @classmethod
     def get_company_activities_from_activity_id(cls, external_id):
@@ -45,7 +45,7 @@ class ActivitiesFinder():
 
     @classmethod
     def get_activity_speakers(cls, activity):
-        return Speakers.query().join(SpeakerActivities, SpeakerActivities.speaker_id == Speakers.id).filter(SpeakerActivities.activity_id == activity.id).all()
+        return Speakers.query.join(SpeakerActivities, SpeakerActivities.speaker_id == Speakers.id).filter(SpeakerActivities.activity_id == activity.id).all()
 
     @classmethod
     def get_activity_companies(cls, activity):

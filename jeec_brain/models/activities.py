@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class Activities(ModelMixin, db.Model):
+class Activities(db.Model, ModelMixin):
     __tablename__ = 'activities'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
