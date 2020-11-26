@@ -12,11 +12,13 @@ from jeec_brain.handlers.squads_handler import SquadsHandler
 
 # Finders
 from jeec_brain.finders.students_finder import StudentsFinder
+from jeec_brain.finders.squads_finder import SquadsFinder
 
 # Values
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
+from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 
 # Login routes
 @bp.route('/login')
@@ -46,23 +48,23 @@ def get_info():
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
     
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/colleagues', methods=['GET'])
-def get_colleagues():
+@bp.route('/students', methods=['GET'])
+def get_students():
     user = current_user
     if(user.is_anonymous):
         return APIErrorValue('No user found').json(401)
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
 
     search = request.args.get('search', None)
 
-    students = StudentsFinder.get_from_search(search)
+    students = StudentsFinder.get_from_search_without_student(search, student.external_id)
 
     return StudentsValue(students, details=False).json(200)
 
@@ -74,7 +76,7 @@ def get_squad():
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
 
     if(student.squad is None):
         return APIErrorValue('No squad found').json(404)
@@ -89,7 +91,10 @@ def create_squad():
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
+
+    if(student.squad is not None):
+        return APIErrorValue('Student already has squad').json(401)
 
     name = request.form.get('name', None)
     cry = request.form.get('cry', None)
@@ -116,6 +121,129 @@ def create_squad():
     
     return SquadsValue(squad).json(200)
 
+@bp.route('/invite-squad', methods=['POST'])
+def invite_squad():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No student found').json(401)
+
+    if(student.squad is None):
+        return APIErrorValue('No squad found').json(401)
+
+    try:
+        members = request.get_json()["members"]
+    except KeyError:
+        return APIErrorValue('Invalid members').json(500)
+
+    if(StudentsHandler.invite_squad_members(student, members)):
+        return jsonify('Success'), 200
+    else:
+        return APIErrorValue('Failed to invite').json(500)
+
+@bp.route('/squad-invitations', methods=['GET'])
+def get_squad_invitations():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No student found').json(401)
+
+    invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
+
+    return SquadInvitationsValue(invitations).json(200)
+
+@bp.route('/accept-invitation', methods=['POST'])
+def accept_invitation():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No student found').json(401)
+
+    try:
+        invitation_id = request.get_json()["invitation_id"]
+    except KeyError:
+        return APIErrorValue('Invalid invitation').json(500)
+
+    invitation = SquadsFinder.get_invitation_from_external_id(invitation_id)
+    if(invitation is None):
+        return APIErrorValue('Invitation not found').json(404)
+
+    student = StudentsHandler.accept_invitation(student, invitation)
+
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('reject-invitation', methods=['POST'])
+def reject_invitation():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No student found').json(401)
+
+    try:
+        invitation_id = request.get_json()["invitation_id"]
+    except KeyError:
+        return APIErrorValue('Invalid invitation').json(500)
+
+    invitation = SquadsFinder.get_invitation_from_external_id(invitation_id)
+    if(invitation is None):
+        return APIErrorValue('Invitation not found').json(404)
+
+    SquadsHandler.delete_squad_invitation(invitation)
+
+    return jsonify('Success'), 200
+
+@bp.route('leave-squad', methods=['POST'])
+def leave_squad():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No student found').json(401)
+
+    student = StudentsHandler.leave_squad(student)
+
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('kick-member', methods=['POST'])
+def kick_member():
+    user = current_user
+    if(user.is_anonymous):
+        return APIErrorValue('No user found').json(401)
+
+    student = StudentsFinder.get_from_user_id(user.id)
+    if(student is None):
+        return APIErrorValue('No student found').json(401)
+
+    if(not student.is_captain()):
+        return APIErrorValue('Student is not captain').json(401)
+
+    try:
+        member_ist_id = request.get_json()["ist_id"]
+    except KeyError:
+        return APIErrorValue('Invalid IST id').json(500)
+    
+    member = StudentsFinder.get_from_ist_id(member_ist_id)
+    if(member is None):
+        return APIErrorValue('Member not found').json(404)
+
+    StudentsHandler.leave_squad(member)
+
+    return SquadsValue(student.squad).json(200)
+
 @bp.route('/redeem-code', methods=['POST'])
 def redeem_code():
     user = current_user
@@ -124,7 +252,7 @@ def redeem_code():
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
 
     try:
         code = request.get_json()["code"]
@@ -146,7 +274,7 @@ def add_linkedin():
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
 
     try:
         url = request.get_json()["url"]
@@ -165,7 +293,7 @@ def add_cv():
 
     student = StudentsFinder.get_from_user_id(user.id)
     if(student is None):
-        return APIErrorValue('No user found').json(401)
+        return APIErrorValue('No student found').json(401)
 
     if 'cv' not in request.files:
         return APIErrorValue('No cv found').json(500)

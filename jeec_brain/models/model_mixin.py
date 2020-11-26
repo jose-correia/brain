@@ -16,7 +16,7 @@ class ModelMixin():
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
-    external_id = Column(UUIDType(binary=False), default=uuid.uuid4, index=True)
+    external_id = Column(UUIDType(binary=False), unique=True, default=uuid.uuid4, index=True)
 
     _repr_hide = ['created_at', 'updated_at']
 

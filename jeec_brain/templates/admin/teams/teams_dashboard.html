@@ -44,6 +44,41 @@
     </form>
     {% endif %}
 
+    <!-- <div class="search-meal-buttons center-align">
+      <a href="/admin/meals?type=Breakfast">
+        <button class="waves-effect blue lighten-2 btn-small search-type-btn">Breakfast</button>
+      </a>
+  
+      <a href="/admin/meals?type=Lunch">
+        <button class="waves-effect blue lighten-2 btn-small search-type-btn">Lunch</button>
+      </a>
+  
+      <a href="/admin/meals?type=Dinner">
+        <button class="waves-effect blue lighten-2 btn-small search-type-btn">Dinner</button>
+      </a>
+  
+      <a href="/admin/meals?type=Snack">
+        <button class="waves-effect blue lighten-2 btn-small search-type-btn">Snack</button>
+      </a>
+  </div>
+
+  <div class="search-bar">
+    <form action="/admin/events" class="col s12" method="get">
+      <div class="row">
+        <div class="input-field col s8">
+          <input class="col s12" id="event" name="event" type="text" class="validate" required>
+          
+          <label for="day">{% if search is not none %}{{ search }}{% else %}search day{% endif %}</label>
+        </div>
+        <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
+      </div>
+    </form>
+
+    {% if search %}
+      <a class="clear-search" href="{{ url_for('admin_api.meals_dashboard') }}">clear search results</a>
+    {% endif %}
+  </div> -->
+
     <div class="section-title center-align" style="margin-top:90px;">
         List of Teams
     </div>

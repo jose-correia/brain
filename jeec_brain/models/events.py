@@ -23,6 +23,7 @@ class Events(db.Model, ModelMixin):
 
     activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="ActivityTypes.name")
     activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete")
+    teams = relationship("Teams", back_populates='event', lazy='dynamic', cascade="all,delete")
 
     def __repr__(self):
         return 'Name: {} | date: {}'.format(self.name, self.start_date)

@@ -10,8 +10,7 @@ class SquadMembersValue(ValueComposite):
 				"name": member.name,
 				"ist_id": member.ist_id,
 				"level": member.level.value,
-				"photo": member.photo,
-				"photo_type": member.photo_type,
+				"photo": 'data: ' + member.photo_type + ';base64, ' + member.photo,
 				"squad_points": member.squad_points,
 				"is_captain": member.ist_id == member.squad.captain_ist_id
 			}

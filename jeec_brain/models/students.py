@@ -20,7 +20,7 @@ class Students(db.Model, ModelMixin):
     __tablename__ = 'students'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
-    ist_id = db.Column(db.String(10), unique=True, nullable=False)
+    ist_id = db.Column(db.String(10), unique=True, nullable=False, index=True)
     photo = db.Column(db.Text())
     photo_type = db.Column(db.String(20))
     fenix_auth_code = deferred(db.Column(db.Text()))
@@ -59,6 +59,9 @@ class Students(db.Model, ModelMixin):
     activities = relationship("Activities",
         secondary="student_activities",
         secondaryjoin=sql.and_(StudentActivities.student_id == Activities.id))
+
+    def is_captain(self):
+        return self.ist_id == self.squad.captain_ist_id
 
     def __repr__(self):
         return 'Email:: {}  |  Name: {}'.format(self.name, self.ist_id)

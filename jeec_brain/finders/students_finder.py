@@ -12,6 +12,10 @@ class StudentsFinder():
         return Students.query.filter_by(external_id=external_id).first()
 
     @classmethod
+    def get_from_id(cls, id):
+        return Students.query.filter_by(id=id).first()
+
+    @classmethod
     def get_from_username(cls, username):
         return Students.query.filter_by(username=username).first()
 
@@ -31,3 +35,8 @@ class StudentsFinder():
     def get_from_search(cls, search):
         search = "%{}%".format(search)
         return Students.query.filter(Students.name.ilike(search) | Students.ist_id.ilike(search)).all()
+
+    @classmethod
+    def get_from_search_without_student(cls, search, student_external_id):
+        search = "%{}%".format(search)
+        return Students.query.filter((Students.name.ilike(search) | Students.ist_id.ilike(search)) & (Students.external_id != student_external_id)).all()

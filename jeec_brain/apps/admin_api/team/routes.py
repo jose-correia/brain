@@ -2,6 +2,7 @@ from .. import bp
 from flask import render_template, request, redirect, url_for
 from jeec_brain.finders.teams_finder import TeamsFinder
 from jeec_brain.finders.colaborators_finder import ColaboratorsFinder
+from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.teams_handler import TeamsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
@@ -16,12 +17,13 @@ import os
 @allow_all_roles
 def teams_dashboard():
     teams_list = TeamsFinder.get_all()
+    events_list = EventsFinder.get_all()
 
     if len(teams_list) == 0:
         error = 'No results found'
-        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=None, role=current_user.role.name)
+        return render_template('admin/teams/teams_dashboard.html', teams=None, events=events_list, error=error, search=None, role=current_user.role.name)
 
-    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=None, role=current_user.role.name)
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, events=events_list, error=None, search=None, role=current_user.role.name)
 
 
 @bp.route('/teams', methods=['POST'])
