@@ -1,91 +1,129 @@
-<html>  
-  <head>
-    <title>JEEC|Brain</title>
-    <link rel="stylesheet" href="/static/admin/css/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<html>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
-  </head>
-  <body>
-    <div class="nav-bar">
-        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
-    <div class="section-header">
-      <h2>Activity Types Management</h2>
-      <p>Manage activity types of {{ event.name }}</p>
-    </div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('select').formSelect();
+    });
+  </script>
+</head>
 
-    <form action="{{ url_for('admin_api.activities_dashboard') }}" method="get" class="row s12">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
     </form>
 
-    {% if role in ['admin', 'activities_admin'] %}
-    <form action="{{ url_for('admin_api.add_activity_type_dashboard') }}" method="get">
-      <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Activity Type</button>
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Activity Types Management</h2>
+    <p>Manage activity types of {{ event.name }}</p>
+  </div>
+
+  <form action="{{ url_for('admin_api.activities_dashboard') }}" method="get" class="row s12">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  <div class="left" style="margin-left: 30px;">
+    <div class="sub_section-title">Events</div>
+    <form class="col s12" id="event_form" method="post">
+      <select name="event" id="event" class="form-control">
+        {% for _event in events %}
+        <option value="{{ _event.external_id }}" {% if _event.id|int() == event.id|int() %}selected="selected"
+          {%endif %}>
+          {{ _event.name }}</option>
+        {% endfor %}
+      </select>
     </form>
+  </div>
+
+  {% if role in ['admin', 'activities_admin'] %}
+  <form id="add_type_form" action="{{ url_for('admin_api.add_activity_type_dashboard') }}" method="get">
+    <input hidden name="_event" type="text" value="{{event.external_id}}">
+    <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Activity
+      Type to {{ event.name }}</button>
+  </form>
+  {% endif %}
+
+  <div class="list">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% else %}
+
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price (€)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity_type in event.activity_types %}
+        <tr>
+          <td><b>{{ activity_type.name }}</b></td>
+
+          <td>
+            {% if activity_type.description is not none %}
+            {{ activity_type.description }}
+            {% endif %}
+          </td>
+
+          <td>
+            {% if activity_type.price is not none %}
+            {{ activity_type.price }}
+            {% endif %}
+          </td>
+
+          {% if role in ['admin', 'activities_admin'] %}
+          <td>
+            <form action="/admin/activities/types/{{activity_type.external_id.hex}}" method="get">
+              <button title="Edit activity type" class="waves-effect waves-light btn-floating"><i
+                  class="material-icons left">edit</i>Edit</button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     {% endif %}
+  </div>
 
-    <div class="list">
-      {% if error is not none %}
-        <blockquote class="create-error">
-          {{ error }}
-        </blockquote>
-      {% else %}
+  <script>
+    $(document).on('change', '#event', function () {
+      $('#event_form').submit();
+    });
 
-        <table class="striped">
-            <thead><tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Price (€)</th>
-            </tr></thead>
-            <tbody>
-                {% for activity_type in event.activity_types %}
-                  <tr>
-                    <td><b>{{ activity_type.name }}</b></td>
+  </script>
+</body>
 
-                    <td>
-                      {% if activity_type.description is not none %}
-                        {{ activity_type.description }}
-                      {% endif %}
-                    </td>
-
-                    <td>
-                      {% if activity_type.price is not none %}
-                        {{ activity_type.price }}
-                      {% endif %}
-                    </td>
-
-                    {% if role in ['admin', 'activities_admin'] %}
-                    <td>
-                      <form action="/admin/activities/types/{{activity_type.external_id.hex}}" method="get">
-                        <button title="Edit activity type" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
-                      </form>
-                    </td>
-                    {% endif %}
-                  </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      {% endif %} 
-    </div>
-  </body>
-</html>  
+</html>

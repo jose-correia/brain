@@ -6,6 +6,10 @@ from jeec_brain.values.event_dates_value import EventDatesValue
 class EventsValue(ValueComposite):
 	def __init__(self, events):
 		super(EventsValue, self).initialize({})
+
+		if (not isinstance(events, list)): 
+			events = [events]
+
 		events_array = []
 		for event in events:
 
@@ -24,7 +28,14 @@ class EventsValue(ValueComposite):
 				"schedule": EventsHandler.find_image(f'{event.external_id}_schedule'),
 				"blueprint": EventsHandler.find_image(f'{event.external_id}_blueprint'),
 				"activity_types": ActivityTypesValue(event.activity_types.all()).to_dict(),
-				"dates": EventsHandler.get_event_dates(event)
+				#"dates": EventsHandler.get_event_dates(event),
+				"show_schedule": event.show_schedule,
+				"show_registrations": event.show_registrations
 			}
 			events_array.append(event_value)
 		self.serialize_with(data=events_array)
+
+		if(len(events_array) == 1):
+			self.serialize_with(data=events_array[0])
+		else:
+			self.serialize_with(data=events_array)

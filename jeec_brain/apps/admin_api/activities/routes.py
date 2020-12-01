@@ -21,17 +21,24 @@ def activities_dashboard():
     search_parameters = request.args
     name = request.args.get('name')
 
-    # get default event
-    event = EventsFinder.get_from_parameters({"default": True})
+    # get event
+    event_id = request.args.get('event',None)
 
-    if event is None or len(event) == 0:
+    if(event_id is None):
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_external_id(event_id)
+
+    events = EventsFinder.get_all()
+
+    if event is None:
         error = 'No default event found! Please set a default event in the menu "Events"'
-        return render_template('admin/activities/activities_dashboard.html', event=None, activities=None, error=error, search=search, role=current_user.role.name)
+        return render_template('admin/activities/activities_dashboard.html', event=None, events=events, activities=None, error=error, search=search, role=current_user.role.name)
 
     # handle search bar requests
     if name is not None:
         search = name
-        activities_list = ActivitiesFinder.search_by_name(name)
+        activities_list = ActivitiesFinder.search_by_name_and_event(name, event)
     
     # handle parameter requests
     elif len(search_parameters) != 0:
@@ -41,41 +48,67 @@ def activities_dashboard():
         if 'type' in search_parameters:
             type_external_id = search_parameters['type']
             activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(type_external_id))
-            activities_list = ActivitiesFinder.get_all_from_type(activity_type)
+            activities_list = ActivitiesFinder.get_all_from_type_and_event(activity_type)
+        else:
+            activities_list = event.activities
 
     # request endpoint with no parameters should return all activities
     else:
         search = None
-        activities_list = event[0].activities
+        activities_list = event.activities
     
     if not activities_list:
         error = 'No results found'
-        return render_template('admin/activities/activities_dashboard.html', event=event[0], activities=None, error=error, search=search, role=current_user.role.name)
+        return render_template('admin/activities/activities_dashboard.html', event=event, events=events, activities=None, error=error, search=search, role=current_user.role.name)
 
-    return render_template('admin/activities/activities_dashboard.html', event=event[0], activities=activities_list, error=None, search=search, role=current_user.role.name)
+    return render_template('admin/activities/activities_dashboard.html', event=event, events=events, activities=activities_list, error=None, search=search, role=current_user.role.name)
 
 
 # Activities Types routes
 @bp.route('/activities/types', methods=['GET'])
 @allow_all_roles
 def activity_types_dashboard():
-    event = EventsFinder.get_from_parameters({"default": True})
-    
-    if event is None or len(event) == 0:
+    events = EventsFinder.get_all()
+
+    event_id = request.args.get('event',None)
+    if(event_id is None):
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_external_id(event_id)
+
+    if event is None:
         error = 'No default event found! Please set a default event in the menu "Events"'
-        return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
+        return render_template('admin/activities/activities_dashboard.html', event=None, events=events, error=error, role=current_user.role.name)
     
-    return render_template('admin/activities/activity_types_dashboard.html', event=event[0], error=None, role=current_user.role.name)
+    return render_template('admin/activities/activity_types_dashboard.html', event=event, events=events, error=None, role=current_user.role.name)
+
+@bp.route('/activities/types', methods=['POST'])
+@allow_all_roles
+def search_activity_types():
+    events = EventsFinder.get_all()
+    
+    event = request.form.get('event', None)
+    if(event is None):
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_external_id(event)
+        
+    if event is None:
+        error = 'No event found! Please set an event in the menu "Events"'
+        return render_template('admin/activities/activities_dashboard.html', events=events, event=None, error=error, role=current_user.role.name)
+    
+    return render_template('admin/activities/activity_types_dashboard.html', events=events, event=event, error=None, role=current_user.role.name)
 
 
 @bp.route('/new-activity-type', methods=['GET'])
 @allowed_roles(['admin', 'activities_admin'])
 def add_activity_type_dashboard():
-    event = EventsFinder.get_from_parameters({"default": True})
+    event_id = request.args.get('_event',None)
+    event = EventsFinder.get_from_external_id(event_id)
     if event is None:
-        return APIErrorValue('No default event found! Please set a default event in the menu "Events"').json(500)
+        return APIErrorValue('No event found! Please set an event in the menu "Events"').json(500)
 
-    return render_template('admin/activities/add_activity_type.html', event=event[0], error=None)
+    return render_template('admin/activities/add_activity_type.html', event=event, error=None)
 
 
 @bp.route('/new-activity-type', methods=['POST'])
@@ -84,16 +117,31 @@ def create_activity_type():
     name = request.form.get('name')
     description = request.form.get('description')
     price = request.form.get('price')
+    show_in_home = request.form.get('show_in_home')
+    show_in_schedule = request.form.get('show_in_schedule')
 
-    event = EventsFinder.get_from_parameters({"default": True})
+    if show_in_home == 'True':
+        show_in_home = True
+    else:
+        show_in_home = False
+
+    if show_in_schedule == 'True':
+        show_in_schedule = True
+    else:
+        show_in_schedule = False
+
+    event_id = request.form.get('event_id')
+    event = EventsFinder.get_from_external_id(event_id)
     if event is None:
-        return APIErrorValue('No default event found! Please set a default event in the menu "Events"').json(500)
+        return APIErrorValue('No event found! Please set an event in the menu "Events"').json(500)
 
     activity_type = ActivityTypesHandler.create_activity_type(
-            event=event[0],
+            event=event,
             name=name,
             description=description,
-            price=price
+            price=price,
+            show_in_home=show_in_home,
+            show_in_schedule=show_in_schedule
         )
 
     if activity_type is None:
@@ -120,6 +168,18 @@ def update_activity_type(activity_type_external_id):
     name = request.form.get('name')
     description = request.form.get('description')
     price = request.form.get('price')
+    show_in_home = request.form.get('show_in_home')
+    show_in_schedule = request.form.get('show_in_schedule')
+
+    if show_in_home == 'True':
+        show_in_home = True
+    else:
+        show_in_home = False
+
+    if show_in_schedule == 'True':
+        show_in_schedule = True
+    else:
+        show_in_schedule = False
 
     activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
 
@@ -127,7 +187,9 @@ def update_activity_type(activity_type_external_id):
         activity_type=activity_type,
         name=name,
         description=description,
-        price=price
+        price=price,
+        show_in_home=show_in_home,
+        show_in_schedule=show_in_schedule
     )
 
     if updated_activity_type is None:
@@ -174,17 +236,21 @@ def add_activity_dashboard():
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
 
-    event = EventsFinder.get_from_parameters({"default": True})
+    event_id = request.args.get('event',None)
+    if(event_id is None):
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_external_id(event_id)
     
-    if event is None or len(event) == 0:
+    if event is None:
         error = 'No default event found! Please set a default event in the menu "Events"'
         return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
     
-    activity_types = event[0].activity_types
+    activity_types = event.activity_types
 
     try:
-        minDate = datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
-        maxDate = datetime.strptime(event[0].end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+        minDate = datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
+        maxDate = datetime.strptime(event.end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
     except:
         minDate = None
         maxDate = None
@@ -195,6 +261,7 @@ def add_activity_dashboard():
         speakers=speakers, \
         minDate=minDate, \
         maxDate=maxDate, \
+        event=event, \
         error=None)
 
 

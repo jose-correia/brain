@@ -21,6 +21,9 @@ class Events(db.Model, ModelMixin):
     youtube_link = db.Column(db.String(100))
     instagram_link = db.Column(db.String(100))
 
+    show_schedule = db.Column(db.Boolean, default=False)
+    show_registrations = db.Column(db.Boolean, default=False)
+
     activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="ActivityTypes.name")
     activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete")
     teams = relationship("Teams", back_populates='event', lazy='dynamic', cascade="all,delete")

@@ -12,7 +12,7 @@ class EventsFinder():
     
     @classmethod
     def get_all(cls):
-            return Events.query.order_by(Events.updated_at).all()
+            return Events.query.order_by(Events.default, Events.updated_at).all()
 
     @classmethod
     def get_from_parameters(cls, kwargs):

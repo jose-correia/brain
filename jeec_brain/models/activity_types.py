@@ -10,6 +10,9 @@ class ActivityTypes(db.Model, ModelMixin):
     description = db.Column(db.String(300))
     price = db.Column(db.Float())
 
+    show_in_home = db.Column(db.Boolean, default=True)
+    show_in_schedule = db.Column(db.Boolean, default=True)
+
     event = relationship('Events', back_populates="activity_types", uselist=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 

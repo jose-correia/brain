@@ -4,6 +4,7 @@ import base64
 from functools import wraps
 from flask_login import current_user
 from jeec_brain.finders.users_finder import UsersFinder
+from jeec_brain.finders.students_finder import StudentsFinder
 from jeec_brain.apps.auth.services.decode_jwt_service import DecodeJwtService
 
 
@@ -78,4 +79,18 @@ def requires_client_auth(func):
                 if data.encode("utf-8") == base64.b64encode(auth_bytes): 
                     return func(*args, **kwargs)
         return Response("Access denied", status=401)
+    return decorated
+
+def requires_student_auth(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        user = current_user
+        if(user.is_anonymous):
+            return Response("No user found, access denied", status=401)
+
+        student = StudentsFinder.get_from_user_id(user.id)
+        if(student is None):
+            return Response("No student found, access denied", status=401)
+            
+        return func(*args, student=student)
     return decorated

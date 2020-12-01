@@ -37,4 +37,6 @@ class UsersFinder():
         
         return users
     
-    
+    @classmethod
+    def get_from_jwt(cls, decoded_jwt):
+        return Users.query.filter_by(username=decoded_jwt['username'], email=decoded_jwt['email']).first()
