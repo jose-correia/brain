@@ -18,7 +18,7 @@ class SquadsValue(ValueComposite):
 				"cry": squad.cry,
 				"daily_points": squad.daily_points,
 				"total_points": squad.total_points,
-				"image": SquadsHandler.find_squad_image(squad.name),
+				"image": SquadsHandler.find_squad_image(str(squad.external_id)),
                 "members": SquadMembersValue(squad.members).to_dict(),
 				"captain_ist_id": squad.captain_ist_id,
 				"rank": SquadsFinder.get_rank(squad.id)

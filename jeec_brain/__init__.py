@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 from flask_cors import CORS
+#from flask_socketio import SocketIO
 
 from datetime import timedelta
 
@@ -16,7 +17,7 @@ from applicationinsights.flask.ext import AppInsights
 
 csrf = CSRFProtect()
 login_manager = LoginManager()
-
+#socketIO = SocketIO()
 
 def initialize_admin_api_blueprint(app):
     from jeec_brain.apps.admin_api import bp as admin_api_bp
@@ -64,6 +65,8 @@ def create_app():
     # enable Cross-Origin Resource Sharing
     CORS(app)
     
+    #socketIO.init_app(app, cors_allowed_origins='*')
+
     app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'storage')
 
     initialize_admin_api_blueprint(app)
@@ -110,12 +113,11 @@ def load_remote_user(request):
     token = request.headers.get('Authorization')
 
     if token:
-        decoded_token = DecodeJwtService(token.replace("Bearer ", "", 1).encode('utf-8')).call()
-        try:
-            user = UsersFinder.get_from_parameters(username=decoded_token['username'], email=decoded_token['email'])[0]
-        except KeyError:
+        decoded_jwt = DecodeJwtService(token.replace("Bearer ", "", 1).encode('utf-8')).call()
+
+        if(decoded_jwt is None or 'username' not in decoded_jwt.keys() or 'email' not in decoded_jwt.keys()):
             return None
 
-        return user
+        return UsersFinder.get_from_jwt(decoded_jwt)
 
     return None

@@ -52,8 +52,8 @@ class ActivitiesHandler():
         return DeleteCompanyActivityService(company_activity).call()
 
     @classmethod
-    def add_student_activity(cls, student, activity, quest, done):
-        return AddStudentActivityService(student.id, activity.id, quest, done).call()
+    def add_student_activity(cls, student, activity):
+        return AddStudentActivityService(student.id, activity.id).call()
 
     @classmethod
     def update_student_activity(cls, student_activity, **kwargs):

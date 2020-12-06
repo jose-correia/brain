@@ -7,6 +7,3 @@ class StudentActivities(db.Model, ModelMixin):
 
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), index=True)
     activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'), index=True)
-
-    quest = db.Column(db.Boolean, default=False)
-    done = db.Column(db.Boolean, default=False)

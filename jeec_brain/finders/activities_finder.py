@@ -1,9 +1,12 @@
 from jeec_brain.models.activities import Activities
 from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.models.speaker_activities import SpeakerActivities
+from jeec_brain.models.activities_tags import ActivitiesTags
 from jeec_brain.models.speakers import Speakers
 from jeec_brain.models.companies import Companies
+from jeec_brain.models.tags import Tags
 from jeec_brain.finders.events_finder import EventsFinder
+from datetime import datetime
 
 class ActivitiesFinder():
 
@@ -29,6 +32,12 @@ class ActivitiesFinder():
     @classmethod
     def get_all(cls):
         return Activities.query.order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
+
+    @classmethod
+    def get_quests(cls):
+        now = datetime.utcnow().strftime('%d %b %Y, %a')
+
+        return Activities.query.filter(Activities.quest == True).filter(Activities.day == now).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
 
     @classmethod
     def get_from_parameters(cls, kwargs):
@@ -63,8 +72,12 @@ class ActivitiesFinder():
 
     @classmethod
     def get_activity_speakers(cls, activity):
-        return Speakers.query.join(SpeakerActivities, SpeakerActivities.speaker_id == Speakers.id).filter(SpeakerActivities.activity_id == activity.id).all()
+        return Speakers.query.join(SpeakerActivities, SpeakerActivities.speaker_id == Speakers.id).filter(SpeakerActivities.activity_id == activity.id).order_by(Speakers.name).all()
 
     @classmethod
     def get_activity_companies(cls, activity):
-        return Companies.query.join(CompanyActivities, CompanyActivities.company_id == Companies.id).filter(CompanyActivities.activity_id == activity.id).all()
+        return Companies.query.join(CompanyActivities, CompanyActivities.company_id == Companies.id).filter(CompanyActivities.activity_id == activity.id).order_by(Companies.name).all()
+
+    @classmethod
+    def get_activity_tags(cls, activity):
+        return Tags.query.join(ActivitiesTags, ActivitiesTags.tag_id == Tags.id).filter(ActivitiesTags.activity_id == activity.id).order_by(Tags.name).all()

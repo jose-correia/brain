@@ -22,18 +22,18 @@ class ActivityCodesHandler():
     @classmethod
     def redeem_activity_code(cls, student, code):
         activity_code = ActivityCodesFinder.get_from_code(code)
-        if(activity_code is None):
+        if(activity_code is None or activity_code.activity in student.activities):
             return None
 
         student_activity = StudentsFinder.get_student_activity_from_id_and_activity_id(student.id, activity_code.activity_id)
         if(student_activity is None):
-            student_activity = ActivitiesHandler.add_student_activity(student, activity_code.activity, False, True)
-        else:
-            student_activity = ActivitiesHandler.update_student_activity(student_activity, done=True)
+            student_activity = ActivitiesHandler.add_student_activity(student, activity_code.activity)
+        # else:
+        #     student_activity = ActivitiesHandler.update_student_activity(student_activity, done=True)
 
         cls.delete_activity_code(activity_code)
 
-        points = int(round(activity_code.activity.points * 1.5)) if activity_code.activity.quest else activity_code.activity.points
+        points = activity_code.activity.points
         
         return StudentsHandler.add_points(student, points)
 

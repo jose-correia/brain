@@ -68,7 +68,7 @@
 
         <div class="input-field col s2" style="margin-left: 30px;">
           <select name="type" class="form-control">
-            {% for type in activity_types %}
+            {% for type in event.activity_types %}
             <option value="{{ type.external_id }}">{{ type.name }}</option>
             {% endfor %}
           </select>
@@ -98,12 +98,27 @@
           <input id="time" name="time" type="text" class="timepicker">
           <label for="time">Time</label>
         </div>
+      </div>
+
+      <div class="row s7">
+        <div class="col s3">
+          Activity is a Quest in Student App:
+          <p>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="quest" type="radio" value="True" />
+              <span>Yes</span>
+            </label>
+            <label>
+              <input class="with-gap" name="quest" type="radio" value="False" checked />
+              <span>No</span>
+            </label>
+          </p>
+        </div>
 
         <div class="input-field col s2">
           <input id="points" name="points" type="number" min="0" class="validate">
           <label for="points">Points</label>
         </div>
-
       </div>
 
       Registration Open:
@@ -144,6 +159,15 @@
             {% endfor %}
           </select>
           <label>Choose speakers</label>
+        </div>
+
+        <div class="input-field col s3">
+          <select multiple name="tag">
+            {% for tag in tags %}
+            <option value="{{ tag.name }}">{{ tag.name }}</option>
+            {% endfor %}
+          </select>
+          <label>Choose tags</label>
         </div>
       </div>
 

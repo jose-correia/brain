@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      Show activity type in JEEC website Homepage:
+      Show activities of this type in JEEC website Homepage:
       <p>
         <label style="margin-right: 20px;">
           <input class="with-gap" name="show_in_home" type="radio" value="True"
@@ -96,7 +96,7 @@
         </label>
       </p>
       <br>
-      Show activity type in JEEC website Schedule:
+      Show activities of this type in JEEC website Schedule:
       <p>
         <label style="margin-right: 20px;">
           <input class="with-gap" name="show_in_schedule" type="radio" value="True"
@@ -106,6 +106,19 @@
         <label>
           <input class="with-gap" name="show_in_schedule" type="radio" value="False"
             {% if activity_type.show_in_schedule is sameas false %} checked {% endif %} />
+          <span>No</span>
+        </label>
+      </p>
+      Show activities of this type in JEEC Student App:
+      <p>
+        <label style="margin-right: 20px;">
+          <input class="with-gap" name="show_in_app" type="radio" value="True"
+            {% if activity_type.show_in_app is sameas true %} checked {% endif %} />
+          <span>Yes</span>
+        </label>
+        <label>
+          <input class="with-gap" name="show_in_app" type="radio" value="False"
+            {% if activity_type.show_in_app is sameas false %} checked {% endif %} />
           <span>No</span>
         </label>
       </p>

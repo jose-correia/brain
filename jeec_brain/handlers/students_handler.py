@@ -2,6 +2,9 @@
 from jeec_brain.services.students.create_student_service import CreateStudentService
 from jeec_brain.services.students.delete_student_service import DeleteStudentService
 from jeec_brain.services.students.update_student_service import UpdateStudentService
+from jeec_brain.services.students.add_student_company_service import AddStudentCompanyService
+from jeec_brain.services.students.delete_student_company_service import DeleteStudentCompanyService
+from jeec_brain.services.students.update_student_company_service import UpdateStudentCompanyService
 
 # FINDERS
 from jeec_brain.finders.levels_finder import LevelsFinder
@@ -98,6 +101,18 @@ class StudentsHandler():
         SquadsHandler.delete_squad_invitation(invitation)
 
         return cls.add_squad_member(student, sender.squad)
+
+    @classmethod
+    def add_student_company(cls, student, company):
+        return AddStudentCompanyService(student.id, company.id).call()
+    
+    @classmethod
+    def update_student_company(cls, student_company, **kwargs):
+        return UpdateStudentCompanyService(student_company, kwargs).call()
+
+    @classmethod
+    def delete_student_company(cls, student_company):
+        return DeleteStudentCompanyService(student_company).call()
 
     # @classmethod
     # def upload_student_cv(cls, file, username):

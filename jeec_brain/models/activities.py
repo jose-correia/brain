@@ -31,6 +31,7 @@ class Activities(db.Model, ModelMixin):
         secondaryjoin=sql.and_(ActivitiesTags.tag_id == Tags.id))
 
     points = db.Column(db.Integer())
+    quest = db.Column(db.Boolean, default=False)
    
     def __repr__(self):
-        return 'Type: {}  |  Name: {}'.format(self.type, self.name)
+        return 'Type: {}  |  Name: {}'.format(self.activity_type.name, self.name)

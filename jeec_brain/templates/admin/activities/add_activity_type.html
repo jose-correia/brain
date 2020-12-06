@@ -54,21 +54,11 @@
     {% endif %}
 
     <form class="col s12" action="/admin/new-activity-type" method="post">
-      <input hidden name="event_id" value="{{ event.external_id }}" type="text">
+      <input hidden style="color: white;" name="event_id" value="{{ event.external_id }}" type="text">
       <div class="row">
         <div class="input-field col s5">
           <input id="name" name="name" type="text" class="validate" required>
           <label for="name">Name</label>
-        </div>
-
-        <div class="input-field col s2" style="margin-left: 30px;">
-          <select name="event" class="form-control">
-            {% for event in events %}
-            <option value="{{ event.id }}" {% if event.default %}selected="selected" {%endif %}>{{ event.name }}
-            </option>
-            {% endfor %}
-          </select>
-          <label>Event</label>
         </div>
       </div>
 
@@ -86,7 +76,7 @@
         </div>
       </div>
 
-      Show activity type in JEEC website Homepage:
+      Show activities of this type in JEEC website Homepage:
       <p>
         <label style="margin-right: 20px;">
           <input class="with-gap" name="show_in_home" type="radio" value="True" checked />
@@ -98,7 +88,7 @@
         </label>
       </p>
       <br>
-      Show activity type in JEEC website Schedule:
+      Show activities of this type in JEEC website Schedule:
       <p>
         <label style="margin-right: 20px;">
           <input class="with-gap" name="show_in_schedule" type="radio" value="True" checked />
@@ -106,6 +96,18 @@
         </label>
         <label>
           <input class="with-gap" name="show_in_schedule" type="radio" value="False" />
+          <span>No</span>
+        </label>
+      </p>
+      <br>
+      Show activities of this type in JEEC Student App:
+      <p>
+        <label style="margin-right: 20px;">
+          <input class="with-gap" name="show_in_app" type="radio" value="True" checked />
+          <span>Yes</span>
+        </label>
+        <label>
+          <input class="with-gap" name="show_in_app" type="radio" value="False" />
           <span>No</span>
         </label>
       </p>

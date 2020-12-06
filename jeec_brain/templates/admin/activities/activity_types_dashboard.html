@@ -84,6 +84,9 @@
           <th>Name</th>
           <th>Description</th>
           <th>Price (€)</th>
+          <th>Show in Website Homepage</th>
+          <th>Show in Website Schedule</th>
+          <th>Show in Student App</th>
         </tr>
       </thead>
       <tbody>
@@ -100,6 +103,30 @@
           <td>
             {% if activity_type.price is not none %}
             {{ activity_type.price }}
+            {% endif %}
+          </td>
+
+          <td>
+            {% if activity_type.show_in_home is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if activity_type.show_in_schedule is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if activity_type.show_in_app is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
             {% endif %}
           </td>
 

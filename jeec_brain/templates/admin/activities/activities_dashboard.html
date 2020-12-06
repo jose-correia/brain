@@ -141,6 +141,7 @@
           <th>Time</th>
           <th>Location</th>
           <th>Points</th>
+          <th>Quest</th>
           <th>Registration Open</th>
         </tr>
       </thead>
@@ -155,7 +156,11 @@
 
           <td>
             {% if activity.description is not none %}
+            {% if activity.description|length < 75 %}
             {{ activity.description }}
+            {% else %}
+            {{ activity.description[0:75] }}...
+            {% endif %}
             {% endif %}
           </td>
 
@@ -179,6 +184,14 @@
 
           <td>
             {{ activity.points }}
+          </td>
+
+          <td>
+            {% if activity.quest is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
+            {% endif %}
           </td>
 
           <td>

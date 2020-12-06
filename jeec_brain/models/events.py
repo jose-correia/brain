@@ -25,8 +25,8 @@ class Events(db.Model, ModelMixin):
     show_registrations = db.Column(db.Boolean, default=False)
 
     activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="ActivityTypes.name")
-    activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete")
-    teams = relationship("Teams", back_populates='event', lazy='dynamic', cascade="all,delete")
+    activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="Activities.day, Activities.time")
+    teams = relationship("Teams", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="Teams.website_priority")
 
     def __repr__(self):
         return 'Name: {} | date: {}'.format(self.name, self.start_date)

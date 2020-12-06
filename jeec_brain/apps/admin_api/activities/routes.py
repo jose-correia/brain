@@ -5,6 +5,8 @@ from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
+from jeec_brain.finders.tags_finder import TagsFinder
+from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.handlers.activity_types_handler import ActivityTypesHandler
@@ -33,7 +35,7 @@ def activities_dashboard():
 
     if event is None:
         error = 'No default event found! Please set a default event in the menu "Events"'
-        return render_template('admin/activities/activities_dashboard.html', event=None, events=events, activities=None, error=error, search=search, role=current_user.role.name)
+        return render_template('admin/activities/activities_dashboard.html', event=None, events=events, activities=None, error=error, search=None, role=current_user.role.name)
 
     # handle search bar requests
     if name is not None:
@@ -119,6 +121,7 @@ def create_activity_type():
     price = request.form.get('price')
     show_in_home = request.form.get('show_in_home')
     show_in_schedule = request.form.get('show_in_schedule')
+    show_in_app = request.form.get('show_in_app')
 
     if show_in_home == 'True':
         show_in_home = True
@@ -129,6 +132,11 @@ def create_activity_type():
         show_in_schedule = True
     else:
         show_in_schedule = False
+
+    if show_in_app == 'True':
+        show_in_app = True
+    else:
+        show_in_app = False
 
     event_id = request.form.get('event_id')
     event = EventsFinder.get_from_external_id(event_id)
@@ -141,7 +149,8 @@ def create_activity_type():
             description=description,
             price=price,
             show_in_home=show_in_home,
-            show_in_schedule=show_in_schedule
+            show_in_schedule=show_in_schedule,
+            show_in_app=show_in_app
         )
 
     if activity_type is None:
@@ -170,6 +179,7 @@ def update_activity_type(activity_type_external_id):
     price = request.form.get('price')
     show_in_home = request.form.get('show_in_home')
     show_in_schedule = request.form.get('show_in_schedule')
+    show_in_app = request.form.get('show_in_app')
 
     if show_in_home == 'True':
         show_in_home = True
@@ -181,6 +191,11 @@ def update_activity_type(activity_type_external_id):
     else:
         show_in_schedule = False
 
+    if show_in_app == 'True':
+        show_in_app = True
+    else:
+        show_in_app = False
+
     activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
 
     updated_activity_type = ActivityTypesHandler.update_activity_type(
@@ -189,7 +204,8 @@ def update_activity_type(activity_type_external_id):
         description=description,
         price=price,
         show_in_home=show_in_home,
-        show_in_schedule=show_in_schedule
+        show_in_schedule=show_in_schedule,
+        show_in_app=show_in_app
     )
 
     if updated_activity_type is None:
@@ -235,6 +251,7 @@ def delete_activity_type(activity_type_external_id):
 def add_activity_dashboard():
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
+    tags = TagsFinder.get_all()
 
     event_id = request.args.get('event',None)
     if(event_id is None):
@@ -246,8 +263,6 @@ def add_activity_dashboard():
         error = 'No default event found! Please set a default event in the menu "Events"'
         return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
     
-    activity_types = event.activity_types
-
     try:
         minDate = datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
         maxDate = datetime.strptime(event.end_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
@@ -256,9 +271,9 @@ def add_activity_dashboard():
         maxDate = None
 
     return render_template('admin/activities/add_activity.html', \
-        activity_types = activity_types, \
         companies=companies, \
         speakers=speakers, \
+        tags=tags, \
         minDate=minDate, \
         maxDate=maxDate, \
         event=event, \
@@ -276,11 +291,17 @@ def create_activity():
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
     points = request.form.get('points')
+    quest = request.form.get('quest')
 
     if registration_open == 'True':
         registration_open = True
     else:
         registration_open = False
+
+    if quest == 'True':
+        quest = True
+    else:
+        quest = False
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -300,12 +321,14 @@ def create_activity():
             time=time,
             registration_link=registration_link,
             registration_open=registration_open,
-            points=points
+            points=points,
+            quest=quest
         )
 
     if activity is None:
         companies = CompaniesFinder.get_all()
         speakers = SpeakersFinder.get_all()
+        tags = TagsFinder.get_all()
 
         try:
             minDate = datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
@@ -315,16 +338,18 @@ def create_activity():
             maxDate = None
 
         return render_template('admin/activities/add_activity.html', \
-            type=activity_type, \
             companies=companies, \
             speakers=speakers, \
+            tags=tags, \
             minDate=minDate, \
             maxDate=maxDate, \
+            event=event, \
             error="Failed to create activity! Maybe it already exists :)")
 
     # extract company names and speaker names from parameters
     companies = request.form.getlist('company')
     speakers = request.form.getlist('speaker')
+    tags = request.form.getlist('tag')
 
     # if company names where provided
     if companies:
@@ -347,6 +372,16 @@ def create_activity():
             if speaker_activity is None:
                 return APIErrorValue('Failed to create speaker activity').json(500)
 
+    if tags:
+        for name in tags:
+            tag = TagsFinder.get_by_name(name)
+            if tag is None:
+                return APIErrorValue('Couldnt find tag').json(500)
+
+            activity_tag = TagsHandler.add_activity_tag(activity, tag)
+            if activity_tag is None:
+                return APIErrorValue('Failed to create activity tag').json(500)
+
     return redirect(url_for('admin_api.activities_dashboard'))
 
 
@@ -356,6 +391,7 @@ def get_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
+    tags = TagsFinder.get_all()
 
     event = EventsFinder.get_from_parameters({"default": True})
     if event is None or len(event) == 0:
@@ -365,6 +401,7 @@ def get_activity(activity_external_id):
     activity_types = event[0].activity_types
     company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
     speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
+    activity_tags = TagsFinder.get_activity_tags_from_activity_id(activity_external_id)
 
     try:
         minDate = datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
@@ -378,8 +415,10 @@ def get_activity(activity_external_id):
         activity_types=activity_types, \
         companies=companies, \
         speakers=speakers, \
+        tags=tags, \
         company_activities=[company.company_id for company in company_activities], \
         speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
+        activity_tags=[tag.tag_id for tag in activity_tags], \
         minDate=minDate, \
         maxDate=maxDate, \
         error=None)
@@ -391,6 +430,7 @@ def update_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
     speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
+    activity_tags = TagsFinder.get_activity_tags_from_activity_id(activity_external_id)
 
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
@@ -403,11 +443,17 @@ def update_activity(activity_external_id):
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
     points = request.form.get('points')
+    quest = request.form.get('quest')
 
     if registration_open == 'True':
         registration_open = True
     else:
         registration_open = False
+
+    if quest == 'True':
+        quest = True
+    else:
+        quest = False
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -422,7 +468,8 @@ def update_activity(activity_external_id):
         time=time,
         registration_link=registration_link,
         registration_open=registration_open,
-        points=points
+        points=points,
+        quest=quest
     )
 
     if company_activities:
@@ -433,9 +480,14 @@ def update_activity(activity_external_id):
         for speaker_activity in speaker_activities:
             ActivitiesHandler.delete_speaker_activities(speaker_activity)
 
+    if activity_tags:
+        for activity_tag in activity_tags:
+            TagsHandler.delete_activity_tag(activity_tag)
+
     # extract company names and speaker names from parameters
     companies = request.form.getlist('company')
     speakers = request.form.getlist('speaker')
+    tags = request.form.getlist('tag')
 
     # if company names where provided
     if companies:
@@ -457,6 +509,16 @@ def update_activity(activity_external_id):
             speaker_activity = ActivitiesHandler.add_speaker_activity(speaker, activity)
             if speaker_activity is None:
                 return APIErrorValue('Failed to create speaker activity').json(500)
+
+    if tags:
+        for name in tags:
+            tag = TagsFinder.get_by_name(name)
+            if tag is None:
+                return APIErrorValue('Couldnt find tag').json(500)
+
+            activity_tag = TagsHandler.add_activity_tag(activity, tag)
+            if activity_tag is None:
+                return APIErrorValue('Failed to create activity tag').json(500)
                 
     if updated_activity is None:
         event = EventsFinder.get_from_parameters({"default": True})
@@ -479,6 +541,7 @@ def update_activity(activity_external_id):
             types=activity_types, \
             companies=CompaniesFinder.get_all(), \
             speakers=SpeakersFinder.get_all(), \
+            tags=TagsFinder.get_all(), \
             minDate=minDate, \
             maxDate=maxDate, \
             error="Failed to update activity!")
@@ -492,6 +555,7 @@ def delete_activity(activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
     speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
+    activity_tags = TagsFinder.get_activity_tags_from_activity_id(activity_external_id)
 
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
@@ -503,6 +567,10 @@ def delete_activity(activity_external_id):
     if speaker_activities:
         for speaker_activity in speaker_activities:
             ActivitiesHandler.delete_speaker_activities(speaker_activity)
+
+    if activity_tags:
+        for activity_tag in activity_tags:
+            TagsHandler.delete_activity_tag(activity_tag)
 
     if ActivitiesHandler.delete_activity(activity):
         return redirect(url_for('admin_api.activities_dashboard'))

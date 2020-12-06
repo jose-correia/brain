@@ -6,5 +6,5 @@ from sqlalchemy import Column, Integer, ForeignKey
 class StudentsTags(db.Model, ModelMixin):
     __tablename__ = 'students_tags'
 
-    tag_id = Column(Integer, ForeignKey('speakers.id'), index=True)
+    tag_id = Column(Integer, ForeignKey('tags.id'), index=True)
     student_id = Column(Integer, ForeignKey('students.id'), index=True)
