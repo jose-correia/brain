@@ -50,6 +50,9 @@ def admin_logout():
 @allow_all_roles
 def dashboard():
     event = EventsFinder.get_default_event()
-    logo = logo = EventsHandler.find_image(image_name=str(event.external_id))
+    if(event is None):
+        return render_template('admin/dashboard.html', role=current_user.role.name, event=None, logo=None)
+
+    logo = EventsHandler.find_image(image_name=str(event.external_id))
     return render_template('admin/dashboard.html', role=current_user.role.name, event=event, logo=logo)
 

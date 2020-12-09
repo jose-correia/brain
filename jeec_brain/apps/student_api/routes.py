@@ -93,6 +93,7 @@ def create_squad(student):
 
         result, msg = SquadsHandler.upload_squad_image(file, str(squad.external_id))
         if not result:
+            SquadsHandler.delete_squad(squad)
             return APIErrorValue(msg).json(500)
         
         StudentsHandler.add_squad_member(student, squad)
@@ -343,9 +344,16 @@ def delete_company(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/student-ranking', methods=['GET'])
+@bp.route('/students-ranking', methods=['GET'])
 @requires_student_auth
-def get_student_rankink(student):
+def get_students_ranking(student):
     students = StudentsFinder.get_top_10()
 
     return StudentsValue(students, details=False).json(200)
+
+@bp.route('/squads-ranking', methods=['GET'])
+@requires_student_auth
+def get_squads_ranking(student):
+    squads = SquadsFinder.get_top_10()
+
+    return SquadsValue(squads).json(200)

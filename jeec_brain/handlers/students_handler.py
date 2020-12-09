@@ -5,10 +5,14 @@ from jeec_brain.services.students.update_student_service import UpdateStudentSer
 from jeec_brain.services.students.add_student_company_service import AddStudentCompanyService
 from jeec_brain.services.students.delete_student_company_service import DeleteStudentCompanyService
 from jeec_brain.services.students.update_student_company_service import UpdateStudentCompanyService
+from jeec_brain.services.students.create_banned_student_service import CreateBannedStudentService
+from jeec_brain.services.students.delete_banned_student_service import DeleteBannedStudentService
+from jeec_brain.services.students.update_banned_student_service import UpdateBannedStudentService
 
 # FINDERS
 from jeec_brain.finders.levels_finder import LevelsFinder
 from jeec_brain.finders.students_finder import StudentsFinder
+from jeec_brain.finders.squads_finder import SquadsFinder
 
 # HANDLERS
 from jeec_brain.handlers.squads_handler import SquadsHandler
@@ -43,6 +47,11 @@ class StudentsHandler():
         student.daily_points += points
         student.total_points += points
         student.squad_points += points
+
+        while(student.total_points > student.level.points):
+            level = LevelsFinder.get_level_by_value(student.level.value + 1)
+            if(level is not None):
+                student.level = level
 
         if(student.squad):
             student.squad.daily_points += points
@@ -85,6 +94,10 @@ class StudentsHandler():
         elif(student.is_captain()):
             SquadsHandler.update_squad(student.squad, captain_ist_id=student.squad.members.first().ist_id)
 
+        invitations = SquadsFinder.get_invitations_from_parameters({'sender_id': student.id})
+        for invitation in invitations:
+            SquadsHandler.delete_squad_invitation(invitation)
+
         return cls.update_student(student, squad_id=None, squad_points=0)
 
     @classmethod
@@ -113,6 +126,18 @@ class StudentsHandler():
     @classmethod
     def delete_student_company(cls, student_company):
         return DeleteStudentCompanyService(student_company).call()
+
+    @classmethod
+    def create_banned_student(cls, student):
+        return CreateBannedStudentService({'name': student.name, 'ist_id': student.ist_id, 'email': student.user.email})
+
+    @classmethod
+    def update_banned_student(cls, banned_student, **kwargs):
+        return UpdateBannedStudentService(banned_student, kwargs)
+
+    @classmethod
+    def delete_banned_student(cls, banned_student):
+        return DeleteBannedStudentService(banned_student)
 
     # @classmethod
     # def upload_student_cv(cls, file, username):

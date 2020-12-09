@@ -1,0 +1,80 @@
+<html>
+
+<head>
+    <title>JEEC|Brain</title>
+    <link rel="stylesheet" href="/static/admin/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="nav-bar">
+        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile"
+                src="/static/jeec_logo_mobile.svg"></a>
+
+        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+            <button class="waves-effect red lighten-2 btn-small right logout-btn"><i
+                    class="material-icons left">lock</i>Log out</button>
+        </form>
+
+        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+            <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+                    class="large material-icons left">web</i>Visit website</button>
+        </a>
+    </div>
+
+    <div class="section-header">
+        <h2>Student App Management</h2>
+        <p>Manage the JEEC Student App</p>
+    </div>
+
+    <form action="{{ url_for('admin_api.dashboard') }}" method="get" class="row s12">
+        <button class="waves-effect waves-light btn back-btn left"><i
+                class="material-icons left">arrow_back</i>back</button>
+    </form>
+
+    <div class="flexbox-btns" style="margin-top: 100px;">
+        <form action="{{ url_for('admin_api.levels_dashboard') }}" method="get">
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+                    class="large material-icons left">bar_chart</i>Levels</button>
+        </form>
+
+        <form action="{{ url_for('admin_api.rewards_dashboard') }}" method="get">
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+                    class="large material-icons left">emoji_events</i>Rewards</button>
+        </form>
+
+        <form action="{{ url_for('admin_api.squads_dashboard') }}" method="get">
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+                    class="large material-icons left">groups</i>Squads</button>
+        </form>
+
+        <form action="{{ url_for('admin_api.students_dashboard') }}" method="get">
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+                    class="large material-icons left">account_circle</i>Students</button>
+        </form>
+
+        <form action="{{ url_for('admin_api.tags_dashboard') }}" method="get">
+            <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+                    class="large material-icons left">local_offer</i>Tags</button>
+        </form>
+    </div>
+
+    <blockquote style="margin-left: 40px;margin-top: 70px;">
+        <b>Caution!</b> Any change in this system will instantly affect the <b>JEEC Student App</b>!
+    </blockquote>
+
+</body>
+
+</html>

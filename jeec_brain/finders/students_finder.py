@@ -1,4 +1,5 @@
 from jeec_brain.models.students import Students
+from jeec_brain.models.levels import Levels
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.student_companies import StudentCompanies
 
@@ -23,6 +24,19 @@ class StudentsFinder():
     @classmethod
     def get_from_user_id(cls, user_id):
         return Students.query.filter_by(user_id=user_id).first()
+
+    @classmethod
+    def get_from_level_or_higher(cls, level):
+        return Students.query.filter(Students.level_id == Levels.id, Levels.value >= level.value).all()
+
+    @classmethod
+    def get_from_parameters(cls, kwargs):
+        try:
+            students = Students.query.filter_by(**kwargs).all()
+        except Exception:
+            return None
+        
+        return students
     
     @classmethod
     def get_all(cls):

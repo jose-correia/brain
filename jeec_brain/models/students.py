@@ -9,7 +9,7 @@ from jeec_brain.models.tags import Tags
 from jeec_brain.models.students_tags import StudentsTags
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.student_companies import StudentCompanies
-from jeec_brain.models.rewards import Rewards
+from jeec_brain.models.solo_rewards import SoloRewards
 from jeec_brain.models.students_rewards import StudentsRewards
 from jeec_brain.models.activities import Activities
 from jeec_brain.models.student_activities import StudentActivities
@@ -52,9 +52,9 @@ class Students(db.Model, ModelMixin):
         secondary="student_companies",
         secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id))
 
-    rewards = relationship("Rewards",
+    rewards = relationship("SoloRewards",
         secondary="students_rewards",
-        secondaryjoin=sql.and_(StudentsRewards.reward_id == Rewards.id))
+        secondaryjoin=sql.and_(StudentsRewards.reward_id == SoloRewards.id))
 
     activities = relationship("Activities",
         secondary="student_activities",

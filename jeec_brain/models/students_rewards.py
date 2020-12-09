@@ -7,4 +7,4 @@ class StudentsRewards(db.Model, ModelMixin):
     __tablename__ = 'students_rewards'
 
     student_id = Column(Integer, ForeignKey('students.id'), index=True)
-    reward_id = Column(Integer, ForeignKey('rewards.id'), index=True)
+    reward_id = Column(Integer, ForeignKey('solo_rewards.id'), index=True)

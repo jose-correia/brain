@@ -17,13 +17,13 @@ class StudentsValue(ValueComposite):
 				"name": student.name,
                 "photo": 'data: ' + student.photo_type + ';base64, ' + student.photo,
                 "ist_id": student.ist_id,
-                "level": LevelsValue(student.level).to_dict()
+                "level": LevelsValue(student.level).to_dict() if student.level else LevelsValue(None).to_dict(),
+                "total_points": student.total_points
             }
             if(details):
                 student_details = {
                     "email": student.user.email,
                     "daily_points": student.daily_points,
-                    "total_points": student.total_points,
                     "squad_points": student.squad_points,
                     "linkedin_url": student.linkedin_url,
                     "uploaded_cv": student.uploaded_cv,

@@ -36,6 +36,10 @@ class SquadsFinder():
         return db_session.query(subquery).filter(subquery.c.id==id).first().rank
 
     @classmethod
+    def get_top_10(cls):
+        return Squads.query.order_by(Squads.total_points.desc()).limit(10).all()
+
+    @classmethod
     def get_invitation_from_external_id(cls, external_id):
         return SquadInvitations.query.filter_by(external_id=external_id).first()
     

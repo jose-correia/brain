@@ -34,8 +34,9 @@
     <h2>JEEC Brain</h2>
     <p>Manage all the data of the event</p>
   </div>
-
+  
   <center>
+    {% if event is not none %}
     <h3 class="section-title">{{ event.name }}</h3>
     {% if logo is not sameas none %}
     <img src="{{ logo }}" class="company-logo centered-image">
@@ -43,6 +44,11 @@
     {% else %}
   <blockquote class="create-error">
     Logo missing! Please, upload one
+  </blockquote>
+  {% endif %}
+  {% else %}
+  <blockquote class="create-error">
+    No default event! Create an event to enjoy all the functionalities.
   </blockquote>
   {% endif %}
 
@@ -94,6 +100,11 @@
           class="large material-icons left">folder_shared</i>Resumes</button>
     </form>
 
+    <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+          class="large material-icons left">settings_cell</i>Students App</button>
+    </form>
+
     <form action="{{ url_for('admin_api.users_dashboard') }}" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
           class="large material-icons left">lock</i>Users</button>
@@ -102,7 +113,7 @@
   {% endif %}
 
   <blockquote style="margin-left: 40px;margin-top: 70px;">
-    <b>Caution!</b> Any change in this system will instantly affect the <b>JEEC website</b> and <b>CV platform</b>!
+    <b>Caution!</b> Any change in this system will instantly affect the <b>JEEC website</b> and <b>JEEC Student App</b>!
   </blockquote>
 </body>
 

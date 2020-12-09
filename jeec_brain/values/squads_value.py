@@ -25,7 +25,7 @@ class SquadsValue(ValueComposite):
 			}
 			squads_array.append(squad_value)
 		
-		if(len(squads_array) == 0):
-			self.serialize_with(data=squads_array)
-		else:
+		if(len(squads_array) == 1):
 			self.serialize_with(data=squads_array[0])
+		else:
+			self.serialize_with(data=squads_array)
