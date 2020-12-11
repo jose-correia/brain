@@ -34,8 +34,8 @@
   </div>
 
   <div class="section-header">
-    <h2>Students Management</h2>
-    <p>Ban and manage students</p>
+    <h2>Rewards Management</h2>
+    <p>Create and manage rewards</p>
   </div>
 
   <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
@@ -44,7 +44,7 @@
   </form>
 
   <div class="section-title center-align" style="margin-top:90px;">
-    List of Students
+    List of Rewards
   </div>
 
   <div class="search-bar">
@@ -53,7 +53,7 @@
         <div class="input-field col s8">
           <input class="col s12" id="search" name="search" type="text" class="validate" required>
 
-          <label for="search">{% if search is not none %}{{ search }}{% else %}search name or username{% endif %}</label>
+          <label for="search">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
         </div>
         <button type="submit" class="btn-floating blue lighten-2 search-btn"><i
             class="material-icons">search</i>Search</button>
@@ -61,9 +61,25 @@
     </form>
 
     {% if search %}
-    <a class="clear-search" href="{{ url_for('admin_api.students_dashboard') }}">clear search results</a>
+    <a class="clear-search" href="{{ url_for('admin_api.rewards_dashboard') }}">clear search results</a>
     {% endif %}
   </div>
+
+  {% if current_user.role.name == 'admin' %}
+  <form action="{{ url_for('admin_api.add_reward_dashboard') }}" method="get">
+    <button class="waves-effect blue lighten-2 btn add-btn right"><i
+        class="material-icons left">add</i>Reward</button>
+  </form>
+  <form action="{{ url_for('admin_api.add_reward_dashboard') }}" method="get">
+    <button class="waves-effect lighten-2 btn add-btn right"><i
+        class="material-icons left">edit</i>Squad Rewards</button>
+  </form>
+  <form action="{{ url_for('admin_api.jeecpot_reward_dashboard') }}" method="get">
+    <button class="waves-effect lighten-2 btn add-btn right"><i
+        class="material-icons left">edit</i>JEECPOT Rewards</button>
+  </form>
+  <br><br>
+  {% endif %}
 
   <div class="list">
     {% if error is not none %}
@@ -72,71 +88,44 @@
     </blockquote>
     {% else %}
     <div class="counter right">
-      Students: {{ students|length }}
+      Rewards: {{ rewards|length }}
     </div>
 
     <table class="striped">
       <thead>
         <tr>
           <th>Name</th>
-          <th>IST Id</th>
-          <th>Email</th>
-          <th>Linkedin</th>
-          <th>Level</th>
-          <th>Total Points</th>
-          <th>Uploaded CV</th>
-          <th>Squad</th>
+          <th>Description</th>
+          <th>Link</th>
+          <th>Quantity</th>
         </tr>
       </thead>
       <tbody>
-        {% for student in students %}
+        {% for reward in rewards %}
         <tr>
-          <td><b>
-              {{ student.name }}
-            </b></td>
-
           <td>
-            {{ student.ist_id }}
+            <b>
+              {{ reward.name }}
+            </b>
           </td>
 
           <td>
-            {{ student.user.email }}
+            {{ reward.description }}
           </td>
 
           <td>
-            {% if student.linkedin_url is not none %}
-            {{ student.linkedin_url}}
-            {% else %}
-            <i class="material-icons icon-red">clear</i>
-            {% endif %}
+            <a href="{{ reward.link }}" target="_blank">{{ reward.link }}</a>
           </td>
 
           <td>
-            {{ student.level.value }}
-          </td>
-
-          <td>
-            {{ student.total_points }}
-          </td>
-
-          <td>
-            {% if student.uploaded_cv is sameas true %}
-            <i class="material-icons icon-green">check</i>
-            {% else %}
-            <i class="material-icons icon-red">clear</i>
-            {% endif %}
-          </td>
-
-          <td>
-            {{ student.squad.name }}
+            {{ reward.quantity }}
           </td>
 
           <td>
             {% if current_user.role.name == 'admin' %}
-            <form action="/admin/student/{{student.external_id.hex}}/ban" method="post"
-              onsubmit="return confirm('Are you sure you want to ban this student?');">
-              <button title="Ban student" class="waves-effect waves-light btn-floating"><i
-                  class="material-icons red left">person_remove</i>Ban</button>
+            <form action="/admin/rewards/{{reward.external_id.hex}}" method="get">
+              <button title="Edit Reward" class="waves-effect waves-light btn-floating"><i
+                  class="material-icons left">edit</i>Edit</button>
             </form>
             {% endif %}
           </td>

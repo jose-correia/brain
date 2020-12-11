@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,6 +18,11 @@
 
   <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('select').formSelect();
+    });
+  </script>
 </head>
 
 <body>
@@ -70,6 +75,7 @@
           <th>Starting Points</th>
           <th>Ending Points</th>
           <th>Points</th>
+          <th>Reward</th>
         </tr>
       </thead>
       <tbody>
@@ -93,51 +99,78 @@
           </td>
 
           <td>
-            {% if ((levels|length > 0) and (loop.index == levels|length)) %}
-            <form action="/admin/level/{{level.external_id.hex}}/delete" method="post">
-              <button title="Delete level" class="waves-effect waves-light red btn-floating"><i class="material-icons left">delete</i>Delete</button>
+            <form action="/admin/level/{{level.external_id.hex}}" method="post" onsubmit="confirm('Are you sure you want to change the reward?');">
+              <select name="reward" class="form-control" onchange="this.form.submit()">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}"
+                  {% if level.reward is not none and reward.id|int() == level.reward.id|int() %} selected {% endif %}>
+                  {{ reward.name }}</option>
+                {% endfor %}
+                <option value="" {% if level.reward is none %} selected {% endif %}></option>
+              </select>
+            </form>
+          </td>
+
+          <td>
+            {% if ((levels|length > 0) and (loop.index == levels|length)) and current_user.role.name == 'admin' %}
+            <form action="/admin/level/{{level.external_id.hex}}/delete" method="post"
+              onsubmit="return confirm('Are you sure you want to delete this level?');">
+              <button title="Delete level" class="waves-effect waves-light red btn-floating"><i
+                  class="material-icons left">delete</i>Delete</button>
             </form>
             {% endif %}
           </td>
         </tr>
         {% set ns.points = level.points + 1  %}
         {% endfor %}
-        <form action="{{ url_for('admin_api.create_level') }}" method="post">
-        <tr>
-          <td>
-            {% if levels|length > 0 %}
-            <input type="number" value="{{levels[levels|length - 1].value + 1}}" disabled>
-            <input name="value" type="number" value="{{levels[levels|length - 1].value + 1}}" hidden>
-            {% else %}
-            <input type="number" value="0" disabled>
-            <input name="value" type="number" value="0" hidden>
-            {% endif %}
-          </td>
-          <td>
-            {% if levels|length > 0 %}
-            <input id="starting_points" type="number" value="{{levels[levels|length - 1].points + 1}}" disabled>
-            {% else %}
-            <input id="starting_points" type="number" value="0" disabled>
-            {% endif %}
-          </td>
-          <td>
-            {% if levels|length > 0 %}
-            <input id="ending_points" type="number" min="{{levels[levels|length - 1].points + 2}}" value="{{levels[levels|length - 1].points + 2}}" disabled>
-            <input name="points" id="_ending_points" type="number" min="{{levels[levels|length - 1].points + 2}}" value="{{levels[levels|length - 1].points + 2}}" hidden>
-            {% else %}
-            <input id="ending_points" type="number" min="1" value="1" disabled>
-            <input name="points" id="_ending_points" type="number" min="1" value="1" hidden>
-            {% endif %}
-          </td>
-          <td>
-            <input id="points" type="number" min="1" value="1">
-          </td>
-          <td>
-            <button type="submit" title="Add level" class="waves-effect waves-light btn-floating"><i
-                class="material-icons left">add</i>Add</button>
-          </td>
-        </tr>
+        {% if current_user.role.name == 'admin' %}
+        <form action="{{ url_for('admin_api.create_level') }}" method="post" enctype="multipart/form-data" id="create-level">
+          <tr>
+            <td>
+              {% if levels|length > 0 %}
+              <input type="number" value="{{levels[levels|length - 1].value + 1}}" disabled>
+              <input name="value" type="number" value="{{levels[levels|length - 1].value + 1}}" hidden>
+              {% else %}
+              <input type="number" value="0" disabled>
+              <input name="value" type="number" value="0" hidden>
+              {% endif %}
+            </td>
+            <td>
+              {% if levels|length > 0 %}
+              <input id="starting_points" type="number" value="{{levels[levels|length - 1].points + 1}}" disabled>
+              {% else %}
+              <input id="starting_points" type="number" value="0" disabled>
+              {% endif %}
+            </td>
+            <td>
+              {% if levels|length > 0 %}
+              <input id="ending_points" type="number" min="{{levels[levels|length - 1].points + 2}}"
+                value="{{levels[levels|length - 1].points + 2}}" disabled>
+              <input name="points" id="_ending_points" type="number" min="{{levels[levels|length - 1].points + 2}}"
+                value="{{levels[levels|length - 1].points + 2}}" hidden>
+              {% else %}
+              <input id="ending_points" type="number" min="1" value="1" disabled>
+              <input name="points" id="_ending_points" type="number" min="1" value="1" hidden>
+              {% endif %}
+            </td>
+            <td>
+              <input id="points" type="number" min="1" value="1">
+            </td>
+            <td>
+              <select name="reward" form="create-level" class="form-control">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}">{{ reward.name }}</option>
+                {% endfor %}
+                <option value="" selected></option>
+              </select>
+            </td>
+            <td>
+              <button type="submit" title="Add level" class="waves-effect waves-light btn-floating"><i
+                  class="material-icons left">add</i>Add</button>
+            </td>
+          </tr>
         </form>
+        {% endif %}
       </tbody>
     </table>
     {% endif %}
@@ -145,7 +178,7 @@
 
   <script>
     $(document).ready(function () {
-      $('#points').bind("input", function() {
+      $('#points').bind("input", function () {
         $("#ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
         $("#_ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
       });

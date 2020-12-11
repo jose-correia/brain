@@ -19,6 +19,8 @@ fenixedu.ini
 /jeec_brain/static/cv_platform/
 /jeec_brain/static/events/
 /jeec_brain/static/news/
+/jeec_brain/static/squads/
+/jeec_brain/static/rewards/
 
 /__pycache__
 

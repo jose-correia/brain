@@ -46,15 +46,18 @@ def create_tables():
     # Students
     from jeec_brain.models.students import Students
     from jeec_brain.models.levels import Levels
-    from jeec_brain.models.solo_rewards import SoloRewards
     from jeec_brain.models.squads import Squads
     from jeec_brain.models.squad_invitations import SquadInvitations
     from jeec_brain.models.student_activities import StudentActivities
     from jeec_brain.models.student_companies import StudentCompanies
-    from jeec_brain.models.students_rewards import StudentsRewards
     from jeec_brain.models.students_tags import StudentsTags
     from jeec_brain.models.tags import Tags
     from jeec_brain.models.banned_students import BannedStudents
+
+    # Rewards
+    from jeec_brain.models.rewards import Rewards
+    from jeec_brain.models.jeecpot_rewards import JeecpotRewards
+    from jeec_brain.models.squads_rewards import SquadsRewards
 
     db.create_all()
 

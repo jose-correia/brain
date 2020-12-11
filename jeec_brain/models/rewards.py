@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
 
-class PersonalRewards(db.Model, ModelMixin):
-    __tablename__ = 'personal_rewards'
+class Rewards(db.Model, ModelMixin):
+    __tablename__ = 'rewards'
     
     name = db.Column(db.String(100), unique=True, nullable=False)
 
@@ -14,9 +14,6 @@ class PersonalRewards(db.Model, ModelMixin):
     link = db.Column(db.String(100))
 
     quantity = db.Column(db.Integer)
-
-    level = relationship('Levels')
-    level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)

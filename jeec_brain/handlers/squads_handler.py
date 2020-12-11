@@ -23,7 +23,7 @@ class SquadsHandler():
     @classmethod
     def delete_squad(cls, squad):
         for extension in current_app.config['ALLOWED_IMAGES']:
-            image_filename = squad.name.lower().replace(' ', '_') + '.' + extension
+            image_filename = str(squad.external_id).lower().replace(' ', '_') + '.' + extension
             DeleteImageService(image_filename, 'static/squads').call()
 
         return DeleteSquadService(squad=squad).call()

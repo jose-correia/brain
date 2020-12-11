@@ -9,8 +9,6 @@ from jeec_brain.models.tags import Tags
 from jeec_brain.models.students_tags import StudentsTags
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.student_companies import StudentCompanies
-from jeec_brain.models.solo_rewards import SoloRewards
-from jeec_brain.models.students_rewards import StudentsRewards
 from jeec_brain.models.activities import Activities
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.levels import Levels
@@ -52,10 +50,6 @@ class Students(db.Model, ModelMixin):
         secondary="student_companies",
         secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id))
 
-    rewards = relationship("SoloRewards",
-        secondary="students_rewards",
-        secondaryjoin=sql.and_(StudentsRewards.reward_id == SoloRewards.id))
-
     activities = relationship("Activities",
         secondary="student_activities",
         secondaryjoin=sql.and_(StudentActivities.student_id == Activities.id))
@@ -64,7 +58,7 @@ class Students(db.Model, ModelMixin):
         return self.ist_id == self.squad.captain_ist_id
 
     def __repr__(self):
-        return 'Email:: {}  |  Name: {}'.format(self.name, self.ist_id)
+        return 'Name: {}  |  IST Id: {}'.format(self.name, self.ist_id)
 
     # def accept_terms(self):
     #     self.accept_terms = True

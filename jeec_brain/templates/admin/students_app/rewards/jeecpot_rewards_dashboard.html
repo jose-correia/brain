@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,6 +18,11 @@
 
   <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('select').formSelect();
+    });
+  </script>
 </head>
 
 <body>
@@ -36,17 +41,17 @@
   </div>
 
   <div class="section-header">
-    <h2>Tags Management</h2>
-    <p>Create tags for activities</p>
+    <h2>JEECPOT Rewards Management</h2>
+    <p>Manage the rewards for the top students and squads</p>
   </div>
 
-  <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
+  <form action="{{ url_for('admin_api.rewards_dashboard') }}" method="get">
     <button class="waves-effect waves-light btn back-btn left"><i
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
   <div class="section-title center-align" style="margin-top:90px;">
-    List of Tags
+    List of JEECPOT Rewards
   </div>
 
   <div class="list">
@@ -55,44 +60,37 @@
       {{ error }}
     </blockquote>
     {% else %}
-    <div class="counter right">
-      Tags: {{ tags|length }}
-    </div>
-    <br><br><br>
-    <div style="display: flex; flex-wrap: wrap; margin-bottom: 40px;">
-      {% for tag in tags %}
-      <div class="tag-wrapper">
-        <p class="tag">{{ tag.name }}</p>
-        <form action="/admin/tag/{{tag.external_id.hex}}/delete" method="post"><button title="Delete tag"
-            class="waves-effect waves-light red btn-floating" style="margin-top: 20px;"><i class="material-icons left">delete</i>Delete</button>
-        </form>
-      </div>
-      {% endfor %}
-    </div>
-    {% if current_user.role.name == 'admin' %}
-    <form action="/admin/new-tag" method="post">
-      <div class="row">
-        <div class="input-field col s3" style="margin: 0;">
-          <input id="name" name="name" type="text" class="validate" required>
-          <label for="name">Add Tag</label>
-        </div>
-        <div class="col s1">
-          <button title="Add tag" class="waves-effect waves-light btn-floating"><i
-              class="material-icons left">add</i>Add</button></div>
-      </div>
-    </form>
-    {% endif %}
+
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Destinatary</th>
+          <th>Reward</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            Top Student
+          </td>
+
+          <td>
+            <form action="/admin/jeecpot-rewards/{{jeecpot_rewards.external_id.hex}}" method="post" onsubmit="confirm('Are you sure you want to change the reward?');">
+              <select name="student_reward" class="form-control" onchange="this.form.submit()">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}"
+                  {% if jeecpot_rewards.student_reward_id is not none and reward.id|int() == jeecpot_rewards.student_reward_id|int() %} selected {% endif %}>
+                  {{ reward.name }}</option>
+                {% endfor %}
+                <option value="" {% if jeecpot_rewards.student_reward_id is none %} selected {% endif %}></option>
+              </select>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     {% endif %}
   </div>
-
-  <script>
-    $(document).ready(function () {
-      $('#points').bind("input", function () {
-        $("#ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
-        $("#_ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
-      });
-    });
-  </script>
 </body>
 
 </html>

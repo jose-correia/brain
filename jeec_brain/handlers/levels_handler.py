@@ -11,7 +11,7 @@ class LevelsHandler():
 
     @classmethod
     def update_level(cls, level, **kwargs):
-        return UpdateLevelService(level, kwargs)
+        return UpdateLevelService(level, kwargs).call()
 
     @classmethod
     def delete_level(cls, level):

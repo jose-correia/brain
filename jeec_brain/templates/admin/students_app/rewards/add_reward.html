@@ -7,8 +7,6 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,7 +15,6 @@
   <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
   <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-
 </head>
 
 <body>
@@ -36,63 +33,66 @@
   </div>
 
   <div class="section-header">
-    <h2>Tags Management</h2>
-    <p>Create tags for activities</p>
+    <h2>Rewards Management</h2>
+    <p>Add a new reward</p>
   </div>
 
-  <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
+  <form action="{{ url_for('admin_api.rewards_dashboard') }}" method="get">
     <button class="waves-effect waves-light btn back-btn left"><i
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
-  <div class="section-title center-align" style="margin-top:90px;">
-    List of Tags
-  </div>
+  <br>
 
-  <div class="list">
+  <div class="create-form">
     {% if error is not none %}
     <blockquote class="create-error">
       {{ error }}
     </blockquote>
-    {% else %}
-    <div class="counter right">
-      Tags: {{ tags|length }}
-    </div>
-    <br><br><br>
-    <div style="display: flex; flex-wrap: wrap; margin-bottom: 40px;">
-      {% for tag in tags %}
-      <div class="tag-wrapper">
-        <p class="tag">{{ tag.name }}</p>
-        <form action="/admin/tag/{{tag.external_id.hex}}/delete" method="post"><button title="Delete tag"
-            class="waves-effect waves-light red btn-floating" style="margin-top: 20px;"><i class="material-icons left">delete</i>Delete</button>
-        </form>
-      </div>
-      {% endfor %}
-    </div>
-    {% if current_user.role.name == 'admin' %}
-    <form action="/admin/new-tag" method="post">
-      <div class="row">
-        <div class="input-field col s3" style="margin: 0;">
-          <input id="name" name="name" type="text" class="validate" required>
-          <label for="name">Add Tag</label>
-        </div>
-        <div class="col s1">
-          <button title="Add tag" class="waves-effect waves-light btn-floating"><i
-              class="material-icons left">add</i>Add</button></div>
-      </div>
-    </form>
     {% endif %}
-    {% endif %}
-  </div>
 
-  <script>
-    $(document).ready(function () {
-      $('#points').bind("input", function () {
-        $("#ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
-        $("#_ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
-      });
-    });
-  </script>
+    <form class="col s12" action="/admin/new-reward" method="post" enctype="multipart/form-data">
+      <div class="row">
+        <div class="input-field col s5">
+          <input id="name" name="name" type="text" class="validate" required>
+          <label for="name">Name</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s8">
+          <textarea name="description" id="description" class="materialize-textarea" maxlength="300"></textarea>
+          <label for="description">Description</label>
+        </div>
+      </div>
+
+      <div class="row s7">
+        <div class="input-field col s3">
+          <input id="link" name="link" type="url" class="validate">
+          <label for="link">Link</label>
+        </div>
+
+        <div class="input-field col s1">
+          <input id="quantity" name="quantity" type="number" min="0" class="validate">
+          <label for="quantity">Quantity</label>
+        </div>
+      </div>
+
+      <div class="file-field input-field" style="width:500px;">
+        <div class="btn">
+          <i class="material-icons left">image</i>
+          <span>Reward Image</span>
+          <input type="file" name="image">
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text" placeholder="use .png with <200kB">
+        </div>
+      </div>
+
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
+          class="material-icons left">save</i>Save Reward</button>
+    </form>
+  </div>
 </body>
 
 </html>
