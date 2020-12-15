@@ -2,7 +2,6 @@
 *.json
 *.pyc
 *.env
-*.sh
 
 fenixedu.ini
 

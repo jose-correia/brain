@@ -1,18 +1,20 @@
 FROM python:3.6
 
-RUN mkdir jeec
+RUN mkdir /jeec_brain
+RUN mkdir -p /jeec_brain/static/members
+RUN mkdir -p /jeec_brain/static/companies/images
+RUN mkdir -p /jeec_brain/static/speakers/companies
+RUN mkdir -p /jeec_brain/static/speakers
+RUN mkdir -p /jeec_brain/static/events/images
 
-RUN mkdir -p /jeec/jeec_brain
+WORKDIR /jeec_brain
 
-RUN mkdir -p /jeec/jeec_brain/static/members
-RUN mkdir -p /jeec/jeec_brain/static/companies/images
-RUN mkdir -p /jeec/jeec_brain/static/speakers/companies
-RUN mkdir -p /jeec/jeec_brain/static/speakers
-RUN mkdir -p /jeec/jeec_brain/static/events/images
+ADD requirements.txt /jeec_brain
+RUN pip install -r requirements.txt
 
-WORKDIR /jeec/jeec_brain
+ADD . /jeec_brain
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 8081
 
-COPY . .
+RUN chmod ugo+rwx ./deployment/entrypoint.sh
+ENTRYPOINT ["sh", "deployment/entrypoint.sh"]
