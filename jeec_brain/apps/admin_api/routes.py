@@ -4,6 +4,8 @@ from . import bp
 from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import allow_all_roles
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
+from jeec_brain.finders.events_finder import EventsFinder
+from jeec_brain.handlers.events_handler import EventsHandler
 
 import logging
 logger = logging.getLogger(__name__)
@@ -47,5 +49,10 @@ def admin_logout():
 @bp.route('/dashboard', methods=['GET'])
 @allow_all_roles
 def dashboard():
-    return render_template('admin/dashboard.html', role=current_user.role.name)
+    event = EventsFinder.get_default_event()
+    if(event is None):
+        return render_template('admin/dashboard.html', role=current_user.role.name, event=None, logo=None)
+
+    logo = EventsHandler.find_image(image_name=str(event.external_id))
+    return render_template('admin/dashboard.html', role=current_user.role.name, event=event, logo=logo)
 

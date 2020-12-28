@@ -33,12 +33,21 @@ def get_activities():
     speaker = request.args.get('speaker')
     company = request.args.get('company')
     
+    event = request.args.get('event')
+    if event is None:
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_name(event)
+
+    if event is None:
+        return APIErrorValue("Event no found!").json(404)
+
     activities_list = []
 
     # handle search bar requests
     if name is not None:
         search = name
-        activities_list = ActivitiesFinder.search_by_name(name)
+        activities_list = ActivitiesFinder.search_by_name_and_event(search, event)
     
     # handle parameter requests
     elif speaker is not None:
@@ -70,7 +79,7 @@ def get_activities():
     # request endpoint with no parameters should return all activities
     else:
         search = None
-        activities_list = ActivitiesFinder.get_all()
+        activities_list = event.activities
     
     if activities_list is None or len(activities_list) == 0:
         return APIErrorValue('No results found').json(400)
@@ -85,11 +94,27 @@ def get_companies():
     search_parameters = request.args
     name = request.args.get('name')
 
+    event_name = request.args.get('event')
+    if event_name is None:
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_name(event_name)
+
+    if event is None:
+        return APIErrorValue("Event not found!").json(404)
+
     # handle search bar requests
     if name is not None:
         search = name
         companies_list = CompaniesFinder.get_website_company(name)
-    
+
+    if event_name is not None:
+        companies_list = []
+        
+        for activity in event.activities:
+            companies_list = companies_list + (CompaniesFinder.get_from_activity(activity))
+        companies_list = removeDuplicates(companies_list)
+
     # handle parameter requests
     elif len(search_parameters) != 0:
         search_parameters = request.args
@@ -100,7 +125,11 @@ def get_companies():
     # request endpoint with no parameters should return all companies
     else:
         search = None
-        companies_list = CompaniesFinder.get_all()
+        companies_list = []
+        
+        for activity in event.activities:
+            companies_list = companies_list + (CompaniesFinder.get_from_activity(activity))
+        companies_list = removeDuplicates(companies_list)
     
     if companies_list is None or len(companies_list) == 0:
         return APIErrorValue('No results found').json(400)
@@ -115,10 +144,26 @@ def get_speakers():
     search_parameters = request.args.to_dict()
     name = request.args.get('name')
 
+    event_name = request.args.get('event')
+    if event_name is None:
+        event = EventsFinder.get_default_event()
+    else:
+        event = EventsFinder.get_from_name(event_name)
+
+    if event is None:
+        return APIErrorValue("Event not found!").json(404)
+
     # handle search bar requests
     if name is not None:
         search = name
         speakers_list = SpeakersFinder.search_by_name(name)
+
+    if event_name is not None:
+        speakers_list = []
+        
+        for activity in event.activities:
+            speakers_list = speakers_list + (SpeakersFinder.get_from_activity(activity))
+        speakers_list = removeDuplicates(speakers_list)
     
     # handle parameter requests
     elif len(search_parameters) != 0:
@@ -135,7 +180,11 @@ def get_speakers():
     # request endpoint with no parameters should return all speakers
     else:
         search = None
-        speakers_list = SpeakersFinder.get_all()
+        speakers_list = []
+        
+        for activity in event.activities:
+            speakers_list = speakers_list + (SpeakersFinder.get_from_activity(activity))
+        speakers_list = removeDuplicates(speakers_list)
     
     if speakers_list is None or len(speakers_list) == 0:
         return APIErrorValue('No results found').json(400)
@@ -178,4 +227,13 @@ def get_teams():
 def get_event():
     event = EventsFinder.get_default_event()
 
-    return EventsValue([event]).json(200)
+    return EventsValue(event).json(200)
+
+def removeDuplicates(listofElements):
+    uniqueList = []
+    
+    for elem in listofElements:
+        if elem not in uniqueList:
+            uniqueList.append(elem)
+    
+    return uniqueList

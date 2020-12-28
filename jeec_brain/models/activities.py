@@ -1,13 +1,16 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
+from jeec_brain.models.tags import Tags
+from jeec_brain.models.activities_tags import ActivitiesTags
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
+from sqlalchemy import sql
 
 
-class Activities(ModelMixin, db.Model):
+class Activities(db.Model, ModelMixin):
     __tablename__ = 'activities'
     
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.String(300))
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
@@ -22,6 +25,13 @@ class Activities(ModelMixin, db.Model):
 
     event = relationship('Events', back_populates="activities", uselist=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+
+    tags = relationship("Tags",
+        secondary="activities_tags",
+        secondaryjoin=sql.and_(ActivitiesTags.tag_id == Tags.id))
+
+    points = db.Column(db.Integer())
+    quest = db.Column(db.Boolean, default=False)
    
     def __repr__(self):
-        return 'Type: {}  |  Name: {}'.format(self.type, self.name)
+        return 'Type: {}  |  Name: {}'.format(self.activity_type.name, self.name)

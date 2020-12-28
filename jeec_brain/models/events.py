@@ -3,7 +3,7 @@ from jeec_brain.models.model_mixin import ModelMixin
 from sqlalchemy.orm import relationship
 
 
-class Events(ModelMixin, db.Model):
+class Events(db.Model, ModelMixin):
     __tablename__ = 'events'
     
     name = db.Column(db.String(100), nullable=False)
@@ -21,8 +21,12 @@ class Events(ModelMixin, db.Model):
     youtube_link = db.Column(db.String(100))
     instagram_link = db.Column(db.String(100))
 
+    show_schedule = db.Column(db.Boolean, default=False)
+    show_registrations = db.Column(db.Boolean, default=False)
+
     activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="ActivityTypes.name")
-    activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete")
+    activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="Activities.day, Activities.time")
+    teams = relationship("Teams", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="Teams.website_priority")
 
     def __repr__(self):
         return 'Name: {} | date: {}'.format(self.name, self.start_date)

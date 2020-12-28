@@ -11,8 +11,6 @@ def create_tables():
     # Event
     from jeec_brain.models.events import Events
     
-    from jeec_brain.models.companies import Companies
-    from jeec_brain.models.students import Students
     from jeec_brain.models.colaborators import Colaborators
     from jeec_brain.models.speakers import Speakers
     from jeec_brain.models.users import Users
@@ -23,10 +21,17 @@ def create_tables():
     from jeec_brain.models.activities import Activities
     from jeec_brain.models.company_activities import CompanyActivities
     from jeec_brain.models.speaker_activities import SpeakerActivities
+    from jeec_brain.models.activities_tags import ActivitiesTags
+    from jeec_brain.models.activity_codes import ActivityCodes
+
+    # Companies
+    from jeec_brain.models.companies import Companies
+    from jeec_brain.models.companies_tags import CompaniesTags
 
     # Auctions
     from jeec_brain.models.auctions import Auctions
     from jeec_brain.models.company_auctions import CompanyAuctions
+    from jeec_brain.models.bids import Bids
 
     # Resumes
     from jeec_brain.models.resume_submissions import ResumeSubmissions
@@ -37,6 +42,22 @@ def create_tables():
     from jeec_brain.models.dishes import Dishes
     from jeec_brain.models.company_meals import CompanyMeals
     from jeec_brain.models.company_dishes import CompanyDishes
+
+    # Students
+    from jeec_brain.models.students import Students
+    from jeec_brain.models.levels import Levels
+    from jeec_brain.models.squads import Squads
+    from jeec_brain.models.squad_invitations import SquadInvitations
+    from jeec_brain.models.student_activities import StudentActivities
+    from jeec_brain.models.student_companies import StudentCompanies
+    from jeec_brain.models.students_tags import StudentsTags
+    from jeec_brain.models.tags import Tags
+    from jeec_brain.models.banned_students import BannedStudents
+
+    # Rewards
+    from jeec_brain.models.rewards import Rewards
+    from jeec_brain.models.jeecpot_rewards import JeecpotRewards
+    from jeec_brain.models.squads_rewards import SquadsRewards
 
     db.create_all()
 

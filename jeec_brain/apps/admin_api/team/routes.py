@@ -2,6 +2,7 @@ from .. import bp
 from flask import render_template, request, redirect, url_for
 from jeec_brain.finders.teams_finder import TeamsFinder
 from jeec_brain.finders.colaborators_finder import ColaboratorsFinder
+from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.teams_handler import TeamsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
@@ -15,32 +16,44 @@ import os
 @bp.route('/teams', methods=['GET'])
 @allow_all_roles
 def teams_dashboard():
-    teams_list = TeamsFinder.get_all()
+    default_event = EventsFinder.get_default_event()
+    events = EventsFinder.get_all()
+    teams_list = TeamsFinder.get_from_parameters({'event_id':default_event.id})
 
     if len(teams_list) == 0:
         error = 'No results found'
-        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=None, role=current_user.role.name)
+        return render_template('admin/teams/teams_dashboard.html', teams=None, events=events, selected_event=default_event.id, error=error, search=None, role=current_user.role.name)
 
-    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=None, role=current_user.role.name)
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, events=events, selected_event=default_event.id, error=None, search=None, role=current_user.role.name)
 
 
 @bp.route('/teams', methods=['POST'])
 @allow_all_roles
 def search_team():
-    name = request.form.get('name')
-    teams_list = TeamsFinder.search_by_name(name)
+    name = request.form.get('name', None)
+    event_id = request.form.get('event', None)
+    events = EventsFinder.get_all()
+    search_parameters = {}
+
+    if(name is not None):
+        search_parameters['name'] = name
+    if(event_id is not None):
+        search_parameters['event_id'] = event_id
+    
+    teams_list = TeamsFinder.get_from_parameters(search_parameters)
 
     if len(teams_list) == 0:
         error = 'No results found'
-        return render_template('admin/teams/teams_dashboard.html', teams=None, error=error, search=name, role=current_user.role.name)
+        return render_template('admin/teams/teams_dashboard.html', teams=None, events=events, selected_event=event_id, error=error, search=name, role=current_user.role.name)
 
-    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, error=None, search=name, role=current_user.role.name)
+    return render_template('admin/teams/teams_dashboard.html', teams=teams_list, events=events, selected_event=event_id, error=None, search=name, role=current_user.role.name)
 
 
 @bp.route('/new-team', methods=['GET'])
 @allowed_roles(['admin', 'teams_admin'])
 def add_team_dashboard():
-    return render_template('admin/teams/add_team.html')
+    events = EventsFinder.get_all()
+    return render_template('admin/teams/add_team.html', events=events)
 
 
 @bp.route('/new-team', methods=['POST'])
@@ -49,6 +62,7 @@ def create_team():
     name = request.form.get('name')
     description = request.form.get('description')
     website_priority = request.form.get('website_priority')
+    event_id = request.form.get('event')
 
     if not website_priority:
         website_priority = 0
@@ -56,7 +70,8 @@ def create_team():
     team = TeamsHandler.create_team(
         name=name,
         description=description,
-        website_priority=website_priority
+        website_priority=website_priority,
+        event_id=event_id
     )
     
     if team is None:
@@ -69,8 +84,9 @@ def create_team():
 @allowed_roles(['admin', 'teams_admin'])
 def get_team(team_external_id):
     team = TeamsFinder.get_from_external_id(team_external_id)
+    events = EventsFinder.get_all()
 
-    return render_template('admin/teams/update_team.html', team=team)
+    return render_template('admin/teams/update_team.html', team=team, events=events)
 
 
 @bp.route('/team/<string:team_external_id>', methods=['POST'])
@@ -84,12 +100,14 @@ def update_team(team_external_id):
     name = request.form.get('name')
     description = request.form.get('description')
     website_priority = request.form.get('website_priority')
+    event = request.form.get('event')
 
     updated_team = TeamsHandler.update_team(
         team=team,
         name=name,
         description=description,
-        website_priority=website_priority
+        website_priority=website_priority,
+        event_id=event
     )
     
     if updated_team is None:

@@ -34,7 +34,7 @@ class Config(object):
 
     ACTIVITIES = ['Workshops', 'Speakers', 'Tech Talks', 'Panel Discussions', 'Job Fair', 'Matchmaking']
 
-
+    STUDENT_APP_URL = os.environ.get('STUDENT_APP_URL')
 
 class DevelopmentConfig(Config):
     """Development configuration"""

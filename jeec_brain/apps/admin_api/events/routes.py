@@ -71,11 +71,23 @@ def create_event():
     facebook_link = request.form.get('facebook_link')
     youtube_link = request.form.get('youtube_link')
     instagram_link = request.form.get('instagram_link')
+    show_schedule = request.form.get('show_schedule')
+    show_registrations = request.form.get('show_registrations')
 
     if default == 'True':
         default = True
     else:
         default = False
+
+    if show_schedule == 'True':
+        show_schedule = True
+    else:
+        show_schedule = False
+
+    if show_registrations == 'True':
+        show_registrations = True
+    else:
+        show_registrations = False
 
     event = EventsHandler.create_event(
             name=name,
@@ -87,7 +99,9 @@ def create_event():
             facebook_link=facebook_link,
             facebook_event_link=facebook_event_link,
             youtube_link=youtube_link,
-            instagram_link=instagram_link
+            instagram_link=instagram_link,
+            show_schedule=show_schedule,
+            show_registrations=show_registrations
         )
 
     if event is None:
@@ -176,11 +190,23 @@ def update_event(event_external_id):
     facebook_link = request.form.get('facebook_link')
     youtube_link = request.form.get('youtube_link')
     instagram_link = request.form.get('instagram_link')
+    show_schedule = request.form.get('show_schedule')
+    show_registrations = request.form.get('show_registrations')
 
     if default == 'True':
         default = True
     else:
         default = False
+
+    if show_schedule == 'True':
+        show_schedule = True
+    else:
+        show_schedule = False
+
+    if show_registrations == 'True':
+        show_registrations = True
+    else:
+        show_registrations = False
 
     updated_event = EventsHandler.update_event(
         event=event,
@@ -193,7 +219,9 @@ def update_event(event_external_id):
         facebook_link=facebook_link,
         facebook_event_link=facebook_event_link,
         youtube_link=youtube_link,
-        instagram_link=instagram_link
+        instagram_link=instagram_link,
+        show_schedule=show_schedule,
+        show_registrations=show_registrations
     )
 
     logo = EventsHandler.find_image(image_name=str(event.external_id))

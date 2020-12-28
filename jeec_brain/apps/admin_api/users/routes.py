@@ -21,19 +21,19 @@ def users_dashboard():
     # handle search bar requests
     if username is not None:
         search = username
-        users_list = UsersFinder.search_by_username(username)
+        users_list = UsersFinder.search_by_username_without_students(username)
     
     # handle parameter requests
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
 
-        users_list = UsersFinder.get_from_parameters(search_parameters)
+        users_list = UsersFinder.get_from_parameters_without_students(search_parameters)
 
     # request endpoint with no parameters should return all users
     else:
         search = None
-        users_list = UsersFinder.get_all()
+        users_list = UsersFinder.get_all_without_students()
     
     if users_list is None or len(users_list) == 0:
         error = 'No results found'

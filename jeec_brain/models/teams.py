@@ -13,5 +13,8 @@ class Teams(db.Model, ModelMixin):
     
     members = relationship("Colaborators", back_populates='team', lazy='dynamic', cascade="all,delete", order_by="Colaborators.name")
 
+    event = relationship('Events', back_populates="teams", uselist=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+
     def __repr__(self):
         return 'Name: {}'.format(self.name)

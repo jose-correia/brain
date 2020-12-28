@@ -1,4 +1,5 @@
 from jeec_brain.models.companies import Companies
+from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.database import db_session
 from sqlalchemy import text
 
@@ -25,6 +26,10 @@ class CompaniesFinder():
     def search_by_email(cls, email):
         search = "%{}%".format(email)
         return Companies.query.filter(Companies.email.ilike(search)).order_by(Companies.name).all()
+
+    @classmethod
+    def get_from_activity(cls, activity):
+        return Companies.query.filter(Companies.id == CompanyActivities.company_id, CompanyActivities.activity_id == activity.id).all()
         
     @classmethod
     def get_all(cls):

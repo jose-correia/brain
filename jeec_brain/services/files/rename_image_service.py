@@ -16,7 +16,8 @@ class RenameImageService(object):
             new_image_filename = self.new_name.lower().replace(' ', '_') + '.' + extension
             new_file = os.path.join(current_app.root_path, self.folder, new_image_filename)
 
-            os.rename(old_file, new_file)
+            if(os.path.isfile(old_file)):
+                os.rename(old_file, new_file)
 
             return True
         return False

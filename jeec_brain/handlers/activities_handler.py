@@ -8,6 +8,9 @@ from jeec_brain.services.activities.delete_company_activities_service import Del
 from jeec_brain.services.activities.add_speaker_activity_service import AddSpeakerActivityService
 from jeec_brain.services.activities.update_speaker_activities_service import UpdateSpeakerActivityService
 from jeec_brain.services.activities.delete_speaker_activities_service import DeleteSpeakerActivityService
+from jeec_brain.services.activities.add_student_activity_service import AddStudentActivityService
+from jeec_brain.services.activities.update_student_activities_service import UpdateStudentActivitiesService
+from jeec_brain.services.activities.delete_student_activities_service import DeleteStudentActivityService
 
 
 class ActivitiesHandler():
@@ -47,3 +50,15 @@ class ActivitiesHandler():
     @classmethod
     def delete_company_activities(cls, company_activity):
         return DeleteCompanyActivityService(company_activity).call()
+
+    @classmethod
+    def add_student_activity(cls, student, activity):
+        return AddStudentActivityService(student.id, activity.id).call()
+
+    @classmethod
+    def update_student_activity(cls, student_activity, **kwargs):
+        return UpdateStudentActivitiesService(student_activity, kwargs).call()
+
+    @classmethod
+    def delete_student_activity(cls, student_activity):
+        return DeleteStudentActivityService(student_activity).call()

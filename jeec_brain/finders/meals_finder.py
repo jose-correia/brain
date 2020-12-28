@@ -11,20 +11,20 @@ class MealsFinder():
 
     @classmethod
     def get_meal_from_external_id(cls, external_id):
-        return Meals.query().filter_by(external_id=external_id).first()
+        return Meals.query.filter_by(external_id=external_id).first()
     
     @classmethod
     def get_all_meals(cls):
-        return Meals.query().order_by(Meals.updated_at).all()
+        return Meals.query.order_by(Meals.updated_at).all()
 
     @classmethod
     def get_meals_from_day(cls, day):
-        return Meals.query().filter(Meals.day.ilike(day)).order_by(Meals.updated_at).all()
+        return Meals.query.filter(Meals.day.ilike(day)).order_by(Meals.updated_at).all()
 
     @classmethod
     def get_meals_from_parameters(cls, kwargs):
         try:
-            return Meals.query().filter_by(**kwargs).all()
+            return Meals.query.filter_by(**kwargs).all()
         except Exception:
             return None
     
@@ -54,11 +54,11 @@ class MealsFinder():
     
     @classmethod
     def get_dishes_from_meal_id(cls, external_id):
-        return Dishes.query().join(Meals, Meals.id == Dishes.meal_id).filter(Meals.external_id == external_id).order_by(Dishes.type).all()
+        return Dishes.query.join(Meals, Meals.id == Dishes.meal_id).filter(Meals.external_id == external_id).order_by(Dishes.type).all()
 
     @classmethod
     def get_dishes_from_dish_external_id(cls, external_id):
-        return Dishes.query().filter_by(external_id=external_id).first()
+        return Dishes.query.filter_by(external_id=external_id).first()
 
     @classmethod
     def get_dishes_per_company_from_meal_id(cls, meal_id):

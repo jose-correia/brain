@@ -3,8 +3,7 @@ from config import Config
 from flask import flash, redirect, url_for, render_template, session, request, send_from_directory, current_app
 from .. import bp
 
-from ..handlers.file_handler import FileHandler
-
+from jeec_brain.handlers.file_handler import FileHandler
 from jeec_brain.apps.auth.wrappers import require_student_login
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
 
@@ -22,7 +21,6 @@ def allowed_file(filename):
 def login_student():
     return AuthHandler.redirect_to_fenix_login()
 
-
 @bp.route('/redirect_uri')
 def redirect_uri():
     if request.args.get('error') == "access_denied":
@@ -35,7 +33,6 @@ def redirect_uri():
 
     else:
         return redirect(url_for('/'))
-
 
 # routes for the students dashboard
 @bp.route('/student_dashboard', methods=['GET'])
@@ -89,7 +86,7 @@ def student_dashboard_actions():
         return redirect(url_for('cv_platform_api.dashboard'))
     
     elif request.form['submit'] == 'Accept Terms':
-        from jeec_brain.models.student import Student
+        from jeec_brain.models.students import Student
         student = Student.query.filter_by(ist_id=session['username']).first()
         student.update(acceptedTerms=True)
         session['first_time_login'] = False

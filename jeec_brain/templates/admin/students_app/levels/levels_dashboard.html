@@ -1,0 +1,189 @@
+<html>
+
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('select').formSelect();
+    });
+  </script>
+</head>
+
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
+    </form>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Levels Management</h2>
+    <p>Define the students progess</p>
+  </div>
+
+  <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  <div class="section-title center-align" style="margin-top:90px;">
+    List of Levels
+  </div>
+
+  <div class="list">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% else %}
+    <div class="counter right">
+      Levels: {{ levels|length }}
+    </div>
+
+    <blockquote class="create-error">
+      <b>Caution!</b> Deleting levels could directly affect the students progress!
+    </blockquote>
+
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Starting Points</th>
+          <th>Ending Points</th>
+          <th>Points</th>
+          <th>Reward</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set ns = namespace(points=0) %}
+        {% for level in levels %}
+        <tr>
+          <td><b>
+              {{ level.value }}
+            </b></td>
+
+          <td>
+            {{ ns.points }}
+          </td>
+
+          <td>
+            {{ level.points }}
+          </td>
+
+          <td>
+            {{ level.points - ns.points }}
+          </td>
+
+          <td>
+            <form action="/admin/level/{{level.external_id.hex}}" method="post" onsubmit="confirm('Are you sure you want to change the reward?');">
+              <select name="reward" class="form-control" onchange="this.form.submit()">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}"
+                  {% if level.reward is not none and reward.id|int() == level.reward.id|int() %} selected {% endif %}>
+                  {{ reward.name }}</option>
+                {% endfor %}
+                <option value="" {% if level.reward is none %} selected {% endif %}></option>
+              </select>
+            </form>
+          </td>
+
+          <td>
+            {% if ((levels|length > 0) and (loop.index == levels|length)) and current_user.role.name == 'admin' %}
+            <form action="/admin/level/{{level.external_id.hex}}/delete" method="post"
+              onsubmit="return confirm('Are you sure you want to delete this level?');">
+              <button title="Delete level" class="waves-effect waves-light red btn-floating"><i
+                  class="material-icons left">delete</i>Delete</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% set ns.points = level.points + 1  %}
+        {% endfor %}
+        {% if current_user.role.name == 'admin' %}
+        <form action="{{ url_for('admin_api.create_level') }}" method="post" enctype="multipart/form-data" id="create-level">
+          <tr>
+            <td>
+              {% if levels|length > 0 %}
+              <input type="number" value="{{levels[levels|length - 1].value + 1}}" disabled>
+              <input name="value" type="number" value="{{levels[levels|length - 1].value + 1}}" hidden>
+              {% else %}
+              <input type="number" value="0" disabled>
+              <input name="value" type="number" value="0" hidden>
+              {% endif %}
+            </td>
+            <td>
+              {% if levels|length > 0 %}
+              <input id="starting_points" type="number" value="{{levels[levels|length - 1].points + 1}}" disabled>
+              {% else %}
+              <input id="starting_points" type="number" value="0" disabled>
+              {% endif %}
+            </td>
+            <td>
+              {% if levels|length > 0 %}
+              <input id="ending_points" type="number" min="{{levels[levels|length - 1].points + 2}}"
+                value="{{levels[levels|length - 1].points + 2}}" disabled>
+              <input name="points" id="_ending_points" type="number" min="{{levels[levels|length - 1].points + 2}}"
+                value="{{levels[levels|length - 1].points + 2}}" hidden>
+              {% else %}
+              <input id="ending_points" type="number" min="1" value="1" disabled>
+              <input name="points" id="_ending_points" type="number" min="1" value="1" hidden>
+              {% endif %}
+            </td>
+            <td>
+              <input id="points" type="number" min="1" value="1">
+            </td>
+            <td>
+              <select name="reward" form="create-level" class="form-control">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}">{{ reward.name }}</option>
+                {% endfor %}
+                <option value="" selected></option>
+              </select>
+            </td>
+            <td>
+              <button type="submit" title="Add level" class="waves-effect waves-light btn-floating"><i
+                  class="material-icons left">add</i>Add</button>
+            </td>
+          </tr>
+        </form>
+        {% endif %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $('#points').bind("input", function () {
+        $("#ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
+        $("#_ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
+      });
+    });
+  </script>
+</body>
+
+</html>

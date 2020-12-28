@@ -308,3 +308,23 @@ button:hover {
     max-width: 100px;
     margin: 10px 25px;
 }
+
+.tag-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #26a69a;
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.tag {
+    margin: 0;
+    width: 200px;
+    font-size: 20px;
+    color: white;
+    overflow-wrap: break-word;
+}

@@ -1,0 +1,98 @@
+<html>
+
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
+    </form>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Tags Management</h2>
+    <p>Create tags for activities</p>
+  </div>
+
+  <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  <div class="section-title center-align" style="margin-top:90px;">
+    List of Tags
+  </div>
+
+  <div class="list">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% else %}
+    <div class="counter right">
+      Tags: {{ tags|length }}
+    </div>
+    <br><br><br>
+    <div style="display: flex; flex-wrap: wrap; margin-bottom: 40px;">
+      {% for tag in tags %}
+      <div class="tag-wrapper">
+        <p class="tag">{{ tag.name }}</p>
+        <form action="/admin/tag/{{tag.external_id.hex}}/delete" method="post"><button title="Delete tag"
+            class="waves-effect waves-light red btn-floating" style="margin-top: 20px;"><i class="material-icons left">delete</i>Delete</button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+    {% if current_user.role.name == 'admin' %}
+    <form action="/admin/new-tag" method="post">
+      <div class="row">
+        <div class="input-field col s3" style="margin: 0;">
+          <input id="name" name="name" type="text" class="validate" required>
+          <label for="name">Add Tag</label>
+        </div>
+        <div class="col s1">
+          <button title="Add tag" class="waves-effect waves-light btn-floating"><i
+              class="material-icons left">add</i>Add</button></div>
+      </div>
+    </form>
+    {% endif %}
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $('#points').bind("input", function () {
+        $("#ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
+        $("#_ending_points").val(parseInt($('#points').val()) + parseInt($('#starting_points').val()));
+      });
+    });
+  </script>
+</body>
+
+</html>

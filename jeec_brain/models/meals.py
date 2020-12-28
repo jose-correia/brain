@@ -3,7 +3,7 @@ from jeec_brain.models.model_mixin import ModelMixin
 from jeec_brain.models.enums.meal_type_enum import MealTypeEnum
 
 
-class Meals(ModelMixin, db.Model):
+class Meals(db.Model, ModelMixin):
     __tablename__ = 'meals'
     
     location = db.Column(db.String(100), default="Instituto Superior Técnico")

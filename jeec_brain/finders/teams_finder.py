@@ -16,3 +16,11 @@ class TeamsFinder():
     def get_all(cls):
         return Teams.query.order_by(Teams.name).all()
 
+    @classmethod
+    def get_from_parameters(cls, kwargs):
+        try:
+            teams = Teams.query.filter_by(**kwargs).all()
+        except Exception:
+            return None
+        
+        return teams
