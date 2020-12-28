@@ -1,7 +1,8 @@
 from . import bp
 from flask import render_template, current_app, request, redirect, url_for, make_response, session, jsonify
-from flask_login  import current_user, login_required
+from flask_login import current_user, login_required
 from config import Config
+from datetime import datetime
 
 # Handlers
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
@@ -17,6 +18,8 @@ from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.tags_finder import TagsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
+from jeec_brain.finders.rewards_finder import RewardsFinder
+from jeec_brain.finders.levels_finder import LevelsFinder
 
 # Values
 from jeec_brain.values.api_error_value import APIErrorValue
@@ -24,6 +27,10 @@ from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
+from jeec_brain.values.rewards_value import RewardsValue
+from jeec_brain.values.squads_rewards_value import SquadsRewardsValue
+from jeec_brain.values.jeecpot_rewards_value import JeecpotRewardsValue
+from jeec_brain.values.levels_value import LevelsValue
 
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
@@ -39,10 +46,10 @@ def redirect_uri():
     
     fenix_auth_code = request.args.get('code')
 
-    loggedin, jwt = AuthHandler.login_student(fenix_auth_code)
+    loggedin, encrypted_code = AuthHandler.login_student(fenix_auth_code)
     
     if loggedin is True:
-        return redirect(Config.STUDENT_APP_URL + '?jwt=' + str(jwt, 'utf-8'))
+        return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
 
     else:
         return redirect(Config.STUDENT_APP_URL)
@@ -60,6 +67,13 @@ def get_students(student):
     students = StudentsFinder.get_from_search_without_student(search, student.external_id)
 
     return StudentsValue(students, details=False).json(200)
+
+@bp.route('/levels', methods=['GET'])
+@requires_student_auth
+def get_levels(student):
+    levels = LevelsFinder.get_all_levels()
+
+    return LevelsValue(levels, True).json(200)
 
 @bp.route('/squad', methods=['GET'])
 @requires_student_auth
@@ -357,3 +371,29 @@ def get_squads_ranking(student):
     squads = SquadsFinder.get_top_10()
 
     return SquadsValue(squads).json(200)
+
+@bp.route('/today-squad-reward', methods=['GET'])
+@requires_student_auth
+def get_today_squad_reward(student):
+    now = datetime.utcnow().strftime('%d %b %Y, %a')
+    
+    squad_reward = RewardsFinder.get_squad_reward_from_date(now)
+
+    if(squad_reward is None):
+        return RewardsValue(None).json(200)
+
+    return RewardsValue(squad_reward.reward).json(200)
+
+@bp.route('/squads-rewards', methods=['GET'])
+@requires_student_auth
+def get_squads_rewards(student):
+    squads_rewards = RewardsFinder.get_all_squad_rewards()
+
+    return SquadsRewardsValue(squads_rewards, student.squad).json(200)
+
+@bp.route('/jeecpot-rewards', methods=['GET'])
+@requires_student_auth
+def get_jeecpot_rewards(student):
+    jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
+
+    return JeecpotRewardsValue(jeecpot_rewards[0], student).json(200)

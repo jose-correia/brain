@@ -9,7 +9,7 @@ from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
 
 # services
-from jeec_brain.apps.auth.services.create_jwt_service import CreateJwtService
+from jeec_brain.apps.auth.services.encrypt_token_service import EncryptTokenService
 
 # finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -56,14 +56,14 @@ class AuthHandler(object):
                     logger.error(e)
                     return False, None
             
-            # login_user(user, remember=True, force=True)
-            # logger.info("Student authenticated! ist_id: {}".format(user.username))
-            jwt = CreateJwtService(user.username, user.email).call()
-
             if(student.fenix_auth_code != fenix_auth_code):
-                StudentsHandler.update_student(student, fenix_auth_code=fenix_auth_code)
+                student = StudentsHandler.update_student(student, fenix_auth_code=fenix_auth_code)
+                if student is None:
+                    return False, None
 
-            return True, jwt
+            encrypted_code = EncryptTokenService(fenix_auth_code).call()
+
+            return True, encrypted_code
                     
         else:
             return False, None

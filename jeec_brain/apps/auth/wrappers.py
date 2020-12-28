@@ -5,8 +5,6 @@ from functools import wraps
 from flask_login import current_user
 from jeec_brain.finders.users_finder import UsersFinder
 from jeec_brain.finders.students_finder import StudentsFinder
-from jeec_brain.apps.auth.services.decode_jwt_service import DecodeJwtService
-
 
 def require_student_login(func):
     @wraps(func)

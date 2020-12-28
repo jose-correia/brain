@@ -10,7 +10,10 @@ class SquadsRewards(db.Model, ModelMixin):
     reward_id = db.Column(db.Integer, db.ForeignKey('rewards.id'))
     reward = relationship('Rewards')
 
-    date = db.Column(db.String(30))
+    date = db.Column(db.String(30), unique=True)
+
+    winner = relationship('Squads')
+    winner_id = db.Column(db.Integer, db.ForeignKey('squads.id'))
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)

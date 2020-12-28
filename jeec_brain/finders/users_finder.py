@@ -1,5 +1,5 @@
 from jeec_brain.models.users import Users
-
+from jeec_brain.models.students import Students
 
 class UsersFinder():
     
@@ -56,5 +56,10 @@ class UsersFinder():
         return users
     
     @classmethod
-    def get_from_jwt(cls, decoded_jwt):
-        return Users.query.filter_by(username=decoded_jwt['username'], email=decoded_jwt['email']).first()
+    def get_from_fenix_auth_code(cls, fenix_auth_code):
+        student = Students.query.filter_by(fenix_auth_code=fenix_auth_code).first()
+
+        if(student is None or student.user is None):
+            return None
+        else:
+            return student.user

@@ -30,7 +30,7 @@ class RewardsFinder():
     
     @classmethod
     def get_all_squad_rewards(cls):
-        return SquadsRewards.all()
+        return SquadsRewards.query.order_by(SquadsRewards.date).all()
 
     @classmethod
     def get_squad_rewards_from_parameters(cls, kwargs):
@@ -38,6 +38,10 @@ class RewardsFinder():
             return SquadsRewards.query.filter_by(**kwargs).all()
         except Exception:
             return None
+
+    @classmethod
+    def get_squad_reward_from_date(cls, date):
+        return SquadsRewards.query.filter_by(date=date).first()
 
     @classmethod
     def get_jeecpot_reward_from_external_id(cls, external_id):

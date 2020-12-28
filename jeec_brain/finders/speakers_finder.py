@@ -1,5 +1,5 @@
 from jeec_brain.models.speakers import Speakers
-
+from jeec_brain.models.speaker_activities import SpeakerActivities
 
 class SpeakersFinder():
 
@@ -15,6 +15,10 @@ class SpeakersFinder():
     def search_by_name(cls, name):
         search = "%{}%".format(name)
         return Speakers.query.filter(Speakers.name.ilike(search)).order_by(Speakers.name).all()
+
+    @classmethod
+    def get_from_activity(cls, activity):
+        return Speakers.query.filter(Speakers.id == SpeakerActivities.speaker_id, SpeakerActivities.activity_id == activity.id).all()
     
     @classmethod
     def get_all(cls):

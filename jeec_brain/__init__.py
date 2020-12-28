@@ -11,7 +11,6 @@ from datetime import timedelta
 
 from jeec_brain.database import db, create_tables
 from jeec_brain.finders.users_finder import UsersFinder
-from jeec_brain.apps.auth.services.decode_jwt_service import DecodeJwtService
 
 from applicationinsights.flask.ext import AppInsights
 
@@ -112,12 +111,8 @@ def load_user(username):
 def load_remote_user(request):
     token = request.headers.get('Authorization')
 
-    if token:
-        decoded_jwt = DecodeJwtService(token.replace("Bearer ", "", 1).encode('utf-8')).call()
-
-        if(decoded_jwt is None or 'username' not in decoded_jwt.keys() or 'email' not in decoded_jwt.keys()):
-            return None
-
-        return UsersFinder.get_from_jwt(decoded_jwt)
-
-    return None
+    if(token is None):
+        return None
+    else:
+        code = token.replace("Bearer ", "", 1)
+        return UsersFinder.get_from_fenix_auth_code(code)

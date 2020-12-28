@@ -71,7 +71,7 @@
       <tbody>
         <tr>
           <td>
-            Top Student
+            <b>Top Student</b>
           </td>
 
           <td>
@@ -83,6 +83,60 @@
                   {{ reward.name }}</option>
                 {% endfor %}
                 <option value="" {% if jeecpot_rewards.student_reward_id is none %} selected {% endif %}></option>
+              </select>
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>First Squad</b>
+          </td>
+
+          <td>
+            <form action="/admin/jeecpot-rewards/{{jeecpot_rewards.external_id.hex}}" method="post" onsubmit="confirm('Are you sure you want to change the reward?');">
+              <select name="first_squad_reward" class="form-control" onchange="this.form.submit()">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}"
+                  {% if jeecpot_rewards.first_squad_reward_id is not none and reward.id|int() == jeecpot_rewards.first_squad_reward_id|int() %} selected {% endif %}>
+                  {{ reward.name }}</option>
+                {% endfor %}
+                <option value="" {% if jeecpot_rewards.first_squad_reward_id is none %} selected {% endif %}></option>
+              </select>
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>Second Squad</b>
+          </td>
+
+          <td>
+            <form action="/admin/jeecpot-rewards/{{jeecpot_rewards.external_id.hex}}" method="post" onsubmit="confirm('Are you sure you want to change the reward?');">
+              <select name="second_squad_reward" class="form-control" onchange="this.form.submit()">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}"
+                  {% if jeecpot_rewards.second_squad_reward_id is not none and reward.id|int() == jeecpot_rewards.second_squad_reward_id|int() %} selected {% endif %}>
+                  {{ reward.name }}</option>
+                {% endfor %}
+                <option value="" {% if jeecpot_rewards.second_squad_reward_id is none %} selected {% endif %}></option>
+              </select>
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>Third Squad</b>
+          </td>
+
+          <td>
+            <form action="/admin/jeecpot-rewards/{{jeecpot_rewards.external_id.hex}}" method="post" onsubmit="confirm('Are you sure you want to change the reward?');">
+              <select name="third_squad_reward" class="form-control" onchange="this.form.submit()">
+                {% for reward in rewards %}
+                <option value="{{ reward.external_id.hex }}"
+                  {% if jeecpot_rewards.third_squad_reward_id is not none and reward.id|int() == jeecpot_rewards.third_squad_reward_id|int() %} selected {% endif %}>
+                  {{ reward.name }}</option>
+                {% endfor %}
+                <option value="" {% if jeecpot_rewards.third_squad_reward_id is none %} selected {% endif %}></option>
               </select>
             </form>
           </td>

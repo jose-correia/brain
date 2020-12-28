@@ -22,6 +22,7 @@ class StudentsValue(ValueComposite):
             }
             if(details):
                 student_details = {
+                    "accessToken": student.fenix_auth_code,
                     "email": student.user.email,
                     "daily_points": student.daily_points,
                     "squad_points": student.squad_points,

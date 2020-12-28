@@ -21,7 +21,7 @@ class Students(db.Model, ModelMixin):
     ist_id = db.Column(db.String(10), unique=True, nullable=False, index=True)
     photo = db.Column(db.Text())
     photo_type = db.Column(db.String(20))
-    fenix_auth_code = deferred(db.Column(db.Text()))
+    fenix_auth_code = deferred(db.Column(db.Text(), unique=True, index=True))
     linkedin_url = deferred(db.Column(db.String(150)))
     uploaded_cv = deferred(db.Column(db.Boolean, default=False))
 

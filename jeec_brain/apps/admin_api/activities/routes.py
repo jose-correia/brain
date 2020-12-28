@@ -290,7 +290,7 @@ def create_activity():
     time = request.form.get('time')
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
-    points = request.form.get('points')
+    points = request.form.get('points') or None
     quest = request.form.get('quest')
 
     if registration_open == 'True':
@@ -442,7 +442,7 @@ def update_activity(activity_external_id):
     time = request.form.get('time')
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
-    points = request.form.get('points')
+    points = request.form.get('points') or None
     quest = request.form.get('quest')
 
     if registration_open == 'True':
