@@ -9,7 +9,6 @@ fenixedu.ini
 # add an exception (using !) to the preceding rule to track a specific file
 !package.json
 
-/jeec_brain/database/migrations
 /jeec_brain/storage/
 /jeec_brain/static/companies/images/
 /jeec_brain/static/members/
