@@ -1,0 +1,1 @@
+docker exec -it jeec_brain_1 python3.6 manage.py db upgrade
