@@ -64,15 +64,15 @@
 
       <div class="row">
         <div class="input-field col s5">
-          <input id="name" name="name" type="text" class="validate" value="{{ activity.name }}">
+          <input id="name" name="name" type="text" class="validate" value="{{ activity.name }}" required>
           <label for="name">Name</label>
         </div>
 
         <div class="input-field col s2" style="margin-left: 30px;">
           <select name="type" class="form-control">
             {% for type in activity_types %}
-            <option value="{{ type.external_id }}" {% if activity.activity_type is sameas type %} selected="selected"
-              {% endif %}>{{ type.name }}</option>
+            <option value="{{ type.external_id }}" {% if activity.activity_type is sameas type %} selected="selected" {%
+              endif %}>{{ type.name }}</option>
             {% endfor %}
           </select>
           <label>Activity type</label>
@@ -102,16 +102,27 @@
           <input id="time" name="time" type="text" class="timepicker" value="{{ activity.time }}">
           <label for="time">Time</label>
         </div>
-
-        <div class="input-field col s2">
-          <input id="points" name="points" type="number" min="0" class="validate" value="{{ activity.points }}">
-          <label for="points">Points</label>
-        </div>
       </div>
 
       <div class="row s7">
-        <div class="col s3">
-          Activity is a Quest in Student App:
+        <div class="col s2">
+          Create chat channel:
+          <p>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="chat" type="radio" value="True" {% if activity.chat_id is not none %}
+              checked {% endif %} />
+              <span>Yes</span>
+            </label>
+            <label>
+              <input class="with-gap" name="chat" type="radio" value="False" {% if activity.chat_id is none %}
+              checked {% endif %} />
+              <span>No</span>
+            </label>
+          </p>
+        </div>
+
+        <div class="col s2">
+          Activity is a Quest in the App:
           <p>
             <label style="margin-right: 20px;">
               <input class="with-gap" name="quest" type="radio" value="True" {% if activity.quest is sameas true %}
@@ -125,19 +136,24 @@
             </label>
           </p>
         </div>
+
+        <div class="input-field col s2">
+          <input id="points" name="points" type="number" min="0" class="validate" value="{{ activity.points }}">
+          <label for="points">Points</label>
+        </div>
       </div>
 
       Registration Open:
       <div class="row s10">
         <p class="col s2">
           <label style="margin-right: 20px;">
-            <input class="with-gap" name="registration_open" type="radio" value="True"
-              {% if activity.registration_open is sameas true %} checked {% endif %} />
+            <input class="with-gap" name="registration_open" type="radio" value="True" {% if activity.registration_open
+              is sameas true %} checked {% endif %} />
             <span>Yes</span>
           </label>
           <label>
-            <input class="with-gap" name="registration_open" type="radio" value="False"
-              {% if activity.registration_open is sameas false %} checked {% endif %} />
+            <input class="with-gap" name="registration_open" type="radio" value="False" {% if activity.registration_open
+              is sameas false %} checked {% endif %} />
             <span>No</span>
           </label>
         </p>

@@ -1,0 +1,152 @@
+<html>
+
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile"
+        src="/static/jeec_logo_mobile.svg"></a>
+
+    <div class="company-dash-username right" style="color:black">{{ user.company.name }}</div>
+
+    <form action="{{ url_for('companies_api.company_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
+    </form>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>{{ meal.type.name }} {{ meal.day }}</h2>
+    <p>Choose your meal.</p>
+  </div>
+
+  <form action="{{ url_for('companies_api.meals_dashboard') }}" method="get" class="row s12">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  <div class="section-title center-align" style="margin-top:50px;">
+    List of foods
+  </div>
+
+  <div class="list">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% else %}
+
+    <form id="dish_form" class="col s12" action="/companies/meal/{{ meal.external_id.hex }}" method="post">
+      {% if max_dish_quantity is not none %}
+      <div class="sub_section-title left-align" style="margin-bottom: 20px;">
+        Number of Dishes Available: {{ max_dish_quantity }}
+      </div>
+      {% endif %}
+
+      {% for dish_type in dish_types %}
+      <table class="striped" id="table_{{ dish_type }}">
+        <thead>
+          <tr>
+            <th>{% if dish_type == 'MainCourse' %}Main Course{% else %}{{ dish_type }}{% endif %}</th>
+            <th>Description</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dish in dishes %}
+          {% if dish.type.name == dish_type %}
+          <tr>
+            <td>
+              {{ dish.name }}
+            </td>
+  
+            <td>
+              {{ dish.description }}
+            </td>
+  
+            <td>
+              <input id="dish_quantity{{ loop.index0 }}" name="dish_quantity_{{ dish_type }}" type="number" min="0" value="{% for company_dish in company_dishes %}{% if company_dish.dish_id == dish.id %}{{ company_dish.dish_quantity }}{% endif %}{% endfor %}" class="validate s2">
+              <input type="hidden" name="dish_{{ dish_type }}" value="{{ dish.external_id }}">
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if not loop.last %}
+      <br><br>
+      {% endif %}
+      {% endfor %}
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn left" ><i class="material-icons left">save</i>Save</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function(){
+      var max_dishes = "{{ max_dish_quantity }}";
+      var dish_types = [];
+      var dishes_type_size = "{{ dish_types|length }}"; 
+      var error = new Array(parseInt(dishes_type_size)).fill(0);
+      
+      {% for dish_type in dish_types %}
+      dish_types.push("{{ dish_type }}");
+      {% endfor %}
+
+      $("#dish_form").submit(function(e){
+        var sum = 0;
+        var number = 0;
+        var i = 0;
+
+        for(i=0;i<dish_types.length;i++)
+        {
+          sum = 0;
+          console.log(dish_types[i]);
+          $('#table_'+dish_types[i]+' input[name ="dish_quantity"]').each(function(){
+            number = $(this).val();
+            if(!isNaN(parseInt(number)))
+            {
+              sum += parseInt(number);
+            }
+          });
+          if(sum > max_dishes && !isNaN(parseInt(max_dishes)))
+          {
+            console.log('error');
+            if(error[i] == 0)
+            {
+              error[i] = 1;
+              $('#table_'+dish_types[i]).append('<blockquote class="create-error">Number of ' + dish_types[i] + 's must be smaller then ' + max_dishes + '!</blockquote>');
+            }
+            e.preventDefault();
+          }
+        }
+      });
+    });
+
+  </script>
+</body>
+
+</html>

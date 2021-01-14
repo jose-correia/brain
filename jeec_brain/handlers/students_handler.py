@@ -8,6 +8,7 @@ from jeec_brain.services.students.update_student_company_service import UpdateSt
 from jeec_brain.services.students.create_banned_student_service import CreateBannedStudentService
 from jeec_brain.services.students.delete_banned_student_service import DeleteBannedStudentService
 from jeec_brain.services.students.update_banned_student_service import UpdateBannedStudentService
+from jeec_brain.services.chat.delete_chat_user_service import DeleteChatUserService
 
 # FINDERS
 from jeec_brain.finders.levels_finder import LevelsFinder
@@ -36,6 +37,11 @@ class StudentsHandler():
 
     @classmethod
     def delete_student(cls, student):
+        if student.user.chat_id:
+            result = DeleteChatUserService(student.user).call()
+            if not result:
+                return False
+
         return DeleteStudentService(student=student).call()
 
     @classmethod
@@ -129,15 +135,15 @@ class StudentsHandler():
 
     @classmethod
     def create_banned_student(cls, student):
-        return CreateBannedStudentService({'name': student.name, 'ist_id': student.ist_id, 'email': student.user.email})
+        return CreateBannedStudentService(name=student.name, ist_id=student.ist_id, email=student.user.email).call()
 
     @classmethod
     def update_banned_student(cls, banned_student, **kwargs):
-        return UpdateBannedStudentService(banned_student, kwargs)
+        return UpdateBannedStudentService(banned_student, kwargs).call()
 
     @classmethod
     def delete_banned_student(cls, banned_student):
-        return DeleteBannedStudentService(banned_student)
+        return DeleteBannedStudentService(banned_student).call()
 
     # @classmethod
     # def upload_student_cv(cls, file, username):

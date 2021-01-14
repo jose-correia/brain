@@ -32,7 +32,7 @@ class Students(db.Model, ModelMixin):
     total_points = db.Column(db.Integer())
     squad_points = db.Column(db.Integer())
 
-    user = relationship('Users')
+    user = relationship('Users', cascade="all,delete")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     stared_companies = relationship("Companies",

@@ -3,7 +3,9 @@ from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.finders.users_finder import UsersFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.handlers.users_handler import UsersHandler
+from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.services.users.get_roles_service import GetRolesService
+from jeec_brain.services.users.generate_credentials_service import GenerateCredentialsService
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.models.enums.roles_enum import RolesEnum
 from jeec_brain.values.api_error_value import APIErrorValue
@@ -14,7 +16,6 @@ from flask_login import current_user
 @bp.route('/users', methods=['GET'])
 @allowed_roles(['admin'])
 def users_dashboard():
-    roles = GetRolesService.call()
     search_parameters = request.args
     username = request.args.get('username')
 
@@ -77,12 +78,25 @@ def create_user():
     # check if is creating company user
     company_external_id = request.form.get('company_external_id')
 
+    password = GenerateCredentialsService().call()
     if company_external_id is not None:
         role = 'company'
         company = CompaniesFinder.get_from_external_id(company_external_id)
         company_id = company.id
+
+        if company is None:
+            return 'No company found', 404
+        
+        try:
+            chat_id = UsersHandler.create_chat_user(username, username, email, password, 'Company')
+        except:
+            return 'Failed to create chat user', 500
+
+        if not chat_id:
+            return 'Failed to create chat user', 500
     else:
         company_id = None
+        chat_id = None
 
     if role not in GetRolesService.call():
         return 'Wrong role type provided', 404
@@ -105,7 +119,9 @@ def create_user():
             username=username,
             email=email,
             role=role,
-            food_manager=food_manager
+            food_manager=food_manager,
+            password=password,
+            chat_id=chat_id
         )
 
     if user is None:
@@ -113,7 +129,14 @@ def create_user():
             roles=GetRolesService.call(), \
             error="Failed to create user!")
 
-    UsersHandler.generate_new_user_credentials(user=user)
+    if user.company:
+        for activity in user.company.activities:
+            if activity.chat_id:
+                if not ActivitiesHandler.join_channel(user, activity):
+                    UsersHandler.delete_user(user)
+                    return render_template('admin/users/add_user.html', \
+                        roles=GetRolesService.call(), \
+                        error="Failed to create user!")
 
     return redirect(url_for('admin_api.users_dashboard'))
 

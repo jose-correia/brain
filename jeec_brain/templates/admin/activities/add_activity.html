@@ -62,7 +62,7 @@
     <form class="col s12" action="/admin/new-activity" method="post">
       <div class="row">
         <div class="input-field col s5">
-          <input id="name" name="name" type="text" class="validate">
+          <input id="name" name="name" type="text" class="validate" required>
           <label for="name">Name</label>
         </div>
 
@@ -100,9 +100,23 @@
         </div>
       </div>
 
-      <div class="row s7">
-        <div class="col s3">
-          Activity is a Quest in Student App:
+      <div class="row s8">
+        <div class="col s2">
+          Create chat channel:
+          <p>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="chat" type="radio" value="True" />
+              <span>Yes</span>
+            </label>
+            <label>
+              <input class="with-gap" name="chat" type="radio" value="False" checked />
+              <span>No</span>
+            </label>
+          </p>
+        </div>
+
+        <div class="col s2">
+          Activity is a Quest in the App:
           <p>
             <label style="margin-right: 20px;">
               <input class="with-gap" name="quest" type="radio" value="True" />

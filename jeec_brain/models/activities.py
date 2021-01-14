@@ -26,6 +26,9 @@ class Activities(db.Model, ModelMixin):
     event = relationship('Events', back_populates="activities", uselist=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
+    chat_id = db.Column(db.String)
+    chat_code = db.Column(db.String)
+
     tags = relationship("Tags",
         secondary="activities_tags",
         secondaryjoin=sql.and_(ActivitiesTags.tag_id == Tags.id))

@@ -8,6 +8,7 @@ from datetime import datetime
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
 from jeec_brain.handlers.activity_codes_handler import ActivityCodesHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
+from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.squads_handler import SquadsHandler
 from jeec_brain.handlers.tags_handler import TagsHandler
 
@@ -397,3 +398,13 @@ def get_jeecpot_rewards(student):
     jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
 
     return JeecpotRewardsValue(jeecpot_rewards[0], student).json(200)
+
+@bp.route('/chat-token', methods=['GET'])
+@requires_student_auth
+def get_chat_token(student):
+    token = UsersHandler.get_chat_user_token(student.user)
+
+    if token:
+        return jsonify({'token':token}), 200
+    else:
+        return APIErrorValue("Error getting token").json(500)

@@ -1,5 +1,4 @@
 from jeec_brain.apps.auth.services.encoding_service import PKCS7Encoder
-from config import Config
 import base64
 from Crypto import Random
 from Crypto.Cipher import AES

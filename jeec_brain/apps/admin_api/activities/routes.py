@@ -292,6 +292,7 @@ def create_activity():
     registration_open = request.form.get('registration_open')
     points = request.form.get('points') or None
     quest = request.form.get('quest')
+    chat = request.form.get('chat')
 
     if registration_open == 'True':
         registration_open = True
@@ -302,6 +303,11 @@ def create_activity():
         quest = True
     else:
         quest = False
+
+    if chat == 'True':
+        chat = True
+    else:
+        chat = False
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -322,7 +328,8 @@ def create_activity():
             registration_link=registration_link,
             registration_open=registration_open,
             points=points,
-            quest=quest
+            quest=quest,
+            chat=chat
         )
 
     if activity is None:
@@ -380,7 +387,7 @@ def create_activity():
 
             activity_tag = TagsHandler.add_activity_tag(activity, tag)
             if activity_tag is None:
-                return APIErrorValue('Failed to create activity tag').json(500)
+                return APIErrorValue('Failed to create activity tag').json(500)        
 
     return redirect(url_for('admin_api.activities_dashboard'))
 
@@ -444,6 +451,7 @@ def update_activity(activity_external_id):
     registration_open = request.form.get('registration_open')
     points = request.form.get('points') or None
     quest = request.form.get('quest')
+    chat = request.form.get('chat')
 
     if registration_open == 'True':
         registration_open = True
@@ -454,6 +462,11 @@ def update_activity(activity_external_id):
         quest = True
     else:
         quest = False
+
+    if chat == 'True':
+        chat = True
+    else:
+        chat = False
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -469,7 +482,8 @@ def update_activity(activity_external_id):
         registration_link=registration_link,
         registration_open=registration_open,
         points=points,
-        quest=quest
+        quest=quest,
+        chat=chat
     )
 
     if company_activities:

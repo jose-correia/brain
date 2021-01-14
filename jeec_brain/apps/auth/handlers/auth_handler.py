@@ -10,6 +10,7 @@ from jeec_brain.handlers.students_handler import StudentsHandler
 
 # services
 from jeec_brain.apps.auth.services.encrypt_token_service import EncryptTokenService
+from jeec_brain.services.users.generate_credentials_service import GenerateCredentialsService
 
 # finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -34,11 +35,25 @@ class AuthHandler(object):
             user = TecnicoClientHandler.get_user(fenix_client, fenix_auth_code)          
             person = TecnicoClientHandler.get_person(fenix_client, user)
 
+            banned_ids = UsersFinder.get_banned_students_ist_id()
+            if (person['username'] in banned_ids):
+                return False, None
+
             user = UsersFinder.get_user_from_username(person['username'])
 
             if user is None:
+                password = GenerateCredentialsService().call()
                 try:
-                    user = UsersHandler.create_user(username=person['username'], email=person['email'], role='student')
+                    chat_id = UsersHandler.create_chat_user(person['name'], person['username'], person['email'], password, 'Student')
+                except Exception as e:
+                    logger.error(e)
+                    return False, None
+
+                if not chat_id:
+                    return False, None
+
+                try:
+                    user = UsersHandler.create_user(username=person['username'], email=person['email'], role='student', chat_id=chat_id, password=password)
                     logger.info("New user added to the DB")
 
                     student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type'])

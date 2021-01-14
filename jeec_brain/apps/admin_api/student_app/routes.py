@@ -49,10 +49,9 @@ def ban_student(student_external_id):
         return APIErrorValue('Couldnt find student').json(500)
 
     banned_student = StudentsHandler.create_banned_student(student)
-    if(banned_student is None):
+    if banned_student is None:
         return APIErrorValue('Error banning student').json(500)
 
-    UsersHandler.delete_user(student.user)
     StudentsHandler.delete_student(student)
 
     return redirect(url_for('admin_api.students_dashboard'))

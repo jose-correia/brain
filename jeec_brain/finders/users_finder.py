@@ -1,5 +1,6 @@
 from jeec_brain.models.users import Users
 from jeec_brain.models.students import Students
+from jeec_brain.models.banned_students import BannedStudents
 
 class UsersFinder():
     
@@ -63,3 +64,7 @@ class UsersFinder():
             return None
         else:
             return student.user
+
+    @classmethod
+    def get_banned_students_ist_id(cls):
+        return [r[0] for r in BannedStudents.query.with_entities(BannedStudents.ist_id).all()]

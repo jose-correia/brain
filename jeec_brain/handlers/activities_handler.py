@@ -11,20 +11,52 @@ from jeec_brain.services.activities.delete_speaker_activities_service import Del
 from jeec_brain.services.activities.add_student_activity_service import AddStudentActivityService
 from jeec_brain.services.activities.update_student_activities_service import UpdateStudentActivitiesService
 from jeec_brain.services.activities.delete_student_activities_service import DeleteStudentActivityService
+from jeec_brain.services.chat.create_channel_service import CreateChannelService
+from jeec_brain.services.chat.delete_channel_service import DeleteChannelService
+from jeec_brain.services.chat.join_channel_service import JoinChannelService
+from jeec_brain.finders.users_finder import UsersFinder
+from jeec_brain.handlers.users_handler import UsersHandler
 
 
 class ActivitiesHandler():
 
     @classmethod
-    def create_activity(cls, event, activity_type, **kwargs):
-        return CreateActivityService(event=event, activity_type=activity_type, kwargs=kwargs).call()
+    def create_activity(cls, event, activity_type, chat=False, **kwargs):
+        if chat:
+            chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
+            if not chat_id or not chat_code:
+                return None
+        else:
+            chat_id = None
+            chat_code = None
+        
+        return CreateActivityService(event=event, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
 
     @classmethod
-    def update_activity(cls, activity, activity_type, **kwargs):
+    def update_activity(cls, activity, activity_type, chat=False, **kwargs):
+        if activity.chat_id and not chat:
+            result = DeleteChannelService(activity.chat_id).call()
+            if not result:
+                return None
+            else:
+                return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":None, "chat_code":None}}).call()
+
+        elif not activity.chat_id and chat:
+            chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
+            if not chat_id or not chat_code:
+                return None
+
+            return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
+        
         return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs=kwargs).call()
 
     @classmethod
     def delete_activity(cls, activity):
+        if activity.chat_id:
+            result = DeleteChannelService(activity.chat_id).call()
+            if not result:
+                return False
+                
         return DeleteActivityService(activity=activity).call()
 
     @classmethod
@@ -41,6 +73,21 @@ class ActivitiesHandler():
 
     @classmethod
     def add_company_activity(cls, company, activity):
+        if activity.chat_id:
+            users = UsersFinder.get_from_parameters({"company_id":company.id})
+            for user in users:
+                if not user.chat_id:
+                    chat_id = UsersHandler.create_chat_user(user.username, user.username, user.email, user.password, 'Company')
+                    if not chat_id:
+                        return None
+                    user = UsersHandler.update_user(user, chat_id=chat_id)
+                    if user is None:
+                        return None
+
+                result = cls.join_channel(user, activity)
+                if not result:
+                    return None
+
         return AddCompanyActivityService(company.id, activity.id).call()
 
     @classmethod
@@ -62,3 +109,7 @@ class ActivitiesHandler():
     @classmethod
     def delete_student_activity(cls, student_activity):
         return DeleteStudentActivityService(student_activity).call()
+
+    @classmethod
+    def join_channel(cls, user, activity):
+        return JoinChannelService(user.username, user.password, activity.chat_id, activity.chat_code).call()

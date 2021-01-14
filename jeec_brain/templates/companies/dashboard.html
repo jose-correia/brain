@@ -49,6 +49,11 @@
     </form>
     {% endfor %}
 
+    <form action="/companies/activities" method="get">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+          class="large material-icons left">build</i>Activities</button>
+    </form>
+
     {% if user.food_manager is sameas true %}
     <form action="/companies/meals" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
