@@ -39,38 +39,12 @@ class AuthHandler(object):
             if (person['username'] in banned_ids):
                 return False, None
 
-            user = UsersFinder.get_user_from_username(person['username'])
-
-            if user is None:
-                password = GenerateCredentialsService().call()
-                try:
-                    chat_id = UsersHandler.create_chat_user(person['name'], person['username'], person['email'], password, 'Student')
-                except Exception as e:
-                    logger.error(e)
-                    return False, None
-
-                if not chat_id:
-                    return False, None
-
-                try:
-                    user = UsersHandler.create_user(username=person['username'], email=person['email'], role='student', chat_id=chat_id, password=password)
-                    logger.info("New user added to the DB")
-
-                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type'])
-                except Exception as e:
-                    logger.error(e)
-                    return False, None
-
-            else:
-                student = StudentsFinder.get_from_ist_id(ist_id=person['username'])
-
+            student = StudentsFinder.get_from_ist_id(person['username'])
             if student is None:
-                try:
-                    student = StudentsHandler.create_student(person['username'], person['name'], user.id, fenix_auth_code, person['photo']['data'], person['photo']['type'])
-                except Exception as e:
-                    logger.error(e)
+                student = StudentsHandler.create_student(person['name'], person['username'], person['email'], fenix_auth_code, person['photo']['data'], person['photo']['type'])
+                if student is None:
                     return False, None
-            
+
             if(student.fenix_auth_code != fenix_auth_code):
                 student = StudentsHandler.update_student(student, fenix_auth_code=fenix_auth_code)
                 if student is None:
@@ -91,8 +65,13 @@ class AuthHandler(object):
         if user is None:
             logger.warning(f"User tried to authenticate with credentials: {username}:{password}")
             return False
+        
+        company_user = UsersFinder.get_company_user_from_user(user)
+        if company_user is None:
+            logger.warning(f"User tried to authenticate with credentials: {username}:{password}")
+            return False
 
-        if user.role.name != 'company' or user.company is None:
+        if user.role.name != 'company' or company_user.company is None:
             logger.warning(f'''User without company role, tried to login as company! username: {username}''')
             return False
 

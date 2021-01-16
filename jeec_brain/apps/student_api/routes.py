@@ -32,6 +32,7 @@ from jeec_brain.values.rewards_value import RewardsValue
 from jeec_brain.values.squads_rewards_value import SquadsRewardsValue
 from jeec_brain.values.jeecpot_rewards_value import JeecpotRewardsValue
 from jeec_brain.values.levels_value import LevelsValue
+from jeec_brain.values.companies_value import CompaniesValue
 
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
@@ -102,7 +103,7 @@ def create_squad(student):
     file = request.files['file']
 
     if file and file.filename != '':
-        squad = SquadsHandler.create_squad(name=name, cry=cry, captain_ist_id=student.ist_id)
+        squad = SquadsHandler.create_squad(name=name, cry=cry, captain_ist_id=student.user.username)
         if squad is None:
             return APIErrorValue('Error creating squad').json(500)
 
@@ -251,7 +252,7 @@ def add_linkedin(student):
 #         return APIErrorValue('No cv found').json(500)
 
 #     if file and allowed_file(file.filename):
-#         filename = 'cv-' + student.ist_id + '.pdf'
+#         filename = 'cv-' + student.user.username + '.pdf'
 
 #         # FileHandler.upload_file(file, filename)
 #         # logger.info('File uploaded sucessfuly!')
@@ -310,17 +311,39 @@ def delete_tag(student):
 
     return StudentsValue(student, details=True).json(200)
 
+@bp.route('/partners', methods=['GET'])
+@requires_student_auth
+def get_partners(student):
+    companies = CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'main_sponsor'})
+    companies = companies + CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'gold'})
+    companies = companies + CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'silver'})
+    companies = companies + CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'bronze'})
+
+    return CompaniesValue(companies, False).json(200)
+
+@bp.route('/partner', methods=['GET'])
+@requires_student_auth
+def get_partner(student):
+    name = request.args.get('name', None)
+    if name is None:
+        return APIErrorValue("Invalid name").json(500)
+
+    company = CompaniesFinder.get_from_name(name)
+    if company is None:
+        return APIErrorValue('Company not found').json(404)
+
+    return "..."
+
 @bp.route('/companies', methods=['GET'])
 @requires_student_auth
 def get_companies(student):
-    companies = CompaniesFinder.get_all()
-    companies_names = []
+    company_names = []
+    companies = CompaniesFinder.get_companies_from_default_event()
 
     for company in companies:
-        companies_names.append(company.name)
+        company_names.append(company.name)
 
-    return jsonify(companies_names), 200
-
+    return jsonify(company_names), 200
 
 @bp.route('/add-companies', methods=['POST'])
 @requires_student_auth

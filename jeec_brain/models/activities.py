@@ -10,7 +10,7 @@ from sqlalchemy import sql
 class Activities(db.Model, ModelMixin):
     __tablename__ = 'activities'
     
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=False, nullable=False)
     description = db.Column(db.String(300))
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")

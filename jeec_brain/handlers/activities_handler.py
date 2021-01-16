@@ -25,10 +25,12 @@ class ActivitiesHandler():
         if chat:
             chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
             if not chat_id or not chat_code:
+                print("chat")
                 return None
         else:
             chat_id = None
             chat_code = None
+            print("no chat")
         
         return CreateActivityService(event=event, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
 
@@ -74,8 +76,8 @@ class ActivitiesHandler():
     @classmethod
     def add_company_activity(cls, company, activity):
         if activity.chat_id:
-            users = UsersFinder.get_from_parameters({"company_id":company.id})
-            for user in users:
+            for company_user in company.users:
+                user = company_user.user
                 if not user.chat_id:
                     chat_id = UsersHandler.create_chat_user(user.username, user.username, user.email, user.password, 'Company')
                     if not chat_id:
@@ -86,6 +88,7 @@ class ActivitiesHandler():
 
                 result = cls.join_channel(user, activity)
                 if not result:
+                    print("here")
                     return None
 
         return AddCompanyActivityService(company.id, activity.id).call()

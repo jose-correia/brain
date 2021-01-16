@@ -44,7 +44,7 @@
   </form>
 
   <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
-    <button class="waves-effect waves-light btn back-btn red right"><i
+    <button class="waves-effect waves-light btn back-btn red right" style="margin-right: 30px;"><i
         class="material-icons left">arrow_forward</i>Banned Students</button>
   </form>
 
@@ -98,11 +98,11 @@
         {% for student in students %}
         <tr>
           <td><b>
-              {{ student.name }}
+              {{ student.user.name }}
             </b></td>
 
           <td>
-            {{ student.ist_id }}
+            {{ student.user.username }}
           </td>
 
           <td>

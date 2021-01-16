@@ -38,13 +38,14 @@ migrate = Migrate(app, db, directory=migrations_dir)
 #     print("Info file was created sucessfully!")
 #     exit()
 
-
+@manager.option('-n', '--name', default="admin", help='New user name')
 @manager.option('-u', '--username', default="admin", help='New user username')
 @manager.option('-r', '--role', default="admin", help='Role of access of the user')
-def create_user(username, role):
+def create_user(name, username, role):
     from jeec_brain.handlers.users_handler import UsersHandler
 
     user = UsersHandler.create_user(
+        name=name,
         username=username,
         role=role
     )
@@ -54,6 +55,7 @@ def create_user(username, role):
         exit()
 
     UsersHandler.generate_new_user_credentials(user)
+    print(f'Name: {user.name}')
     print(f'Username: {user.username}')
     print(f'Role: {user.role.name}')
     print(f'Password: {user.password}')

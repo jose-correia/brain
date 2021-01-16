@@ -91,10 +91,10 @@ def get_activities():
 @bp.route('/companies', methods=['GET'])
 @requires_client_auth
 def get_companies():
-    search_parameters = request.args
-    name = request.args.get('name')
-
+    search_parameters = request.args.to_dict()
+    search_parameters.pop('event', None)
     event_name = request.args.get('event')
+
     if event_name is None:
         event = EventsFinder.get_default_event()
     else:
@@ -103,38 +103,13 @@ def get_companies():
     if event is None:
         return APIErrorValue("Event not found!").json(404)
 
-    # handle search bar requests
-    if name is not None:
-        search = name
-        companies_list = CompaniesFinder.get_website_company(name)
 
-    if event_name is not None:
-        companies_list = []
-        
-        for activity in event.activities:
-            companies_list = companies_list + (CompaniesFinder.get_from_activity(activity))
-        companies_list = removeDuplicates(companies_list)
+    companies_list = CompaniesFinder.get_website_companies(event, search_parameters)
 
-    # handle parameter requests
-    elif len(search_parameters) != 0:
-        search_parameters = request.args
-        search = 'search name'
-
-        companies_list = CompaniesFinder.get_website_companies(search_parameters)
-
-    # request endpoint with no parameters should return all companies
-    else:
-        search = None
-        companies_list = []
-        
-        for activity in event.activities:
-            companies_list = companies_list + (CompaniesFinder.get_from_activity(activity))
-        companies_list = removeDuplicates(companies_list)
-    
     if companies_list is None or len(companies_list) == 0:
         return APIErrorValue('No results found').json(400)
 
-    return CompaniesValue(companies_list).json(200)
+    return CompaniesValue(companies_list, True).json(200)
 
 
 # Speakers routes
@@ -142,7 +117,12 @@ def get_companies():
 @requires_client_auth
 def get_speakers():
     search_parameters = request.args.to_dict()
-    name = request.args.get('name')
+    search_parameters.pop('event', None)
+    if 'spotlight' in search_parameters:
+            if search_parameters['spotlight'] == 'True':
+                search_parameters['spotlight'] = True
+            elif search_parameters['spotlight'] == 'False':
+                search_parameters['spotlight'] = False
 
     event_name = request.args.get('event')
     if event_name is None:
@@ -153,44 +133,12 @@ def get_speakers():
     if event is None:
         return APIErrorValue("Event not found!").json(404)
 
-    # handle search bar requests
-    if name is not None:
-        search = name
-        speakers_list = SpeakersFinder.search_by_name(name)
-
-    if event_name is not None:
-        speakers_list = []
-        
-        for activity in event.activities:
-            speakers_list = speakers_list + (SpeakersFinder.get_from_activity(activity))
-        speakers_list = removeDuplicates(speakers_list)
-    
-    # handle parameter requests
-    elif len(search_parameters) != 0:
-        search = 'search name'
-
-        if 'spotlight' in search_parameters:
-            if search_parameters['spotlight'] == 'True':
-                search_parameters['spotlight'] = True
-            elif search_parameters['spotlight'] == 'False':
-                search_parameters['spotlight'] = False
-
-        speakers_list = SpeakersFinder.get_from_parameters(search_parameters)
-
-    # request endpoint with no parameters should return all speakers
-    else:
-        search = None
-        speakers_list = []
-        
-        for activity in event.activities:
-            speakers_list = speakers_list + (SpeakersFinder.get_from_activity(activity))
-        speakers_list = removeDuplicates(speakers_list)
+    speakers_list = SpeakersFinder.get_website_speakers(event, search_parameters)
     
     if speakers_list is None or len(speakers_list) == 0:
         return APIErrorValue('No results found').json(400)
 
     return SpeakersValue(speakers_list).json(200)
-
 
 # Team routes
 @bp.route('/teams', methods=['GET'])

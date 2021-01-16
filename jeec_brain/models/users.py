@@ -8,22 +8,18 @@ from jeec_brain.models.enums.roles_enum import RolesEnum
 class Users(db.Model, ModelMixin, UserMixin):
     __tablename__ = 'users'
     
+    name = db.Column(db.String(100), unique=False, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
 
     password = db.Column(db.String)
     
     role = db.Column(db.Enum(RolesEnum), nullable=False)
 
-    company = db.relationship('Companies', back_populates="users", uselist=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
-
     sent_authentication_to_email = db.Column(db.Boolean, default=False)
     last_auth_email_destination = db.Column(db.String(100))
 
     accepted_terms = db.Column(db.Boolean, default=False)
-
-    food_manager = db.Column(db.Boolean, default=False)
 
     chat_id = db.Column(db.String)
 

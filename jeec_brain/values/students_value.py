@@ -1,5 +1,4 @@
 from jeec_brain.values.value_composite import ValueComposite
-from jeec_brain.values.companies_value import CompaniesValue
 from jeec_brain.values.levels_value import LevelsValue
 from jeec_brain.values.squads_value import SquadsValue
 
@@ -14,9 +13,9 @@ class StudentsValue(ValueComposite):
         for student in students:
             
             student_value = {
-				"name": student.name,
+				"name": student.user.name,
                 "photo": 'data: ' + student.photo_type + ';base64, ' + student.photo,
-                "ist_id": student.ist_id,
+                "ist_id": student.user.username,
                 "level": LevelsValue(student.level).to_dict() if student.level else LevelsValue(None).to_dict(),
                 "total_points": student.total_points
             }

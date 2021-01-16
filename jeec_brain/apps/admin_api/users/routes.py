@@ -3,6 +3,7 @@ from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.finders.users_finder import UsersFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.handlers.users_handler import UsersHandler
+from jeec_brain.handlers.company_users_handler import CompanyUsersHandler
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.services.users.get_roles_service import GetRolesService
 from jeec_brain.services.users.generate_credentials_service import GenerateCredentialsService
@@ -22,25 +23,28 @@ def users_dashboard():
     # handle search bar requests
     if username is not None:
         search = username
-        users_list = UsersFinder.search_by_username_without_students(username)
+        users_list = UsersFinder.get_admin_users_by_username(username)
+        company_users_list = UsersFinder.get_company_users_from_username(username)
     
     # handle parameter requests
     elif len(search_parameters) != 0:
         search_parameters = request.args
         search = 'search name'
 
-        users_list = UsersFinder.get_from_parameters_without_students(search_parameters)
+        users_list = UsersFinder.get_admin_users_from_parameters(search_parameters)
+        company_users_list = None
 
     # request endpoint with no parameters should return all users
     else:
         search = None
-        users_list = UsersFinder.get_all_without_students()
+        users_list = UsersFinder.get_all_admin_users()
+        company_users_list = UsersFinder.get_all_company_users()
     
-    if users_list is None or len(users_list) == 0:
+    if (users_list is None or len(users_list) == 0) and (company_users_list is None or len(company_users_list) == 0):
         error = 'No results found'
-        return render_template('admin/users/users_dashboard.html', users=None, error=error, search=search, current_user=current_user)
+        return render_template('admin/users/users_dashboard.html', users=None, company_users=None, error=error, search=search, current_user=current_user)
 
-    return render_template('admin/users/users_dashboard.html', users=users_list, error=None, search=search, current_user=current_user)
+    return render_template('admin/users/users_dashboard.html', users=users_list, company_users=company_users_list, error=None, search=search, current_user=current_user)
 
 
 @bp.route('/new-user', methods=['GET'])
@@ -53,16 +57,18 @@ def add_user_dashboard():
         roles.remove('student')
 
     return render_template('admin/users/add_user.html', \
+        user = current_user, \
         roles = roles, \
         error=None)
 
 
-@bp.route('/new-organization-suser', methods=['GET'])
+@bp.route('/new-organization-user', methods=['GET'])
 @allowed_roles(['admin'])
 def add_company_user_dashboard():
     companies = CompaniesFinder.get_all()
 
     return render_template('admin/users/add_company_user.html', \
+        user = current_user, \
         companies=companies, \
         error=None)
 
@@ -71,40 +77,23 @@ def add_company_user_dashboard():
 @allowed_roles(['admin'])
 def create_user():
     # extract form parameters
+    name = request.form.get('name')
     username = request.form.get('username')
     email = request.form.get('email', None)
     role = request.form.get('role', None)
+    post = request.form.get('post', None)
     
     # check if is creating company user
     company_external_id = request.form.get('company_external_id')
-
-    password = GenerateCredentialsService().call()
     if company_external_id is not None:
-        role = 'company'
         company = CompaniesFinder.get_from_external_id(company_external_id)
         company_id = company.id
 
         if company is None:
             return 'No company found', 404
-        
-        try:
-            chat_id = UsersHandler.create_chat_user(username, username, email, password, 'Company')
-        except:
-            return 'Failed to create chat user', 500
-
-        if not chat_id:
-            return 'Failed to create chat user', 500
-    else:
-        company_id = None
-        chat_id = None
-
-    if role not in GetRolesService.call():
-        return 'Wrong role type provided', 404
-    else:
-        role = RolesEnum[role]
 
     # extract food_manager from parameters
-    food_manager = request.form.get('food_manager')
+    food_manager = request.form.get('food_manager', None)
 
     if food_manager == 'True':
         food_manager = True
@@ -113,30 +102,52 @@ def create_user():
     else:
         food_manager = None
 
-    # create new user
-    user = UsersHandler.create_user(
-            company_id=company_id,
+    # create new company user
+    if company_external_id:
+        company_user = CompanyUsersHandler.create_company_user(name, username, email, company_id, post, food_manager)
+        if not company_user:
+            return render_template('admin/users/add_company_user.html', \
+                    user=current_user, \
+                    companies=CompaniesFinder.get_all(), \
+                    roles=GetRolesService.call(), \
+                    error="Failed to create user!")
+
+        if not UsersHandler.join_channel(company_user.user, company.chat_id, company.chat_code):
+            CompanyUsersHandler.delete_company_user(company_user)
+            return render_template('admin/users/add_company_user.html', \
+                    user=current_user, \
+                    companies=CompaniesFinder.get_all(), \
+                    roles=GetRolesService.call(), \
+                    error="Failed to create user!")
+
+        for activity in company_user.company.activities:
+            if activity.chat_id:
+                if not ActivitiesHandler.join_channel(company_user.user, activity):
+                    CompanyUsersHandler.delete_company_user(company_user)
+                    return render_template('admin/users/add_company_user.html', \
+                        user=current_user, \
+                        companies=CompaniesFinder.get_all(), \
+                        roles=GetRolesService.call(), \
+                        error="Failed to create user!")
+
+    else:
+        if role not in GetRolesService.call():
+            return 'Wrong role type provided', 404
+        else:
+            role = RolesEnum[role]
+
+        user = UsersHandler.create_user(
+            name=name,
             username=username,
             email=email,
             role=role,
-            food_manager=food_manager,
-            password=password,
-            chat_id=chat_id
+            password=GenerateCredentialsService().call()
         )
 
-    if user is None:
-        return render_template('admin/users/add_user.html', \
-            roles=GetRolesService.call(), \
-            error="Failed to create user!")
-
-    if user.company:
-        for activity in user.company.activities:
-            if activity.chat_id:
-                if not ActivitiesHandler.join_channel(user, activity):
-                    UsersHandler.delete_user(user)
-                    return render_template('admin/users/add_user.html', \
-                        roles=GetRolesService.call(), \
-                        error="Failed to create user!")
+        if user is None:
+            return render_template('admin/users/add_user.html', \
+                roles=GetRolesService.call(), \
+                error="Failed to create user!")
 
     return redirect(url_for('admin_api.users_dashboard'))
 
@@ -148,10 +159,18 @@ def delete_user(user_external_id):
 
     if user is None:
         return APIErrorValue('Couldnt find user').json(500)
-        
-    UsersHandler.delete_user(user)
-    return redirect(url_for('admin_api.users_dashboard'))
 
+    if user.role.name == 'company':
+        company_user = UsersFinder.get_company_user_from_user(user)
+        if not company_user:
+            return APIErrorValue('Couldnt find user').json(500)
+            
+        CompanyUsersHandler.delete_company_user(company_user)
+
+    else:
+        UsersHandler.delete_user(user)
+    
+    return redirect(url_for('admin_api.users_dashboard'))
 
 
 @bp.route('/user/<string:user_external_id>/credentials', methods=['GET'])

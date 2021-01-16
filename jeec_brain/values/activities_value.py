@@ -23,7 +23,7 @@ class ActivitiesValue(ValueComposite):
                 "registration_open": activity.registration_open,
                 "registration_link": activity.registration_link,
 				"speakers": SpeakersValue(activity_speakers).to_dict(),
-				"companies": CompaniesValue(activity_companies).to_dict()
+				"companies": CompaniesValue(activity_companies, True).to_dict()
 			}
 			activities_array.append(activity_value)
 		self.serialize_with(data=activities_array)

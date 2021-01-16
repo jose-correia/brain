@@ -28,7 +28,11 @@ def require_company_login(func):
         if not current_user.is_authenticated or current_user.role.name is not 'company':
             return Response("Access denied", status=401)
 
-        return func(*args, **kwargs)
+        company_user = UsersFinder.get_company_user_from_user(current_user)
+        if not company_user or not company_user.company:
+            return Response("Access denied", status=401)
+
+        return func(*args, **{**kwargs, **{'company_user':company_user}})
     return check_company_login
 
 

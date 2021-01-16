@@ -6,19 +6,19 @@ from jeec_brain.services.users.generate_credentials_service import GenerateCrede
 from jeec_brain.services.chat.create_chat_user_service import CreateChatUserService
 from jeec_brain.services.chat.delete_chat_user_service import DeleteChatUserService
 from jeec_brain.services.chat.login_chat_user_service import LoginChatUserService
+from jeec_brain.services.chat.join_channel_service import JoinChannelService
 
 
 class UsersHandler():
 
     @classmethod
-    def create_user(cls, username, role, company_id=None, email=None, password=None, food_manager=None, chat_id=None):
+    def create_user(cls, name, username, role, email=None, password=None, chat_id=None):
         return CreateUserService(
-            company_id=company_id,
+            name=name,
             username=username,
             email=email,
             password=password,
             role=role,
-            food_manager=food_manager,
             chat_id=chat_id
         ).call()
 
@@ -62,3 +62,7 @@ class UsersHandler():
             return chat_user['authToken']
         else:
             return None
+
+    @classmethod
+    def join_channel(cls, user, chat_id, chat_code):
+        return JoinChannelService(user.username, user.password, chat_id, chat_code).call()

@@ -1,4 +1,5 @@
 from jeec_brain.models.students import Students
+from jeec_brain.models.users import Users
 from jeec_brain.models.levels import Levels
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.student_companies import StudentCompanies
@@ -7,7 +8,7 @@ class StudentsFinder():
 
     @classmethod
     def get_from_ist_id(cls, ist_id):
-        return Students.query.filter_by(ist_id=ist_id).first()
+        return Students.query.filter((Students.user_id == Users.id) & (Users.username == ist_id)).first()
 
     @classmethod
     def get_from_external_id(cls, external_id):
@@ -49,12 +50,12 @@ class StudentsFinder():
     @classmethod
     def get_from_search(cls, search):
         search = "%{}%".format(search)
-        return Students.query.filter(Students.name.ilike(search) | Students.ist_id.ilike(search)).all()
+        return Students.query.filter(Students.user.name.ilike(search) | Students.user.username.ilike(search)).all()
 
     @classmethod
     def get_from_search_without_student(cls, search, student_external_id):
         search = "%{}%".format(search)
-        return Students.query.filter((Students.name.ilike(search) | Students.ist_id.ilike(search)) & (Students.external_id != student_external_id)).all()
+        return Students.query.filter((Students.user.name.ilike(search) | Students.user.username.ilike(search)) & (Students.external_id != student_external_id)).all()
 
     @classmethod
     def get_student_activity_from_id_and_activity_id(cls, student_id, activity_id):

@@ -8,7 +8,9 @@ from jeec_brain.services.students.update_student_company_service import UpdateSt
 from jeec_brain.services.students.create_banned_student_service import CreateBannedStudentService
 from jeec_brain.services.students.delete_banned_student_service import DeleteBannedStudentService
 from jeec_brain.services.students.update_banned_student_service import UpdateBannedStudentService
+from jeec_brain.services.users.generate_credentials_service import GenerateCredentialsService
 from jeec_brain.services.chat.delete_chat_user_service import DeleteChatUserService
+from jeec_brain.models.enums.roles_enum import RolesEnum
 
 # FINDERS
 from jeec_brain.finders.levels_finder import LevelsFinder
@@ -16,16 +18,25 @@ from jeec_brain.finders.students_finder import StudentsFinder
 from jeec_brain.finders.squads_finder import SquadsFinder
 
 # HANDLERS
+from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.squads_handler import SquadsHandler
 
 class StudentsHandler():
 
     @classmethod
-    def create_student(cls, ist_id, name, user_id, fenix_auth_code, photo, photo_type):
+    def create_student(cls, name, ist_id, email, fenix_auth_code, photo, photo_type):
+        password = GenerateCredentialsService().call()
+        
+        chat_id = UsersHandler.create_chat_user(name, ist_id, email, password, 'Student')
+        if not chat_id:
+            return None
+
+        user = UsersHandler.create_user(name, ist_id, RolesEnum['student'], email, password, chat_id)
+        if not user:
+            return None
+
         return CreateStudentService(
-            ist_id=ist_id,
-            name=name,
-            user_id=user_id,
+            user_id=user.id,
             fenix_auth_code=fenix_auth_code,
             photo=photo,
             photo_type=photo_type,
@@ -98,7 +109,7 @@ class StudentsHandler():
             SquadsHandler.delete_squad(student.squad)
 
         elif(student.is_captain()):
-            SquadsHandler.update_squad(student.squad, captain_ist_id=student.squad.members.first().ist_id)
+            SquadsHandler.update_squad(student.squad, captain_ist_id=student.squad.members.first().user.username)
 
         invitations = SquadsFinder.get_invitations_from_parameters({'sender_id': student.id})
         for invitation in invitations:
@@ -135,7 +146,7 @@ class StudentsHandler():
 
     @classmethod
     def create_banned_student(cls, student):
-        return CreateBannedStudentService(name=student.name, ist_id=student.ist_id, email=student.user.email).call()
+        return CreateBannedStudentService(name=student.name, ist_id=student.user.username, email=student.user.email).call()
 
     @classmethod
     def update_banned_student(cls, banned_student, **kwargs):

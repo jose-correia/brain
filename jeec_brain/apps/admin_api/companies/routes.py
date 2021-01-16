@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for, current_app
 from flask_login import current_user
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
+from jeec_brain.handlers.company_users_handler import CompanyUsersHandler
 # finders
 from jeec_brain.finders.companies_finder import CompaniesFinder
 # values
@@ -158,6 +159,9 @@ def delete_company(company_external_id):
         return APIErrorValue('Couldnt find company').json(500)
     
     name = company.name
+
+    for company_user in company.users:
+        CompanyUsersHandler.delete_company_user(company_user)
     
     if CompaniesHandler.delete_company(company):
         return redirect(url_for('admin_api.companies_dashboard'))

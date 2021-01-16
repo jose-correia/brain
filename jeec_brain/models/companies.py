@@ -1,6 +1,6 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
-from jeec_brain.models.users import Users
+from jeec_brain.models.company_users import CompanyUsers
 from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.models.activities import Activities
 from jeec_brain.models.company_meals import CompanyMeals
@@ -20,6 +20,9 @@ class Companies(db.Model, ModelMixin):
     email = db.Column(db.String(100))
     link = db.Column(db.String(100))
     business_area = db.Column(db.String(100))
+
+    chat_id = db.Column(db.String)
+    chat_code = db.Column(db.String)
 
     partnership_tier = db.Column(db.String(20))
 
@@ -41,7 +44,7 @@ class Companies(db.Model, ModelMixin):
         secondary="companies_tags",
         secondaryjoin=sql.and_(CompaniesTags.tag_id == Tags.id))
 
-    users = relationship("Users", back_populates='company', lazy='dynamic', cascade="all,delete")
+    users = relationship("CompanyUsers", back_populates='company', lazy='dynamic', cascade="all,delete")
 
     def __repr__(self):
         return 'Name: {}'.format(self.name)

@@ -1,6 +1,5 @@
 from jeec_brain.apps.companies_api import bp
 from flask import render_template, session, request, redirect, url_for
-from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
@@ -13,23 +12,17 @@ from datetime import datetime
 
 @bp.route('/activities', methods=['GET'])
 @require_company_login
-def activities_dashboard():
-    if current_user.company is None:
-        return APIErrorValue('Couldnt find company').json(400)
-
-    activities = current_user.company.activities
+def activities_dashboard(company_user):
+    activities = company_user.company.activities
     if activities is None or len(activities) == 0:
-        return render_template('companies/activities/activities_dashboard.html', activities=None, error="No activities found", company=current_user.company)
+        return render_template('companies/activities/activities_dashboard.html', activities=None, error="No activities found", company=company_user.company)
 
-    return render_template('companies/activities/activities_dashboard.html', activities=activities, error=None, company=current_user.company)
+    return render_template('companies/activities/activities_dashboard.html', activities=activities, error=None, company=company_user.company)
 
 
 @bp.route('/activity/<string:activity_external_id>', methods=['GET'])
 @require_company_login
-def get_activity(activity_external_id):
-    if current_user.company is None:
-        return APIErrorValue('Couldnt find company').json(400)
-
+def get_activity(company_user, activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(400)
@@ -40,15 +33,11 @@ def get_activity(activity_external_id):
         activity=activity, \
         error=None, \
         codes=codes, \
-        user=current_user)
-
+        user=company_user)
 
 @bp.route('/activity/<string:activity_external_id>/code', methods=['POST'])
 @require_company_login
-def create_activity_code(activity_external_id):
-    if current_user.company is None:
-        return APIErrorValue('Couldnt find company').json(400)
-    
+def create_activity_code(company_user, activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(400)
@@ -66,4 +55,4 @@ def create_activity_code(activity_external_id):
         activity=activity, \
         error=None, \
         codes=codes, \
-        user=current_user)
+        user=company_user)

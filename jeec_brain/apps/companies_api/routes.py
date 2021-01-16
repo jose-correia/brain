@@ -44,20 +44,20 @@ def company_logout():
 
 @bp.route('/dashboard', methods=['GET'])
 @require_company_login
-def dashboard():
-    if not current_user.accepted_terms:
-        return render_template('companies/terms_conditions.html', user=current_user)
+def dashboard(company_user):
+    if not company_user.user.accepted_terms:
+        return render_template('companies/terms_conditions.html', user=company_user.user)
 
-    company_auctions = CompaniesFinder.get_company_auctions(current_user.company)
+    company_auctions = CompaniesFinder.get_company_auctions(company_user.company)
 
-    company_logo = CompaniesHandler.find_image(current_user.company.name)
+    company_logo = CompaniesHandler.find_image(company_user.company.name)
 
-    return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, user=current_user)
+    return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, user=company_user)
 
 
 @bp.route('/dashboard', methods=['POST'])
 @require_company_login
-def accept_terms():
-    UsersHandler.update_user(user=current_user, accepted_terms=True)
+def accept_terms(company_user):
+    UsersHandler.update_user(user=company_user.user, accepted_terms=True)
 
     return redirect(url_for('companies_api.dashboard'))

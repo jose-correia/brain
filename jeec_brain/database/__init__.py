@@ -25,6 +25,7 @@ def create_tables():
     from jeec_brain.models.activity_codes import ActivityCodes
 
     # Companies
+    from jeec_brain.models.company_users import CompanyUsers
     from jeec_brain.models.companies import Companies
     from jeec_brain.models.companies_tags import CompaniesTags
 

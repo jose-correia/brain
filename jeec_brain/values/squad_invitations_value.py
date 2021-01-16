@@ -17,7 +17,7 @@ class SquadInvitationsValue(ValueComposite):
 				"squad_cry": squad.cry,
 				"squad_rank": SquadsFinder.get_rank(squad.id),
 				"squad_image": SquadsHandler.find_squad_image(str(squad.external_id)),
-				"sender_name": sender.name
+				"sender_name": sender.user.name
 			}
 			invitations_array.append(invitation_value)
 		self.serialize_with(data=invitations_array)

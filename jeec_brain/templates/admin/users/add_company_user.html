@@ -22,6 +22,8 @@
   <div class="nav-bar">
     <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
 
+    <div class="company-dash-username right" style="color:black">{{user.name}}</div>
+    
     <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
       <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
         out</button>
@@ -55,19 +57,33 @@
 
     <form class="col s12" action="{{ url_for('admin_api.create_user') }}" method="post">
       <div class="row">
-        <div class="input-field col s12" style="margin-left: 30px;">
-          <input class="col s4" id="username" name="username" type="text" class="validate" required>
+        <div class="input-field col s9" style="margin-left: 30px;">
+          <input id="name" name="name" type="text" required>
+          <label for="name">Name</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s4" style="margin-left: 30px;">
+          <input class="col" id="username" name="username" type="text" class="validate" required>
           <label for="username">Username</label>
         </div>
 
-        <div class="input-field col s2" style="margin-left: 30px;">
+        <div class="input-field col s4" style="margin-left: 30px;">
+          <input class="col" id="post" name="post" type="text" class="validate" required>
+          <label for="post">Position</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s9" style="margin-left: 30px;">
           <input id="email" name="email" type="text" required>
           <label for="email">Email</label>
         </div>
       </div>
 
       <div class="row">
-        <div class="col s2" style="margin-left: 30px;">
+        <div class="col s2">
           {% if companies|length == 0 %}
           <p class="right">Please create a company profile first!</p>
           {% else %}
