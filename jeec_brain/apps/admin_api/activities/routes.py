@@ -355,17 +355,18 @@ def create_activity():
 
     # extract company names and speaker names from parameters
     companies = request.form.getlist('company')
+    zoom_urls = request.form.getlist('url')
     speakers = request.form.getlist('speaker')
     tags = request.form.getlist('tag')
 
     # if company names where provided
     if companies:
-        for name in companies:
+        for index, name in enumerate(companies):
             company = CompaniesFinder.get_from_name(name)
             if company is None:
                 return APIErrorValue('Couldnt find company').json(500)
 
-            company_activity = ActivitiesHandler.add_company_activity(company, activity)
+            company_activity = ActivitiesHandler.add_company_activity(company, activity, zoom_urls[index])
             if company_activity is None:
                 return APIErrorValue('Failed to create company activity').json(500)
 
@@ -417,6 +418,10 @@ def get_activity(activity_external_id):
         minDate = None
         maxDate = None
 
+    companies_zoom_url = {}
+    for company in company_activities:
+        companies_zoom_url[company.company_id] = company.zoom_link
+
     return render_template('admin/activities/update_activity.html', \
         activity=activity, \
         activity_types=activity_types, \
@@ -425,6 +430,7 @@ def get_activity(activity_external_id):
         tags=tags, \
         company_activities=[company.company_id for company in company_activities], \
         speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
+        companies_zoom_url=companies_zoom_url, \
         activity_tags=[tag.tag_id for tag in activity_tags], \
         minDate=minDate, \
         maxDate=maxDate, \
@@ -500,17 +506,18 @@ def update_activity(activity_external_id):
 
     # extract company names and speaker names from parameters
     companies = request.form.getlist('company')
+    zoom_urls = request.form.getlist('url')
     speakers = request.form.getlist('speaker')
     tags = request.form.getlist('tag')
 
     # if company names where provided
     if companies:
-        for name in companies:
+        for index, name in enumerate(companies):
             company = CompaniesFinder.get_from_name(name)
             if company is None:
                 return APIErrorValue('Couldnt find company').json(500)
 
-            company_activity = ActivitiesHandler.add_company_activity(company, activity)
+            company_activity = ActivitiesHandler.add_company_activity(company, activity, zoom_urls[index])
             if company_activity is None:
                 return APIErrorValue('Failed to create company activity').json(500)
 

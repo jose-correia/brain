@@ -2,13 +2,12 @@ from config import Config
 import requests
 import json
 
-class JoinChannelService():
+class CreateDirectMessageService():
 
-    def __init__(self, user, channel_id, channel_code):
-        self.channel_id = channel_id
-        self.channel_code = channel_code
+    def __init__(self, user_sender, user_receiver):
+        self.receiver_username = user_receiver.username
         url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
-        payload = {"user":user.username, "password":user.password}
+        payload = {"user":user_sender.username, "password":user_sender.password}
 
         try:
             user = requests.post(url, data=json.dumps(payload))
@@ -25,16 +24,16 @@ class JoinChannelService():
 
 
     def call(self):
-        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/channels.join'
+        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/im.create'
         headers = {"X-Auth-Token":self.auth_token, "X-User-Id":self.user_id}
-        payload = {"roomId":self.channel_id, "joinCode":self.channel_code}
+        payload = {"username":self.receiver_username}
         
         try:
-            channel = requests.post(url, data=json.dumps(payload), headers=headers)
+            room = requests.post(url, data=json.dumps(payload), headers=headers)
         except:
-            return False
+            return None
 
-        if not channel or not channel.json()['success']:
-            return False
+        if not room or not room.json()['success']:
+            return None
 
-        return True
+        return room.json()['room']['rid']

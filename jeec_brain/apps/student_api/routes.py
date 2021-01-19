@@ -21,6 +21,7 @@ from jeec_brain.finders.tags_finder import TagsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.rewards_finder import RewardsFinder
 from jeec_brain.finders.levels_finder import LevelsFinder
+from jeec_brain.finders.users_finder import UsersFinder
 
 # Values
 from jeec_brain.values.api_error_value import APIErrorValue
@@ -33,6 +34,7 @@ from jeec_brain.values.squads_rewards_value import SquadsRewardsValue
 from jeec_brain.values.jeecpot_rewards_value import JeecpotRewardsValue
 from jeec_brain.values.levels_value import LevelsValue
 from jeec_brain.values.companies_value import CompaniesValue
+from jeec_brain.values.partners_value import PartnersValue
 
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
@@ -332,7 +334,7 @@ def get_partner(student):
     if company is None:
         return APIErrorValue('Company not found').json(404)
 
-    return "..."
+    return PartnersValue(company, student).json(200)
 
 @bp.route('/companies', methods=['GET'])
 @requires_student_auth
@@ -431,3 +433,34 @@ def get_chat_token(student):
         return jsonify({'token':token}), 200
     else:
         return APIErrorValue("Error getting token").json(500)
+
+@bp.route('/chat-room', methods=['GET'])
+@requires_student_auth
+def get_chat_room(student):
+    company_name = request.args.get('company', None)
+    user_id = request.args.get('member', None)
+
+    if company_name:
+        company = CompaniesFinder.get_from_name(company_name)
+        if company is None:
+            return APIErrorValue("Company not found").json(404)
+
+        result = UsersHandler.join_channel(student.user, company.chat_id, company.chat_code)
+        if result:
+            return jsonify({'result':True}), 200
+        else:
+            return APIErrorValue("Failed to join room").json(500)
+
+    elif user_id:
+        company_user = UsersFinder.get_from_external_id(user_id)
+        if company_user is None and not company_user.role.name == 'company':
+            return APIErrorValue("Invalid user").json(500)
+        
+        room_id = UsersHandler.create_direct_message(student.user, company_user)
+        if room_id is None:
+            return APIErrorValue("Failed to create direct message session").json(500)
+
+        return jsonify({"room_id":room_id}), 200
+
+    else:
+        return APIErrorValue("No room found").json(404)

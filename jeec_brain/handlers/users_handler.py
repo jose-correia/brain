@@ -7,6 +7,7 @@ from jeec_brain.services.chat.create_chat_user_service import CreateChatUserServ
 from jeec_brain.services.chat.delete_chat_user_service import DeleteChatUserService
 from jeec_brain.services.chat.login_chat_user_service import LoginChatUserService
 from jeec_brain.services.chat.join_channel_service import JoinChannelService
+from jeec_brain.services.chat.create_direct_message_service import CreateDirectMessageService
 
 
 class UsersHandler():
@@ -65,4 +66,8 @@ class UsersHandler():
 
     @classmethod
     def join_channel(cls, user, chat_id, chat_code):
-        return JoinChannelService(user.username, user.password, chat_id, chat_code).call()
+        return JoinChannelService(user, chat_id, chat_code).call()
+
+    @classmethod
+    def create_direct_message(cls, user_sender, user_receiver):
+        return CreateDirectMessageService(user_sender, user_receiver).call()

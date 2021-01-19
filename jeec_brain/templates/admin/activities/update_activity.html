@@ -169,7 +169,7 @@
 
       <div class="row">
         <div class="input-field col s3">
-          <select multiple name="company">
+          <select multiple name="company" id="companies">
             {% for company in companies %}
             <option value="{{ company.name }}" {% if company.id in company_activities %} selected {% endif %}>
               {{ company.name }}</option>
@@ -199,6 +199,19 @@
         </div>
       </div>
 
+      <div id="urls">
+        {% for company in companies %}
+        {% if company.id in company_activities %}
+        <div class="row url" style="margin-bottom:0" id="url{{ company.name }}">
+          <div class="input-field col s5">
+            <input name="url" type="url" class="validate" {% if companies_zoom_url[company.id] %} value="{{ companies_zoom_url[company.id] }} {% endif %}">
+            <label for="url{{ company.name }}">{{ company.name }} Zoom URL</label>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
       <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
           class="material-icons left">save</i>Save Activity</button>
     </form>
@@ -218,7 +231,52 @@
         $('.parallax').parallax();
 
       }); // end of document ready
-    })(jQuery); 
+    })(jQuery);
+
+    $(document).ready(function () {
+      var companies = $('#companies').val();
+
+      $('#companies').change(function () {
+        var new_companies = $('#companies').val();
+
+        for (var i=0; i < companies.length; i++) {
+          if (jQuery.inArray(companies[i], new_companies) === -1) {
+            $("#url" + companies[i]).remove();
+
+            companies = jQuery.grep(companies, function (value) {
+              return value != companies[i];
+            });
+
+            i--;
+          }
+        }
+
+        for (var i=0; i < new_companies.length; i++) {
+          if (jQuery.inArray(new_companies[i], companies) === -1) {
+            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i] + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
+            var divs = $('.url');
+            
+            var j = 0;
+            for(j = 0; j < divs.length; j++)
+            {
+              if(new_companies[i] < divs[j].id.substring(3, divs[j].id.length))
+              {
+                $('#' + divs[j].id).before(input);
+                break;
+              }
+            }
+
+            if(j === divs.length)
+            {
+              $('#urls').append(input);
+            }
+          }
+        }
+
+        companies = new_companies;
+
+      });
+    });
   </script>
 </body>
 

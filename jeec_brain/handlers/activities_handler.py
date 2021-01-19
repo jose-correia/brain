@@ -74,7 +74,7 @@ class ActivitiesHandler():
         return DeleteSpeakerActivityService(speaker_activity).call()
 
     @classmethod
-    def add_company_activity(cls, company, activity):
+    def add_company_activity(cls, company, activity, zoom_link=None):
         if activity.chat_id:
             for company_user in company.users:
                 user = company_user.user
@@ -91,7 +91,7 @@ class ActivitiesHandler():
                     print("here")
                     return None
 
-        return AddCompanyActivityService(company.id, activity.id).call()
+        return AddCompanyActivityService(company.id, activity.id, zoom_link).call()
 
     @classmethod
     def update_company_activity(cls, company_activity, company, activity):
@@ -115,4 +115,4 @@ class ActivitiesHandler():
 
     @classmethod
     def join_channel(cls, user, activity):
-        return JoinChannelService(user.username, user.password, activity.chat_id, activity.chat_code).call()
+        return JoinChannelService(user, activity.chat_id, activity.chat_code).call()
