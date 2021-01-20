@@ -2,6 +2,7 @@ from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 from jeec_brain.models.tags import Tags
 from jeec_brain.models.activities_tags import ActivitiesTags
+from jeec_brain.models.enums.activity_chat_enum import ActivityChatEnum
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
 from sqlalchemy import sql
@@ -28,6 +29,9 @@ class Activities(db.Model, ModelMixin):
 
     chat_id = db.Column(db.String)
     chat_code = db.Column(db.String)
+    chat_type = db.Column(db.Enum(ActivityChatEnum), nullable=False)
+
+    zoom_link = db.Column(db.String)
 
     tags = relationship("Tags",
         secondary="activities_tags",

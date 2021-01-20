@@ -10,6 +10,7 @@ from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.handlers.activity_types_handler import ActivityTypesHandler
+from jeec_brain.models.enums.activity_chat_enum import ActivityChatEnum
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from flask_login import current_user
@@ -293,6 +294,7 @@ def create_activity():
     points = request.form.get('points') or None
     quest = request.form.get('quest')
     chat = request.form.get('chat')
+    zoom_link = request.form.get('zoom_url')
 
     if registration_open == 'True':
         registration_open = True
@@ -304,10 +306,7 @@ def create_activity():
     else:
         quest = False
 
-    if chat == 'True':
-        chat = True
-    else:
-        chat = False
+    chat_type = ActivityChatEnum[chat]
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -329,7 +328,9 @@ def create_activity():
             registration_open=registration_open,
             points=points,
             quest=quest,
-            chat=chat
+            zoom_link=zoom_link,
+            chat_type=chat_type,
+            chat=(chat=='general')
         )
 
     if activity is None:
@@ -458,6 +459,7 @@ def update_activity(activity_external_id):
     points = request.form.get('points') or None
     quest = request.form.get('quest')
     chat = request.form.get('chat')
+    zoom_link = request.form.get('zoom_url')
 
     if registration_open == 'True':
         registration_open = True
@@ -469,10 +471,7 @@ def update_activity(activity_external_id):
     else:
         quest = False
 
-    if chat == 'True':
-        chat = True
-    else:
-        chat = False
+    chat_type = ActivityChatEnum[chat]
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -489,7 +488,9 @@ def update_activity(activity_external_id):
         registration_open=registration_open,
         points=points,
         quest=quest,
-        chat=chat
+        zoom_link=zoom_link,
+        chat_type=chat_type,
+        chat=(chat=='general'),
     )
 
     if company_activities:

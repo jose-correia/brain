@@ -30,7 +30,7 @@ mccabe==0.6.1
 pkcs7==0.1.2
 psycopg2==2.7.7
 psycopg2-binary==2.8.4
-pycrypto==2.6.1
+pycryptodome==3.9.9
 pylint==2.4.4
 pylint-flask==0.6
 pylint-plugin-utils==0.6

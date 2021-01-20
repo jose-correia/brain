@@ -6,7 +6,7 @@ import json
 class CreateChannelService():
 
     def __init__(self, name, members=[]):
-        self.name = name
+        self.name = name.replace(" ","_")
         self.members = members
         url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
         payload = {"user":Config.ROCKET_CHAT_ADMIN_USERNAME, "password":Config.ROCKET_CHAT_ADMIN_PASSWORD}

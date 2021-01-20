@@ -8,4 +8,4 @@ class CompanyActivities(db.Model, ModelMixin):
 
     company_id = Column(Integer, ForeignKey('companies.id'), index=True)
     activity_id = Column(Integer, ForeignKey('activities.id'), index=True)
-    zoom_link = db.Column(db.String(100))
+    zoom_link = db.Column(db.String)

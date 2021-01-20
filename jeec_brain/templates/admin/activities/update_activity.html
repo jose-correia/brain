@@ -105,16 +105,21 @@
       </div>
 
       <div class="row s7">
-        <div class="col s2">
+        <div class="col s2" style="margin-right: 20px;">
           Create chat channel:
           <p>
             <label style="margin-right: 20px;">
-              <input class="with-gap" name="chat" type="radio" value="True" {% if activity.chat_id is not none %}
+              <input class="with-gap" name="chat" type="radio" value="general" {% if (activity.chat_type.name == 'general') %}
               checked {% endif %} />
-              <span>Yes</span>
+              <span>General</span>
+            </label>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="chat" type="radio" value="individual" {% if (activity.chat_type.name == 'individual') %}
+              checked {% endif %} />
+              <span>Individual</span>
             </label>
             <label>
-              <input class="with-gap" name="chat" type="radio" value="False" {% if activity.chat_id is none %}
+              <input class="with-gap" name="chat" type="radio" value="none" {% if (activity.chat_type.name == 'none') %}
               checked {% endif %} />
               <span>No</span>
             </label>
@@ -140,6 +145,15 @@
         <div class="input-field col s2">
           <input id="points" name="points" type="number" min="0" class="validate" value="{{ activity.points }}">
           <label for="points">Points</label>
+        </div>
+      </div>
+
+      <div class="row s10">
+        <div class="col s7">
+          <div class="input-field">
+            <input id="zoom_url" name="zoom_url" type="url" class="validate" value="{{ activity.zoom_link }}">
+            <label for="zoom_url">ZOOM URL</label>
+          </div>
         </div>
       </div>
 

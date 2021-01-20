@@ -101,15 +101,19 @@
       </div>
 
       <div class="row s8">
-        <div class="col s2">
+        <div class="col s2" style="margin-right: 20px;">
           Create chat channel:
           <p>
             <label style="margin-right: 20px;">
-              <input class="with-gap" name="chat" type="radio" value="True" />
-              <span>Yes</span>
+              <input class="with-gap" name="chat" type="radio" value="general" />
+              <span>General</span>
+            </label>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="chat" type="radio" value="individual" />
+              <span>Individual</span>
             </label>
             <label>
-              <input class="with-gap" name="chat" type="radio" value="False" checked />
+              <input class="with-gap" name="chat" type="radio" value="none" checked />
               <span>No</span>
             </label>
           </p>
@@ -132,6 +136,15 @@
         <div class="input-field col s2">
           <input id="points" name="points" type="number" min="0" class="validate">
           <label for="points">Points</label>
+        </div>
+      </div>
+
+      <div class="row s10">
+        <div class="col s7">
+          <div class="input-field">
+            <input id="zoom_url" name="zoom_url" type="url" class="validate">
+            <label for="zoom_url">ZOOM URL</label>
+          </div>
         </div>
       </div>
 
@@ -207,11 +220,12 @@
 
       $('#companies').change(function () {
         var new_companies = $('#companies').val();
-
+        
+        //delete unused companies
         for (var i=0; i < companies.length; i++) {
           if (jQuery.inArray(companies[i], new_companies) === -1) {
-            $("#url" + companies[i]).remove();
-
+            $("#url" + companies[i].replace(" ","_")).remove();
+            
             companies = jQuery.grep(companies, function (value) {
               return value != companies[i];
             });
@@ -220,9 +234,10 @@
           }
         }
 
+        //create new companies
         for (var i=0; i < new_companies.length; i++) {
           if (jQuery.inArray(new_companies[i], companies) === -1) {
-            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i] + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
+            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replace(" ","_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
             var divs = $('.url');
             
             var j = 0;

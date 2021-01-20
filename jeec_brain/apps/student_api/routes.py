@@ -46,7 +46,7 @@ def login_student():
 @bp.route('/redirect_uri')
 def redirect_uri():
     if request.args.get('error') == "access_denied":
-        return redirect(Config.STUDENT_APP_URL + 'login')
+        return redirect(Config.STUDENT_APP_URL)
     
     fenix_auth_code = request.args.get('code')
 
@@ -316,10 +316,10 @@ def delete_tag(student):
 @bp.route('/partners', methods=['GET'])
 @requires_student_auth
 def get_partners(student):
-    companies = CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'main_sponsor'})
-    companies = companies + CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'gold'})
-    companies = companies + CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'silver'})
-    companies = companies + CompaniesFinder.get_companies_from_default_event_and_parameters({'partnership_tier':'bronze'})
+    companies = CompaniesFinder.get_chat_companies({'partnership_tier':'main_sponsor'})
+    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'gold'})
+    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'silver'})
+    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'bronze'})
 
     return CompaniesValue(companies, False).json(200)
 

@@ -4,6 +4,7 @@ from jeec_brain.models.activities import Activities
 from jeec_brain.models.events import Events
 from jeec_brain.database import db_session
 from sqlalchemy import text
+from datetime import datetime, timedelta
 
 class CompaniesFinder():
 
@@ -50,8 +51,11 @@ class CompaniesFinder():
         return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.event_id == Events.id) & (Events.id == event.id)).filter_by(show_in_website=True, **kwargs).all()
 
     @classmethod
-    def get_companies_from_default_event_and_parameters(cls, kwargs={}):
-        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.event_id == Events.id) & (Events.default == True)).filter_by(**kwargs).all()
+    def get_chat_companies(cls, kwargs={}):
+        now = datetime.utcnow()
+        day = now.strftime('%d %b %Y, %a')
+
+        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.day == day) & (Activities.chat_type == 'individual') & (Activities.event_id == Events.id) & (Events.default == True)).filter_by(**kwargs).all()
     
     @classmethod
     def get_company_auctions(cls, company):

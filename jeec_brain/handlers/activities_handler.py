@@ -25,12 +25,10 @@ class ActivitiesHandler():
         if chat:
             chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
             if not chat_id or not chat_code:
-                print("chat")
                 return None
         else:
             chat_id = None
             chat_code = None
-            print("no chat")
         
         return CreateActivityService(event=event, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
 
