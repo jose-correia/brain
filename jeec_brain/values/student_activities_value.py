@@ -22,6 +22,7 @@ class StudentActivitiesValue(ValueComposite):
 				"location": activity.location,
 				"day": activity.day,
 				"time": activity.time,
+				"end_time": activity.end_time,
 				"type": activity.activity_type.name,
 				"points": activity.points,
 				"quest": activity.quest,

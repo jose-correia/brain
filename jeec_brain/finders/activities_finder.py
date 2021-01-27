@@ -83,8 +83,8 @@ class ActivitiesFinder():
 
     @classmethod
     def get_next_company_activity(cls, company):
-        now = datetime.utcnow() - timedelta(minutes=30)
+        now = datetime.utcnow() - timedelta(minutes=5)
         day = now.strftime('%d %b %Y, %a')
         time = now.strftime("%H:%M")
 
-        return CompanyActivities.query.join(Activities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.time > time)).first()
+        return CompanyActivities.query.join(Activities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.time <= time) & (Activities.end_time > time)).first()

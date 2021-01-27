@@ -102,6 +102,11 @@
           <input id="time" name="time" type="text" class="timepicker" value="{{ activity.time }}">
           <label for="time">Time</label>
         </div>
+
+        <div class="input-field col s1">
+          <input id="end_time" name="end_time" type="text" class="timepicker" value="{{ activity.end_time }}">
+          <label for="end_time">Ending Time</label>
+        </div>
       </div>
 
       <div class="row s7">
@@ -216,7 +221,7 @@
       <div id="urls">
         {% for company in companies %}
         {% if company.id in company_activities %}
-        <div class="row url" style="margin-bottom:0" id="url{{ company.name }}">
+        <div class="row url" style="margin-bottom:0" id="url{{ company.name | replace(' ','_') }}">
           <div class="input-field col s5">
             <input name="url" type="url" class="validate" {% if companies_zoom_url[company.id] %} value="{{ companies_zoom_url[company.id] }} {% endif %}">
             <label for="url{{ company.name }}">{{ company.name }} Zoom URL</label>
@@ -255,7 +260,7 @@
 
         for (var i=0; i < companies.length; i++) {
           if (jQuery.inArray(companies[i], new_companies) === -1) {
-            $("#url" + companies[i]).remove();
+            $("#url" + companies[i].replace(" ","_")).remove();
 
             companies = jQuery.grep(companies, function (value) {
               return value != companies[i];
@@ -267,7 +272,7 @@
 
         for (var i=0; i < new_companies.length; i++) {
           if (jQuery.inArray(new_companies[i], companies) === -1) {
-            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i] + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
+            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replace(" ","_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
             var divs = $('.url');
             
             var j = 0;

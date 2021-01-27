@@ -289,6 +289,7 @@ def create_activity():
     location = request.form.get('location')
     day = request.form.get('day')
     time = request.form.get('time')
+    end_time = request.form.get('end_time')
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
     points = request.form.get('points') or None
@@ -316,6 +317,10 @@ def create_activity():
         error = 'No default event found! Please set a default event in the menu "Events"'
         return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
 
+    if time > end_time:
+        error = 'Activity starting time after ending time'
+        return render_template('admin/activities/activities_dashboard.html', event=event, error=error, role=current_user.role.name)
+
     activity = ActivitiesHandler.create_activity(
             name=name,
             description=description,
@@ -324,6 +329,7 @@ def create_activity():
             location=location,
             day=day,
             time=time,
+            end_time=end_time,
             registration_link=registration_link,
             registration_open=registration_open,
             points=points,
@@ -454,12 +460,16 @@ def update_activity(activity_external_id):
     location = request.form.get('location')
     day = request.form.get('day')
     time = request.form.get('time')
+    end_time = request.form.get('end_time')
     registration_link = request.form.get('registration_link')
     registration_open = request.form.get('registration_open')
     points = request.form.get('points') or None
     quest = request.form.get('quest')
     chat = request.form.get('chat')
     zoom_link = request.form.get('zoom_url')
+
+    if time > end_time is None:
+        return APIErrorValue('Activity starting time after ending time').json(500)
 
     if registration_open == 'True':
         registration_open = True
@@ -484,6 +494,7 @@ def update_activity(activity_external_id):
         location=location,
         day=day,
         time=time,
+        end_time=end_time,
         registration_link=registration_link,
         registration_open=registration_open,
         points=points,

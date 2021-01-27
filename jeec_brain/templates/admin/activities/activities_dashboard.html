@@ -138,7 +138,8 @@
           <th>Type</th>
           <th>Description</th>
           <th>Day</th>
-          <th>Time</th>
+          <th>Starting Time</th>
+          <th>Ending Time</th>
           <th>Location</th>
           <th>Points</th>
           <th>Quest</th>
@@ -173,6 +174,12 @@
           <td>
             {% if activity.time is not none %}
             {{ activity.time }}
+            {% endif %}
+          </td>
+
+          <td>
+            {% if activity.end_time is not none %}
+            {{ activity.end_time }}
             {% endif %}
           </td>
 

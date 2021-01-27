@@ -17,6 +17,7 @@ class Activities(db.Model, ModelMixin):
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
     day = db.Column(db.String(20))
     time = db.Column(db.String(10))
+    end_time = db.Column(db.String(10))
 
     registration_open = db.Column(db.Boolean, default=False)
     registration_link = db.Column(db.String(100))
