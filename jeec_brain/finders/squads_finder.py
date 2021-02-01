@@ -7,7 +7,7 @@ from sqlalchemy import func
 class SquadsFinder():
 
     @classmethod
-    def search_by_squad(cls, name):
+    def search_by_name(cls, name):
         search = "%{}%".format(name)
         return Squads.query.filter(Squads.name.ilike(search)).all()
 

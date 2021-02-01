@@ -34,35 +34,17 @@
   </div>
 
   <div class="section-header">
-    <h2>Students Management</h2>
-    <p>Ban and manage students</p>
+    <h2>Banned Students Management</h2>
+    <p>Unban students</p>
   </div>
 
-  <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
+  <form action="{{ url_for('admin_api.students_dashboard') }}" method="get">
     <button class="waves-effect waves-light btn back-btn left"><i
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
   <div class="section-title center-align" style="margin-top:90px;">
-    List of Students
-  </div>
-
-  <div class="search-bar">
-    <form class="col s12" method="get">
-      <div class="row">
-        <div class="input-field col s8">
-          <input class="col s12" id="search" name="search" type="text" class="validate" required>
-
-          <label for="search">{% if search is not none %}{{ search }}{% else %}search name or username{% endif %}</label>
-        </div>
-        <button type="submit" class="btn-floating blue lighten-2 search-btn"><i
-            class="material-icons">search</i>Search</button>
-      </div>
-    </form>
-
-    {% if search %}
-    <a class="clear-search" href="{{ url_for('admin_api.students_dashboard') }}">clear search results</a>
-    {% endif %}
+    List of Banned Students
   </div>
 
   <div class="list">
@@ -81,11 +63,6 @@
           <th>Name</th>
           <th>IST Id</th>
           <th>Email</th>
-          <th>Linkedin</th>
-          <th>Level</th>
-          <th>Total Points</th>
-          <th>Uploaded CV</th>
-          <th>Squad</th>
         </tr>
       </thead>
       <tbody>
@@ -96,45 +73,17 @@
             </b></td>
 
           <td>
-            {{ student.user.username }}
+            {{ student.ist_id }}
           </td>
 
           <td>
-            {{ student.user.email }}
-          </td>
-
-          <td>
-            {% if student.linkedin_url is not none %}
-            {{ student.linkedin_url}}
-            {% else %}
-            <i class="material-icons icon-red">clear</i>
-            {% endif %}
-          </td>
-
-          <td>
-            {{ student.level.value }}
-          </td>
-
-          <td>
-            {{ student.total_points }}
-          </td>
-
-          <td>
-            {% if student.uploaded_cv is sameas true %}
-            <i class="material-icons icon-green">check</i>
-            {% else %}
-            <i class="material-icons icon-red">clear</i>
-            {% endif %}
-          </td>
-
-          <td>
-            {{ student.squad.name }}
+            {{ student.email }}
           </td>
 
           <td>
             {% if current_user.role.name == 'admin' %}
-            <form action="/admin/student/{{student.external_id.hex}}/ban" method="post"
-              onsubmit="return confirm('Are you sure you want to ban this student?');">
+            <form action="/admin/student/{{student.external_id.hex}}/unban" method="post"
+              onsubmit="return confirm('Are you sure you want to unban this student?');">
               <button title="Ban student" class="waves-effect waves-light btn-floating"><i
                   class="material-icons red left">person_remove</i>Ban</button>
             </form>

@@ -1,4 +1,5 @@
 from jeec_brain.models.students import Students
+from jeec_brain.models.banned_students import BannedStudents
 from jeec_brain.models.users import Users
 from jeec_brain.models.levels import Levels
 from jeec_brain.models.student_activities import StudentActivities
@@ -55,7 +56,7 @@ class StudentsFinder():
     @classmethod
     def get_from_search_without_student(cls, search, student_external_id):
         search = "%{}%".format(search)
-        return Students.query.filter((Students.user.name.ilike(search) | Students.user.username.ilike(search)) & (Students.external_id != student_external_id)).all()
+        return Students.query.filter((Students.user_id == Users.id) & (Users.name.ilike(search) | Users.username.ilike(search)) & (Students.external_id != student_external_id)).all()
 
     @classmethod
     def get_student_activity_from_id_and_activity_id(cls, student_id, activity_id):
@@ -64,3 +65,15 @@ class StudentsFinder():
     @classmethod
     def get_student_company(cls, student, company):
         return StudentCompanies.query.filter_by(student_id=student.id, company_id=company.id).first()
+
+    @classmethod
+    def get_banned_students_ist_id(cls):
+        return [r[0] for r in BannedStudents.query.with_entities(BannedStudents.ist_id).all()]
+
+    @classmethod
+    def get_banned_student_from_external_id(cls, external_id):
+        return BannedStudents.query.filter_by(external_id=external_id).first()
+
+    @classmethod
+    def get_all_banned(cls):
+        return BannedStudents.all()

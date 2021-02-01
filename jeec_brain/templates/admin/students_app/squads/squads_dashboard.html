@@ -34,8 +34,8 @@
   </div>
 
   <div class="section-header">
-    <h2>Students Management</h2>
-    <p>Ban and manage students</p>
+    <h2>Squads Management</h2>
+    <p>Ban and manage squads</p>
   </div>
 
   <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
@@ -43,13 +43,8 @@
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
-  <form action="{{ url_for('admin_api.banned_students_dashboard') }}" method="get">
-    <button class="waves-effect waves-light btn back-btn red right" style="margin-right: 30px;"><i
-        class="material-icons left">arrow_forward</i>Banned Students</button>
-  </form>
-
   <div class="section-title center-align" style="margin-top:90px;">
-    List of Students
+    List of Squads
   </div>
 
   <div class="search-bar">
@@ -58,7 +53,7 @@
         <div class="input-field col s8">
           <input class="col s12" id="search" name="search" type="text" class="validate" required>
 
-          <label for="search">{% if search is not none %}{{ search }}{% else %}search name or username{% endif
+          <label for="search">{% if search is not none %}{{ search }}{% else %}search name{% endif
             %}</label>
         </div>
         <button type="submit" class="btn-floating blue lighten-2 search-btn"><i
@@ -67,7 +62,7 @@
     </form>
 
     {% if search %}
-    <a class="clear-search" href="{{ url_for('admin_api.students_dashboard') }}">clear search results</a>
+    <a class="clear-search" href="{{ url_for('admin_api.squads_dashboard') }}">clear search results</a>
     {% endif %}
   </div>
 
@@ -78,70 +73,52 @@
     </blockquote>
     {% else %}
     <div class="counter right">
-      Students: {{ students|length }}
+      Squads: {{ squads|length }}
     </div>
 
     <table class="striped">
       <thead>
         <tr>
           <th>Name</th>
-          <th>IST Id</th>
-          <th>Email</th>
-          <th>Linkedin</th>
-          <th>Level</th>
+          <th>Cry</th>
+          <th>Captain Id</th>
+          <th>Members Id</th>
+          <th>Daily Points</th>
           <th>Total Points</th>
-          <th>Uploaded CV</th>
-          <th>Squad</th>
         </tr>
       </thead>
       <tbody>
-        {% for student in students %}
+        {% for squad in squads %}
         <tr>
           <td><b>
-              {{ student.user.name }}
+              {{ squad.name }}
             </b></td>
 
           <td>
-            {{ student.user.username }}
+            {{ squad.cry }}
           </td>
 
           <td>
-            {{ student.user.email }}
+            {{ squad.captain_ist_id }}
           </td>
 
           <td>
-            {% if student.linkedin_url is not none %}
-            {{ student.linkedin_url}}
-            {% else %}
-            <i class="material-icons icon-red">clear</i>
-            {% endif %}
+            {{ squad.members_id }}
           </td>
 
           <td>
-            {{ student.level.value }}
+            {{ squad.daily_points }}
           </td>
 
           <td>
-            {{ student.total_points }}
-          </td>
-
-          <td>
-            {% if student.uploaded_cv is sameas true %}
-            <i class="material-icons icon-green">check</i>
-            {% else %}
-            <i class="material-icons icon-red">clear</i>
-            {% endif %}
-          </td>
-
-          <td>
-            {{ student.squad.name }}
+            {{ squad.total_points }}
           </td>
 
           <td>
             {% if current_user.role.name == 'admin' %}
-            <form action="/admin/student/{{student.external_id.hex}}/ban" method="post"
-              onsubmit="return confirm('Are you sure you want to ban this student?');">
-              <button title="Ban student" class="waves-effect waves-light btn-floating"><i
+            <form action="/admin/squad/{{squad.external_id.hex}}/ban" method="post"
+              onsubmit="return confirm('Are you sure you want to ban this squad?');">
+              <button title="Ban squad" class="waves-effect waves-light btn-floating"><i
                   class="material-icons red left">person_remove</i>Ban</button>
             </form>
             {% endif %}

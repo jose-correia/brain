@@ -35,7 +35,7 @@ class AuthHandler(object):
             user = TecnicoClientHandler.get_user(fenix_client, fenix_auth_code)          
             person = TecnicoClientHandler.get_person(fenix_client, user)
 
-            banned_ids = UsersFinder.get_banned_students_ist_id()
+            banned_ids = StudentsFinder.get_banned_students_ist_id()
             if (person['username'] in banned_ids):
                 return False, None
 

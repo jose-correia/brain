@@ -146,7 +146,7 @@ class StudentsHandler():
 
     @classmethod
     def create_banned_student(cls, student):
-        return CreateBannedStudentService(name=student.name, ist_id=student.user.username, email=student.user.email).call()
+        return CreateBannedStudentService(name=student.user.name, ist_id=student.user.username, email=student.user.email).call()
 
     @classmethod
     def update_banned_student(cls, banned_student, **kwargs):

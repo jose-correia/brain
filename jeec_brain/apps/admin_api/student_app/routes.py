@@ -2,6 +2,7 @@ from .. import bp
 from flask import render_template, current_app, request, redirect, url_for, jsonify
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.finders.students_finder import StudentsFinder
+from jeec_brain.finders.squads_finder import SquadsFinder
 from jeec_brain.finders.levels_finder import LevelsFinder
 from jeec_brain.finders.tags_finder import TagsFinder
 from jeec_brain.finders.rewards_finder import RewardsFinder
@@ -36,7 +37,7 @@ def students_dashboard():
         students_list = StudentsFinder.get_all()
     
     if students_list is None or len(students_list) == 0:
-        error = 'No results found'
+        error = 'No students found'
         return render_template('admin/students_app/students/students_dashboard.html', students=None, error=error, search=search, current_user=current_user)
     
     return render_template('admin/students_app/students/students_dashboard.html', students=students_list, error=None, search=search, current_user=current_user)
@@ -56,11 +57,69 @@ def ban_student(student_external_id):
 
     return redirect(url_for('admin_api.students_dashboard'))
 
+@bp.route('/banned-students', methods=['GET'])
+@allowed_roles(['admin'])
+def banned_students_dashboard():
+    banned_students = StudentsFinder.get_all_banned()
+
+    if banned_students is None or len(banned_students) == 0:
+        error = 'No banned students found'
+        return render_template('admin/students_app/students/banned_students_dashboard.html', students=None, error=error, current_user=current_user)
+    
+    return render_template('admin/students_app/students/banned_students_dashboard.html', students=banned_students, error=None, current_user=current_user)
+
+@bp.route('/student/<string:student_external_id>/unban', methods=['POST'])
+@allowed_roles(['admin'])
+def unban_student(student_external_id):
+    banned_student = StudentsFinder.get_banned_student_from_external_id(student_external_id)
+    if banned_student is None:
+        return APIErrorValue('Couldnt find student').json(500)
+
+    StudentsHandler.delete_banned_student(banned_student)
+
+    return redirect(url_for('admin_api.banned_students_dashboard'))
+
 @bp.route('/squads', methods=['GET'])
 @allowed_roles(['admin'])
 def squads_dashboard():
+    search = request.args.get('search')
+
+    # handle search bar requests
+    if search is not None:
+        squads = SquadsFinder.search_by_name(search)
+    else:
+        search = None
+        squads = SquadsFinder.get_all()
     
-    return render_template('admin/students_app/students_app_dashboard.html')
+    if squads is None or len(squads) == 0:
+        error = 'No squads found'
+        return render_template('admin/students_app/squads/squads_dashboard.html', squads=None, error=error, search=search, current_user=current_user)
+    
+    for squad in squads:
+        squad.members_id = [member.user.username for member in squad.members]
+        squad.members_id.remove(squad.captain_ist_id)
+        squad.members_id = " ".join(squad.members_id)
+
+    return render_template('admin/students_app/squads/squads_dashboard.html', squads=squads, error=None, search=search, current_user=current_user)
+
+@bp.route('/squad/<string:squad_external_id>/ban', methods=['POST'])
+@allowed_roles(['admin'])
+def ban_squad(squad_external_id):
+    squad = SquadsFinder.get_from_external_id(squad_external_id)
+    if squad is None:
+        return APIErrorValue('Couldnt find squad').json(500)
+
+    for member in squad.members:
+        StudentsHandler.leave_squad(member)
+
+        banned_student = StudentsHandler.create_banned_student(member)
+        if banned_student is None:
+            return APIErrorValue('Error banning student').json(500)
+
+        StudentsHandler.delete_student(member)
+
+    return redirect(url_for('admin_api.squads_dashboard'))
+
 
 @bp.route('/levels', methods=['GET'])
 @allowed_roles(['admin'])
