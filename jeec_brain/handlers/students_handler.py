@@ -5,6 +5,9 @@ from jeec_brain.services.students.update_student_service import UpdateStudentSer
 from jeec_brain.services.students.add_student_company_service import AddStudentCompanyService
 from jeec_brain.services.students.delete_student_company_service import DeleteStudentCompanyService
 from jeec_brain.services.students.update_student_company_service import UpdateStudentCompanyService
+from jeec_brain.services.students.create_student_referral_service import CreateStudentReferralService
+from jeec_brain.services.students.update_student_referral_service import UpdateStudentReferralService
+from jeec_brain.services.students.delete_student_referral_service import DeleteStudentReferralService
 from jeec_brain.services.students.add_student_login_service import AddStudentLoginService
 from jeec_brain.services.students.delete_student_login_service import DeleteStudentLoginService
 from jeec_brain.services.students.update_student_login_service import UpdateStudentLoginService
@@ -138,6 +141,20 @@ class StudentsHandler():
         SquadsHandler.delete_squad_invitation(invitation)
 
         return cls.add_squad_member(student, sender.squad)
+
+    @classmethod
+    def redeem_referral(cls, receiver, sender):
+        receiver = StudentsFinder.get_referral_receiver(receiver)
+        if(receiver):
+            return False, None
+        else:
+            referral = CreateStudentReferralService({'receiver_id':receiver.id, 'sender_id':sender.id}).call()
+            if not referral:
+                return False
+            cls.add_points(sender, 10)
+            receiver = cls.add_points(receiver, 10)
+
+            return True, receiver
 
     @classmethod
     def add_student_company(cls, student, company):

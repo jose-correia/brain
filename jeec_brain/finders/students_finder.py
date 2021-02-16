@@ -5,6 +5,7 @@ from jeec_brain.models.levels import Levels
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.student_companies import StudentCompanies
 from jeec_brain.models.student_logins import StudentLogins
+from jeec_brain.models.student_referrals import StudentReferrals
 
 class StudentsFinder():
 
@@ -27,6 +28,10 @@ class StudentsFinder():
     @classmethod
     def get_from_user_id(cls, user_id):
         return Students.query.filter_by(user_id=user_id).first()
+
+    @classmethod
+    def get_from_referral_code(cls, code):
+        return Students.query.filter_by(referral_code=code).first()
 
     @classmethod
     def get_from_level_or_higher(cls, level):
@@ -82,3 +87,7 @@ class StudentsFinder():
     @classmethod
     def get_all_banned(cls):
         return BannedStudents.all()
+
+    @classmethod
+    def get_referral_receiver(cls, receiver):
+        return StudentReferrals.query.filter_by(receiver_id=receiver.id).first()

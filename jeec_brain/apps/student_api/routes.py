@@ -234,14 +234,21 @@ def kick_member(student):
 @requires_student_auth
 def redeem_code(student):
     try:
-        code = request.get_json()["code"]
+        code = request.get_json()["code"].replace("-","")
     except KeyError:
         return APIErrorValue('Invalid code').json(500)
 
-    student = ActivityCodesHandler.redeem_activity_code(student, code)
+    result, student = ActivityCodesHandler.redeem_activity_code(student, code)
 
-    if(student is None):
-        return APIErrorValue('Invalid code').json(500)
+    if(not result):
+        sender_student = StudentsFinder.get_from_referral_code(code)
+        if(not sender_student or sender_student.id == student.id):
+            return APIErrorValue('Invalid code').json(500)
+
+        result, student = StudentsHandler.redeem_referral(student, sender_student)
+
+        if not result:
+            return APIErrorValue('Invalid code').json(500)
 
     return StudentsValue(student, details=True).json(200)
 
