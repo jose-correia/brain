@@ -9,6 +9,7 @@ from jeec_brain.models.tags import Tags
 from jeec_brain.models.students_tags import StudentsTags
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.student_companies import StudentCompanies
+from jeec_brain.models.student_logins import StudentLogins
 from jeec_brain.models.activities import Activities
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.levels import Levels
@@ -30,6 +31,10 @@ class Students(db.Model, ModelMixin):
     total_points = db.Column(db.Integer())
     squad_points = db.Column(db.Integer())
 
+    referral_code = db.Column(db.String(16), unique=True, nullable=False, index=True)
+    course = db.Column(db.String(10))
+    entry_year = db.Column(db.String())
+
     user = relationship('Users', cascade="all,delete")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -43,6 +48,8 @@ class Students(db.Model, ModelMixin):
     companies = relationship("Companies",
         secondary="student_companies",
         secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id))
+
+    login_dates = relationship("StudentLogins")
 
     activities = relationship("Activities",
         secondary="student_activities",

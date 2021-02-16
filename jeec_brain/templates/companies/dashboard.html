@@ -41,29 +41,36 @@
 
   <img src="{{ company_logo }}" class="company-logo-company-side centered-image">
 
+  <div class="flexbox-btns">
+    {% for activity_type in activity_types %}
+    <form action="/companies/activity_type/{{activity_type.external_id.hex}}" method="get">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ activity_type.name }}</button>
+    </form>
+    {% endfor %}
+  </div>
 
   <div class="flexbox-btns">
     {% for auction in auctions %}
     <form action="/companies/auction/{{auction.external_id.hex}}" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ auction.name }}</button>
+      <button class="waves-effect red lighten-2 btn-large dashboard-btn">{{ auction.name }}</button>
     </form>
     {% endfor %}
 
-    <form action="/companies/activities" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+    <!-- <form action="/companies/activities" method="get">
+      <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
           class="large material-icons left">build</i>Activities</button>
-    </form>
+    </form> -->
 
     {% if user.food_manager is sameas true %}
     <form action="/companies/meals" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+      <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
           class="large material-icons left">restaurant</i>Meals</button>
     </form>
     {% endif %}
     
     <form action="/companies/resumes" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
-          class="large material-icons left">person_outline</i>Resumes</button>
+      <button class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;"><i
+          class="large material-icons left">person_outline</i>Students & CV's</button>
     </form>
   </div>
 

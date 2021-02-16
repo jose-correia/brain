@@ -9,6 +9,7 @@ from jeec_brain.models.company_dishes import CompanyDishes
 from jeec_brain.models.dishes import Dishes
 from jeec_brain.models.tags import Tags
 from jeec_brain.models.companies_tags import CompaniesTags
+from jeec_brain.models.events import Events
 from sqlalchemy.orm import relationship
 from sqlalchemy import sql
 
@@ -30,7 +31,7 @@ class Companies(db.Model, ModelMixin):
 
     activities = relationship("Activities",
         secondary="company_activities",
-        secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id))
+        secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id, Activities.event_id == Events.id, Events.default == True))
 
     dishes = relationship("Dishes",
         secondary="company_dishes",

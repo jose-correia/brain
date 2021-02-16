@@ -28,7 +28,9 @@ class StudentsValue(ValueComposite):
                     "linkedin_url": student.linkedin_url,
                     "uploaded_cv": student.uploaded_cv,
                     "companies": [company.name for company in student.companies],
-                    "tags": [tag.name for tag in student.tags]
+                    "tags": [tag.name for tag in student.tags],
+                    "login_dates": [login_date.date for login_date in student.login_dates],
+                    "referral_code": student.referral_code
                 }
 
                 students_array.append({**student_value, **student_details})

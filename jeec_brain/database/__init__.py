@@ -54,6 +54,7 @@ def create_tables():
     from jeec_brain.models.students_tags import StudentsTags
     from jeec_brain.models.tags import Tags
     from jeec_brain.models.banned_students import BannedStudents
+    from jeec_brain.models.student_logins import StudentLogins
 
     # Rewards
     from jeec_brain.models.rewards import Rewards

@@ -4,6 +4,7 @@ from jeec_brain.models.users import Users
 from jeec_brain.models.levels import Levels
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.models.student_companies import StudentCompanies
+from jeec_brain.models.student_logins import StudentLogins
 
 class StudentsFinder():
 
@@ -65,6 +66,10 @@ class StudentsFinder():
     @classmethod
     def get_student_company(cls, student, company):
         return StudentCompanies.query.filter_by(student_id=student.id, company_id=company.id).first()
+
+    @classmethod
+    def get_student_login(cls, student, date):
+        return StudentLogins.query.filter_by(student_id=student.id, date=date).first()
 
     @classmethod
     def get_banned_students_ist_id(cls):

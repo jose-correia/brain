@@ -52,7 +52,12 @@ def dashboard(company_user):
 
     company_logo = CompaniesHandler.find_image(company_user.company.name)
 
-    return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, user=company_user)
+    activity_types = []
+    for activity in company_user.company.activities:
+        if activity.activity_type not in activity_types:
+            activity_types.append(activity.activity_type)
+
+    return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, activity_types=activity_types, user=company_user)
 
 
 @bp.route('/dashboard', methods=['POST'])
