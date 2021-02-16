@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class ActivityCodes(db.Model, ModelMixin):
     __tablename__ = 'activity_codes'
     
-    code = db.Column(db.String(16), unique=True, nullable=False)
+    code = db.Column(db.String(16), unique=True, nullable=False, index=True)
 
     activity = relationship('Activities')
     activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'))

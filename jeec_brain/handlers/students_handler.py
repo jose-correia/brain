@@ -5,6 +5,9 @@ from jeec_brain.services.students.update_student_service import UpdateStudentSer
 from jeec_brain.services.students.add_student_company_service import AddStudentCompanyService
 from jeec_brain.services.students.delete_student_company_service import DeleteStudentCompanyService
 from jeec_brain.services.students.update_student_company_service import UpdateStudentCompanyService
+from jeec_brain.services.students.add_student_login_service import AddStudentLoginService
+from jeec_brain.services.students.delete_student_login_service import DeleteStudentLoginService
+from jeec_brain.services.students.update_student_login_service import UpdateStudentLoginService
 from jeec_brain.services.students.create_banned_student_service import CreateBannedStudentService
 from jeec_brain.services.students.delete_banned_student_service import DeleteBannedStudentService
 from jeec_brain.services.students.update_banned_student_service import UpdateBannedStudentService
@@ -24,9 +27,10 @@ from jeec_brain.handlers.squads_handler import SquadsHandler
 class StudentsHandler():
 
     @classmethod
-    def create_student(cls, name, ist_id, email, fenix_auth_code, photo, photo_type):
+    def create_student(cls, name, ist_id, email, course, entry_year, fenix_auth_code, photo, photo_type):
         password = GenerateCredentialsService().call()
-        
+        referral_code = GenerateCredentialsService().call()
+
         chat_id = UsersHandler.create_chat_user(name, ist_id, email, password, 'Student')
         if not chat_id:
             return None
@@ -37,6 +41,9 @@ class StudentsHandler():
 
         return CreateStudentService(
             user_id=user.id,
+            course=course,
+            entry_year=entry_year,
+            referral_code=referral_code,
             fenix_auth_code=fenix_auth_code,
             photo=photo,
             photo_type=photo_type,
@@ -143,6 +150,18 @@ class StudentsHandler():
     @classmethod
     def delete_student_company(cls, student_company):
         return DeleteStudentCompanyService(student_company).call()
+
+    @classmethod
+    def add_student_login(cls, student, date):
+        return AddStudentLoginService(student.id, date).call()
+    
+    @classmethod
+    def update_student_login(cls, student_login, **kwargs):
+        return UpdateStudentLoginService(student_login, kwargs).call()
+
+    @classmethod
+    def delete_student_login(cls, student_login):
+        return DeleteStudentLoginService(student_login).call()
 
     @classmethod
     def create_banned_student(cls, student):

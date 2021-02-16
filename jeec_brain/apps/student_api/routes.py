@@ -1,5 +1,5 @@
 from . import bp
-from flask import render_template, current_app, request, redirect, url_for, make_response, session, jsonify
+from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify
 from flask_login import current_user, login_required
 from config import Config
 from datetime import datetime
@@ -11,6 +11,7 @@ from jeec_brain.handlers.students_handler import StudentsHandler
 from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.squads_handler import SquadsHandler
 from jeec_brain.handlers.tags_handler import TagsHandler
+from jeec_brain.handlers.events_handler import EventsHandler
 
 # Finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -50,13 +51,41 @@ def redirect_uri():
     
     fenix_auth_code = request.args.get('code')
 
-    loggedin, encrypted_code = AuthHandler.login_student(fenix_auth_code)
+    student, encrypted_code = AuthHandler.login_student(fenix_auth_code)
     
-    if loggedin is True:
-        return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
+    if student:
+        now = datetime.utcnow()
+        date = now.strftime('%d %b %Y, %a')
+        event = EventsFinder.get_default_event()
+        dates = EventsHandler.get_event_dates(event)
+
+        if date in dates:
+            student_login = StudentsFinder.get_student_login(student, date)
+            if student_login:
+                return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
+            else:
+                StudentsHandler.add_student_login(student, date)
+                StudentsHandler.add_points(student, 5)
+                return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code + '&firstlog=true')
 
     else:
         return redirect(Config.STUDENT_APP_URL)
+
+@bp.route('/today-login', methods=['GET'])
+@requires_student_auth
+def today_login(student):
+    now = datetime.utcnow()
+    date = now.strftime('%d %b %Y, %a')
+    event = EventsFinder.get_default_event()
+    dates = EventsHandler.get_event_dates(event)
+
+    if date in dates:
+        student_login = StudentsFinder.get_student_login(student, date)
+        if student_login is None:
+            StudentsHandler.add_student_login(student, date)
+            StudentsHandler.add_points(student, 5)
+            
+    return StudentsValue(student, details=True).json(200)
 
 @bp.route('/info', methods=['GET'])
 @requires_student_auth

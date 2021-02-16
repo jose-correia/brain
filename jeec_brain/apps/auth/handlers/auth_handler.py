@@ -37,25 +37,34 @@ class AuthHandler(object):
 
             banned_ids = StudentsFinder.get_banned_students_ist_id()
             if (person['username'] in banned_ids):
-                return False, None
+                return None, None
+
+            for role in person['roles']:
+                if role['type'] == "STUDENT":
+                    course = role['registrations'][0]['acronym']
+                    entry_year = get_year(role['registrations'][0]['academicTerms'])
+                    break
+
+            if course is None:
+                return None, None
 
             student = StudentsFinder.get_from_ist_id(person['username'])
             if student is None:
-                student = StudentsHandler.create_student(person['name'], person['username'], person['email'], fenix_auth_code, person['photo']['data'], person['photo']['type'])
+                student = StudentsHandler.create_student(person['name'], person['username'], person['email'], course, entry_year, fenix_auth_code, person['photo']['data'], person['photo']['type'])
                 if student is None:
-                    return False, None
+                    return None, None
 
             if(student.fenix_auth_code != fenix_auth_code):
                 student = StudentsHandler.update_student(student, fenix_auth_code=fenix_auth_code)
                 if student is None:
-                    return False, None
+                    return None, None
 
             encrypted_code = EncryptTokenService(fenix_auth_code).call()
 
-            return True, encrypted_code
+            return student, encrypted_code
                     
         else:
-            return False, None
+            return None, None
 
     
     @staticmethod
@@ -96,3 +105,8 @@ class AuthHandler(object):
     @staticmethod
     def logout_user():
         logout_user()
+
+def get_year(academicTerms):
+    terms = [academicTerm[11:].replace(" ","") for academicTerm in academicTerms]
+    terms.sort()
+    return terms[0]
