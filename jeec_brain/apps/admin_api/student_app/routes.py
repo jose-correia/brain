@@ -8,6 +8,7 @@ from jeec_brain.finders.tags_finder import TagsFinder
 from jeec_brain.finders.rewards_finder import RewardsFinder
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.students_handler import StudentsHandler
+from jeec_brain.handlers.squads_handler import SquadsHandler
 from jeec_brain.handlers.levels_handler import LevelsHandler
 from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.tags_handler import TagsHandler
@@ -15,7 +16,8 @@ from jeec_brain.handlers.rewards_handler import RewardsHandler
 from jeec_brain.handlers.events_handler import EventsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from flask_login import current_user
-
+from datetime import datetime
+from random import choice
 
 # Student App routes
 @bp.route('/students-app', methods=['GET'])
@@ -472,3 +474,39 @@ def update_squad_reward(squad_reward_external_id):
         return render_template('admin/students_app/rewards/squad_rewards_dashboard.html', error='Failed to update reward', squad_rewards=None, rewards=None, current_user=current_user)
     
     return render_template('admin/students_app/rewards/squad_rewards_dashboard.html', error=None, squad_rewards=RewardsFinder.get_all_squad_rewards(), rewards=RewardsFinder.get_all_rewards(), current_user=current_user)
+
+@bp.route('/reset-daily-points', methods=['POST'])
+@allowed_roles(['admin'])
+def reset_daily_points():
+    squads = SquadsFinder.get_all()
+    for squad in squads:
+        if not SquadsHandler.reset_daily_points(squad):
+            return APIErrorValue("Reset failed").json(500)
+
+    students = StudentsFinder.get_all()
+    for student in students:
+        if not StudentsHandler.reset_daily_points(student):
+            return APIErrorValue("Reset failed").json(500)
+    
+    return jsonify("Success"), 200
+
+@bp.route('/select-winners', methods=['POST'])
+@allowed_roles(['admin'])
+def select_winners():
+    top_squads = SquadsFinder.get_first()
+    if top_squads is None:
+        return APIErrorValue("No squad found").json(404)
+
+    winner = choice(top_squads)
+    now = datetime.utcnow()
+    date = now.strftime('%d %b %Y, %a')
+
+    squad_reward = RewardsFinder.get_squad_reward_from_date(date)
+    if squad_reward is None:
+        return APIErrorValue("No reward found").json(404)
+
+    squad_reward = RewardsHandler.update_squad_reward(squad_reward, winner_id=winner.id)
+    if squad_reward is None:
+        return APIErrorValue("Error selecting winner").json(500)
+
+    return jsonify("Success"), 200

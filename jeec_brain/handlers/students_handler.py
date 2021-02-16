@@ -8,6 +8,9 @@ from jeec_brain.services.students.update_student_company_service import UpdateSt
 from jeec_brain.services.students.create_student_referral_service import CreateStudentReferralService
 from jeec_brain.services.students.update_student_referral_service import UpdateStudentReferralService
 from jeec_brain.services.students.delete_student_referral_service import DeleteStudentReferralService
+from jeec_brain.services.students.create_student_daily_points_service import CreateStudentDailyPointsService
+from jeec_brain.services.students.update_student_daily_points_service import UpdateStudentDailyPointsService
+from jeec_brain.services.students.delete_student_daily_points_service import DeleteStudentDailyPointsService
 from jeec_brain.services.students.add_student_login_service import AddStudentLoginService
 from jeec_brain.services.students.delete_student_login_service import DeleteStudentLoginService
 from jeec_brain.services.students.update_student_login_service import UpdateStudentLoginService
@@ -26,6 +29,8 @@ from jeec_brain.finders.squads_finder import SquadsFinder
 # HANDLERS
 from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.squads_handler import SquadsHandler
+
+from datetime import datetime
 
 class StudentsHandler():
 
@@ -191,6 +196,21 @@ class StudentsHandler():
     @classmethod
     def delete_banned_student(cls, banned_student):
         return DeleteBannedStudentService(banned_student).call()
+
+    @classmethod
+    def reset_daily_points(cls, student):
+        now = datetime.utcnow()
+        date = now.strftime('%d %b %Y, %a')
+        
+        if(student.daily_points > 0):
+            daily_points = CreateStudentDailyPointsService({'student_id':student.id, 'points':student.daily_points, 'date':date}).call()
+            if not daily_points:
+                return False
+
+            if not cls.update_student(student, daily_points=0):
+                return False
+
+        return True
 
     # @classmethod
     # def upload_student_cv(cls, file, username):
