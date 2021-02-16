@@ -49,6 +49,7 @@ def create_tables():
     from jeec_brain.models.levels import Levels
     from jeec_brain.models.squads import Squads
     from jeec_brain.models.squad_invitations import SquadInvitations
+    from jeec_brain.models.squads_daily_points import SquadDailyPoints
     from jeec_brain.models.student_activities import StudentActivities
     from jeec_brain.models.student_companies import StudentCompanies
     from jeec_brain.models.students_tags import StudentsTags
@@ -56,6 +57,7 @@ def create_tables():
     from jeec_brain.models.banned_students import BannedStudents
     from jeec_brain.models.student_logins import StudentLogins
     from jeec_brain.models.student_referrals import StudentReferrals
+    from jeec_brain.models.student_daily_points import StudentDailyPoints
 
     # Rewards
     from jeec_brain.models.rewards import Rewards

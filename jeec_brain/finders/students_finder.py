@@ -51,8 +51,8 @@ class StudentsFinder():
         return Students.all()
 
     @classmethod
-    def get_top_10(cls):
-        return Students.query.order_by(Students.total_points.desc()).limit(10).all()
+    def get_top(cls, number=10):
+        return Students.query.order_by(Students.total_points.desc()).limit(number).all()
     
     @classmethod
     def get_from_search(cls, search):

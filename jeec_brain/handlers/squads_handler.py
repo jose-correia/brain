@@ -9,6 +9,11 @@ from jeec_brain.services.files.find_image_service import FindImageService
 from jeec_brain.services.squads.create_squad_invitation_service import CreateSquadInvitationService
 from jeec_brain.services.squads.delete_squad_invitation_service import DeleteSquadInvitationService
 from jeec_brain.services.squads.update_squad_invitation_service import UpdateSquadInvitationService
+from jeec_brain.services.squads.create_squad_daily_points_service import CreateSquadDailyPointsService
+from jeec_brain.services.squads.update_squad_daily_points_service import UpdateSquadReferralService
+from jeec_brain.services.squads.delete_squad_daily_points_service import DeleteSquadDailyPointsService
+
+from datetime import datetime
 
 class SquadsHandler():
 
@@ -47,3 +52,18 @@ class SquadsHandler():
     @classmethod
     def delete_squad_invitation(cls, squad_invitation):
         return DeleteSquadInvitationService(squad_invitation=squad_invitation).call()
+
+    @classmethod
+    def reset_daily_points(cls, squad):
+        now = datetime.utcnow()
+        date = now.strftime('%d %b %Y, %a')
+        
+        if(squad.daily_points > 0):
+            daily_points = CreateSquadDailyPointsService({'squad_id':squad.id, 'points':squad.daily_points, 'date':date}).call()
+            if not daily_points:
+                return False
+            
+            if not cls.update_squad(squad, daily_points=0):
+                return False
+
+        return True
