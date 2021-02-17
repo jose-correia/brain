@@ -110,6 +110,28 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="input-field col s2">
+          <input id="cvs_submission_start" name="cvs_submission_start" type="text" class="validate" value="{{ event.cvs_submission_start }}">
+          <label for="cvs_submission_start">CV's Submission Start date</label>
+        </div>
+
+        <div class="input-field col s2">
+          <input id="cvs_submission_end" name="cvs_submission_end" type="text" class="validate" value="{{ event.cvs_submission_end }}">
+          <label for="cvs_submission_end">CV's Submission End date</label>
+        </div>
+
+        <div class="input-field col s2">
+          <input id="cvs_access_start" name="cvs_access_start" type="text" class="validate" value="{{ event.cvs_access_start }}">
+          <label for="cvs_access_start">CV's Access Start date</label>
+        </div>
+
+        <div class="input-field col s2">
+          <input id="cvs_access_end" name="cvs_access_end" type="text" class="validate"  value="{{ event.cvs_access_end }}">
+          <label for="cvs_access_end">CV's Access End date</label>
+        </div>
+      </div>
+
       Default event for the rest of the Platform:
       <p>
         <label style="margin-right: 20px;">
@@ -259,7 +281,10 @@
 
         $('#start_date').datepicker({ format: "dd mmm yyyy, ddd" });
         $('#end_date').datepicker({ format: "dd mmm yyyy, ddd" });
-
+        $('#cvs_submission_start').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('#cvs_submission_end').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('#cvs_access_start').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('#cvs_access_end').datepicker({ format: "dd mmm yyyy, ddd" });
       }); // end of document ready
     })(jQuery); 
   </script>

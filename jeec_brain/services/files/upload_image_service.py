@@ -23,7 +23,7 @@ class UploadImageService(object):
 
         size_limit = current_app.config['MAX_IMG_SIZE']
         if not self.__allowed_size(self.file, size_limit):
-            error = f'File size must be under {size_limit} bytes'
+            error = f'File size must be under {size_limit/1000} kB'
             return False, error
 
         extension = self.__get_extension(self.file.filename)

@@ -28,6 +28,7 @@ class Companies(db.Model, ModelMixin):
     partnership_tier = db.Column(db.String(20))
 
     show_in_website = db.Column(db.Boolean, default=True)
+    cvs_access = db.Column(db.Boolean, default=False)
 
     activities = relationship("Activities",
         secondary="company_activities",

@@ -34,10 +34,6 @@ def create_tables():
     from jeec_brain.models.company_auctions import CompanyAuctions
     from jeec_brain.models.bids import Bids
 
-    # Resumes
-    from jeec_brain.models.resume_submissions import ResumeSubmissions
-    from jeec_brain.models.company_resume_submissions import CompanyResumeSubmissions
-
     # Meals
     from jeec_brain.models.meals import Meals
     from jeec_brain.models.dishes import Dishes

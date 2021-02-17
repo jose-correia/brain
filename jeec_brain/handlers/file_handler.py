@@ -1,5 +1,6 @@
 import os
 from flask import current_app
+from config import Config
 from jeec_brain.services.files.compress_files_service import CompressFilesService
 
 import logging
@@ -24,6 +25,7 @@ class FileHandler(object):
             return True
         except Exception as e:
             logger.error(e)
+            return False
 
     @staticmethod
     def delete_file(filename):
@@ -31,5 +33,9 @@ class FileHandler(object):
             os.remove(os.path.join(current_app.root_path, 'storage', filename))
         except Exception as e:
             logger.error(e)
+            return False
 
+    @staticmethod
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 

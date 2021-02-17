@@ -1,8 +1,9 @@
 from . import bp
-from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify
+from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify, send_from_directory
 from flask_login import current_user, login_required
 from config import Config
 from datetime import datetime
+import os
 
 # Handlers
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
@@ -12,6 +13,7 @@ from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.squads_handler import SquadsHandler
 from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.handlers.events_handler import EventsHandler
+from jeec_brain.handlers.file_handler import FileHandler
 
 # Finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -84,6 +86,10 @@ def today_login(student):
         if student_login is None:
             StudentsHandler.add_student_login(student, date)
             StudentsHandler.add_points(student, 5)
+        else:
+            return APIErrorValue("Already loggedin today").json(500)
+    else:
+        return APIErrorValue("Date out of event").json(500)
             
     return StudentsValue(student, details=True).json(200)
 
@@ -279,26 +285,39 @@ def add_linkedin(student):
 
     return StudentsValue(student, details=True).json(200)
 
-# @bp.route('/add-cv', methods=['POST'])
-# @requires_student_auth
-# def add_cv(student):
-#     if 'cv' not in request.files:
-#         return APIErrorValue('No cv found').json(500)
+@bp.route('/add-cv', methods=['POST'])
+@requires_student_auth
+def add_cv(student):
+    if 'cv' not in request.files:
+        return APIErrorValue('No cv found').json(500)
 
-#     file = request.files['file']
-#     if file.filename == '':
-#         return APIErrorValue('No cv found').json(500)
+    file = request.files['cv']
+    if file.filename == '':
+        return APIErrorValue('No cv found').json(500)
 
-#     if file and allowed_file(file.filename):
-#         filename = 'cv-' + student.user.username + '.pdf'
+    if file and FileHandler.allowed_file(file.filename):
+        filename = 'cv-' + student.user.username + '.pdf'
 
-#         # FileHandler.upload_file(file, filename)
-#         # logger.info('File uploaded sucessfuly!')
+        if not FileHandler.upload_file(file, filename):
+            return APIErrorValue('Error uploading file').json(500)
 
-#     else:
-#         return APIErrorValue('Wrong file extension').json(500)
+        if not student.uploaded_cv:
+            StudentsHandler.update_student(student, uploaded_cv=True)
+            StudentsHandler.add_points(student, 10)
 
-#     return StudentsValue(student, details=True).json(200)
+    else:
+        return APIErrorValue('Wrong file extension').json(500)
+
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('/cv', methods=['GET'])
+@requires_student_auth
+def get_cv(student):
+    if not student.uploaded_cv:
+        return APIErrorValue("No CV uploaded").json(404)
+
+    filename = 'cv-' + student.user.username + '.pdf'
+    return send_from_directory(os.path.join(current_app.root_path, 'storage'), filename)
 
 @bp.route('/tags', methods=['GET'])
 @requires_student_auth
@@ -423,14 +442,14 @@ def delete_company(student):
 @bp.route('/students-ranking', methods=['GET'])
 @requires_student_auth
 def get_students_ranking(student):
-    students = StudentsFinder.get_top_10()
+    students = StudentsFinder.get_top()
 
     return StudentsValue(students, details=False).json(200)
 
 @bp.route('/squads-ranking', methods=['GET'])
 @requires_student_auth
 def get_squads_ranking(student):
-    squads = SquadsFinder.get_top_10()
+    squads = SquadsFinder.get_top()
 
     return SquadsValue(squads).json(200)
 
