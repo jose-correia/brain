@@ -1,9 +1,10 @@
 from . import bp
-from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify, send_from_directory
+from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify, send_file
 from flask_login import current_user, login_required
 from config import Config
 from datetime import datetime
 import os
+import base64
 
 # Handlers
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
@@ -317,7 +318,11 @@ def get_cv(student):
         return APIErrorValue("No CV uploaded").json(404)
 
     filename = 'cv-' + student.user.username + '.pdf'
-    return send_from_directory(os.path.join(current_app.root_path, 'storage'), filename)
+
+    with open(os.path.join(current_app.root_path, 'storage', filename), mode='rb') as file:
+        fileContent = file.read()
+
+    return jsonify({'data':str(base64.b64encode(fileContent), 'utf-8'), 'content-type':'application/pdf'})
 
 @bp.route('/tags', methods=['GET'])
 @requires_student_auth

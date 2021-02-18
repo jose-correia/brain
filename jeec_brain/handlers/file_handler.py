@@ -31,6 +31,7 @@ class FileHandler(object):
     def delete_file(filename):
         try:
             os.remove(os.path.join(current_app.root_path, 'storage', filename))
+            return True
         except Exception as e:
             logger.error(e)
             return False

@@ -5,6 +5,7 @@ from jeec_brain.models.activities_tags import ActivitiesTags
 from jeec_brain.models.speakers import Speakers
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.tags import Tags
+from jeec_brain.models.events import Events
 from jeec_brain.finders.events_finder import EventsFinder
 from datetime import datetime, timedelta
 
@@ -88,3 +89,11 @@ class ActivitiesFinder():
         time = now.strftime("%H:%M")
 
         return CompanyActivities.query.join(Activities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.time <= time) & (Activities.end_time > time)).first()
+
+    @classmethod
+    def get_activities_from_speaker_and_event(cls, speaker, event):
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (SpeakerActivities.activity_id == Activities.id) & (SpeakerActivities.speaker_id == speaker.id)).all()
+
+    @classmethod
+    def get_activities_from_company_and_event(cls, company, event):
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (CompanyActivities.activity_id == Activities.id) & (CompanyActivities.company_id == company.id)).all()

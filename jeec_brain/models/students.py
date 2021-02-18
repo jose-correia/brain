@@ -53,7 +53,7 @@ class Students(db.Model, ModelMixin):
 
     activities = relationship("Activities",
         secondary="student_activities",
-        secondaryjoin=sql.and_(StudentActivities.student_id == Activities.id))
+        secondaryjoin=sql.and_(StudentActivities.activity_id == Activities.id))
 
     def is_captain(self):
         return self.user.username == self.squad.captain_ist_id

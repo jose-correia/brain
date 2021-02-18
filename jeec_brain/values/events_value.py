@@ -28,7 +28,7 @@ class EventsValue(ValueComposite):
 				"schedule": EventsHandler.find_image(f'{event.external_id}_schedule'),
 				"blueprint": EventsHandler.find_image(f'{event.external_id}_blueprint'),
 				"activity_types": ActivityTypesValue(event.activity_types.all()).to_dict(),
-				#"dates": EventsHandler.get_event_dates(event),
+				"dates": EventsHandler.get_event_dates(event),
 				"show_schedule": event.show_schedule,
 				"show_registrations": event.show_registrations
 			}
