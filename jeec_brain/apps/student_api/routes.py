@@ -70,6 +70,8 @@ def redirect_uri():
                 StudentsHandler.add_student_login(student, date)
                 StudentsHandler.add_points(student, 5)
                 return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code + '&firstlog=true')
+        else:
+            return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
 
     else:
         return redirect(Config.STUDENT_APP_URL)

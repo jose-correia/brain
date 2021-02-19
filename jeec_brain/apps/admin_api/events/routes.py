@@ -39,7 +39,10 @@ def events_dashboard():
     now = datetime.utcnow()
     for event in events_list:
         if event.cvs_access_end:
-            cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
+            try:
+                cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
+            except:
+                break
             event.cvs_purgeable = (now > cvs_access_end)
         else:
             event.cvs_purgeable = False
