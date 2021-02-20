@@ -97,10 +97,6 @@ class StudentsHandler():
         return cls.update_student(student, squad_id=squad.id)
 
     @classmethod
-    def add_linkedin(cls, student, url):
-        return cls.update_student(student, linkedin_url=url)
-
-    @classmethod
     def invite_squad_members(cls, student, members_ist_id):
         if(student.squad is None or (len(members_ist_id) + len(student.squad.members.all()) > 4)):
             return None

@@ -55,14 +55,14 @@ def get_activities():
         speaker = SpeakersFinder.get_from_name(search)
 
         if speaker:
-            activities_list = speaker.activities
+            activities_list = ActivitiesFinder.get_activities_from_speaker_and_event(speaker, event)
 
     elif company is not None:
         search = company
         company = CompaniesFinder.get_from_name(search)
         
         if company:
-            activities_list = company.activities
+            activities_list = ActivitiesFinder.get_activities_from_company_and_event(company, event)
 
     elif len(search_parameters) != 0:
         search = 'search name'
@@ -81,7 +81,7 @@ def get_activities():
         search = None
         activities_list = event.activities
     
-    if activities_list is None or len(activities_list) == 0:
+    if activities_list is None:
         return APIErrorValue('No results found').json(400)
 
     return ActivitiesValue(activities_list).json(200)
@@ -93,7 +93,7 @@ def get_activities():
 def get_companies():
     search_parameters = request.args.to_dict()
     search_parameters.pop('event', None)
-    event_name = request.args.get('event')
+    event_name = request.args.get('event', None)
 
     if event_name is None:
         event = EventsFinder.get_default_event()
@@ -103,11 +103,10 @@ def get_companies():
     if event is None:
         return APIErrorValue("Event not found!").json(404)
 
-
     companies_list = CompaniesFinder.get_website_companies(event, search_parameters)
 
-    if companies_list is None or len(companies_list) == 0:
-        return APIErrorValue('No results found').json(400)
+    if companies_list is None:
+        return APIErrorValue('No results found').json(404)
 
     return CompaniesValue(companies_list, True).json(200)
 
@@ -135,7 +134,7 @@ def get_speakers():
 
     speakers_list = SpeakersFinder.get_website_speakers(event, search_parameters)
     
-    if speakers_list is None or len(speakers_list) == 0:
+    if speakers_list is None:
         return APIErrorValue('No results found').json(400)
 
     return SpeakersValue(speakers_list).json(200)

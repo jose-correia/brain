@@ -6,7 +6,7 @@ from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from flask_login import current_user
-
+from datetime import datetime
 
 # Events routes
 @bp.route('/events', methods=['GET'])
@@ -36,6 +36,17 @@ def events_dashboard():
         error = 'No results found'
         return render_template('admin/events/events_dashboard.html', events=None, error=error, search=search, role=current_user.role.name)
 
+    now = datetime.utcnow()
+    for event in events_list:
+        if event.cvs_access_end:
+            try:
+                cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
+            except:
+                break
+            event.cvs_purgeable = (now > cvs_access_end)
+        else:
+            event.cvs_purgeable = False
+
     return render_template('admin/events/events_dashboard.html', events=events_list, error=None, search=search, role=current_user.role.name)
 
 
@@ -64,6 +75,10 @@ def create_event():
     name = request.form.get('name')
     start_date = request.form.get('start_date')
     end_date = request.form.get('end_date')
+    cvs_submission_start = request.form.get('cvs_submission_start')
+    cvs_submission_end = request.form.get('cvs_submission_end')
+    cvs_access_start = request.form.get('cvs_access_start')
+    cvs_access_end = request.form.get('cvs_access_end')
     email = request.form.get('email')
     location = request.form.get('location')
     default = request.form.get('default')
@@ -101,7 +116,11 @@ def create_event():
             youtube_link=youtube_link,
             instagram_link=instagram_link,
             show_schedule=show_schedule,
-            show_registrations=show_registrations
+            show_registrations=show_registrations,
+            cvs_submission_start=cvs_submission_start,
+            cvs_submission_end=cvs_submission_end,
+            cvs_access_start=cvs_access_start,
+            cvs_access_end=cvs_access_end
         )
 
     if event is None:
@@ -176,13 +195,16 @@ def get_event(event_external_id):
 @allowed_roles(['admin'])
 def update_event(event_external_id):
     event = EventsFinder.get_from_external_id(event_external_id)
-
     if event is None:
         return APIErrorValue('Couldnt find event').json(500)
 
     name = request.form.get('name')
     start_date = request.form.get('start_date')
     end_date = request.form.get('end_date')
+    cvs_submission_start = request.form.get('cvs_submission_start')
+    cvs_submission_end = request.form.get('cvs_submission_end')
+    cvs_access_start = request.form.get('cvs_access_start')
+    cvs_access_end = request.form.get('cvs_access_end')
     default = request.form.get('default')
     email = request.form.get('email')
     location = request.form.get('location')
@@ -221,7 +243,11 @@ def update_event(event_external_id):
         youtube_link=youtube_link,
         instagram_link=instagram_link,
         show_schedule=show_schedule,
-        show_registrations=show_registrations
+        show_registrations=show_registrations,
+        cvs_submission_start=cvs_submission_start,
+        cvs_submission_end=cvs_submission_end,
+        cvs_access_start=cvs_access_start,
+        cvs_access_end=cvs_access_end
     )
 
     logo = EventsHandler.find_image(image_name=str(event.external_id))
@@ -274,3 +300,14 @@ def update_event(event_external_id):
                 return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
 
     return redirect(url_for('admin_api.events_dashboard'))
+
+@bp.route('/events/<string:event_external_id>/purge_cvs', methods=['POST'])
+@allowed_roles(['admin'])
+def purge_cvs(event_external_id):
+    event = EventsFinder.get_from_external_id(event_external_id)
+    if event is None:
+        return APIErrorValue('Couldnt find event').json(500)
+
+    #
+    #
+    #

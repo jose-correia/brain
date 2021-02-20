@@ -1,12 +1,12 @@
-from jeec_brain.services.chat.update_chat_user_service import UpdateChatUserService
 from config import Config
 from typing import Dict
 import requests
 import json
 
-class CreateChatUserService():
+class UpdateChatUserService():
 
-    def __init__(self, kwargs: Dict):
+    def __init__(self, username, kwargs: Dict):
+        self.username = username
         self.kwargs = kwargs
         url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
         payload = {"user":Config.ROCKET_CHAT_ADMIN_USERNAME, "password":Config.ROCKET_CHAT_ADMIN_PASSWORD}
@@ -26,21 +26,25 @@ class CreateChatUserService():
 
 
     def call(self):
-        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/users.create'
+        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/users.info'
         headers={"X-Auth-Token":self.auth_token, "X-User-Id":self.user_id}
-        payload={"active":True, "joinDefaultChannels":True, "requirePasswordChange":False, "sendWelcomeEmail":False, "verified":True}
         
         try:
-            user = requests.post(url, data=json.dumps({**self.kwargs, **payload}), headers=headers)
+            user = requests.get(url + '?username=' + self.username, headers=headers)
         except:
             return None
 
-        if user is None:
-            return None
-        elif not user.json()['success'] and (self.kwargs.get("username","") + ' is already in use') in user.json()['error']:
-            data = self.kwargs
-            return UpdateChatUserService(data.pop("username"), data).call()
-        elif not user.json()['success']:
+        if not user or not user.json()['success']:
             return None
 
+        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/users.update'
+
+        try:
+            user = requests.post(url, data=json.dumps({'userId':user.json()['user']['_id'], 'data':self.kwargs}), headers=headers)
+        except:
+            return None
+
+        if not user or not user.json()['success']:
+            return None
+       
         return user.json()['user']['_id']
