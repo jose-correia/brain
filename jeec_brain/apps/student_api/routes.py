@@ -284,7 +284,9 @@ def add_linkedin(student):
     except KeyError:
         return APIErrorValue('Invalid url').json(500)
 
-    student = StudentsHandler.add_linkedin(student, url)
+    if not student.linkedin_url:
+        StudentsHandler.add_points(student, 10)
+    StudentsHandler.update_student(student, linkedin_url=url)
 
     return StudentsValue(student, details=True).json(200)
 
