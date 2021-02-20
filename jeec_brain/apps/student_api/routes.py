@@ -528,3 +528,24 @@ def get_chat_room(student):
 
     else:
         return APIErrorValue("No room found").json(404)
+
+@bp.route('/notifications', methods=['GET'])
+@requires_student_auth
+def get_notifications(student):
+    notifications={}
+
+    if(student.squad):
+        notifications['squad_xp'] = student.squad.total_points
+    
+    notifications['invites'] = []
+    invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
+    for invitation in invitations:
+        sender = StudentsFinder.get_from_id(invitation.sender_id)
+        notifications['invites'].append(sender.user.name)
+    
+    notifications['activities'] = []
+    activities = ActivitiesFinder.get_next_activity()
+    for activity in activities:
+        notifications['activities'].append(activity.name)
+
+    return jsonify(notifications), 200
