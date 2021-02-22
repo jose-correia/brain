@@ -97,3 +97,14 @@ class ActivitiesFinder():
     @classmethod
     def get_activities_from_company_and_event(cls, company, event):
         return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (CompanyActivities.activity_id == Activities.id) & (CompanyActivities.company_id == company.id)).all()
+
+    @classmethod
+    def get_next_activity(cls):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+        activity = Activities.query.filter(Activities.time >= current_time).order_by(Activities.time).first()
+
+        if activity:
+            return Activities.query.filter(Activities.time == activity.time).all()
+        else:
+            return []
