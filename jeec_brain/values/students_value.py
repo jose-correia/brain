@@ -1,3 +1,5 @@
+import jwt
+from config import Config
 from jeec_brain.values.value_composite import ValueComposite
 from jeec_brain.values.levels_value import LevelsValue
 from jeec_brain.values.squads_value import SquadsValue
@@ -21,6 +23,7 @@ class StudentsValue(ValueComposite):
             }
             if(details):
                 student_details = {
+                    "jwt": jwt.encode({"user_id": student.user.username}, Config.JWT_SECRET, algorithm="HS256"),
                     "accessToken": student.fenix_auth_code,
                     "email": student.user.email,
                     "daily_points": student.daily_points,

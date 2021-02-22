@@ -40,6 +40,8 @@ class Config(object):
     ROCKET_CHAT_ADMIN_USERNAME = os.environ.get('ROCKET_CHAT_ADMIN_USERNAME')
     ROCKET_CHAT_ADMIN_PASSWORD = os.environ.get('ROCKET_CHAT_ADMIN_PASSWORD')
 
+    JWT_SECRET = os.environ.get('JWT_SECRET')
+
 class DevelopmentConfig(Config):
     """Development configuration"""
     SECRET_KEY = os.environ.get('SECRET_KEY')
