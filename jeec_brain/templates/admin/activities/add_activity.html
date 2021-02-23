@@ -185,7 +185,7 @@
         </div>
 
         <div class="input-field col s3">
-          <select multiple name="speaker">
+          <select multiple name="speaker" id="speakers">
             {% for speaker in speakers %}
             <option value="{{ speaker.name }}">{{ speaker.name }}</option>
             {% endfor %}
@@ -194,12 +194,31 @@
         </div>
 
         <div class="input-field col s3">
+          <select name="moderator" id="moderator">
+            <option value=""></option>
+          </select>
+          <label>Choose Moderator</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s3">
           <select multiple name="tag">
             {% for tag in tags %}
             <option value="{{ tag.name }}">{{ tag.name }}</option>
             {% endfor %}
           </select>
           <label>Choose tags</label>
+        </div>
+
+        <div class="input-field col s3">
+          <select name="reward">
+            <option value=""></option>
+            {% for reward in rewards %}
+            <option value="{{ reward.id }}">{{ reward.name }}</option>
+            {% endfor %}
+          </select>
+          <label>Choose Reward</label>
         </div>
       </div>
 
@@ -221,16 +240,38 @@
     })(jQuery);
 
     $(document).ready(function () {
+
+      $('#speakers').change(function () {
+
+        $.each($('#moderator option'), function () {
+          $(this).remove();
+        });
+
+        $('#moderator').append($('<option>', {
+          value: "",
+          text: ""
+        }));
+
+        $.each($('#speakers').val(), function (i, item) {
+          $('#moderator').append($('<option>', {
+            value: item,
+            text: item
+          }));
+        });
+
+        $('#moderator').formSelect()
+      });
+
       var companies = [];
 
       $('#companies').change(function () {
         var new_companies = $('#companies').val();
-        
+
         //delete unused companies
-        for (var i=0; i < companies.length; i++) {
+        for (var i = 0; i < companies.length; i++) {
           if (jQuery.inArray(companies[i], new_companies) === -1) {
-            $("#url" + companies[i].replaceAll(" ","_")).remove();
-            
+            $("#url" + companies[i].replaceAll(" ", "_")).remove();
+
             companies = jQuery.grep(companies, function (value) {
               return value != companies[i];
             });
@@ -240,23 +281,20 @@
         }
 
         //create new companies
-        for (var i=0; i < new_companies.length; i++) {
+        for (var i = 0; i < new_companies.length; i++) {
           if (jQuery.inArray(new_companies[i], companies) === -1) {
-            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replaceAll(" ","_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
+            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replaceAll(" ", "_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
             var divs = $('.url');
-            
+
             var j = 0;
-            for(j = 0; j < divs.length; j++)
-            {
-              if(new_companies[i] < divs[j].id.substring(3, divs[j].id.length))
-              {
+            for (j = 0; j < divs.length; j++) {
+              if (new_companies[i] < divs[j].id.substring(3, divs[j].id.length)) {
                 $('#' + divs[j].id).before(input);
                 break;
               }
             }
 
-            if(j === divs.length)
-            {
+            if (j === divs.length) {
               $('#urls').append(input);
             }
           }

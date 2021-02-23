@@ -1,6 +1,7 @@
 from jeec_brain.values.value_composite import ValueComposite
 from jeec_brain.values.speakers_value import SpeakersValue
 from jeec_brain.values.companies_value import CompaniesValue
+from jeec_brain.values.rewards_value import RewardsValue
 from jeec_brain.finders.activities_finder import ActivitiesFinder
 
 
@@ -29,8 +30,10 @@ class StudentActivitiesValue(ValueComposite):
                 "registration_open": activity.registration_open,
                 "registration_link": activity.registration_link,
 				"speakers": SpeakersValue(activity_speakers).to_dict(),
+				"moderator": activity.moderator.name if activity.moderator else "",
 				"companies": CompaniesValue(activity_companies, True).to_dict(),
 				"participated": activity in student.activities,
+				"reward": RewardsValue(activity.reward).to_dict(),
 				"zoom_url": activity.zoom_link,
 				"interest": not set(activity_tags).isdisjoint(student.tags) or not set(activity_companies).isdisjoint(student.companies)
 			}
