@@ -6,11 +6,11 @@ from jeec_brain.finders.activities_finder import ActivitiesFinder
 
 
 class StudentActivitiesValue(ValueComposite):
-	def __init__(self, event, activities, student):
+	def __init__(self, event, activities, student, bypass_show_in_app=False):
 		super(StudentActivitiesValue, self).initialize({})
 		activities_array = []
 		for activity in activities:
-			if(not activity.activity_type.show_in_app):
+			if(not activity.activity_type.show_in_app and not bypass_show_in_app):
 				continue
 
 			activity_speakers = ActivitiesFinder.get_activity_speakers(activity)

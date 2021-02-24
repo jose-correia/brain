@@ -274,7 +274,7 @@ def get_quests(student):
     event = EventsFinder.get_default_event()
     activities = ActivitiesFinder.get_quests()
     
-    return StudentActivitiesValue(event, activities, student).json(200)
+    return StudentActivitiesValue(event, activities, student, True).json(200)
 
 @bp.route('/add-linkedin', methods=['POST'])
 @requires_student_auth

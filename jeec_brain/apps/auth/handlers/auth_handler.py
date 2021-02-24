@@ -59,6 +59,7 @@ class AuthHandler(object):
                 if student is None:
                     return None, None
 
+            print(student.fenix_auth_code)
             encrypted_code = EncryptTokenService(fenix_auth_code).call()
 
             return student, encrypted_code
