@@ -33,7 +33,7 @@ from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
-from jeec_brain.values.student_activity_types_value import StudentActivityTypesValue
+from jeec_brain.values.student_event_info_value import StudentEventInfoValue
 from jeec_brain.values.rewards_value import RewardsValue
 from jeec_brain.values.squads_rewards_value import SquadsRewardsValue
 from jeec_brain.values.jeecpot_rewards_value import JeecpotRewardsValue
@@ -277,12 +277,12 @@ def get_quests(student):
     
     return StudentActivitiesValue(event, activities, student, True).json(200)
 
-@bp.route('/activity-types', methods=['GET'])
+@bp.route('/event-info', methods=['GET'])
 @requires_student_auth
-def get_activity_types(student):
+def get_event_info(student):
     event = EventsFinder.get_default_event()
     
-    return StudentActivityTypesValue(event.activity_types).json(200)
+    return StudentEventInfoValue(event).json(200)
 
 @bp.route('/add-linkedin', methods=['POST'])
 @requires_student_auth
