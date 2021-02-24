@@ -34,6 +34,12 @@ class Activities(db.Model, ModelMixin):
 
     zoom_link = db.Column(db.String)
 
+    reward_id = db.Column(db.Integer, db.ForeignKey('rewards.id', ondelete='SET NULL'))
+    reward = relationship('Rewards')
+
+    moderator_id = db.Column(db.Integer, db.ForeignKey('speakers.id', ondelete='SET NULL'))
+    moderator = relationship('Speakers')
+
     tags = relationship("Tags",
         secondary="activities_tags",
         secondaryjoin=sql.and_(ActivitiesTags.tag_id == Tags.id))

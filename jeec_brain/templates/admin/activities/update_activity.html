@@ -114,18 +114,18 @@
           Create chat channel:
           <p>
             <label style="margin-right: 20px;">
-              <input class="with-gap" name="chat" type="radio" value="general" {% if (activity.chat_type.name == 'general') %}
-              checked {% endif %} />
+              <input class="with-gap" name="chat" type="radio" value="general" {% if (activity.chat_type.name=='general'
+                ) %} checked {% endif %} />
               <span>General</span>
             </label>
             <label style="margin-right: 20px;">
-              <input class="with-gap" name="chat" type="radio" value="individual" {% if (activity.chat_type.name == 'individual') %}
-              checked {% endif %} />
+              <input class="with-gap" name="chat" type="radio" value="individual" {% if
+                (activity.chat_type.name=='individual' ) %} checked {% endif %} />
               <span>Individual</span>
             </label>
             <label>
-              <input class="with-gap" name="chat" type="radio" value="none" {% if (activity.chat_type.name == 'none') %}
-              checked {% endif %} />
+              <input class="with-gap" name="chat" type="radio" value="none" {% if (activity.chat_type.name=='none' ) %}
+                checked {% endif %} />
               <span>No</span>
             </label>
           </p>
@@ -198,7 +198,7 @@
         </div>
 
         <div class="input-field col s3">
-          <select multiple name="speaker">
+          <select multiple name="speaker" id="speakers">
             {% for speaker in speakers %}
             <option value="{{ speaker.name }}" {% if speaker.id in speaker_activities %} selected {% endif %}>
               {{ speaker.name }}</option>
@@ -208,6 +208,19 @@
         </div>
 
         <div class="input-field col s3">
+          <select name="moderator" id="moderator">
+            <option value=""></option>
+            {% for speaker in speakers %}
+            {% if speaker.id == activity.moderator_id %}
+            <option value="{{ speaker.name }}" selected>{{ speaker.name }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          <label>Choose Moderator</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s3">
           <select multiple name="tag">
             {% for tag in tags %}
             <option value="{{ tag.name }}" {% if tag.id in activity_tags %} selected {% endif %}>
@@ -216,6 +229,17 @@
           </select>
           <label>Choose tags</label>
         </div>
+
+        <div class="input-field col s3">
+          <select name="reward">
+            <option value=""></option>
+            {% for reward in rewards %}
+            <option value="{{ reward.id }}" {% if reward.id==activity.reward_id %} selected {% endif %}">{{ reward.name
+              }}</option>
+            {% endfor %}
+          </select>
+          <label>Choose Reward</label>
+        </div>
       </div>
 
       <div id="urls">
@@ -223,7 +247,8 @@
         {% if company.id in company_activities %}
         <div class="row url" style="margin-bottom:0" id="url{{ company.name | replace(' ','_') }}">
           <div class="input-field col s5">
-            <input name="url" type="url" class="validate" {% if companies_zoom_url[company.id] %} value="{{ companies_zoom_url[company.id] }} {% endif %}">
+            <input name="url" type="url" class="validate" {% if companies_zoom_url[company.id] %}
+              value="{{ companies_zoom_url[company.id] }} {% endif %}">
             <label for="url{{ company.name }}">{{ company.name }} Zoom URL</label>
           </div>
         </div>
@@ -253,14 +278,49 @@
     })(jQuery);
 
     $(document).ready(function () {
+
+      $.each($('#speakers').val(), function (i, item) {
+        if (item !== '{{ activity.moderator.name|string() }}') {
+          $('#moderator').append($('<option>', {
+            value: item,
+            text: item
+          }));
+        }
+      });
+
+      $('#moderator').formSelect();
+
+
+      $('#speakers').change(function () {
+
+        $.each($('#moderator option'), function () {
+          $(this).remove();
+        });
+
+        $('#moderator').append($('<option>', {
+          value: "",
+          text: ""
+        }));
+
+        $.each($('#speakers').val(), function (i, item) {
+          $('#moderator').append($('<option>', {
+            value: item,
+            text: item
+          }));
+        });
+
+        $('#moderator').formSelect();
+      });
+
+
       var companies = $('#companies').val();
 
       $('#companies').change(function () {
         var new_companies = $('#companies').val();
 
-        for (var i=0; i < companies.length; i++) {
+        for (var i = 0; i < companies.length; i++) {
           if (jQuery.inArray(companies[i], new_companies) === -1) {
-            $("#url" + companies[i].replace(" ","_")).remove();
+            $("#url" + companies[i].replaceAll(" ", "_")).remove();
 
             companies = jQuery.grep(companies, function (value) {
               return value != companies[i];
@@ -270,23 +330,20 @@
           }
         }
 
-        for (var i=0; i < new_companies.length; i++) {
+        for (var i = 0; i < new_companies.length; i++) {
           if (jQuery.inArray(new_companies[i], companies) === -1) {
-            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replace(" ","_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
+            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replaceAll(" ", "_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
             var divs = $('.url');
-            
+
             var j = 0;
-            for(j = 0; j < divs.length; j++)
-            {
-              if(new_companies[i] < divs[j].id.substring(3, divs[j].id.length))
-              {
+            for (j = 0; j < divs.length; j++) {
+              if (new_companies[i] < divs[j].id.substring(3, divs[j].id.length)) {
                 $('#' + divs[j].id).before(input);
                 break;
               }
             }
 
-            if(j === divs.length)
-            {
+            if (j === divs.length) {
               $('#urls').append(input);
             }
           }

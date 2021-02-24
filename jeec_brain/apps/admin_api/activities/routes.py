@@ -6,6 +6,7 @@ from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.finders.tags_finder import TagsFinder
+from jeec_brain.finders.rewards_finder import RewardsFinder
 from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
@@ -253,6 +254,7 @@ def add_activity_dashboard():
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
     tags = TagsFinder.get_all()
+    rewards = RewardsFinder.get_all_rewards()
 
     event_id = request.args.get('event',None)
     if(event_id is None):
@@ -278,6 +280,7 @@ def add_activity_dashboard():
         minDate=minDate, \
         maxDate=maxDate, \
         event=event, \
+        rewards=rewards, \
         error=None)
 
 
@@ -296,6 +299,8 @@ def create_activity():
     quest = request.form.get('quest')
     chat = request.form.get('chat')
     zoom_link = request.form.get('zoom_url')
+    reward_id = request.form.get('reward') or None
+    moderator = request.form.get('moderator') or None
 
     if registration_open == 'True':
         registration_open = True
@@ -336,13 +341,15 @@ def create_activity():
             quest=quest,
             zoom_link=zoom_link,
             chat_type=chat_type,
-            chat=(chat=='general')
+            chat=(chat=='general'),
+            reward_id=reward_id
         )
 
     if activity is None:
         companies = CompaniesFinder.get_all()
         speakers = SpeakersFinder.get_all()
         tags = TagsFinder.get_all()
+        rewards = RewardsFinder.get_all_rewards()
 
         try:
             minDate = datetime.strptime(event.start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
@@ -355,6 +362,7 @@ def create_activity():
             companies=companies, \
             speakers=speakers, \
             tags=tags, \
+            rewards=rewards, \
             minDate=minDate, \
             maxDate=maxDate, \
             event=event, \
@@ -387,6 +395,13 @@ def create_activity():
             if speaker_activity is None:
                 return APIErrorValue('Failed to create speaker activity').json(500)
 
+        if(moderator and moderator in speakers):
+            moderator = SpeakersFinder.get_from_name(moderator)
+            if moderator is None:
+                return APIErrorValue('Couldnt find moderator').json(500)
+
+            ActivitiesHandler.update_activity(activity, activity_type, moderator_id = moderator.id)
+
     if tags:
         for name in tags:
             tag = TagsFinder.get_by_name(name)
@@ -407,6 +422,7 @@ def get_activity(activity_external_id):
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
     tags = TagsFinder.get_all()
+    rewards = RewardsFinder.get_all_rewards()
 
     event = EventsFinder.get_from_parameters({"default": True})
     if event is None or len(event) == 0:
@@ -435,6 +451,7 @@ def get_activity(activity_external_id):
         companies=companies, \
         speakers=speakers, \
         tags=tags, \
+        rewards=rewards, \
         company_activities=[company.company_id for company in company_activities], \
         speaker_activities=[speaker.speaker_id for speaker in speaker_activities], \
         companies_zoom_url=companies_zoom_url, \
@@ -467,6 +484,8 @@ def update_activity(activity_external_id):
     quest = request.form.get('quest')
     chat = request.form.get('chat')
     zoom_link = request.form.get('zoom_url')
+    reward_id = request.form.get('reward') or None
+    moderator = request.form.get('moderator') or None
 
     if time > end_time is None:
         return APIErrorValue('Activity starting time after ending time').json(500)
@@ -502,6 +521,7 @@ def update_activity(activity_external_id):
         zoom_link=zoom_link,
         chat_type=chat_type,
         chat=(chat=='general'),
+        reward_id=reward_id
     )
 
     if company_activities:
@@ -542,6 +562,17 @@ def update_activity(activity_external_id):
             speaker_activity = ActivitiesHandler.add_speaker_activity(speaker, activity)
             if speaker_activity is None:
                 return APIErrorValue('Failed to create speaker activity').json(500)
+        
+        if(moderator and moderator in speakers):
+            moderator = SpeakersFinder.get_from_name(moderator)
+            if moderator is None:
+                return APIErrorValue('Couldnt find moderator').json(500)
+
+            ActivitiesHandler.update_activity(activity, activity_type, moderator_id = moderator.id)
+
+        elif(not moderator):
+            ActivitiesHandler.update_activity(activity, activity_type, moderator_id = None)
+
 
     if tags:
         for name in tags:
@@ -575,6 +606,7 @@ def update_activity(activity_external_id):
             companies=CompaniesFinder.get_all(), \
             speakers=SpeakersFinder.get_all(), \
             tags=TagsFinder.get_all(), \
+            rewards=RewardsFinder.get_all_rewards(), \
             minDate=minDate, \
             maxDate=maxDate, \
             error="Failed to update activity!")
