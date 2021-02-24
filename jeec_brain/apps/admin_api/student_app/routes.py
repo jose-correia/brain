@@ -50,7 +50,10 @@ def ban_student(student_external_id):
     student = StudentsFinder.get_from_external_id(student_external_id)
     if student is None:
         return APIErrorValue('Couldnt find student').json(500)
-
+    
+    if student.squad:
+        SquadsHandler.delete_squad(student.squad)
+        
     banned_student = StudentsHandler.create_banned_student(student)
     if banned_student is None:
         return APIErrorValue('Error banning student').json(500)
@@ -366,7 +369,7 @@ def jeecpot_reward_dashboard():
     rewards = RewardsFinder.get_all_rewards()
 
     if(jeecpot_rewards is None or len(jeecpot_rewards) < 1):
-        RewardsHandler.create_jeecpot_reward(student_reward_id=None, first_squad_reward_id=None, second_squad_reward_id=None, third_squad_reward_id=None)
+        RewardsHandler.create_jeecpot_reward()
         jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
 
     return render_template('admin/students_app/rewards/jeecpot_rewards_dashboard.html', error=None, jeecpot_rewards=jeecpot_rewards[0], rewards=rewards, current_user=current_user)
@@ -378,15 +381,39 @@ def update_jeecpot_reward(jeecpot_rewards_external_id):
     if(jeecpot_rewards is None):
         return APIErrorValue('JEECPOT Rewards not found').json(500)
 
-    student_reward_id = request.form.get('student_reward', None)
-    if(student_reward_id is not None):
-        if(student_reward_id == ""):
-            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, student_reward_id = None)
+    first_student_reward_id = request.form.get('first_student_reward', None)
+    if(first_student_reward_id is not None):
+        if(first_student_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, first_student_reward_id = None)
         else:
-            student_reward = RewardsFinder.get_reward_from_external_id(student_reward_id)
-            if(student_reward is None):
+            first_student_reward = RewardsFinder.get_reward_from_external_id(first_student_reward_id)
+            if(first_student_reward is None):
                 return APIErrorValue('Reward not found').json(404)
-            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, student_reward_id = student_reward.id)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, first_student_reward_id = first_student_reward.id)
+        if(jeecpot_rewards is None):
+            return APIErrorValue('Failed to update reward').json(500)
+
+    second_student_reward_id = request.form.get('second_student_reward', None)
+    if(second_student_reward_id is not None):
+        if(second_student_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, second_student_reward_id = None)
+        else:
+            second_student_reward = RewardsFinder.get_reward_from_external_id(second_student_reward_id)
+            if(second_student_reward is None):
+                return APIErrorValue('Reward not found').json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, second_student_reward_id = second_student_reward.id)
+        if(jeecpot_rewards is None):
+            return APIErrorValue('Failed to update reward').json(500)
+
+    third_student_reward_id = request.form.get('third_student_reward', None)
+    if(third_student_reward_id is not None):
+        if(third_student_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, third_student_reward_id = None)
+        else:
+            third_student_reward = RewardsFinder.get_reward_from_external_id(third_student_reward_id)
+            if(third_student_reward is None):
+                return APIErrorValue('Reward not found').json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, third_student_reward_id = third_student_reward.id)
         if(jeecpot_rewards is None):
             return APIErrorValue('Failed to update reward').json(500)
     
@@ -426,6 +453,54 @@ def update_jeecpot_reward(jeecpot_rewards_external_id):
         if(jeecpot_rewards is None):
             return APIErrorValue('Failed to update reward').json(500)
 
+    king_job_fair_reward_id = request.form.get('king_job_fair_reward', None)
+    if(king_job_fair_reward_id is not None):
+        if(king_job_fair_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_job_fair_reward_id = None)
+        else:
+            king_job_fair_reward = RewardsFinder.get_reward_from_external_id(king_job_fair_reward_id)
+            if(king_job_fair_reward is None):
+                return APIErrorValue('Reward not found').json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_job_fair_reward_id = king_job_fair_reward.id)
+        if(jeecpot_rewards is None):
+            return APIErrorValue('Failed to update reward').json(500)
+
+    king_knowledge_reward_id = request.form.get('king_knowledge_reward', None)
+    if(king_knowledge_reward_id is not None):
+        if(king_knowledge_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_knowledge_reward_id = None)
+        else:
+            king_knowledge_reward = RewardsFinder.get_reward_from_external_id(king_knowledge_reward_id)
+            if(king_knowledge_reward is None):
+                return APIErrorValue('Reward not found').json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_knowledge_reward_id = king_knowledge_reward.id)
+        if(jeecpot_rewards is None):
+            return APIErrorValue('Failed to update reward').json(500)
+
+    king_hacking_reward_id = request.form.get('king_hacking_reward', None)
+    if(king_hacking_reward_id is not None):
+        if(king_hacking_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_hacking_reward_id = None)
+        else:
+            king_hacking_reward = RewardsFinder.get_reward_from_external_id(king_hacking_reward_id)
+            if(king_hacking_reward is None):
+                return APIErrorValue('Reward not found').json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_hacking_reward_id = king_hacking_reward.id)
+        if(jeecpot_rewards is None):
+            return APIErrorValue('Failed to update reward').json(500)
+
+    king_networking_reward_id = request.form.get('king_networking_reward', None)
+    if(king_networking_reward_id is not None):
+        if(king_networking_reward_id == ""):
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_networking_reward_id = None)
+        else:
+            king_networking_reward = RewardsFinder.get_reward_from_external_id(king_networking_reward_id)
+            if(king_networking_reward is None):
+                return APIErrorValue('Reward not found').json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(jeecpot_rewards, king_networking_reward_id = king_networking_reward.id)
+        if(jeecpot_rewards is None):
+            return APIErrorValue('Failed to update reward').json(500)
+
     return render_template('admin/students_app/rewards/jeecpot_rewards_dashboard.html', error=None, jeecpot_rewards=jeecpot_rewards, rewards=RewardsFinder.get_all_rewards(), current_user=current_user)
 
 @bp.route('/squad-rewards', methods=['GET'])
@@ -450,6 +525,7 @@ def squad_rewards_dashboard():
             RewardsHandler.create_squad_reward(reward_id=None, date=date)
 
     rewards = RewardsFinder.get_all_rewards()
+    squad_rewards = RewardsFinder.get_all_squad_rewards()
 
     return render_template('admin/students_app/rewards/squad_rewards_dashboard.html', error=None, squad_rewards=squad_rewards, rewards=rewards, current_user=current_user)
 

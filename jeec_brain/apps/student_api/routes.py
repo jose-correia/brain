@@ -33,6 +33,7 @@ from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
+from jeec_brain.values.student_activity_types_value import StudentActivityTypesValue
 from jeec_brain.values.rewards_value import RewardsValue
 from jeec_brain.values.squads_rewards_value import SquadsRewardsValue
 from jeec_brain.values.jeecpot_rewards_value import JeecpotRewardsValue
@@ -90,9 +91,9 @@ def today_login(student):
             StudentsHandler.add_student_login(student, date)
             StudentsHandler.add_points(student, 5)
         else:
-            return APIErrorValue("Already loggedin today").json(500)
+            return APIErrorValue("Already loggedin today").json(409)
     else:
-        return APIErrorValue("Date out of event").json(500)
+        return APIErrorValue("Date out of event").json(409)
             
     return StudentsValue(student, details=True).json(200)
 
@@ -275,6 +276,13 @@ def get_quests(student):
     activities = ActivitiesFinder.get_quests()
     
     return StudentActivitiesValue(event, activities, student, True).json(200)
+
+@bp.route('/activity-types', methods=['GET'])
+@requires_student_auth
+def get_activity_types(student):
+    event = EventsFinder.get_default_event()
+    
+    return StudentActivityTypesValue(event.activity_types).json(200)
 
 @bp.route('/add-linkedin', methods=['POST'])
 @requires_student_auth
