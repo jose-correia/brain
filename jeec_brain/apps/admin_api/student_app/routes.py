@@ -157,14 +157,14 @@ def create_level():
 
     levels = LevelsFinder.get_all_levels()
 
-    if(len(levels) > 0 and int(levels[-1].value + 1) != int(value)):
+    if((len(levels) > 0 and int(levels[-1].value + 1) != int(value)) or (len(levels) == 0 and int(value) != 1)):
         return APIErrorValue('Invalid level value').json(500)
 
     level = LevelsHandler.create_level(value=value, points=points, reward_id=reward_id)
     if(level is None):
         return APIErrorValue('Error creating level').json(500)
 
-    if(len(levels) == 0 and level.value == 0):
+    if(len(levels) == 0 and level.value == 1):
         students = StudentsFinder.get_from_parameters({'level_id': None})
         for student in students:
             StudentsHandler.update_student(student, level_id = level.id)
