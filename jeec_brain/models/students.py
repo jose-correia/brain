@@ -20,7 +20,6 @@ class Students(db.Model, ModelMixin):
     
     photo = db.Column(db.Text())
     photo_type = db.Column(db.String(20))
-    fenix_auth_code = deferred(db.Column(db.Text(), unique=True, index=True))
     linkedin_url = deferred(db.Column(db.String(150)))
     uploaded_cv = deferred(db.Column(db.Boolean, default=False))
 
@@ -56,7 +55,9 @@ class Students(db.Model, ModelMixin):
         secondaryjoin=sql.and_(StudentActivities.activity_id == Activities.id))
 
     def is_captain(self):
-        return self.user.username == self.squad.captain_ist_id
+        if self.squad:
+            return self.user.username == self.squad.captain_ist_id
+        return False
 
     def __repr__(self):
         return 'Name: {}  |  IST Id: {}'.format(self.user.name, self.user.username)

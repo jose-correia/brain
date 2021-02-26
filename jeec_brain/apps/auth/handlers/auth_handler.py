@@ -1,5 +1,7 @@
 from flask import session, redirect
 import os
+import jwt
+from config import Config
 from flask_login import login_user, logout_user, current_user
 from jeec_brain.apps.auth import fenix_client
 
@@ -53,16 +55,12 @@ class AuthHandler(object):
                 student = StudentsHandler.create_student(person['name'], person['username'], person['email'], course, entry_year, fenix_auth_code, person['photo']['data'], person['photo']['type'])
                 if student is None:
                     return None, None
+            
+            _jwt = jwt.encode({"user_id": person['username']}, Config.JWT_SECRET, algorithm="HS256")
+            encrypted_jwt = EncryptTokenService(_jwt).call()
 
-            if(student.fenix_auth_code != fenix_auth_code):
-                student = StudentsHandler.update_student(student, fenix_auth_code=fenix_auth_code)
-                if student is None:
-                    return None, None
-
-            encrypted_code = EncryptTokenService(fenix_auth_code).call()
-
-            return student, encrypted_code
-                    
+            return student, encrypted_jwt
+      
         else:
             return None, None
 

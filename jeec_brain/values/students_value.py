@@ -23,8 +23,7 @@ class StudentsValue(ValueComposite):
             }
             if(details):
                 student_details = {
-                    "jwt": jwt.encode({"user_id": student.user.username}, Config.JWT_SECRET, algorithm="HS256"),
-                    "accessToken": student.fenix_auth_code,
+                    # "jwt": jwt.encode({"user_id": student.user.username}, Config.JWT_SECRET, algorithm="HS256"),
                     "email": student.user.email,
                     "daily_points": student.daily_points,
                     "squad_points": student.squad_points,

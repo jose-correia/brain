@@ -55,7 +55,7 @@ def redirect_uri():
     
     fenix_auth_code = request.args.get('code')
 
-    student, encrypted_code = AuthHandler.login_student(fenix_auth_code)
+    student, encrypted_jwt = AuthHandler.login_student(fenix_auth_code)
     
     if student:
         now = datetime.utcnow()
@@ -66,16 +66,21 @@ def redirect_uri():
         if date in dates:
             student_login = StudentsFinder.get_student_login(student, date)
             if student_login:
-                return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
+                return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
             else:
                 StudentsHandler.add_student_login(student, date)
                 StudentsHandler.add_points(student, 5)
-                return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code + '&firstlog=true')
+                return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt + '&firstlog=true')
         else:
-            return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
+            return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
 
     else:
         return redirect(Config.STUDENT_APP_URL)
+
+@bp.route('/info', methods=['GET'])
+@requires_student_auth
+def get_info(student):    
+    return StudentsValue(student, details=True).json(200)
 
 @bp.route('/today-login', methods=['GET'])
 @requires_student_auth
@@ -95,11 +100,6 @@ def today_login(student):
     else:
         return APIErrorValue("Date out of event").json(409)
             
-    return StudentsValue(student, details=True).json(200)
-
-@bp.route('/info', methods=['GET'])
-@requires_student_auth
-def get_info(student):    
     return StudentsValue(student, details=True).json(200)
 
 @bp.route('/students', methods=['GET'])
