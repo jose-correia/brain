@@ -103,8 +103,7 @@ def load_user(username):
 @login_manager.request_loader
 def load_remote_user(request):
     token = request.headers.get('Authorization')
-    print(request, request.remote_addr)
-    print(token)
+
     try:
         payload = jwt.decode(token, Config.JWT_SECRET, algorithms="HS256")
         return UsersFinder.get_user_from_username(username=payload["user_id"])
