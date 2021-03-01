@@ -30,7 +30,7 @@ class Activities(db.Model, ModelMixin):
 
     chat_id = db.Column(db.String)
     chat_code = db.Column(db.String)
-    chat_type = db.Column(db.Enum(ActivityChatEnum), nullable=False)
+    chat_type = db.Column(db.Enum(ActivityChatEnum))
 
     zoom_link = db.Column(db.String)
 
