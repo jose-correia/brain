@@ -57,7 +57,7 @@ class StudentsHandler():
             daily_points=0,
             total_points=0,
             squad_points=0,
-            level=LevelsFinder.get_level_by_value(0)
+            level=LevelsFinder.get_level_by_value(1)
         ).call()
 
     @classmethod
