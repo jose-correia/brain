@@ -35,7 +35,7 @@ from datetime import datetime
 class StudentsHandler():
 
     @classmethod
-    def create_student(cls, name, ist_id, email, course, entry_year, fenix_auth_code, photo, photo_type):
+    def create_student(cls, name, ist_id, email, course, entry_year, photo, photo_type):
         password = GenerateCredentialsService().call()
         referral_code = GenerateCredentialsService().call()
 
@@ -52,7 +52,6 @@ class StudentsHandler():
             course=course,
             entry_year=entry_year,
             referral_code=referral_code,
-            fenix_auth_code=fenix_auth_code,
             photo=photo,
             photo_type=photo_type,
             daily_points=0,

@@ -52,7 +52,7 @@ class AuthHandler(object):
 
             student = StudentsFinder.get_from_ist_id(person['username'])
             if student is None:
-                student = StudentsHandler.create_student(person['name'], person['username'], person['email'], course, entry_year, fenix_auth_code, person['photo']['data'], person['photo']['type'])
+                student = StudentsHandler.create_student(person['name'], person['username'], person['email'], course, entry_year, person['photo']['data'], person['photo']['type'])
                 if student is None:
                     return None, None
             
