@@ -19,6 +19,7 @@ class ActivitiesValue(ValueComposite):
 				"location": activity.location,
 				"day": activity.day,
 				"time": activity.time,
+				"end_time": activity.end_time,
 				"type": activity.activity_type.name,
                 "registration_open": activity.registration_open,
                 "registration_link": activity.registration_link,
