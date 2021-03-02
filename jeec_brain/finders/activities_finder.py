@@ -54,7 +54,7 @@ class ActivitiesFinder():
         if(event is None):
             event = EventsFinder.get_default_event()
 
-        return Activities.query.filter(Activities.name.ilike(search) & Activities.event_id == event.id).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
+        return Activities.query.filter(Activities.name.ilike(search) & (Activities.event_id == event.id)).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
     
     @classmethod
     def search_by_name(cls, name):
