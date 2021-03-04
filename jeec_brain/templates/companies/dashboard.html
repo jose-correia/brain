@@ -41,6 +41,17 @@
 
   <img src="{{ company_logo }}" class="company-logo-company-side centered-image">
 
+  <center>
+    <div class="evf" style="margin-top: 30px;">
+      <p><b>user:</b> {{ user.user.username }}</p>
+      <p><b>password:</b> {{ user.user.password }}</p>
+      <form action="https://tecnicoevents.easyvirtualfair.com/backend" target="_blank">
+        <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
+            class="large material-icons left">language</i>Log In</button>
+      </form>
+    </div>
+  </center>
+
   <div class="flexbox-btns">
     {% for activity_type in activity_types %}
     <form action="/companies/activity_type/{{activity_type.external_id.hex}}" method="get">
@@ -67,7 +78,7 @@
           class="large material-icons left">restaurant</i>Meals</button>
     </form>
     {% endif %}
-    
+
     <form action="/companies/resumes" method="get">
       <button class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;" disabled><i
           class="large material-icons left">person_outline</i>Students & CV's</button>
