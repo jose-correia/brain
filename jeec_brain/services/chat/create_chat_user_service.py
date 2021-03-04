@@ -3,6 +3,8 @@ from config import Config
 from typing import Dict
 import requests
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 class CreateChatUserService():
 
@@ -32,7 +34,8 @@ class CreateChatUserService():
         
         try:
             user = requests.post(url, data=json.dumps({**self.kwargs, **payload}), headers=headers)
-        except:
+        except Exception as e:
+            logger.warning(e)
             return None
 
         if user is None:

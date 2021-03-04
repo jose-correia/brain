@@ -55,7 +55,7 @@
     <form class="col s12" id="event_form" method="get">
       <select name="event" id="event" class="form-control">
         {% for _event in events %}
-        <option value="{{ _event.external_id }}" {% if _event.id|int() == event.id|int() %}selected="selected" {%endif %}>
+        <option value="{{ _event.external_id }}" {% if _event.id|int()==event.id|int() %}selected="selected" {%endif %}>
           {{ _event.name }}</option>
         {% endfor %}
       </select>
@@ -157,13 +157,8 @@
 
           <td>
             {% if activity.description is not none %}
-            {% if activity.description|length < 75 %}
-            {{ activity.description }}
-            {% else %}
-            {{ activity.description[0:75] }}...
-            {% endif %}
-            {% endif %}
-          </td>
+            {% if activity.description|length < 75 %} {{ activity.description }} {% else %} {{
+              activity.description[0:75] }}... {% endif %} {% endif %} </td>
 
           <td>
             {% if activity.day is not none %}
@@ -211,6 +206,20 @@
 
           {% if role in ['admin', 'activities_admin'] %}
           <td>
+            {% if activity.activity_type.name not in ["Speaker", "Discussion Panel"] %}
+            <button title="Create Code" data-target="modal1"
+              class="waves-effect waves-light btn-floating modal-trigger"><i
+                class="material-icons left">qr_code</i>Generate Code</button>
+            {% else %}
+            <button title="Create Code" data-target="modal1"
+              class="waves-effect waves-light btn-floating modal-trigger" disabled><i
+                class="material-icons left">qr_code</i>Generate Code</button>
+            {% endif %}
+          </td>
+          {% endif %}
+
+          {% if role in ['admin', 'activities_admin'] %}
+          <td>
             <form action="/admin/activity/{{activity.external_id.hex}}" method="get">
               <button title="Edit activity" class="waves-effect waves-light btn-floating"><i
                   class="material-icons left">edit</i>Edit</button>
@@ -225,9 +234,28 @@
   </div>
   {% endif %}
 
+  <div id="modal1" class="modal" style="height: auto;">
+    <div class="modal-content">
+      <center style="margin-top: 40px;">
+        <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" readonly>
+
+        <div style="margin-top: 40px;">
+          <button id="code" class="waves-effect red lighten-2 btn-large dashboard-btn"
+            style="width: auto; margin-right: 10px;"><i class="large material-icons left">qr_code</i>Generate
+            Code</button>
+
+          <button id="copy" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+            style="width: auto; margin-left: 10x;"><i class="large material-icons left">content_copy</i>Copy to
+            Clipboard</button>
+        </div>
+      </center>
+    </div>
+  </div>
+
   <script>
     $(document).on('change', '#event', function () {
       $('#event_form').submit();
+      $('.modal').modal();
     });
   </script>
 </body>
