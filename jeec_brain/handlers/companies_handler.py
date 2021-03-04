@@ -24,7 +24,7 @@ class CompaniesHandler():
     @classmethod
     def update_company(cls, company, **kwargs):
         if not company.chat_id:
-            chat_id, chat_code = CreateChannelService(company.name).call()
+            chat_id, chat_code = CreateChannelService(company.name.replace("&", " and ")).call()
             if not chat_id or not chat_code:
                 return None
         else:
