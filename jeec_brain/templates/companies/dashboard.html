@@ -44,7 +44,7 @@
   <div class="flexbox-btns">
     {% for activity_type in activity_types %}
     <form action="/companies/activity_type/{{activity_type.external_id.hex}}" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ activity_type.name }}</button>
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn" disabled>{{ activity_type.name }}</button>
     </form>
     {% endfor %}
   </div>
@@ -69,7 +69,7 @@
     {% endif %}
     
     <form action="/companies/resumes" method="get">
-      <button class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;"><i
+      <button class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;" disabled><i
           class="large material-icons left">person_outline</i>Students & CV's</button>
     </form>
   </div>

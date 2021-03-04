@@ -33,7 +33,8 @@ class ActivityCodesHandler():
 
         points = activity_code.activity.points
         
-        cls.delete_activity_code(activity_code)
+        if code.activity.activity_type.name not in ["Speaker", "Discussion Panel"]:
+            cls.delete_activity_code(activity_code)
 
         return True, StudentsHandler.add_points(student, points)
 

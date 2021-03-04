@@ -1,6 +1,6 @@
 from .. import bp
 import uuid
-from flask import render_template, current_app, request, redirect, url_for
+from flask import render_template, current_app, request, redirect, url_for, jsonify
 from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
@@ -9,8 +9,10 @@ from jeec_brain.finders.tags_finder import TagsFinder
 from jeec_brain.finders.rewards_finder import RewardsFinder
 from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.finders.events_finder import EventsFinder
+from jeec_brain.finders.activity_codes_finder import ActivityCodesFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.handlers.activity_types_handler import ActivityTypesHandler
+from jeec_brain.handlers.activity_codes_handler import ActivityCodesHandler
 from jeec_brain.models.enums.activity_chat_enum import ActivityChatEnum
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
@@ -642,3 +644,27 @@ def delete_activity(activity_external_id):
 
     else:
         return render_template('admin/activities/update_activity.html', activity=activity, error="Failed to delete activity!")
+
+@bp.route('/activity/<string:activity_external_id>/code', methods=['POST'])
+@allowed_roles(['admin', 'activities_admin'])
+def generate_codes(activity_external_id):
+    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+    if activity is None:
+        return APIErrorValue('Couldnt find activity').json(404)
+
+    number = request.form.get('number', 1)
+    activity_codes = []
+    
+    for _ in range(number):
+        activity_codes.append(ActivityCodesHandler.create_activity_code(activity_id=activity.id).code)
+
+    return jsonify(activity_codes)
+
+@bp.route('/code/<string:code>/delete', methods=['POST'])
+@allowed_roles(['admin', 'activities_admin'])
+def delete_code(code):
+    code = ActivityCodesFinder.get_from_code(code)
+    if code is None:
+        return APIErrorValue('Couldnt find code').json(404)
+
+    return jsonify({'success':ActivityCodesHandler.delete_activity_code(code)})
