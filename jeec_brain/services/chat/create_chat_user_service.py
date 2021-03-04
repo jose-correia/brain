@@ -10,15 +10,17 @@ class CreateChatUserService():
 
     def __init__(self, kwargs: Dict):
         self.kwargs = kwargs
+        logger.warning(kwargs)
         url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
         payload = {"user":Config.ROCKET_CHAT_ADMIN_USERNAME, "password":Config.ROCKET_CHAT_ADMIN_PASSWORD}
 
         try:
             admin = requests.post(url, data=json.dumps(payload))
-        except:
+        except Exception as e:
+            logger.warning(e)
             self.auth_token = None
             self.user_id = None
-
+        logger.warning(admin.json())
         if not admin or not admin.json()['status'] == 'success':
             self.auth_token = None
             self.user_id = None
@@ -37,7 +39,7 @@ class CreateChatUserService():
         except Exception as e:
             logger.warning(e)
             return None
-
+        logger.warning(user.json())
         if user is None:
             return None
         elif not user.json()['success'] and (self.kwargs.get("username","") + ' is already in use') in user.json()['error']:
