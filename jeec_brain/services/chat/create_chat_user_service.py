@@ -13,14 +13,14 @@ class CreateChatUserService():
         logger.warning(kwargs)
         url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
         payload = {"user":Config.ROCKET_CHAT_ADMIN_USERNAME, "password":Config.ROCKET_CHAT_ADMIN_PASSWORD}
-
+        logger.warning(url)
         try:
             admin = requests.post(url, data=json.dumps(payload))
         except Exception as e:
             logger.warning(e)
             self.auth_token = None
             self.user_id = None
-        logger.warning(admin.json())
+        logger.warning(admin)
         if not admin or not admin.json()['status'] == 'success':
             self.auth_token = None
             self.user_id = None
