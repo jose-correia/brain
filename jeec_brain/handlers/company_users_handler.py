@@ -9,9 +9,6 @@ from jeec_brain.models.enums.roles_enum import RolesEnum
 # HANDLERS
 from jeec_brain.handlers.users_handler import UsersHandler
 
-import logging
-logger = logging.getLogger(__name__)
-
 class CompanyUsersHandler():
 
     @classmethod
@@ -19,12 +16,10 @@ class CompanyUsersHandler():
         password = GenerateCredentialsService().call()
         
         chat_id = UsersHandler.create_chat_user(name, username, email, password, 'Company')
-        logger.warning("chat_id " + chat_id)
         if not chat_id:
             return None
 
         user = UsersHandler.create_user(name, username, RolesEnum['company'], email, password, chat_id)
-        logger.warning(user)
         if not user:
             return None
 

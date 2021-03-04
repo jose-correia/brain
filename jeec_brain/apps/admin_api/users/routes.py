@@ -12,9 +12,6 @@ from jeec_brain.models.enums.roles_enum import RolesEnum
 from jeec_brain.values.api_error_value import APIErrorValue
 from flask_login import current_user
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 # Users routes
 @bp.route('/users', methods=['GET'])
@@ -108,7 +105,6 @@ def create_user():
     # create new company user
     if company_external_id:
         company_user = CompanyUsersHandler.create_company_user(name, username, email, company_id, post, food_manager)
-        logger.warning(company_user)
         if not company_user:
             return render_template('admin/users/add_company_user.html', \
                     user=current_user, \

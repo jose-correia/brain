@@ -23,7 +23,15 @@ class CompaniesHandler():
 
     @classmethod
     def update_company(cls, company, **kwargs):
-        return UpdateCompanyService(company=company, kwargs=kwargs).call()
+        if not company.chat_id:
+            chat_id, chat_code = CreateChannelService(company.name).call()
+            if not chat_id or not chat_code:
+                return None
+        else:
+            chat_id = company.chat_id
+            chat_code = company.chat_code
+
+        return UpdateCompanyService(company=company, kwargs={**kwargs, **{'chat_id':chat_id, 'chat_code':chat_code}}).call()
 
     @classmethod
     def delete_company(cls, company):

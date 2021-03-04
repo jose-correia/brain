@@ -3,24 +3,20 @@ from config import Config
 from typing import Dict
 import requests
 import json
-import logging
-logger = logging.getLogger(__name__)
 
 class CreateChatUserService():
 
     def __init__(self, kwargs: Dict):
         self.kwargs = kwargs
-        logger.warning(kwargs)
         url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
         payload = {"user":Config.ROCKET_CHAT_ADMIN_USERNAME, "password":Config.ROCKET_CHAT_ADMIN_PASSWORD}
-        logger.warning(url)
+
         try:
             admin = requests.post(url, data=json.dumps(payload))
-        except Exception as e:
-            logger.warning(e)
+        except:
             self.auth_token = None
             self.user_id = None
-        logger.warning(admin)
+
         if not admin or not admin.json()['status'] == 'success':
             self.auth_token = None
             self.user_id = None
@@ -36,10 +32,9 @@ class CreateChatUserService():
         
         try:
             user = requests.post(url, data=json.dumps({**self.kwargs, **payload}), headers=headers)
-        except Exception as e:
-            logger.warning(e)
+        except:
             return None
-        logger.warning(user.json())
+
         if user is None:
             return None
         elif not user.json()['success'] and (self.kwargs.get("username","") + ' is already in use') in user.json()['error']:

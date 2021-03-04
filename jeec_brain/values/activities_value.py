@@ -24,6 +24,7 @@ class ActivitiesValue(ValueComposite):
                 "registration_open": activity.registration_open,
                 "registration_link": activity.registration_link,
 				"speakers": SpeakersValue(activity_speakers).to_dict(),
+				"moderator": activity.moderator.name if activity.moderator else "",
 				"companies": CompaniesValue(activity_companies, True).to_dict()
 			}
 			activities_array.append(activity_value)
