@@ -3,6 +3,9 @@ from jeec_brain.services.users.generate_credentials_service import GenerateCrede
 import requests
 import json
 
+import logging
+logger = logging.getLogger(__name__)
+
 class CreateChannelService():
 
     def __init__(self, name, members=[]):
@@ -32,9 +35,10 @@ class CreateChannelService():
         
         try:
             channel = requests.post(url, data=json.dumps(payload), headers=headers)
-        except:
+        except Exception as e:
+            logger.warning(e)
             return None, None
-
+        logger.warning(channel.json())
         if not channel or not channel.json()['success']:
             return None, None
 
