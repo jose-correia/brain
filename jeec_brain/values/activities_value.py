@@ -2,7 +2,7 @@ from jeec_brain.values.value_composite import ValueComposite
 from jeec_brain.values.speakers_value import SpeakersValue
 from jeec_brain.values.companies_value import CompaniesValue
 from jeec_brain.finders.activities_finder import ActivitiesFinder
-
+from jeec_brain.values.rewards_value import RewardsValue
 
 class ActivitiesValue(ValueComposite):
 	def __init__(self, activities):
@@ -25,6 +25,7 @@ class ActivitiesValue(ValueComposite):
                 "registration_link": activity.registration_link,
 				"speakers": SpeakersValue(activity_speakers).to_dict(),
 				"moderator": activity.moderator.name if activity.moderator else "",
+				"reward": RewardsValue(activity.reward).to_dict(),
 				"companies": CompaniesValue(activity_companies, True).to_dict()
 			}
 			activities_array.append(activity_value)
