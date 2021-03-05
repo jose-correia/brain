@@ -78,6 +78,19 @@
           </div>
 
           <div class="row">
+            <div class="input-field col s4">
+              <input id="evf_username" name="evf_username" type="text" class="validate" value="{{ company.evf_username }}" >
+              <label for="evf_username">EVF Username</label>
+            </div>
+  
+          
+            <div class="input-field col s4">
+              <input id="evf_password" name="evf_password" type="text" class="validate" value="{{ company.evf_password }}">
+              <label for="evf_password">EVF Password</label>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="input-field col s6">
               <input id="business_area" name="business_area" type="text" value="{{ company.business_area }}">
               <label for="business_area">Business area</label>

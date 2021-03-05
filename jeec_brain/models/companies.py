@@ -30,6 +30,9 @@ class Companies(db.Model, ModelMixin):
     show_in_website = db.Column(db.Boolean, default=True)
     cvs_access = db.Column(db.Boolean, default=False)
 
+    evf_username = db.Column(db.String, unique=True)
+    evf_password = db.Column(db.String)
+
     activities = relationship("Activities",
         secondary="company_activities",
         secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id, Activities.event_id == Events.id, Events.default == True))

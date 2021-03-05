@@ -339,7 +339,7 @@ button:hover {
 }
 
 .evf::before {
-    content: 'EVF Credentials';
+    content: 'Backend Booth Credentials';
     font-size: 25px !important;
     font-weight: bold;
 }

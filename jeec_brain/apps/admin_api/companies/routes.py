@@ -54,6 +54,8 @@ def create_company():
     business_area = request.form.get('business_area')
     show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
+    evf_username = request.form.get('evf_username')
+    evf_password = request.form.get('evf_password')
 
     if partnership_tier == "":
         partnership_tier = None
@@ -69,7 +71,9 @@ def create_company():
         business_area=business_area,
         link=link,
         show_in_website=show_in_website,
-        partnership_tier=partnership_tier
+        partnership_tier=partnership_tier,
+        evf_username=evf_username,
+        evf_password=evf_password
     )
     
     if company is None:
@@ -111,6 +115,8 @@ def update_company(company_external_id):
     business_area = request.form.get('business_area')
     show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
+    evf_username = request.form.get('evf_username')
+    evf_password = request.form.get('evf_password')
 
     if partnership_tier == "":
         partnership_tier = None
@@ -130,7 +136,9 @@ def update_company(company_external_id):
         business_area=business_area,
         link=link,
         show_in_website=show_in_website,
-        partnership_tier=partnership_tier
+        partnership_tier=partnership_tier,
+        evf_username=evf_username,
+        evf_password=evf_password
     )
     
     if updated_company is None:
