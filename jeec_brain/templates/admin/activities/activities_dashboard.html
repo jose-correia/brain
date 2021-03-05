@@ -220,7 +220,7 @@
 
           {% if role in ['admin', 'activities_admin'] %}
           <td>
-            <form action="/admin/activity/{{activity.external_id.hex}}" method="get">
+            <form action="/admin/activity/{{activity.external_id.hex}}" method="get" style="margin: 0;">
               <button title="Edit activity" class="waves-effect waves-light btn-floating"><i
                   class="material-icons left">edit</i>Edit</button>
             </form>
