@@ -10,7 +10,7 @@ class Dishes(db.Model, ModelMixin):
     description = db.Column(db.String(300))
     type = db.Column(db.Enum(DishTypeEnum), nullable=False)
 
-    meal_id = db.Column(db.Integer, db.ForeignKey('meals.id'), index=True)
+    meal_id = db.Column(db.Integer, db.ForeignKey('meals.id', ondelete='CASCADE'), index=True)
 
     def __repr__(self):
         return 'Dish: {}'.format(self.name)

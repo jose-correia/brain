@@ -7,5 +7,5 @@ class SquadInvitations(db.Model, ModelMixin):
     
     __table_args__ = (db.UniqueConstraint('sender_id', 'receiver_id', name='uix_squads'),)
 
-    sender_id = db.Column(db.Integer, db.ForeignKey('students.id'), index=True)
-    receiver_id = db.Column(db.Integer, db.ForeignKey('students.id'), index=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('students.id', ondelete='CASCADE'), index=True)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('students.id', ondelete='CASCADE'), index=True)

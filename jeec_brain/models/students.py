@@ -35,7 +35,7 @@ class Students(db.Model, ModelMixin):
     entry_year = db.Column(db.String())
 
     user = relationship('Users', cascade="all,delete")
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
 
     squad = relationship('Squads', back_populates="members", uselist=False)
     squad_id = db.Column(db.Integer, db.ForeignKey('squads.id', ondelete='SET NULL'))

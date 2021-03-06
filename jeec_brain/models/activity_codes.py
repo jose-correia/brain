@@ -9,7 +9,7 @@ class ActivityCodes(db.Model, ModelMixin):
     code = db.Column(db.String(16), unique=True, nullable=False, index=True)
 
     activity = relationship('Activities')
-    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'))
+    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id', ondelete='CASCADE'))
 
     def __repr__(self):
         return 'Code: {}'.format(self.code)

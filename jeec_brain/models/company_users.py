@@ -8,14 +8,14 @@ class CompanyUsers(db.Model, ModelMixin):
     __tablename__ = 'company_users'
     
     company = db.relationship('Companies', back_populates="users", uselist=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id', ondelete='CASCADE'))
 
     post = db.Column(db.String(50))
 
     food_manager = db.Column(db.Boolean, default=False)
 
     user = relationship('Users', cascade="all,delete")
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
 
     evf_username = db.Column(db.String, unique=True)
     evf_password = db.Column(db.String)

@@ -23,10 +23,10 @@ class Activities(db.Model, ModelMixin):
     registration_link = db.Column(db.String(100))
 
     activity_type = relationship('ActivityTypes', back_populates="activities", uselist=False)
-    activity_type_id = db.Column(db.Integer, db.ForeignKey('activity_types.id'))
+    activity_type_id = db.Column(db.Integer, db.ForeignKey('activity_types.id', ondelete='SET NULL'))
 
     event = relationship('Events', back_populates="activities", uselist=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id', ondelete='SET NULL'))
 
     chat_id = db.Column(db.String)
     chat_code = db.Column(db.String)

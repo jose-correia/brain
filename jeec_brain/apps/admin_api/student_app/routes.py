@@ -58,7 +58,7 @@ def ban_student(student_external_id):
     if banned_student is None:
         return APIErrorValue('Error banning student').json(500)
 
-    StudentsHandler.delete_student(student)
+    UsersHandler.delete_user(student.user)
 
     return redirect(url_for('admin_api.students_dashboard'))
 
@@ -121,7 +121,7 @@ def ban_squad(squad_external_id):
         if banned_student is None:
             return APIErrorValue('Error banning student').json(500)
 
-        StudentsHandler.delete_student(member)
+        UsersHandler.delete_user(member.user)
 
     return redirect(url_for('admin_api.squads_dashboard'))
 

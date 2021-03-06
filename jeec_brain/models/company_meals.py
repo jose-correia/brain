@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, ForeignKey
 class CompanyMeals(db.Model, ModelMixin):
     __tablename__ = 'company_meals'
 
-    company_id = Column(Integer, ForeignKey('companies.id'), index=True)
-    meal_id = Column(Integer, ForeignKey('meals.id'), index=True)
+    company_id = Column(Integer, ForeignKey('companies.id', ondelete='CASCADE'), index=True)
+    meal_id = Column(Integer, ForeignKey('meals.id', ondelete='CASCADE'), index=True)
 
     max_dish_quantity = Column(Integer)

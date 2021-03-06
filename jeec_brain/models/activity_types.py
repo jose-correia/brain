@@ -15,7 +15,7 @@ class ActivityTypes(db.Model, ModelMixin):
     show_in_app = db.Column(db.Boolean, default=True)
 
     event = relationship('Events', back_populates="activity_types", uselist=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id', ondelete='SET NULL'))
 
     activities = relationship("Activities", back_populates='activity_type', lazy='dynamic', cascade="all,delete")
 
