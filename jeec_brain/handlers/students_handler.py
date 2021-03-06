@@ -151,10 +151,10 @@ class StudentsHandler():
             referral = CreateStudentReferralService({'redeemed_id':redeemed.id, 'redeemer_id':redeemer.id}).call()
             if not referral:
                 return False, None
-            cls.add_points(redeemer, 10)
-            receiver = cls.add_points(redeemed, 10)
+            cls.add_points(redeemed, 10)
+            redeemer = cls.add_points(redeemer, 10)
 
-            return True, receiver
+            return True, redeemer
 
     @classmethod
     def add_student_company(cls, student, company):
