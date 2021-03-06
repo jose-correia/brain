@@ -143,16 +143,16 @@ class StudentsHandler():
         return cls.add_squad_member(student, sender.squad)
 
     @classmethod
-    def redeem_referral(cls, receiver, sender):
-        receiver = StudentsFinder.get_referral_receiver(receiver)
-        if(receiver):
+    def redeem_referral(cls, redeemer, redeemed):
+        redeemer_code = StudentsFinder.get_referral_redeemer(redeemer)
+        if(redeemer_code):
             return False, None
         else:
-            referral = CreateStudentReferralService({'receiver_id':receiver.id, 'sender_id':sender.id}).call()
+            referral = CreateStudentReferralService({'redeemed_id':redeemed.id, 'redeemer_id':redeemer.id}).call()
             if not referral:
-                return False
-            cls.add_points(sender, 10)
-            receiver = cls.add_points(receiver, 10)
+                return False, None
+            cls.add_points(redeemer, 10)
+            receiver = cls.add_points(redeemed, 10)
 
             return True, receiver
 

@@ -89,5 +89,5 @@ class StudentsFinder():
         return BannedStudents.all()
 
     @classmethod
-    def get_referral_receiver(cls, receiver):
-        return StudentReferrals.query.filter_by(receiver_id=receiver.id).first()
+    def get_referral_redeemer(cls, redeemer):
+        return StudentReferrals.query.filter_by(redeemer_id=redeemer.id).first()

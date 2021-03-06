@@ -251,11 +251,11 @@ def redeem_code(student):
     result, student = ActivityCodesHandler.redeem_activity_code(student, code)
 
     if(not result):
-        sender_student = StudentsFinder.get_from_referral_code(code)
-        if(not sender_student or sender_student.id == student.id):
+        redeemed_student = StudentsFinder.get_from_referral_code(code)
+        if(not redeemed_student or redeemed_student.id == student.id):
             return APIErrorValue('Invalid code').json(500)
 
-        result, student = StudentsHandler.redeem_referral(student, sender_student)
+        result, student = StudentsHandler.redeem_referral(student, redeemed_student)
 
         if not result:
             return APIErrorValue('Invalid code').json(500)
