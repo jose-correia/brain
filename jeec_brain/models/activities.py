@@ -26,7 +26,7 @@ class Activities(db.Model, ModelMixin):
     activity_type_id = db.Column(db.Integer, db.ForeignKey('activity_types.id', ondelete='SET NULL'))
 
     event = relationship('Events', back_populates="activities", uselist=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id', ondelete='SET NULL'))
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
     chat_id = db.Column(db.String)
     chat_code = db.Column(db.String)
