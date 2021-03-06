@@ -1,44 +1,13 @@
 version: '3.3'
 
 services:
-  postgres:
-    #   Use the Docker Image postgres. This will pull the newest release.
-    image: postgres:11.4-alpine
-
-    #   Setup the username, password, and database name. You can changes these values.
-    environment:
-      - POSTGRES_USER=josecorreia
-      - POSTGRES_PASSWORD=
-      - POSTGRES_DB=jeec_brain_dev
-
-    #   Maps port 54320 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
+  jeec-brain:
+    container_name: jeec_brain_2
     ports:
-      - "5432:5432"
-
-    #   Set a volume so that database is not lost after shutting down the container.
+      - "8081:8081"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     volumes:
-      - db_data:/var/lib/postgresql/data
-
-  web:
-    build: .
-    image: jeec_brain
-    entrypoint: python manage.py runserver
-    command: --host 0.0.0.0 --port 80
-    volumes:
-      - ./:/jeec/jeec_brain
-    env_file:
-      - '.env'
-    depends_on:
-      - postgres
-    ports:
-      - "8081:80"
-    environment:
-      # If running in windows or linux replace comments DATABASE URL
-      # replace your role name before the @ 
-      # - DATABASE_URL=postgres://josecorreia@localhost:5432/
-      - DATABASE_URL=postgres://josecorreia@docker.for.mac.localhost:5432/
-      - APP_DB=jeec_brain_dev
-
-
-volumes:
-  db_data:
+      - /home/jeecist/jeec-brain/jeec_brain/storage:/jeec_brain/jeec_brain/storage
+      - /home/jeecist/jeec-brain/jeec_brain/static:/jeec_brain/jeec_brain/static
