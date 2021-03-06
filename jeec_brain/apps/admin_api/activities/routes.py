@@ -655,7 +655,7 @@ def generate_codes(activity_external_id):
     number = request.form.get('number', 1)
     activity_codes = []
     
-    for _ in range(number):
+    for _ in range(int(number)):
         activity_codes.append(ActivityCodesHandler.create_activity_code(activity_id=activity.id).code)
 
     return jsonify(activity_codes)

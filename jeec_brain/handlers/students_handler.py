@@ -119,7 +119,7 @@ class StudentsHandler():
             SquadsHandler.delete_squad(student.squad)
 
         elif(student.is_captain()):
-            SquadsHandler.update_squad(student.squad, captain_ist_id=student.squad.members.first().user.username)
+            SquadsHandler.update_squad(student.squad, captain_ist_id=list(filter(lambda member: (not member.is_captain()), student.squad.members.all()))[0].user.username)
 
         invitations = SquadsFinder.get_invitations_from_parameters({'sender_id': student.id})
         for invitation in invitations:
