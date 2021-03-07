@@ -1,9 +1,8 @@
 from jeec_brain.database import db
-from jeec_brain.models.model_mixin import ModelMixin
 from sqlalchemy.orm import relationship
 
 
-class Logs(db.Model, ModelMixin):
+class Logs(db.Model):
     __tablename__ = 'logs'
     
     id = db.Column(db.Integer, primary_key=True)
