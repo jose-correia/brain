@@ -37,4 +37,4 @@ class SpeakersFinder():
 
     @classmethod
     def get_website_speakers(cls, event, kwargs={}):
-        return Speakers.query.filter((Speakers.id == SpeakerActivities.speaker_id) & (Activities.id == SpeakerActivities.activity_id) & (Activities.event_id == Events.id) & (Events.id == event.id)).filter_by(**kwargs).all()
+        return Speakers.query.filter((Speakers.id == SpeakerActivities.speaker_id) & (Activities.id == SpeakerActivities.activity_id) & (Activities.event_id == Events.id) & (Events.id == event.id)).filter_by(**kwargs).order_by(Speakers.updated_at).all()

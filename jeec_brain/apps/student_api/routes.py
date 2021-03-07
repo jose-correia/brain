@@ -31,6 +31,7 @@ from jeec_brain.finders.users_finder import UsersFinder
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
+from jeec_brain.values.members_value import MembersValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
 from jeec_brain.values.student_event_info_value import StudentEventInfoValue
@@ -175,12 +176,19 @@ def invite_squad(student):
     else:
         return APIErrorValue('Failed to invite').json(500)
 
-@bp.route('/squad-invitations', methods=['GET'])
+@bp.route('/squad-invitations-received', methods=['GET'])
 @requires_student_auth
-def get_squad_invitations(student):
+def get_squad_invitations_received(student):
     invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
 
     return SquadInvitationsValue(invitations).json(200)
+
+@bp.route('/squad-invitations-sent', methods=['GET'])
+@requires_student_auth
+def get_squad_invitations_sent(student):
+    invitations = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
+
+    return MembersValue([invitation.receiver for invitation in invitations]).json(200)
 
 @bp.route('/accept-invitation', methods=['POST'])
 @requires_student_auth
@@ -459,7 +467,7 @@ def delete_company(student):
 @bp.route('/students-ranking', methods=['GET'])
 @requires_student_auth
 def get_students_ranking(student):
-    students = StudentsFinder.get_top()
+    students = StudentsFinder.get_top(20)
 
     return StudentsValue(students, details=False).json(200)
 
@@ -467,6 +475,13 @@ def get_students_ranking(student):
 @requires_student_auth
 def get_squads_ranking(student):
     squads = SquadsFinder.get_top()
+
+    return SquadsValue(squads).json(200)
+
+@bp.route('/daily-squads-ranking', methods=['GET'])
+@requires_student_auth
+def get_daily_squads_ranking(student):
+    squads = SquadsFinder.get_daily_top()
 
     return SquadsValue(squads).json(200)
 

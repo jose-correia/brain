@@ -88,7 +88,7 @@ class ActivitiesFinder():
         day = now.strftime('%d %b %Y, %a')
         time = now.strftime("%H:%M")
 
-        return CompanyActivities.query.join(Activities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.time <= time) & (Activities.end_time > time)).first()
+        return Activities.query.join(CompanyActivities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.time <= time) & (Activities.end_time > time)).first()
 
     @classmethod
     def get_activities_from_speaker_and_event(cls, speaker, event):

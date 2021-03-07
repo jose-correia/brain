@@ -40,6 +40,10 @@ class SquadsFinder():
         return Squads.query.order_by(Squads.total_points.desc()).limit(number).all()
 
     @classmethod
+    def get_daily_top(cls, number=10):
+        return Squads.query.order_by(Squads.daily_points.desc()).limit(number).all()
+        
+    @classmethod
     def get_first(cls):
         max = db_session.query(func.max(Squads.daily_points)).subquery()
         return Squads.query.filter_by(daily_points=max).all()
