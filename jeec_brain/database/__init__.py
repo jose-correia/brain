@@ -60,6 +60,8 @@ def create_tables():
     from jeec_brain.models.jeecpot_rewards import JeecpotRewards
     from jeec_brain.models.squads_rewards import SquadsRewards
 
+    from jeec_brain.models.logs import Logs
+
     db.create_all()
 
 
