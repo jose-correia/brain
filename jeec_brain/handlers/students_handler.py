@@ -1,3 +1,5 @@
+from config import Config
+
 # SERVICES
 from jeec_brain.services.students.create_student_service import CreateStudentService
 from jeec_brain.services.students.delete_student_service import DeleteStudentService
@@ -152,8 +154,8 @@ class StudentsHandler():
             referral = CreateStudentReferralService({'redeemed_id':redeemed.id, 'redeemer_id':redeemer.id}).call()
             if not referral:
                 return False, None
-            cls.add_points(redeemed, 10)
-            redeemer = cls.add_points(redeemer, 10)
+            cls.add_points(redeemed, Config.REWARD_REFERRAL)
+            redeemer = cls.add_points(redeemer, Config.REWARD_REFERRAL)
 
             return True, redeemer
 
