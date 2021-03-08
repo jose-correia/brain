@@ -34,8 +34,8 @@ class StudentActivitiesValue(ValueComposite):
 				"companies": CompaniesValue(activity_companies, True).to_dict(),
 				"participated": activity in student.activities,
 				"reward": RewardsValue(activity.reward).to_dict(),
-				"zoom_url": activity.zoom_link,
-				"interest": not set(activity_tags).isdisjoint(student.tags) or not set(activity_companies).isdisjoint(student.companies)
+				"zoom_url": activity.zoom_link
+				# "interest": not set(activity_tags).isdisjoint(student.tags) or not set(activity_companies).isdisjoint(student.companies)
 			}
 			activities_array.append(activity_value)
 		self.serialize_with(data=activities_array)
