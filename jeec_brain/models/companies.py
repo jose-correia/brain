@@ -30,7 +30,7 @@ class Companies(db.Model, ModelMixin):
     show_in_website = db.Column(db.Boolean, default=True)
     cvs_access = db.Column(db.Boolean, default=False)
 
-    evf_username = db.Column(db.String, unique=True)
+    evf_username = db.Column(db.String)
     evf_password = db.Column(db.String)
 
     activities = relationship("Activities",

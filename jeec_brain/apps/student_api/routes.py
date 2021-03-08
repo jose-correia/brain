@@ -31,7 +31,7 @@ from jeec_brain.finders.users_finder import UsersFinder
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
-from jeec_brain.values.members_value import MembersValue
+from jeec_brain.values.squad_members_value import SquadMembersValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
 from jeec_brain.values.student_event_info_value import StudentEventInfoValue
@@ -188,7 +188,7 @@ def get_squad_invitations_received(student):
 def get_squad_invitations_sent(student):
     invitations = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
 
-    return MembersValue([invitation.receiver for invitation in invitations]).json(200)
+    return SquadMembersValue([invitation.receiver for invitation in invitations]).json(200)
 
 @bp.route('/accept-invitation', methods=['POST'])
 @requires_student_auth
