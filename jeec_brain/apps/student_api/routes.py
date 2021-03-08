@@ -32,6 +32,7 @@ from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
 from jeec_brain.values.squad_members_value import SquadMembersValue
+from jeec_brain.values.squad_invitations_sent_value import SquadInvitationsSentValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
 from jeec_brain.values.student_event_info_value import StudentEventInfoValue
@@ -176,6 +177,23 @@ def invite_squad(student):
     else:
         return APIErrorValue('Failed to invite').json(500)
 
+@bp.route('/cancel-invitation', methods=['POST'])
+@requires_student_auth
+def cancel_invite(student):
+    try:
+        receiver_id = request.get_json()["id"]
+    except KeyError:
+        return APIErrorValue('Invalid members').json(500)
+
+    invitations = SquadsFinder.get_invitations_from_parameters({"sender_id":student.id, "receiver_id": receiver_id})
+    if(invitations is None or len(invitations) == 0):
+        return APIErrorValue("No invites found").json(404)
+
+    for invitation in invitations:
+        SquadsHandler.delete_squad_invitation(invitation)
+
+    return jsonify('Success'), 200
+
 @bp.route('/squad-invitations-received', methods=['GET'])
 @requires_student_auth
 def get_squad_invitations_received(student):
@@ -188,7 +206,7 @@ def get_squad_invitations_received(student):
 def get_squad_invitations_sent(student):
     invitations = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
 
-    return SquadMembersValue([invitation.receiver for invitation in invitations]).json(200)
+    return SquadInvitationsSentValue([invitation.receiver for invitation in invitations]).json(200)
 
 @bp.route('/accept-invitation', methods=['POST'])
 @requires_student_auth
@@ -203,6 +221,8 @@ def accept_invitation(student):
         return APIErrorValue('Invitation not found').json(404)
 
     student = StudentsHandler.accept_invitation(student, invitation)
+    if(not student):
+        return APIErrorValue("Failed to join squad").json(500)
 
     return StudentsValue(student, details=True).json(200)
 

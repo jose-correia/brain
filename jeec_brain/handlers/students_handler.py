@@ -99,7 +99,8 @@ class StudentsHandler():
 
     @classmethod
     def invite_squad_members(cls, student, members_ist_id):
-        if(student.squad is None or (len(members_ist_id) + len(student.squad.members.all()) > 4)):
+        invitations_sent = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
+        if(student.squad is None or (len(members_ist_id) + len(student.squad.members.all()) + len(invitations_sent) > 4)):
             return None
 
         for member_ist_id in members_ist_id:
@@ -134,15 +135,15 @@ class StudentsHandler():
         if(student.id != invitation.receiver_id):
             return False
 
-        sender = StudentsFinder.get_from_id(invitation.sender_id)
-        if(student.squad and sender.squad and student.squad.id == sender.squad.id):
-            return student
-
-        cls.leave_squad(student)
+        if(len(invitation.sender.squad.members.all()) >= 4 or (invitation.sender.squad and student.squad and student.squad.id == invitation.sender.squad.id)):
+            SquadsHandler.delete_squad_invitation(invitation)
+            return False
 
         SquadsHandler.delete_squad_invitation(invitation)
+        
+        cls.leave_squad(student)
 
-        return cls.add_squad_member(student, sender.squad)
+        return cls.add_squad_member(student, invitation.sender.squad)
 
     @classmethod
     def redeem_referral(cls, redeemer, redeemed):
