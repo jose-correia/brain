@@ -149,15 +149,15 @@ class StudentsHandler():
     def redeem_referral(cls, redeemer, redeemed):
         redeemer_code = StudentsFinder.get_referral_redeemer(redeemer)
         if(redeemer_code):
-            return False, None
+            return "Already redeemed a personal code", None
         else:
             referral = CreateStudentReferralService({'redeemed_id':redeemed.id, 'redeemer_id':redeemer.id}).call()
             if not referral:
-                return False, None
-            cls.add_points(redeemed, Config.REWARD_REFERRAL)
-            redeemer = cls.add_points(redeemer, Config.REWARD_REFERRAL)
+                return "Failed to redeem code", None
+            cls.add_points(redeemed, 50)
+            redeemer = cls.add_points(redeemer, 50)
 
-            return True, redeemer
+            return None, redeemer
 
     @classmethod
     def add_student_company(cls, student, company):
