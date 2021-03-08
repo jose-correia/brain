@@ -41,6 +41,7 @@ class AuthHandler(object):
             if (person['username'] in banned_ids):
                 return None, None
 
+            course = None
             for role in person['roles']:
                 if role['type'] == "STUDENT":
                     course = role['registrations'][0]['acronym']
