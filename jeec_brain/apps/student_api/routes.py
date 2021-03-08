@@ -221,6 +221,8 @@ def accept_invitation(student):
         return APIErrorValue('Invitation not found').json(404)
 
     student = StudentsHandler.accept_invitation(student, invitation)
+    if(not student):
+        return APIErrorValue("Failed to join squad").json(500)
 
     return StudentsValue(student, details=True).json(200)
 

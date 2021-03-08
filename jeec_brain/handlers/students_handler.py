@@ -139,9 +139,12 @@ class StudentsHandler():
         if(student.squad and sender.squad and student.squad.id == sender.squad.id):
             return student
 
-        cls.leave_squad(student)
-
         SquadsHandler.delete_squad_invitation(invitation)
+
+        if(len(sender.squad.members.all()) >= 4):
+            return False
+
+        cls.leave_squad(student)
 
         return cls.add_squad_member(student, sender.squad)
 
