@@ -97,7 +97,8 @@ class StudentsHandler():
 
     @classmethod
     def invite_squad_members(cls, student, members_ist_id):
-        if(student.squad is None or (len(members_ist_id) + len(student.squad.members.all()) > 4)):
+        invitations_sent = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
+        if(student.squad is None or (len(members_ist_id) + len(student.squad.members.all()) + len(invitations_sent) > 4)):
             return None
 
         for member_ist_id in members_ist_id:
