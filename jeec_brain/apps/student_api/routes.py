@@ -96,7 +96,7 @@ def today_login(student):
         student_login = StudentsFinder.get_student_login(student, date)
         if student_login is None:
             StudentsHandler.add_student_login(student, date)
-            StudentsHandler.add_points(student, Config.REWARD_LOGIN)
+            StudentsHandler.add_points(student, int(Config.REWARD_LOGIN))
         else:
             return APIErrorValue("Already loggedin today").json(409)
     else:
@@ -320,7 +320,7 @@ def add_linkedin(student):
         return APIErrorValue('Invalid url').json(500)
 
     if not student.linkedin_url:
-        StudentsHandler.add_points(student, Config.REWARD_LINKEDIN)
+        StudentsHandler.add_points(student, int(Config.REWARD_LINKEDIN))
     StudentsHandler.update_student(student, linkedin_url=url)
 
     return StudentsValue(student, details=True).json(200)
@@ -343,7 +343,7 @@ def add_cv(student):
 
         if not student.uploaded_cv:
             StudentsHandler.update_student(student, uploaded_cv=True)
-            StudentsHandler.add_points(student, Config.REWARD_CV)
+            StudentsHandler.add_points(student, int(Config.REWARD_CV))
 
     else:
         return APIErrorValue('Wrong file extension').json(500)

@@ -154,8 +154,9 @@ class StudentsHandler():
             referral = CreateStudentReferralService({'redeemed_id':redeemed.id, 'redeemer_id':redeemer.id}).call()
             if not referral:
                 return "Failed to redeem code", None
-            cls.add_points(redeemed, 50)
-            redeemer = cls.add_points(redeemer, 50)
+
+            cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
+            redeemer = cls.add_points(redeemer, int(Config.REWARD_REFERRAL))
 
             return None, redeemer
 
