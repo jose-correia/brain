@@ -293,16 +293,28 @@ def redeem_code(student):
 @requires_student_auth
 def get_activities(student):
     event = EventsFinder.get_default_event()
+    date = request.args.get('date', None)
+    if date is None:
+        activities = event.activities
+    else:
+        activities = ActivitiesFinder.get_from_parameters({"event_id":event.id,"day":date})
     
-    return StudentActivitiesValue(event, event.activities, student).json(200)
+    return StudentActivitiesValue(activities, student).json(200)
 
 @bp.route('/quests', methods=['GET'])
 @requires_student_auth
 def get_quests(student):
-    event = EventsFinder.get_default_event()
     activities = ActivitiesFinder.get_quests()
     
-    return StudentActivitiesValue(event, activities, student, True).json(200)
+    return StudentActivitiesValue(activities, student, True).json(200)
+
+@bp.route('/event-dates', methods=['GET'])
+@requires_student_auth
+def get_activity_dates(student):
+    event = EventsFinder.get_default_event()
+    dates = EventsHandler.get_event_dates(event)
+
+    return jsonify(dates)
 
 @bp.route('/event-info', methods=['GET'])
 @requires_student_auth

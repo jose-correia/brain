@@ -6,7 +6,7 @@ from jeec_brain.finders.activities_finder import ActivitiesFinder
 
 
 class StudentActivitiesValue(ValueComposite):
-	def __init__(self, event, activities, student, bypass_show_in_app=False):
+	def __init__(self, activities, student, bypass_show_in_app=False):
 		super(StudentActivitiesValue, self).initialize({})
 		activities_array = []
 		for activity in activities:
@@ -39,5 +39,3 @@ class StudentActivitiesValue(ValueComposite):
 			}
 			activities_array.append(activity_value)
 		self.serialize_with(data=activities_array)
-		self.serialize_with(start_date=event.start_date)
-		self.serialize_with(end_date=event.end_date)
