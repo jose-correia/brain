@@ -12,13 +12,16 @@ from datetime import datetime
 @bp.route('/resumes', methods=['GET'])
 @require_company_login
 def resumes_dashboard(company_user):
-    event = EventsFinder.get_default_event()
-    today = datetime.now()
-    cvs_access_start = datetime.strptime(event.cvs_access_start, '%d %b %Y, %a')
-    cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
+    if company_user.company.cvs_access:
+        event = EventsFinder.get_default_event()
+        today = datetime.now()
+        cvs_access_start = datetime.strptime(event.cvs_access_start, '%d %b %Y, %a')
+        cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
 
-    if today < cvs_access_start or today > cvs_access_end:
-        return render_template('companies/resumes/resumes_dashboard.html', cv_students=None, interested_students=None, error="Out of access date")
+        if today < cvs_access_start or today > cvs_access_end:
+            return render_template('companies/resumes/resumes_dashboard.html', cv_students=None, interested_students=None, error="Out of access date")
+    else:
+        return render_template('companies/resumes/resumes_dashboard.html', cv_students=None, interested_students=None, error="Not authorized")
 
     company_user = UsersFinder.get_company_user_from_user(current_user)
     interested_students = StudentsFinder.get_company_students(company_user.company)

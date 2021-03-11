@@ -50,14 +50,17 @@ def dashboard(company_user):
     if not company_user.user.accepted_terms:
         return render_template('companies/terms_conditions.html', user=company_user.user)
 
-    event = EventsFinder.get_default_event()
-    today = datetime.now()
-    cvs_access_start = datetime.strptime(event.cvs_access_start, '%d %b %Y, %a')
-    cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
-    if today < cvs_access_start or today > cvs_access_end:
-        cvs_enabled = False
+    if company_user.company.cvs_access:
+        event = EventsFinder.get_default_event()
+        today = datetime.now()
+        cvs_access_start = datetime.strptime(event.cvs_access_start, '%d %b %Y, %a')
+        cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
+        if today < cvs_access_start or today > cvs_access_end:
+            cvs_enabled = False
+        else:
+            cvs_enabled = True
     else:
-        cvs_enabled = True
+        cvs_enabled = False
 
     company_auctions = CompaniesFinder.get_company_auctions(company_user.company)
 

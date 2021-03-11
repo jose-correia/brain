@@ -56,6 +56,7 @@ def create_company():
     partnership_tier = request.form.get('partnership_tier')
     evf_username = request.form.get('evf_username')
     evf_password = request.form.get('evf_password')
+    cvs_access = request.form.get('cvs_access')
 
     if partnership_tier == "":
         partnership_tier = None
@@ -65,6 +66,11 @@ def create_company():
     else:
         show_in_website = False
 
+    if cvs_access == 'True':
+        cvs_access = True
+    else:
+        cvs_access = False
+
     company = CompaniesHandler.create_company(
         name=name,
         email=email,
@@ -73,7 +79,8 @@ def create_company():
         show_in_website=show_in_website,
         partnership_tier=partnership_tier,
         evf_username=evf_username,
-        evf_password=evf_password
+        evf_password=evf_password,
+        cvs_access=cvs_access
     )
     
     if company is None:
@@ -117,6 +124,7 @@ def update_company(company_external_id):
     partnership_tier = request.form.get('partnership_tier')
     evf_username = request.form.get('evf_username')
     evf_password = request.form.get('evf_password')
+    cvs_access = request.form.get('cvs_access')
 
     if partnership_tier == "":
         partnership_tier = None
@@ -125,6 +133,11 @@ def update_company(company_external_id):
         show_in_website = True
     else:
         show_in_website = False
+
+    if cvs_access == 'True':
+        cvs_access = True
+    else:
+        cvs_access = False
 
     image_path = CompaniesHandler.find_image(name)
     old_company_name = company.name
@@ -138,7 +151,8 @@ def update_company(company_external_id):
         show_in_website=show_in_website,
         partnership_tier=partnership_tier,
         evf_username=evf_username,
-        evf_password=evf_password
+        evf_password=evf_password,
+        cvs_access=cvs_access
     )
     
     if updated_company is None:

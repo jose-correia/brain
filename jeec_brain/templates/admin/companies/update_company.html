@@ -58,9 +58,23 @@
           {% endif %}
 
           <div class="row">
-            <div class="input-field col s12">
-              <input class="col s3" id="name" name="name" type="text" class="validate" value="{{ company.name }}" required>
+            <div class="input-field col s4">
+              <input class="col s12" id="name" name="name" type="text" class="validate" value="{{ company.name }}" required>
               <label for="name">Name</label>
+            </div>
+
+            <div class="col">
+              CV's Access:
+              <p>
+                <label style="margin-right: 20px;">
+                  <input class="with-gap" name="cvs_access" type="radio" value="True" {% if company.cvs_access is sameas true %} checked {% endif %} />
+                  <span>Yes</span>
+                </label>
+                <label>
+                  <input class="with-gap" name="cvs_access" type="radio" value="False" {% if company.cvs_access is sameas false %} checked {% endif %} />
+                  <span>No</span>
+                </label>
+              </p>
             </div>
           </div>
 

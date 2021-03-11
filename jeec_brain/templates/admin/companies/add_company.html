@@ -1,133 +1,156 @@
-<html>  
-  <head>
-    <title>JEEC|Brain</title>
-    <link rel="stylesheet" href="/static/admin/css/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<html>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-  </head>
-  <body>
-    <div class="nav-bar">
-        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+</head>
 
-    <div class="section-header" >
-      <h2>Companies Management</h2>
-      <p>Add a new company</p>
-    </div>
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
 
-    <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
     </form>
 
-    <br>
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
 
-    <div class="create-form">
-      {% if error is not none %}
-        <blockquote class="create-error">
-          {{ error }}
-        </blockquote>
-      {% endif %}
+  <div class="section-header">
+    <h2>Companies Management</h2>
+    <p>Add a new company</p>
+  </div>
 
-      <form class="col s12" action="{{ url_for('admin_api.create_company') }}" method="post" enctype="multipart/form-data">
-          <div class="row">
-            <div class="input-field col s12">
-              <input class="col s3" id="name" name="name" type="text" class="validate" required>
-              <label for="name">Name</label>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="input-field col s4">
-              <input id="link" name="link" type="url" class="validate">
-              <label for="link">Website link</label>
-            </div>
-  
-          
-            <div class="input-field col s3">
-              <input id="email" name="email" type="email" class="validate">
-              <label for="email">Contact email</label>
-              <span class="helper-text" data-error="wrong format" data-success="right"></span>
-            </div>
-          </div>
+  <form action="{{ url_for('admin_api.companies_dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
 
-          <div class="row">
-            <div class="input-field col s4">
-              <input id="evf_username" name="evf_username" type="text" class="validate">
-              <label for="evf_username">EVF Username</label>
-            </div>
-  
-          
-            <div class="input-field col s4">
-              <input id="evf_password" name="evf_password" type="text" class="validate">
-              <label for="evf_password">EVF Password</label>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="input-field col s6">
-              <input id="business_area" name="business_area" type="text" class="validate">
-              <label for="business_area">Business area</label>
-            </div>
-          </div>
-          
-          <p>
-              <select name="partnership_tier" class="browser-default" style="margin-left: 100px;width: 200px;display: inline-block;">
-                <option value="" disabled selected>Partnership</option>
-                <option value="gold">Gold Partner</option>
-                <option value="silver">Silver Partner</option>
-                <option value="bronze">Bronze Partner</option>
-                <option value="main_sponsor">Main Sponsor</option>
-                <option value="sponsor">Partner</option>
-              </select>
-          </p>
+  <br>
 
-          <br>
-          
-          Show company in JEEC website:
+  <div class="create-form">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% endif %}
+
+    <form class="col s12" action="{{ url_for('admin_api.create_company') }}" method="post"
+      enctype="multipart/form-data">
+      <div class="row">
+        <div class="input-field col s4">
+          <input class="col s12" id="name" name="name" type="text" class="validate" required>
+          <label for="name">Name</label>
+        </div>
+
+        <div class="col">
+          CV's Access:
           <p>
             <label style="margin-right: 20px;">
-              <input class="with-gap" name="show_in_website" type="radio" value="True" checked/>
+              <input class="with-gap" name="cvs_access" type="radio" value="True" />
               <span>Yes</span>
             </label>
             <label>
-                <input class="with-gap" name="show_in_website" type="radio" value="False"/>
-                <span>No</span>
+              <input class="with-gap" name="cvs_access" type="radio" value="False" checked />
+              <span>No</span>
             </label>
           </p>
+        </div>
+      </div>
 
-          <br>
-          
-          <div class="file-field input-field" style="width:500px;">
-            <div class="btn">
-              <i class="material-icons left">add_a_photo</i>
-              <span>company image</span>
-              <input type="file" name="file">
-            </div>
-            <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="use .png with <200kB">
-            </div>
-          </div>
-    
-          <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Company</button>
-      </form>
-    </div>
-  </body>
-</html>  
+      <div class="row">
+        <div class="input-field col s4">
+          <input id="link" name="link" type="url" class="validate">
+          <label for="link">Website link</label>
+        </div>
+
+
+        <div class="input-field col s3">
+          <input id="email" name="email" type="email" class="validate">
+          <label for="email">Contact email</label>
+          <span class="helper-text" data-error="wrong format" data-success="right"></span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s4">
+          <input id="evf_username" name="evf_username" type="text" class="validate">
+          <label for="evf_username">EVF Username</label>
+        </div>
+
+
+        <div class="input-field col s4">
+          <input id="evf_password" name="evf_password" type="text" class="validate">
+          <label for="evf_password">EVF Password</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="business_area" name="business_area" type="text" class="validate">
+          <label for="business_area">Business area</label>
+        </div>
+      </div>
+
+      <p>
+        <select name="partnership_tier" class="browser-default"
+          style="margin-left: 100px;width: 200px;display: inline-block;">
+          <option value="" disabled selected>Partnership</option>
+          <option value="gold">Gold Partner</option>
+          <option value="silver">Silver Partner</option>
+          <option value="bronze">Bronze Partner</option>
+          <option value="main_sponsor">Main Sponsor</option>
+          <option value="sponsor">Partner</option>
+        </select>
+      </p>
+
+      <br>
+
+      Show company in JEEC website:
+      <p>
+        <label style="margin-right: 20px;">
+          <input class="with-gap" name="show_in_website" type="radio" value="True" checked />
+          <span>Yes</span>
+        </label>
+        <label>
+          <input class="with-gap" name="show_in_website" type="radio" value="False" />
+          <span>No</span>
+        </label>
+      </p>
+
+      <br>
+
+      <div class="file-field input-field" style="width:500px;">
+        <div class="btn">
+          <i class="material-icons left">add_a_photo</i>
+          <span>company image</span>
+          <input type="file" name="file">
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text" placeholder="use .png with <200kB">
+        </div>
+      </div>
+
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
+          class="material-icons left">save</i>Save Company</button>
+    </form>
+  </div>
+</body>
+
+</html>
