@@ -41,19 +41,28 @@ class AuthHandler(object):
             if (person['username'] in banned_ids):
                 return None, None
 
-            course = None
-            for role in person['roles']:
-                if role['type'] == "STUDENT":
-                    course = role['registrations'][0]['acronym']
-                    entry_year = get_year(role['registrations'][0]['academicTerms'])
-                    break
-
-            if course is None:
-                return None, None
-
             student = StudentsFinder.get_from_ist_id(person['username'])
             if student is None:
-                student = StudentsHandler.create_student(person['name'], person['username'], person['email'], course, entry_year, person['photo']['data'], person['photo']['type'])
+                course = None
+                for role in person['roles']:
+                    if role['type'] == "STUDENT":
+                        for registration in role['registrations']:
+                            if registration['acronym']:
+                                course = registration['acronym']
+                                entry_year = get_year(registration['academicTerms'])
+                                break
+
+                if not course:
+                    return None, None
+
+                if person['email']:
+                    email = person['email']
+                elif person['institutionalEmail']:
+                    email = person['institutionalEmail']
+                else:
+                    return None, None
+
+                student = StudentsHandler.create_student(person['name'], person['username'], email, course, entry_year, person['photo']['data'], person['photo']['type'])
                 if student is None:
                     return None, None
             

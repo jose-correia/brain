@@ -23,6 +23,7 @@ class ActivitiesValue(ValueComposite):
 				"type": activity.activity_type.name,
                 "registration_open": activity.registration_open,
                 "registration_link": activity.registration_link,
+				"zoom_link": activity.zoom_link,
 				"speakers": SpeakersValue(activity_speakers).to_dict(),
 				"moderator": activity.moderator.name if activity.moderator else "",
 				"reward": RewardsValue(activity.reward).to_dict(),

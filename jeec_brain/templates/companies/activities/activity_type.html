@@ -97,8 +97,8 @@
   <center id="info">
     {% if activity_type.name|string() == 'Job Fair' %}
     <div class="evf evf-user">
-      <p><b>user:</b> {{ user.user.username }}</p>
-      <p><b>password:</b> {{ user.user.password }}</p>
+      <p><b>user:</b> {{ user.evf_username }}</p>
+      <p><b>password:</b> {{ user.evf_password }}</p>
       <form action="https://tecnicoevents.easyvirtualfair.com/" target="_blank">
         <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
             class="large material-icons left">language</i>Log In</button>

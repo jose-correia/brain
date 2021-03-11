@@ -18,6 +18,7 @@ class CompanyUsers(db.Model, ModelMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
 
     evf_username = db.Column(db.String, unique=True)
+    evf_password = db.Column(db.String)
 
     def __repr__(self):
         return 'Name: {}  |  Company: {}'.format(self.user.name, self.company.name)

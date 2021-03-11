@@ -83,6 +83,7 @@ def create_user():
     role = request.form.get('role', None)
     post = request.form.get('post', None)
     evf_username = request.form.get('evf_username', None)
+    evf_password = request.form.get('evf_password', None)
     
     # check if is creating company user
     company_external_id = request.form.get('company_external_id')
@@ -105,7 +106,7 @@ def create_user():
 
     # create new company user
     if company_external_id:
-        company_user = CompanyUsersHandler.create_company_user(name, username, email, company_id, post, food_manager, evf_username)
+        company_user = CompanyUsersHandler.create_company_user(name, username, email, company_id, post, food_manager, evf_username, evf_password)
         if not company_user:
             return render_template('admin/users/add_company_user.html', \
                     user=current_user, \

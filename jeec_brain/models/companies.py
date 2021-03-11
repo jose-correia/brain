@@ -35,6 +35,7 @@ class Companies(db.Model, ModelMixin):
 
     activities = relationship("Activities",
         secondary="company_activities",
+        order_by="Activities.day, Activities.time",
         secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id, Activities.event_id == Events.id, Events.default == True))
 
     dishes = relationship("Dishes",

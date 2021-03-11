@@ -12,7 +12,7 @@ from jeec_brain.handlers.users_handler import UsersHandler
 class CompanyUsersHandler():
 
     @classmethod
-    def create_company_user(cls, name, username, email, company_id, post, food_manager, evf_username):
+    def create_company_user(cls, name, username, email, company_id, post, food_manager, evf_username, evf_password):
         password = GenerateCredentialsService().call()
         
         chat_id = UsersHandler.create_chat_user(name, username, email, password, 'Company')
@@ -28,7 +28,8 @@ class CompanyUsersHandler():
             company_id=company_id,
             post=post,
             food_manager=food_manager,
-            evf_username=evf_username
+            evf_username=evf_username,
+            evf_password=evf_password
         ).call()
 
     @classmethod

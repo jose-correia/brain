@@ -57,7 +57,7 @@ class StudentsFinder():
     @classmethod
     def get_from_search(cls, search):
         search = "%{}%".format(search)
-        return Students.query.filter(Students.user.name.ilike(search) | Students.user.username.ilike(search)).all()
+        return Students.query.filter((Students.user_id == Users.id) & (Users.name.ilike(search) | Users.username.ilike(search))).all()
 
     @classmethod
     def get_from_search_without_student(cls, search, student_external_id):
