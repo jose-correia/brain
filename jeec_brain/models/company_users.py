@@ -17,7 +17,7 @@ class CompanyUsers(db.Model, ModelMixin):
     user = relationship('Users', cascade="all,delete")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
 
-    evf_username = db.Column(db.String, unique=True)
+    evf_username = db.Column(db.String)
     evf_password = db.Column(db.String)
 
     def __repr__(self):
