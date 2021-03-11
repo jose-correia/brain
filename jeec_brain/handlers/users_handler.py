@@ -62,7 +62,7 @@ class UsersHandler():
         if chat_user:
             return chat_user['authToken']
         else:
-            return None
+            return ""
 
     @classmethod
     def join_channel(cls, user, chat_id, chat_code):

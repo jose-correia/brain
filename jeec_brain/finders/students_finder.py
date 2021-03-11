@@ -91,3 +91,11 @@ class StudentsFinder():
     @classmethod
     def get_referral_redeemer(cls, redeemer):
         return StudentReferrals.query.filter_by(redeemer_id=redeemer.id).first()
+
+    @classmethod
+    def get_cv_students(cls):
+        return Students.query.filter_by(uploaded_cv=True).all()
+
+    @classmethod
+    def get_company_students(cls, company):
+        return Students.query.filter((StudentCompanies.company_id == company.id) & (StudentCompanies.student_id == Students.id)).all()

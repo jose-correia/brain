@@ -49,15 +49,18 @@
 
   {% if activity_type.name|string() == 'Job Fair' %}
   <div class="flexbox-btns" style="justify-content: center;">
-    <button id="info_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-right: 50px;"><i
+    <button id="activity_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-right: 50px;"><i
+      class="large material-icons left">build</i>Activity</button>
+
+    <button id="info_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
         class="large material-icons left">info</i>Info</button>
 
-    <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-left: 50px;"><i
+    <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-left: 50px;" disabled><i
         class="large material-icons left">chat</i>Chat</button>
   </div>
   {% endif %}
 
-  <center id="info">
+  <center id="activity">
     <div class="carousel-wrapper">
       <img class="left-arrow" src="/static/icons/arrow.svg">
       <div class="carousel carousel-slider" style="min-height: 450px !important;">
@@ -65,7 +68,8 @@
         <div class="carousel-item">
           <p class="activity-name">{{ activity.name }}</p>
           <p class="activity-description">{{ activity.description }}</p>
-          <p class="activity-time">{{ activity.day }} - {{ activity.time }}{%if activity.end_time %}/{{activity.end_time }}{% endif %}</p>
+          <p class="activity-time">{{ activity.day }} - {{ activity.time }}{%if activity.end_time %}/{{activity.end_time
+            }}{% endif %}</p>
 
           <div class="flexbox-btns">
             <button id="calendar_btn" class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;"><i
@@ -73,7 +77,7 @@
 
             {% if activity_type.name|string() == 'Job Fair' %}
             <button data-target="modal1" class="waves-effect red lighten-2 btn-large dashboard-btn modal-trigger"
-              style="width: auto;"><i class="large material-icons left">qr_code</i>Generate Code</button>
+              style="width: auto;" disabled><i class="large material-icons left">qr_code</i>Generate Code</button>
             {% endif %}
 
             {% if activity.zoom_link %}
@@ -88,12 +92,23 @@
       </div>
       <img class="right-arrow" src="/static/icons/arrow.svg">
     </div>
+  </center>
 
+  <center id="info">
     {% if activity_type.name|string() == 'Job Fair' %}
-    <div class="evf">
+    <div class="evf evf-user">
       <p><b>user:</b> {{ user.user.username }}</p>
       <p><b>password:</b> {{ user.user.password }}</p>
-      <form action="https://google.com" target="_blank">
+      <form action="https://tecnicoevents.easyvirtualfair.com/" target="_blank">
+        <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
+            class="large material-icons left">language</i>Log In</button>
+      </form>
+    </div>
+
+    <div class="evf">
+      <p><b>user:</b> {{ user.company.evf_username }}</p>
+      <p><b>password:</b> {{ user.company.evf_password }}</p>
+      <form action="https://tecnicoevents.easyvirtualfair.com/backend" target="_blank">
         <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
             class="large material-icons left">language</i>Log In</button>
       </form>
@@ -103,12 +118,7 @@
 
   {% if activity_type.name|string() == 'Job Fair' %}
   <div id="chat">
-    <iframe
-      id="chat-frame"
-      class="chat-frame"
-      src="{{ chat_url }}"
-      frameborder="0"
-      ></iframe>
+    <iframe id="chat-frame" class="chat-frame" src="{{ chat_url }}" frameborder="0"></iframe>
   </div>
 
   <div id="modal1" class="modal" style="height: auto;">
@@ -117,11 +127,13 @@
         <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" readonly>
 
         <div style="margin-top: 40px;">
-          <button id="code" class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto; margin-right: 10px;"><i
-              class="large material-icons left">qr_code</i>Generate Code</button>
+          <button id="code" class="waves-effect red lighten-2 btn-large dashboard-btn"
+            style="width: auto; margin-right: 10px;"><i class="large material-icons left">qr_code</i>Generate
+            Code</button>
 
           <button id="copy" class="waves-effect blue lighten-2 btn-large dashboard-btn"
-            style="width: auto; margin-left: 10x;"><i class="large material-icons left">content_copy</i>Copy to Clipboard</button>
+            style="width: auto; margin-left: 10x;"><i class="large material-icons left">content_copy</i>Copy to
+            Clipboard</button>
         </div>
       </center>
     </div>
@@ -132,10 +144,11 @@
   </div>
 
   <script>
-    var activities = {{ activities|tojson }};
+    var activities = {{ activities| tojson }};
 
     $(document).ready(function () {
       $("#chat").hide();
+      $("#info").hide();
 
       $('.carousel.carousel-slider').carousel({
         fullWidth: true,
@@ -152,8 +165,8 @@
       $("#code").click(function () {
         var activity = (activities[($('.carousel.carousel-slider')[0].M_Carousel.center) % (activities.length)]);
 
-        $.post("/companies/activity/" + activity['external_id'] + "/code", function( data ) {
-          var code = data.substring(0, 4) + '-' + data.substring(4,8) + '-' + data.substring(8,12) + '-' + data.substring(12);
+        $.post("/companies/activity/" + activity['external_id'] + "/code", function (data) {
+          var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
           $('#code-input').val(code);
         });
       });
@@ -169,11 +182,19 @@
       $("#info_btn").click(function () {
         $("#info").show();
         $("#chat").hide();
+        $("#activity").hide();
       });
 
       $("#chat_btn").click(function () {
         $("#info").hide();
+        $("#activity").hide();
         $("#chat").show();
+      });
+
+      $("#activity_btn").click(function () {
+        $("#info").hide();
+        $("#activity").show();
+        $("#chat").hide();
       });
 
       $("#calendar_btn").click(function () {
@@ -240,7 +261,9 @@
           ? "0" + (start_date.getDate()).toString()
           : (start_date.getDate()).toString()) +
         "T" +
-        start_date.getHours() +
+        (start_date.getHours() < 10
+          ? "0" + start_date.getHours()
+          : start_date.getHours()) +
         (start_date.getMinutes() < 10
           ? "0" + start_date.getMinutes()
           : start_date.getMinutes()) +
@@ -255,7 +278,9 @@
           ? "0" + (end_date.getDate()).toString()
           : (end_date.getDate()).toString()) +
         "T" +
-        end_date.getHours() +
+        (end_date.getHours() < 10
+          ? "0" + end_date.getHours()
+          : end_date.getHours()) +
         (end_date.getMinutes() < 10
           ? "0" + end_date.getMinutes()
           : end_date.getMinutes()) +

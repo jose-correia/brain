@@ -48,7 +48,7 @@ class Companies(db.Model, ModelMixin):
     tags = relationship("Tags",
         secondary="companies_tags",
         secondaryjoin=sql.and_(CompaniesTags.tag_id == Tags.id))
-
+    
     users = relationship("CompanyUsers", back_populates='company', lazy='dynamic', cascade="all,delete")
 
     def __repr__(self):

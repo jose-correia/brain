@@ -331,7 +331,7 @@ button:hover {
 }
 
 .evf {
-    margin-top: -120px;
+    margin-top: 30px;
     background-color: #F2F3F3;
     width: 500px;
     border-radius: 30px;
@@ -342,6 +342,10 @@ button:hover {
     content: 'Backend Booth Credentials';
     font-size: 25px !important;
     font-weight: bold;
+}
+
+.evf-user::before {
+    content: 'User Booth Credentials';
 }
 
 
