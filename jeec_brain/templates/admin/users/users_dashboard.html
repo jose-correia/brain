@@ -94,6 +94,7 @@
           <th>Username</th>
           <th>Name</th>
           <th>Role</th>
+          <th>Post</th>
           <th>Email</th>
           <th>Company</th>
           <th>Password</th>
@@ -118,6 +119,8 @@
           <td>
             {{ user.role.name }}
           </td>
+
+          <td></td>
 
           <td>
             {{ user.email }}
@@ -166,6 +169,10 @@
 
           <td>
             company
+          </td>
+
+          <td>
+            {{ company_user.post }}
           </td>
 
           <td>
