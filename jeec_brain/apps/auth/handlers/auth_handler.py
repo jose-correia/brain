@@ -51,6 +51,12 @@ class AuthHandler(object):
                                 course = registration['acronym']
                                 entry_year = get_year(registration['academicTerms'])
                                 break
+                    if role['type'] == 'ALUMNI':
+                        for registration in role['concludedRegistrations']:
+                            if registration['acronym']:
+                                course = registration['acronym']
+                                entry_year = get_year(registration['academicTerms'])
+                                break
 
                 if not course:
                     return None, None
