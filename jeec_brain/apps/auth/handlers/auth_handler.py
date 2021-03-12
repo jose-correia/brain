@@ -121,6 +121,9 @@ class AuthHandler(object):
         logout_user()
 
 def get_year(academicTerms):
+    if len(academicTerms) == 0:
+        return ""
+        
     terms = [academicTerm[11:].replace(" ","") for academicTerm in academicTerms]
     terms.sort()
     return terms[0]
