@@ -32,7 +32,6 @@ def get_activity(company_user, activity_external_id):
     codes = ActivityCodesFinder.get_from_parameters({'activity_id':activity.id})
 
     return render_template('companies/activities/activity.html', \
-
         activity=activity, \
         error=None, \
         codes=codes, \
@@ -55,6 +54,13 @@ def get_activity_type(company_user, activity_type_external_id):
             _activity.pop('chat_type')
             activities.append(_activity)
 
+    now = datetime.utcnow()
+    today = now.strftime('%d %b %Y, %a')
+    for _ in range(len(activities)):
+        if activities[0]['day'] == today:
+            break
+        activities.append(activities.pop(0))
+
     chat_token = UsersHandler.get_chat_user_token(company_user.user)
     chat_url = Config.ROCKET_CHAT_APP_URL + 'home?resumeToken=' + chat_token
 
@@ -70,7 +76,10 @@ def get_activity_type(company_user, activity_type_external_id):
 def generate_code(company_user, activity_external_id):
     activity = ActivitiesFinder.get_from_external_id(activity_external_id)
     if activity is None:
-        return APIErrorValue('Couldnt find activity').json(400)
+        return APIErrorValue('Couldnt find activity').json(404)
+
+    if activity.activity_type.name != 'Job Fair Booth':
+        return APIErrorValue('Invalid activity').json(500)
     
     activity_code = ActivityCodesHandler.create_activity_code(activity_id=activity.id)
 
