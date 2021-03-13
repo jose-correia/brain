@@ -1,4 +1,5 @@
 from jeec_brain.models.activities import Activities
+from jeec_brain.models.activity_types import ActivityTypes
 from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.models.speaker_activities import SpeakerActivities
 from jeec_brain.models.activities_tags import ActivitiesTags
@@ -97,6 +98,10 @@ class ActivitiesFinder():
     @classmethod
     def get_activities_from_company_and_event(cls, company, event):
         return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (CompanyActivities.activity_id == Activities.id) & (CompanyActivities.company_id == company.id)).all()
+
+    @classmethod
+    def get_activities_from_event(cls, event):
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.show_in_schedule == True)).all()
 
     @classmethod
     def get_next_activity(cls):

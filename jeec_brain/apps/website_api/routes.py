@@ -79,7 +79,7 @@ def get_activities():
     # request endpoint with no parameters should return all activities
     else:
         search = None
-        activities_list = event.activities
+        activities_list = ActivitiesFinder.get_activities_from_event(event)
     
     if activities_list is None:
         return APIErrorValue('No results found').json(400)
