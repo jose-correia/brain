@@ -375,6 +375,7 @@ def create_activity():
     zoom_urls = request.form.getlist('url')
     speakers = request.form.getlist('speaker')
     tags = request.form.getlist('tag')
+    job_fair_booth = ActivityTypesFinder.get_from_name('Job Fair Booth')
 
     # if company names where provided
     if companies:
@@ -386,6 +387,21 @@ def create_activity():
             company_activity = ActivitiesHandler.add_company_activity(company, activity, zoom_urls[index])
             if company_activity is None:
                 return APIErrorValue('Failed to create company activity').json(500)
+
+            if activity_type.name == 'Job Fair':
+                job_fair_booth_activity = ActivitiesHandler.create_activity(
+                    name=company.name + " Booth",
+                    description="Visit " + company.name + " booth to earn extra points",
+                    activity_type=job_fair_booth,
+                    event=event,
+                    location="Job Fair",
+                    day=day,
+                    time='10:30',
+                    end_time='16:30',
+                    points=40,
+                    quest=False
+                )
+                ActivitiesHandler.add_company_activity(company, job_fair_booth_activity)
 
     if speakers:
         for name in speakers:
@@ -502,7 +518,7 @@ def update_activity(activity_external_id):
     else:
         quest = False
 
-    chat_type = ActivityChatEnum[chat]
+    chat_type = ActivityChatEnum[chat] if chat else None
 
     activity_type_external_id = request.form.get('type')
     activity_type = ActivityTypesFinder.get_from_external_id(uuid.UUID(activity_type_external_id))
@@ -554,6 +570,23 @@ def update_activity(activity_external_id):
             company_activity = ActivitiesHandler.add_company_activity(company, activity, zoom_urls[index])
             if company_activity is None:
                 return APIErrorValue('Failed to create company activity').json(500)
+
+            if activity_type.name == 'Job Fair':
+                job_fair_booth = ActivityTypesFinder.get_from_name('Job Fair Booth')
+                if not ActivitiesFinder.get_from_parameters({'name':company.name + " Booth",'day':day}):
+                    job_fair_booth_activity = ActivitiesHandler.create_activity(
+                        name=company.name + " Booth",
+                        description="Visit " + company.name + " booth to earn extra points",
+                        activity_type=job_fair_booth,
+                        event=activity.event,
+                        location="Job Fair",
+                        day=day,
+                        time='10:30',
+                        end_time='16:30',
+                        points=40,
+                        quest=False
+                    )
+                    ActivitiesHandler.add_company_activity(company, job_fair_booth_activity)
 
     if speakers:
         for name in speakers:
@@ -659,6 +692,20 @@ def generate_codes(activity_external_id):
         activity_codes.append(ActivityCodesHandler.create_activity_code(activity_id=activity.id).code)
 
     return jsonify(activity_codes)
+
+@bp.route('/activity/<string:activity_external_id>/codes-delete', methods=['POST'])
+@allowed_roles(['admin', 'activities_admin'])
+def delete_activity_code(activity_external_id):
+    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+    if activity is None:
+        return APIErrorValue('Couldnt find activity').json(404)
+
+    codes = ActivityCodesFinder.get_from_parameters({'activity_id':activity.id})
+    for code in codes:
+        if not ActivityCodesHandler.delete_activity_code(code):
+            return jsonify("Failed"), 500
+
+    return jsonify("Success")
 
 @bp.route('/code/<string:code>/delete', methods=['POST'])
 @allowed_roles(['admin', 'activities_admin'])

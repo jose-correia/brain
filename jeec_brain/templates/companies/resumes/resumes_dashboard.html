@@ -54,6 +54,14 @@
         class="large material-icons left">person_add</i>Interested</button>
   </div>
 
+  {% if error is none %}
+  <div class="flexbox-btns" style="margin-bottom: 50px;">
+    <a class="waves-effect waves-light red btn back-btn" style="font-weight: 700; margin-left: 0;"
+      href="{{ url_for('companies_api.download_resumes') }}" download="JEEC21 CVs"><i
+        class="material-icons left">file_download</i>Download All</a>
+  </div>
+  {% endif %}
+
   <div id="all">
     <div class="section-title center-align" style="margin-top:20px;">
       List of All Students Resumes
@@ -107,7 +115,11 @@
             </td>
 
             <td>
+              {% if student.linkedin_url %}
               <a href="{{ student.linkedin_url }}" target="_blank">{{ student.linkedin_url }}</a>
+              {% else %}
+              <i class="material-icons icon-red">clear</i>
+              {% endif %}
             </td>
 
             <td><a href="{{ url_for('companies_api.download_resume', student_external_id=student.external_id) }}"
@@ -177,16 +189,8 @@
     </div>
   </div>
 
-  {% if error is none %}
-  <div class="flexbox-btns">
-    <a class="waves-effect waves-light red btn back-btn" style="font-weight: 700;"
-      href="{{ url_for('companies_api.download_resumes') }}" download="JEEC21 CVs"><i
-        class="material-icons left">file_download</i>Download All</a>
-  </div>
-  {% endif %}
-  
   <script>
-    $(document).ready(function () {
+    $(function () {
       $("#interested").hide();
 
       $("#all_btn").click(function () {

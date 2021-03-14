@@ -206,14 +206,17 @@
 
           {% if role in ['admin', 'activities_admin'] %}
           <td>
-            {% if activity.activity_type.name not in ["Speaker", "Discussion Panel"] %}
-            <button title="Create Code" data-target="modal1"
-              class="waves-effect waves-light btn-floating modal-trigger"><i
+            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
+            <button title="Create Code" data-target="modal1" data-name="{{ activity.external_id }}"
+              class="waves-effect waves-light green btn-floating modal-trigger code-btn"><i
                 class="material-icons left">qr_code</i>Generate Code</button>
-            {% else %}
-            <button title="Create Code" data-target="modal1"
-              class="waves-effect waves-light btn-floating modal-trigger" disabled><i
-                class="material-icons left">qr_code</i>Generate Code</button>
+            {% endif %}
+          </td>
+          <td>
+            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
+            <button title="Create Code" data-name="{{ activity.external_id }}"
+              class="waves-effect waves-light red btn-floating modal-trigger delete-code-btn"><i
+                class="material-icons left">delete</i>Delete Code</button>
             {% endif %}
           </td>
           {% endif %}
@@ -253,9 +256,42 @@
   </div>
 
   <script>
+    $(function () {
+      var activity_external_id = "";
+
+      $('.modal').modal();
+
+      $("#copy").click(function () {
+        var code = $("#code-input");
+        code.select();
+        document.execCommand("copy");
+      });
+
+      $(".code-btn").click(function () {
+        activity_external_id = jQuery(this).data('name');
+      });
+
+      $("#code").click(function () {
+        $.post("/admin/activity/" + activity_external_id + "/code", function (data) {
+          var code = data[0].substring(0, 4) + '-' + data[0].substring(4, 8) + '-' + data[0].substring(8, 12) + '-' + data[0].substring(12);
+          $('#code-input').val(code);
+        });
+      });
+
+      $(".delete-code-btn").click(function () {
+        if (!confirm("Are you sure about that?")) return;
+
+        $.post("/admin/activity/" + jQuery(this).data('name') + "/codes-delete", function (data) {
+          alert(data)
+          $('#code-input').val(code);
+        }).fail(function (error) {
+          alert('Error: ' + error);
+        });
+      });
+    });
+
     $(document).on('change', '#event', function () {
       $('#event_form').submit();
-      $('.modal').modal();
     });
   </script>
 </body>

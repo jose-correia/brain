@@ -3,6 +3,7 @@ from jeec_brain.apps.companies_api import bp
 from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
+from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.auctions_finder import AuctionsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.events_finder import EventsFinder
@@ -66,12 +67,16 @@ def dashboard(company_user):
 
     company_logo = CompaniesHandler.find_image(company_user.company.name)
 
+    job_fair = False
     activity_types = []
-    for activity in company_user.company.activities:
-        if activity.activity_type not in activity_types:
+    for activity in ActivitiesFinder.get_current_company_activities(company_user.company):
+        if (activity.activity_type not in activity_types) and (activity.activity_type.name not in ['Job Fair','Job Fair Booth']):
             activity_types.append(activity.activity_type)
 
-    return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, activity_types=activity_types, user=company_user, cvs_enabled=cvs_enabled)
+        if (activity.activity_type.name in ['Job Fair','Job Fair Booth']):
+            job_fair = True
+
+    return render_template('companies/dashboard.html', auctions=company_auctions, job_fair=job_fair, company_logo=company_logo, activity_types=activity_types, user=company_user, cvs_enabled=cvs_enabled)
 
 
 @bp.route('/dashboard', methods=['POST'])
