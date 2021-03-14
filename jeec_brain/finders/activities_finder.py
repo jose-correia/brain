@@ -104,6 +104,10 @@ class ActivitiesFinder():
         return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.show_in_schedule == True)).order_by(Activities.day, Activities.time).all()
 
     @classmethod
+    def get_current_company_activities(cls, company):
+        return Activities.query.filter((Events.default == True) & (Events.id == Activities.event_id) & (Activities.id == CompanyActivities.activity_id) & (CompanyActivities.company_id == company.id)).order_by(Activities.day, Activities.time).all()
+
+    @classmethod
     def get_next_activity(cls):
         now = datetime.now()
         current_time = now.strftime("%H:%M")

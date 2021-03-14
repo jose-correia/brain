@@ -39,7 +39,7 @@
   </div>
 
   <div class="section-header">
-    <h2>{{ activity_type.name }}</h2>
+    <h2>Job Fair</h2>
   </div>
 
   <form action="{{ url_for('companies_api.dashboard') }}" method="get" class="row s12">
@@ -47,46 +47,91 @@
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
-  <center>
-    <div class="carousel-wrapper">
-      <img class="left-arrow" src="/static/icons/arrow.svg">
-      <div class="carousel carousel-slider" style="min-height: 500px;">
-        {% for activity in activities %}
-        <div class="carousel-item">
-          <p class="activity-name">{{ activity.name }}</p>
-          <p class="activity-description">{{ activity.description }}</p>
-          <p class="activity-time">{{ activity.day }} - {{ activity.time }}{%if activity.end_time %}/{{activity.end_time
-            }}{% endif %}</p>
+  <div class="flexbox-btns" style="justify-content: center;">
+    <button id="info_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="width: 250px;"><i
+        class="large material-icons left">info</i>Info</button>
 
-          <div class="flexbox-btns">
-            <button id="calendar_btn" class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;"><i
-                class="large material-icons left">event</i>Add To Calendar</button>
+    <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+      style="margin-left: 50px; margin-right: 50px; width: 250px;"><i class="large material-icons left">chat</i>Chat
+      Rooms</button>
 
-            {% if activity_type.name|string() == 'Job Fair Booth' %}
-            <button data-target="modal1" class="waves-effect red lighten-2 btn-large dashboard-btn modal-trigger"
-              style="width: auto;"><i class="large material-icons left">qr_code</i>Generate Code</button>
-            {% endif %}
+    <button id="code_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="width: 250px;"><i
+        class="large material-icons left">qr_code</i>Generate Code</button>
+  </div>
 
-            {% if activity.zoom_link %}
-            <a href="{{ activity.zoom_link }}" target="_blank"
-              class="waves-effect red lighten-2 btn-large dashboard-btn" style="font-weight: 600;"><i
-                class="large material-icons left">connected_tv</i>Zoom Link</a>
-            {% endif %}
-          </div>
-        </div>
-        {% endfor %}
+  <center id="info">
+    <div style="display: flex; justify-content: space-evenly; flex-wrap: wrap;">
+      <div class="evf evf-user">
+        <p><b>user:</b> {{ user.evf_username }}</p>
+        <p><b>password:</b> {{ user.evf_password }}</p>
+        <form action="https://tecnicoevents.easyvirtualfair.com/" target="_blank">
+          <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
+              class="large material-icons left">language</i>Log In</button>
+        </form>
       </div>
-      <img class="right-arrow" src="/static/icons/arrow.svg">
+
+      <div class="evf">
+        <p><b>user:</b> {{ user.company.evf_username }}</p>
+        <p><b>password:</b> {{ user.company.evf_password }}</p>
+        <form action="https://tecnicoevents.easyvirtualfair.com/backend" target="_blank">
+          <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
+              class="large material-icons left">language</i>Log In</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="flexbox-btns" style="margin-top: 50px; justify-content: space-evenly;">
+      {% for job_fair in job_fairs %}
+      <button data-name="{{ loop.index0 }}" class="waves-effect red lighten-2 btn-large dashboard-btn add-calender-btn" style="width: auto;"><i
+          class="large material-icons left">event</i>Add To Calendar - {{ job_fair.day }}</button>
+      {% endfor %}
+
+      {% if job_fairs[0].zoom_link %}
+      <a href="{{ job_fairs[0].zoom_link }}" target="_blank"
+        class="waves-effect red lighten-2 btn-large dashboard-btn" style="font-weight: 600;"><i
+          class="large material-icons left">connected_tv</i>Zoom Link</a>
+      {% endif %}
     </div>
   </center>
 
+  <div id="chat">
+    <iframe id="chat-frame" class="chat-frame" src="{{ chat_url }}" frameborder="0"></iframe>
+  </div>
+
+  <div id="code" style="height: auto;">
+    <center style="margin-top: 40px;">
+      <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" readonly>
+
+      <div style="margin-top: 40px;">
+        <button id="code" class="waves-effect red lighten-2 btn-large dashboard-btn"
+          style="width: auto; margin-right: 10px;"><i class="large material-icons left">qr_code</i>Generate
+          Code</button>
+
+        <button id="copy" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+          style="width: auto; margin-left: 10x;"><i class="large material-icons left">content_copy</i>Copy to
+          Clipboard</button>
+      </div>
+    </center>
+  </div>
+
   <script>
     $(function () {
-      var activities = {{ activities| tojson }};
+      var job_fairs = {{ job_fairs| tojson }};
 
-      $('.carousel.carousel-slider').carousel({
-        fullWidth: true,
-        indicators: true
+      $("#chat").hide();
+      $("#code").hide();
+
+      $("#copy").click(function () {
+        var code = $("#code-input");
+        code.select();
+        document.execCommand("copy");
+      });
+
+      $("#code").click(function () {
+        $.post("/companies/activity/code", function (data) {
+          var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
+          $('#code-input').val(code);
+        });
       });
 
       $(".left-arrow").click(function () {
@@ -97,8 +142,26 @@
         $('.carousel.carousel-slider').carousel('next', 1);
       });
 
-      $("#calendar_btn").click(function () {
-        var activity = (activities[($('.carousel.carousel-slider')[0].M_Carousel.center) % (activities.length)]);
+      $("#info_btn").click(function () {
+        $("#info").show();
+        $("#chat").hide();
+        $("#code").hide();
+      });
+
+      $("#chat_btn").click(function () {
+        $("#info").hide();
+        $("#code").hide();
+        $("#chat").show();
+      });
+
+      $("#code_btn").click(function () {
+        $("#info").hide();
+        $("#code").show();
+        $("#chat").hide();
+      });
+
+      $(".add-calender-btn").click(function () {
+        var activity = job_fairs[jQuery(this).data('name')];
 
         var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
         url = url + "&text=" + activity.name;

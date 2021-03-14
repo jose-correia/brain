@@ -11,6 +11,8 @@ from jeec_brain.finders.students_finder import StudentsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
 
+from datetime import datetime
+
 class ActivityCodesHandler():
 
     @classmethod
@@ -26,6 +28,11 @@ class ActivityCodesHandler():
             return False, student
         
         ActivitiesHandler.add_student_activity(student, activity_code.activity)
+        
+        now = datetime.utcnow()
+        today = now.strftime('%d %b %Y, %a')
+        if activity_code.activity.day != today:
+            return False, student
 
         points = activity_code.activity.points
         

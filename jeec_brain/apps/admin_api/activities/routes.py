@@ -693,6 +693,20 @@ def generate_codes(activity_external_id):
 
     return jsonify(activity_codes)
 
+@bp.route('/activity/<string:activity_external_id>/codes-delete', methods=['POST'])
+@allowed_roles(['admin', 'activities_admin'])
+def delete_activity_code(activity_external_id):
+    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+    if activity is None:
+        return APIErrorValue('Couldnt find activity').json(404)
+
+    codes = ActivityCodesFinder.get_from_parameters({'activity_id':activity.id})
+    for code in codes:
+        if not ActivityCodesHandler.delete_activity_code(code):
+            return jsonify("Failed"), 500
+
+    return jsonify("Success")
+
 @bp.route('/code/<string:code>/delete', methods=['POST'])
 @allowed_roles(['admin', 'activities_admin'])
 def delete_code(code):
