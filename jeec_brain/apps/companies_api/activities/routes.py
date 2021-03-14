@@ -72,7 +72,7 @@ def get_activity_type(company_user, activity_type_external_id):
 def get_job_fair(company_user):
     job_fairs = []
     for activity in ActivitiesFinder.get_current_company_activities(company_user.company):
-        if activity.activity_type.name == 'Job Fair':
+        if activity.activity_type.name == 'Job Fair Booth':
             _activity = dict(ActivitiesFinder.get_from_external_id(activity.external_id).__dict__)
             _activity['external_id'] = _activity['external_id'].hex
             _activity.pop('_sa_instance_state')
