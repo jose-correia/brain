@@ -93,15 +93,15 @@ class ActivitiesFinder():
 
     @classmethod
     def get_activities_from_speaker_and_event(cls, speaker, event):
-        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (SpeakerActivities.activity_id == Activities.id) & (SpeakerActivities.speaker_id == speaker.id)).all()
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (SpeakerActivities.activity_id == Activities.id) & (SpeakerActivities.speaker_id == speaker.id)).order_by(Activities.day, Activities.time).all()
 
     @classmethod
     def get_activities_from_company_and_event(cls, company, event):
-        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (CompanyActivities.activity_id == Activities.id) & (CompanyActivities.company_id == company.id)).all()
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (CompanyActivities.activity_id == Activities.id) & (CompanyActivities.company_id == company.id)).order_by(Activities.day, Activities.time).all()
 
     @classmethod
     def get_activities_from_event(cls, event):
-        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.show_in_schedule == True)).all()
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.show_in_schedule == True)).order_by(Activities.day, Activities.time).all()
 
     @classmethod
     def get_next_activity(cls):
