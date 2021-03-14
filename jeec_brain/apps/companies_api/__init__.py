@@ -7,3 +7,4 @@ from jeec_brain.apps.companies_api.auctions import routes
 from jeec_brain.apps.companies_api.activities import routes
 from jeec_brain.apps.companies_api.meals import routes
 from jeec_brain.apps.companies_api.resumes import routes
+from jeec_brain.apps.companies_api.statistics import routes

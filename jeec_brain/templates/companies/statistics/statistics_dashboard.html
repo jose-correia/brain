@@ -1,0 +1,207 @@
+<html>
+
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('select').formSelect();
+    });
+  </script>
+
+</head>
+
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile"
+        src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('companies_api.company_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
+    </form>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Statistics</h2>
+    <p>Statistics from app usage</p>
+  </div>
+
+  <div >
+  <form action="{{ url_for('companies_api.dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+  </div>
+
+  <div class="stats_app" style="margin-top: 90px">
+      <div class="total_stats" >
+          <b>Total interactions: {{total_interactions}}</b>
+          <b>Total participations: {{total_participations}}</b>
+      </div>
+
+      <div class="graph_type_buttons" >
+  <button class="waves-effect waves-light btn back-btn left" onclick="graph_type='interactions'; graph_plot();">Interactions</button>
+  <button class="waves-effect waves-light btn back-btn left" onclick="graph_type='participations'; graph_plot();">Participations</button>
+      </div>
+
+  <div class="left" style="margin-top: 50px; margin-left: 30px; width:500px; float: none !important;">
+    <div class="sub_section-title">Activities</div>
+      <select name="activity" id="activity" class="form-control">
+          <option value="Total" selected="selected">Total</option>
+        {% for _activity in total_interactions_by_activity.keys() %}
+        <option value="{{ _activity}}" >{{_activity}}</option>
+        {% endfor %}
+      </select>
+  </div>
+
+  <div class="mode_div" >
+  <button id="activity_button" class="waves-effect waves-light btn back-btn left" style="display: block" onclick="mode='activity'; graph_plot()">By Activity</button>
+  <button class="waves-effect waves-light btn back-btn left" onclick="mode='year'; graph_plot();">By Year</button>
+  <button class="waves-effect waves-light btn back-btn left" onclick="mode='course'; graph_plot();">By Course</button>
+  </div>
+
+  <div class="test" style="margin-top: 50px">
+  <div id="tester" ></div>
+  </div>
+  </div>
+
+  <script>
+   let interactions_element = document.getElementById('interactions_div');
+   let participations_element = document.getElementById('participations_div');
+
+   function show_interactions() {
+       participations_element.style.display = "none";
+       interactions_element.style.display = "block";
+   }
+
+   function show_participations() {
+       interactions_element.style.display = "none";
+       participations_element.style.display = "block";
+   }
+
+
+   let total_interactions_by_course = {{total_interactions_by_course|tojson}};
+   let total_interactions_by_activity = {{total_interactions_by_activity|tojson}};
+   let total_interactions_by_year = {{total_interactions_by_year|tojson}};
+   let interactions_by_year = {{interactions_by_year|tojson}};
+   let interactions_by_course = {{interactions_by_course|tojson}};
+
+   let total_participations_by_course = {{total_participations_by_course|tojson}};
+   let total_participations_by_activity = {{total_participations_by_activity|tojson}};
+   let total_participations_by_year = {{total_participations_by_year|tojson}};
+   let participations_by_year = {{participations_by_year|tojson}};
+   let participations_by_course = {{participations_by_course|tojson}};
+
+   var data = [{
+       values: Object.values(total_interactions_by_activity),
+       labels: Object.keys(total_interactions_by_activity),
+       marker: {
+           colors: [
+               "#68EDC6",
+               "#B5BA72",
+               "#E9B872",
+               "#BA2C73",
+               "#13505B",
+               "#353531",
+               "#FDE74C",
+               "#C1FBA4",
+               "#D8D4F2",
+               "#A5C4D4",
+           ]
+       },
+       type: 'pie'
+   }];
+
+   var layout = {
+       height: 500,
+       width: 1000,
+       title: "Total interactions by activity"
+   };
+
+
+   function replot(target_data) {
+       graph_element = document.getElementById('tester');
+       if(target_data){
+           graph_element.innerHTML="";
+           data[0].values = Object.values(target_data);
+           data[0].labels = Object.keys(target_data);
+           layout.title = $('#activity').val() + " " + graph_type + " by " + mode;
+           Plotly.newPlot('tester', data, layout);
+       }
+       else {
+           graph_element.innerHTML="<p>No Data!</p>";
+       }
+
+   }
+
+   var graph_type = "interactions"
+   var mode = "activity"
+
+   replot(total_interactions_by_activity);
+
+   function graph_plot() {
+       if (graph_type === "interactions"){
+            if (mode === "course"){
+                replot(interactions_by_course[$('#activity').val()]);
+            }
+            else if (mode === "year"){
+                replot(interactions_by_year[$('#activity').val()]);
+            }
+            else if (mode === "activity"){
+                replot(total_interactions_by_activity);
+            }
+        }
+        else {
+            if (mode === "course") {
+                replot(participations_by_course[$('#activity').val()]);
+            }
+            else if (mode === "year"){
+                replot(participations_by_year[$('#activity').val()]);
+            }
+            else if (mode === "activity"){
+                replot(total_participations_by_activity);
+            }
+        }
+   }
+
+    $(document).on('change', '#activity', function () {
+      //$('#activity_form').submit();
+        activity_element = document.getElementById('activity_button');
+        if($('#activity').val() === "Total") {
+            activity_element.style.display = "block";
+        }
+        else {
+            activity_element.style.display = "none";
+            if(mode === "activity"){
+                mode = "year"
+            }
+        }
+        graph_plot();
+    });
+  </script>
+</body>
+
+</html>
