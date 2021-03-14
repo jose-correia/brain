@@ -59,19 +59,14 @@
             }}{% endif %}</p>
 
           <div class="flexbox-btns">
-            <button id="calendar_btn" class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;"><i
-                class="large material-icons left">event</i>Add To Calendar</button>
-
-            {% if activity_type.name|string() == 'Job Fair Booth' %}
-            <button data-target="modal1" class="waves-effect red lighten-2 btn-large dashboard-btn modal-trigger"
-              style="width: auto;"><i class="large material-icons left">qr_code</i>Generate Code</button>
-            {% endif %}
-
             {% if activity.zoom_link %}
             <a href="{{ activity.zoom_link }}" target="_blank"
               class="waves-effect red lighten-2 btn-large dashboard-btn" style="font-weight: 600;"><i
                 class="large material-icons left">connected_tv</i>Zoom Link</a>
             {% endif %}
+            
+            <button id="calendar_btn" class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;"><i
+                class="large material-icons left">event</i>Add To Calendar</button>
           </div>
         </div>
         {% endfor %}
