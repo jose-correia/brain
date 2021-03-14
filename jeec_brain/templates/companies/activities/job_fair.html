@@ -82,14 +82,13 @@
 
     <div class="flexbox-btns" style="margin-top: 50px; justify-content: space-evenly;">
       {% for job_fair in job_fairs %}
-      <button data-name="{{ loop.index0 }}" class="waves-effect red lighten-2 btn-large dashboard-btn add-calender-btn" style="width: auto;"><i
-          class="large material-icons left">event</i>Add To Calendar - {{ job_fair.day }}</button>
+      <button data-name="{{ loop.index0 }}" class="waves-effect red lighten-2 btn-large dashboard-btn add-calender-btn"
+        style="width: auto;"><i class="large material-icons left">event</i>Add To Calendar - {{ job_fair.day }}</button>
       {% endfor %}
 
       {% if job_fairs[0].zoom_link %}
-      <a href="{{ job_fairs[0].zoom_link }}" target="_blank"
-        class="waves-effect red lighten-2 btn-large dashboard-btn" style="font-weight: 600;"><i
-          class="large material-icons left">connected_tv</i>Zoom Link</a>
+      <a href="{{ job_fairs[0].zoom_link }}" target="_blank" class="waves-effect red lighten-2 btn-large dashboard-btn"
+        style="font-weight: 600;"><i class="large material-icons left">connected_tv</i>Zoom Link</a>
       {% endif %}
     </div>
   </center>
@@ -116,92 +115,89 @@
 
   <script>
     $(function () {
-      var job_fairs = {{ job_fairs| tojson }};
+      var job_fairs = {{ job_fairs| tojson
+    }};
 
+    $("#chat").hide();
+    $("#code").hide();
+
+    $("#copy").click(function () {
+      var code = $("#code-input");
+      code.select();
+      document.execCommand("copy");
+    });
+
+    $("#code").click(function () {
+      $.post("/companies/activity/code", function (data) {
+        var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
+        $('#code-input').val(code);
+      });
+    });
+
+    $(".left-arrow").click(function () {
+      $('.carousel.carousel-slider').carousel('prev', 1);
+    });
+
+    $(".right-arrow").click(function () {
+      $('.carousel.carousel-slider').carousel('next', 1);
+    });
+
+    $("#info_btn").click(function () {
+      $("#info").show();
       $("#chat").hide();
       $("#code").hide();
+    });
 
-      $("#copy").click(function () {
-        var code = $("#code-input");
-        code.select();
-        document.execCommand("copy");
-      });
+    $("#chat_btn").click(function () {
+      $("#info").hide();
+      $("#code").hide();
+      $("#chat").show();
+    });
 
-      $("#code").click(function () {
-        $.post("/companies/activity/code", function (data) {
-          var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
-          $('#code-input').val(code);
-        });
-      });
+    $("#code_btn").click(function () {
+      $("#info").hide();
+      $("#code").show();
+      $("#chat").hide();
+    });
 
-      $(".left-arrow").click(function () {
-        $('.carousel.carousel-slider').carousel('prev', 1);
-      });
+    $(".add-calender-btn").click(function () {
+      var activity = job_fairs[jQuery(this).data('name')];
 
-      $(".right-arrow").click(function () {
-        $('.carousel.carousel-slider').carousel('next', 1);
-      });
+      var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+      url = url + "&text=" + activity.name;
+      url = url + "&ctz=" + "Europe/Lisbon";
+      url = url + "&location=" + activity.location;
+      url = url + "&dates=" + get_date(activity);
+      url =
+        url +
+        "&sprop=website:" +
+        activity.registration_link +
+        "&sprop=name:" +
+        activity.name;
 
-      $("#info_btn").click(function () {
-        $("#info").show();
-        $("#chat").hide();
-        $("#code").hide();
-      });
-
-      $("#chat_btn").click(function () {
-        $("#info").hide();
-        $("#code").hide();
-        $("#chat").show();
-      });
-
-      $("#code_btn").click(function () {
-        $("#info").hide();
-        $("#code").show();
-        $("#chat").hide();
-      });
-
-      $(".add-calender-btn").click(function () {
-        var activity = job_fairs[jQuery(this).data('name')];
-
-        var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
-        url = url + "&text=" + activity.name;
-        url = url + "&ctz=" + "Europe/Lisbon";
-        url = url + "&location=" + activity.location;
-        url = url + "&dates=" + get_date(activity);
+      if (activity.zoom_link) {
         url =
           url +
-          "&sprop=website:" +
-          activity.registration_link +
-          "&sprop=name:" +
-          activity.name;
+          "&details=" +
+          "Zoom Link: " +
+          activity.zoom_link;
+      }
 
-        if (activity.registration_open) {
-          url =
-            url +
-            "&details=" +
-            "Registrations in " +
-            activity.registration_link +
-            "%0A%0A" +
-            activity.description;
-        } else {
-          url = url + "&details=" + activity.description;
-        }
+      var date = new Date();
 
-        var date = new Date();
+      if (
+        date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
+      ) {
+        url = url + "&crm=" + "BUSY"; //busy
+      } else if (!activity.registration_open) {
+        url = url + "&crm=" + "BLOCKING"; //blocking
+      } else {
+        url = url + "&crm=" + "AVAILABLE"; //available
+      }
 
-        if (
-          date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
-        ) {
-          url = url + "&crm=" + "BUSY"; //busy
-        } else if (!activity.registration_open) {
-          url = url + "&crm=" + "BLOCKING"; //blocking
-        } else {
-          url = url + "&crm=" + "AVAILABLE"; //available
-        }
-
-        var win = window.open(url, '_blank');
-        win.focus();
-      });
+      var win = window.open(url, '_blank');
+      win.focus();
+    });
     });
 
     function get_date(activity) {

@@ -82,63 +82,60 @@
 
   <script>
     $(function () {
-      var activities = {{ activities| tojson }};
+      var activities = {{ activities| tojson
+    }};
 
-      $('.carousel.carousel-slider').carousel({
-        fullWidth: true,
-        indicators: true
-      });
+    $('.carousel.carousel-slider').carousel({
+      fullWidth: true,
+      indicators: true
+    });
 
-      $(".left-arrow").click(function () {
-        $('.carousel.carousel-slider').carousel('prev', 1);
-      });
+    $(".left-arrow").click(function () {
+      $('.carousel.carousel-slider').carousel('prev', 1);
+    });
 
-      $(".right-arrow").click(function () {
-        $('.carousel.carousel-slider').carousel('next', 1);
-      });
+    $(".right-arrow").click(function () {
+      $('.carousel.carousel-slider').carousel('next', 1);
+    });
 
-      $("#calendar_btn").click(function () {
-        var activity = (activities[($('.carousel.carousel-slider')[0].M_Carousel.center) % (activities.length)]);
+    $("#calendar_btn").click(function () {
+      var activity = (activities[($('.carousel.carousel-slider')[0].M_Carousel.center) % (activities.length)]);
 
-        var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
-        url = url + "&text=" + activity.name;
-        url = url + "&ctz=" + "Europe/Lisbon";
-        url = url + "&location=" + activity.location;
-        url = url + "&dates=" + get_date(activity);
+      var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+      url = url + "&text=" + activity.name;
+      url = url + "&ctz=" + "Europe/Lisbon";
+      url = url + "&location=" + activity.location;
+      url = url + "&dates=" + get_date(activity);
+      url =
+        url +
+        "&sprop=website:" +
+        activity.registration_link +
+        "&sprop=name:" +
+        activity.name;
+
+      if (activity.zoom_link) {
         url =
           url +
-          "&sprop=website:" +
-          activity.registration_link +
-          "&sprop=name:" +
-          activity.name;
+          "&details=" +
+          "Zoom Link: " +
+          activity.zoom_link;
+      }
 
-        if (activity.registration_open) {
-          url =
-            url +
-            "&details=" +
-            "Registrations in " +
-            activity.registration_link +
-            "%0A%0A" +
-            activity.description;
-        } else {
-          url = url + "&details=" + activity.description;
-        }
+      var date = new Date();
 
-        var date = new Date();
+      if (
+        date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
+      ) {
+        url = url + "&crm=" + "BUSY"; //busy
+      } else if (!activity.registration_open) {
+        url = url + "&crm=" + "BLOCKING"; //blocking
+      } else {
+        url = url + "&crm=" + "AVAILABLE"; //available
+      }
 
-        if (
-          date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
-        ) {
-          url = url + "&crm=" + "BUSY"; //busy
-        } else if (!activity.registration_open) {
-          url = url + "&crm=" + "BLOCKING"; //blocking
-        } else {
-          url = url + "&crm=" + "AVAILABLE"; //available
-        }
-
-        var win = window.open(url, '_blank');
-        win.focus();
-      });
+      var win = window.open(url, '_blank');
+      win.focus();
+    });
     });
 
     function get_date(activity) {
