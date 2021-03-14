@@ -55,9 +55,8 @@ class CompaniesFinder():
     def get_chat_companies(cls, kwargs={}):
         now = datetime.utcnow() - timedelta(minutes=5)
         day = now.strftime('%d %b %Y, %a')
-        time = now.strftime("%H:%M")
 
-        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.day == day) & (Activities.time <= time) & (Activities.end_time > time) & (Activities.chat_type == 'individual') & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.name == 'Job Fair Booth') & (Activities.event_id == Events.id) & (Events.default == True)).filter_by(**kwargs).all()
+        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.day == day) & (Activities.chat_type == 'individual') & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.name == 'Job Fair Booth') & (Activities.event_id == Events.id) & (Events.default == True)).filter_by(**kwargs).all()
     
     @classmethod
     def get_company_auctions(cls, company):
