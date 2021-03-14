@@ -50,20 +50,20 @@
   {% if activity_type.name|string() == 'Job Fair Booth' %}
   <div class="flexbox-btns" style="justify-content: center;">
     <button id="activity_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-right: 50px;"><i
-      class="large material-icons left">build</i>Activity</button>
+        class="large material-icons left">build</i>Activity</button>
 
     <button id="info_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
         class="large material-icons left">info</i>Info</button>
 
-    <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-left: 50px;" disabled><i
-        class="large material-icons left">chat</i>Chat</button>
+    <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-left: 50px;"
+      disabled><i class="large material-icons left">chat</i>Chat</button>
   </div>
   {% endif %}
 
   <center id="activity">
     <div class="carousel-wrapper">
       <img class="left-arrow" src="/static/icons/arrow.svg">
-      <div class="carousel carousel-slider" style="min-height: 450px !important;">
+      <div class="carousel carousel-slider">
         {% for activity in activities %}
         <div class="carousel-item">
           <p class="activity-name">{{ activity.name }}</p>
@@ -81,10 +81,9 @@
             {% endif %}
 
             {% if activity.zoom_link %}
-            <form action="{{ activity.zoom_link }}" target="_blank">
-              <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
-                  class="large material-icons left">connected_tv</i>Zoom Link</button>
-            </form>
+            <a href="{{ activity.zoom_link }}" target="_blank"
+              class="waves-effect red lighten-2 btn-large dashboard-btn"><i
+                class="large material-icons left">connected_tv</i>Zoom Link</a>
             {% endif %}
           </div>
         </div>
@@ -146,7 +145,7 @@
   <script>
     var activities = {{ activities| tojson }};
 
-    $(document).ready(function () {
+    $(function () {
       $("#chat").hide();
       $("#info").hide();
 
