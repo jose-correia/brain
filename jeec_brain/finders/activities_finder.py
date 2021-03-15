@@ -87,9 +87,8 @@ class ActivitiesFinder():
     def get_next_company_activity(cls, company):
         now = datetime.utcnow() - timedelta(minutes=5)
         day = now.strftime('%d %b %Y, %a')
-        time = now.strftime("%H:%M")
 
-        return Activities.query.join(CompanyActivities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.time <= time) & (Activities.end_time > time)).first()
+        return Activities.query.join(CompanyActivities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.name == 'Job Fair Booth')).first()
 
     @classmethod
     def get_activities_from_speaker_and_event(cls, speaker, event):
