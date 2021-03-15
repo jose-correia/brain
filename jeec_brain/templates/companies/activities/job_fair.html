@@ -82,12 +82,12 @@
 
     <div class="flexbox-btns" style="margin-top: 50px; justify-content: space-evenly;">
       {% if job_fairs[0].zoom_link %}
-      <a href="{{ job_fairs[0].zoom_link }}" target="_blank" class="waves-effect red lighten-2 btn-large dashboard-btn"
+      <a href="{{ job_fairs[0].zoom_link }}" target="_blank" class="waves-effect lighten-2 btn-large dashboard-btn"
         style="font-weight: 600;"><i class="large material-icons left">connected_tv</i>Zoom Link</a>
       {% endif %}
       
       {% for job_fair in job_fairs %}
-      <button data-name="{{ loop.index0 }}" class="waves-effect red lighten-2 btn-large dashboard-btn add-calender-btn"
+      <button data-name="{{ loop.index0 }}" class="waves-effect lighten-2 btn-large dashboard-btn add-calender-btn"
         style="width: auto;"><i class="large material-icons left">event</i>Add To Calendar - {{ job_fair.day }}</button>
       {% endfor %}
     </div>

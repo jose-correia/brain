@@ -90,24 +90,24 @@
           </tr>
         </thead>
         <tbody>
-          {% for student in cv_students %}
-          <tr>
-            <td><b>{{ student.user.name }}</b></td>
+          {% for student in company_students %}
+          <tr {% if student[6] is none %} class="not-interested" {% endif %}>
+            <td><b>{{ student[4] }}</b></td>
 
             <td>
-              {{ student.course }}
+              {{ student[1] }}
             </td>
 
             <td>
-              {{ student.entry_year }}
+              {{ student[0] }}
             </td>
 
             <td>
-              {{ student.user.email }}
+              {{ student[5] }}
             </td>
 
             <td>
-              {% if student in interested_students %}
+              {% if student[6] %}
               <i class="material-icons icon-green">check</i>
               {% else %}
               <i class="material-icons icon-red">clear</i>
@@ -115,72 +115,15 @@
             </td>
 
             <td>
-              {% if student.linkedin_url %}
-              <a href="{{ student.linkedin_url }}" target="_blank">{{ student.linkedin_url }}</a>
+              {% if student[2] %}
+              <a href="{{ student[2] }}" target="_blank">{{ student[2] }}</a>
               {% else %}
               <i class="material-icons icon-red">clear</i>
               {% endif %}
             </td>
 
-            <td><a href="{{ url_for('companies_api.download_resume', student_external_id=student.external_id) }}"
-                download="{{ student.user.name }}-cv">CV</a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% endif %}
-    </div>
-  </div>
-
-  <div id="interested">
-    <div class="section-title center-align" style="margin-top:20px;">
-      List of Interested Students Resumes
-    </div>
-
-    <div class="list">
-      {% if error is not none %}
-      <blockquote class="create-error">
-        {{ error }}
-      </blockquote>
-      {% else %}
-      <div class="counter right">
-        Students: {{ interested_students|length }}
-      </div>
-
-      <table class="striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Degree</th>
-            <th>Entry Year</th>
-            <th>Email</th>
-            <th>Linkedin</th>
-            <th>CV's</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for student in interested_students %}
-          <tr>
-            <td><b>{{ student.user.name }}</b></td>
-
-            <td>
-              {{ student.course }}
-            </td>
-
-            <td>
-              {{ student.entry_year }}
-            </td>
-
-            <td>
-              {{ student.user.email }}
-            </td>
-
-            <td>
-              <a href="{{ student.linkedin_url }}" target="_blank">{{ student.linkedin_url }}</a>
-            </td>
-
-            <td><a href="{{ url_for('companies_api.download_resume', student_external_id=student.external_id) }}"
-                download="{{ student.user.name }}-cv">CV</a></td>
+            <td><a href="{{ url_for('companies_api.download_resume', student_external_id=student[3]) }}"
+                download="{{ student[4] }}-cv">CV</a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -191,16 +134,12 @@
 
   <script>
     $(function () {
-      $("#interested").hide();
-
       $("#all_btn").click(function () {
-        $("#all").show();
-        $("#interested").hide();
+        $(".not-interested").show();
       });
 
       $("#interested_btn").click(function () {
-        $("#interested").show();
-        $("#all").hide();
+        $(".not-interested").hide();
       });
     })
   </script>

@@ -23,11 +23,9 @@ def resumes_dashboard(company_user):
     else:
         return render_template('companies/resumes/resumes_dashboard.html', cv_students=None, interested_students=None, error="Not authorized")
 
-    company_user = UsersFinder.get_company_user_from_user(current_user)
-    interested_students = StudentsFinder.get_company_students(company_user.company)
-    cv_students = StudentsFinder.get_cv_students()
+    company_students = StudentsFinder.get_company_students(company_user.company)
 
-    return render_template('companies/resumes/resumes_dashboard.html', cv_students=cv_students, interested_students=interested_students, error=None)
+    return render_template('companies/resumes/resumes_dashboard.html', company_students=company_students, error=None)
 
 @bp.route('/resumes/<string:student_external_id>/download', methods=['GET'])
 @require_company_login

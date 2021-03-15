@@ -353,6 +353,16 @@ button:hover {
     content: 'User Booth Credentials';
 }
 
+.stats_app {
+    text-align: center;
+}
+
+.total_stats {
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 30px;
+}
+
 
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {

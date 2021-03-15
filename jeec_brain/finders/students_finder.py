@@ -98,4 +98,8 @@ class StudentsFinder():
 
     @classmethod
     def get_company_students(cls, company):
-        return Students.query.filter((StudentCompanies.company_id == company.id) & (StudentCompanies.student_id == Students.id)).all()
+        return Students.query \
+            .join(StudentCompanies, (StudentCompanies.student_id == Students.id) & (StudentCompanies.company_id == company.id), isouter=True) \
+            .join(Users, Students.user_id == Users.id) \
+            .with_entities(Students.entry_year, Students.course, Students.linkedin_url, Students.external_id, Users.name, Users.email, StudentCompanies.company_id) \
+            .filter(Students.uploaded_cv == True).all()
