@@ -60,21 +60,7 @@ def redirect_uri():
     student, encrypted_jwt = AuthHandler.login_student(fenix_auth_code)
     
     if student:
-        now = datetime.utcnow()
-        date = now.strftime('%d %b %Y, %a')
-        event = EventsFinder.get_default_event()
-        dates = EventsHandler.get_event_dates(event)
-
-        if date in dates:
-            student_login = StudentsFinder.get_student_login(student, date)
-            if student_login:
-                return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
-            else:
-                StudentsHandler.add_student_login(student, date)
-                StudentsHandler.add_points(student, 5)
-                return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt + '&firstlog=true')
-        else:
-            return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
+        return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
 
     else:
         return redirect(Config.STUDENT_APP_URL)
