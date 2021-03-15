@@ -354,7 +354,10 @@ button:hover {
 }
 
 .stats_app {
-    text-align: center;
+    text-align: left;
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
 }
 
 .total_stats {
@@ -363,6 +366,18 @@ button:hover {
     font-size: 30px;
 }
 
+.total_stats p {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.graph-btn {
+    width: 300px;
+    margin-left: 30px;
+}
 
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {

@@ -57,48 +57,88 @@
         </form>
     </div>
 
-    <div class="stats_app" style="margin-top: 90px">
-        <div class="total_stats">
-            <b>Total interactions: {{total_interactions}}</b>
-            <b>Total participations: {{total_participations}}</b>
-        </div>
+    <div class="flexbox-btns" style="justify-content: center; margin-top: 90px;">
+        <button id="general_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="width: 250px;"><i
+                class="large material-icons left">info</i>General</button>
+        <button id="interactions_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+            style="margin-left: 50px; margin-right: 50px; width: 250px;"
+            onclick="graph_type='interactions'; graph_plot();"><i
+                class="large material-icons left">autorenew</i>Interactions</button>
+        <button id="participations_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+            style="width: 250px;" onclick="graph_type='participations'; graph_plot();"><i
+                class="large material-icons left">group</i>Participations</button>
+    </div>
 
-        <div class="flexbox-btns" style="justify-content: space-evenly;">
-            <button class="waves-effect waves-light btn back-btn left"
-                onclick="graph_type='interactions'; graph_plot();">Interactions</button>
-            <button class="waves-effect waves-light btn back-btn left"
-                onclick="graph_type='participations'; graph_plot();">Participations</button>
+    <div id="general" class="total_stats" style="margin-top: 100px;">
+        <div>
+            <p style="font-size: 30px;">Total interactions:</p><br>
+            <p style="font-size: 80px; color: #1B9DD9;">{{ total_interactions }}</p>
         </div>
+        <div>
+            <p style="font-size: 30px;">Total participations:</p><br>
+            <p style="font-size: 80px; color: #1B9DD9">{{ total_participations }}</p>
+        </div>
+    </div>
 
-        <div class="row">
-            <div class="input-field col s2" style="margin-left: 30px;">
-                <select name="activity" id="activity" class="form-control">
-                    <option value="Total" selected="selected">Total</option>
-                    {% for _activity in total_interactions_by_activity.keys() %}
-                    <option value="{{ _activity}}">{{_activity}}</option>
-                    {% endfor %}
-                </select>
-                <label>Activities</label>
+    <div id="rest" class="stats_app" style="margin-top: 90px">
+        <div>
+            <div class="row">
+                <div class="input-field col s2" style="margin-left: 30px; width: 300px;">
+                    <select name="activity" id="activity" class="form-control">
+                        <option value="Total" selected="selected">Total</option>
+                        {% for _activity in total_interactions_by_activity.keys() %}
+                        <option value="{{ _activity}}">{{_activity}}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Activities</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <button id="activity_button" class="waves-effect waves-light btn back-btn left graph-btn"
+                    onclick="mode='activity'; graph_plot()">By Activity</button>
+            </div>
+            <div class="row">
+                <button class="waves-effect waves-light btn back-btn left graph-btn"
+                    onclick="mode='year'; graph_plot();">By Year</button>
+            </div>
+            <div class="row">
+                <button class="waves-effect waves-light btn back-btn left graph-btn"
+                    onclick="mode='course'; graph_plot();">By Course</button>
             </div>
         </div>
 
-        <div class="flexbox-btns" style="justify-content: space-evenly;">
-            <button id="activity_button" class="waves-effect waves-light btn back-btn left" style="display: block"
-                onclick="mode='activity'; graph_plot()">By Activity</button>
-            <button class="waves-effect waves-light btn back-btn left" onclick="mode='year'; graph_plot();">By
-                Year</button>
-            <button class="waves-effect waves-light btn back-btn left" onclick="mode='course'; graph_plot();">By
-                Course</button>
+        <div>
+            <center>
+                <div class="test" style="margin-top: 50px">
+                    <div id="tester"></div>
+                </div>
+            </center>
         </div>
 
-        <center>
-            <div class="test" style="margin-top: 50px">
-                <div id="tester"></div>
-            </div>
-        </center>
+        <div style="width: 400px;"></div>
     </div>
 
     <script>
+        $(function () {
+            $("#rest").hide();
+
+            $("#general_btn").click(function () {
+                $("#general").show();
+                $("#rest").hide();
+            });
+
+            $("#interactions_btn").click(function () {
+                $("#general").hide();
+                $("#rest").show();
+            });
+
+            $("#participations_btn").click(function () {
+                $("#general").hide();
+                $("#rest").show();
+            });
+        });
+
         let interactions_element = document.getElementById('interactions_div');
         let participations_element = document.getElementById('participations_div');
 
