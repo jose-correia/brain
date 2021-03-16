@@ -85,6 +85,8 @@ class StudentsHandler():
             level = LevelsFinder.get_level_by_value(student.level.value + 1)
             if(level is not None):
                 student.level = level
+            else:
+                break
 
         if(student.squad):
             student.squad.daily_points += points
