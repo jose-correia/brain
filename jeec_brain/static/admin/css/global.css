@@ -344,13 +344,13 @@ button:hover {
 }
 
 .evf::before {
-    content: 'Backend Booth Credentials';
+    content: 'EVF Backend Booth Credentials';
     font-size: 25px !important;
     font-weight: bold;
 }
 
 .evf-user::before {
-    content: 'User Booth Credentials';
+    content: 'EVF User Booth Credentials';
 }
 
 .stats_app {
