@@ -18,6 +18,8 @@ from jeec_brain.models.levels import Levels
 class Students(db.Model, ModelMixin):
     __tablename__ = 'students'
     
+    name = db.Column(db.String(100), nullable=False)
+    ist_id = db.Column(db.String(10), unique=True, nullable=False, index=True)
     photo = db.Column(db.Text())
     photo_type = db.Column(db.String(20))
     linkedin_url = deferred(db.Column(db.String(150)))
