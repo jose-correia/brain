@@ -15,8 +15,6 @@ ADD requirements.txt /jeec_brain
 RUN pip install -r requirements.txt
 
 ADD . /jeec_brain
-RUN python manage.py db migrate
-RUN python manage.py db upgrade
 
 EXPOSE 8081
 
