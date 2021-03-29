@@ -7,12 +7,12 @@ class SquadMembersValue(ValueComposite):
 		members_array = []
 		for member in members:
 			member_value = {
-				"name": member.name,
-				"ist_id": member.ist_id,
+				"name": member.user.name,
+				"ist_id": member.user.username,
 				"level": member.level.value,
 				"photo": 'data: ' + member.photo_type + ';base64, ' + member.photo,
 				"squad_points": member.squad_points,
-				"is_captain": member.ist_id == member.squad.captain_ist_id
+				"is_captain": member.is_captain()
 			}
 			members_array.append(member_value)
 		self.serialize_with(data=members_array)

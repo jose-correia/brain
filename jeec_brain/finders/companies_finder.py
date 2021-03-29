@@ -1,7 +1,11 @@
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.company_activities import CompanyActivities
+from jeec_brain.models.activities import Activities
+from jeec_brain.models.activity_types import ActivityTypes
+from jeec_brain.models.events import Events
 from jeec_brain.database import db_session
 from sqlalchemy import text
+from datetime import datetime, timedelta
 
 class CompaniesFinder():
 
@@ -34,16 +38,26 @@ class CompaniesFinder():
     @classmethod
     def get_all(cls):
         return Companies.query.order_by(Companies.name).all()
-        
-    @classmethod
-    def get_website_companies(cls, kwargs):
-        try:
-            companies = Companies.query.filter_by(show_in_website=True, **kwargs).order_by(Companies.name).all()
-        except Exception:
-            return None
-        
-        return companies
 
+    @classmethod
+    def get_companies_from_default_event(cls):
+        return Companies.query.filter((Companies.partnership_tier != "sponsor") & (Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.event_id == Events.id) & (Events.default == True)).order_by(Companies.name).all()
+    
+    @classmethod
+    def get_companies_from_event(cls, event):
+        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.event_id == Events.id) & (Events.id == event.id)).all()
+    
+    @classmethod
+    def get_website_companies(cls, event, kwargs={}):
+        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.event_id == Events.id) & (Events.id == event.id)).filter_by(show_in_website=True, **kwargs).all()
+
+    @classmethod
+    def get_chat_companies(cls, kwargs={}):
+        now = datetime.utcnow() - timedelta(minutes=5)
+        day = now.strftime('%d %b %Y, %a')
+
+        return Companies.query.filter((Companies.id == CompanyActivities.company_id) & (Activities.id == CompanyActivities.activity_id) & (Activities.day == day) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.name == 'Job Fair Booth') & (Activities.event_id == Events.id) & (Events.default == True)).filter_by(**kwargs).all()
+    
     @classmethod
     def get_company_auctions(cls, company):
         command = text (
@@ -81,5 +95,4 @@ class CompaniesFinder():
     @classmethod
     def get_website_company(cls, name):
         search = "%{}%".format(name)
-        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website.ilike(True)).order_by(Companies.name).all()
-    
+        return Companies.query.filter(Companies.name.ilike(search), Companies.show_in_website == True).order_by(Companies.name).all()

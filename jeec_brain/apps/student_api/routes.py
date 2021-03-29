@@ -1,15 +1,20 @@
 from . import bp
-from flask import render_template, current_app, request, redirect, url_for, make_response, session, jsonify
+from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify, send_file
 from flask_login import current_user, login_required
 from config import Config
 from datetime import datetime
+import os
+import base64
 
 # Handlers
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
 from jeec_brain.handlers.activity_codes_handler import ActivityCodesHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
+from jeec_brain.handlers.users_handler import UsersHandler
 from jeec_brain.handlers.squads_handler import SquadsHandler
 from jeec_brain.handlers.tags_handler import TagsHandler
+from jeec_brain.handlers.events_handler import EventsHandler
+from jeec_brain.handlers.file_handler import FileHandler
 
 # Finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -20,17 +25,23 @@ from jeec_brain.finders.tags_finder import TagsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.rewards_finder import RewardsFinder
 from jeec_brain.finders.levels_finder import LevelsFinder
+from jeec_brain.finders.users_finder import UsersFinder
 
 # Values
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.values.students_value import StudentsValue
 from jeec_brain.values.squads_value import SquadsValue
+from jeec_brain.values.squad_members_value import SquadMembersValue
+from jeec_brain.values.squad_invitations_sent_value import SquadInvitationsSentValue
 from jeec_brain.values.squad_invitations_value import SquadInvitationsValue
 from jeec_brain.values.student_activities_value import StudentActivitiesValue
+from jeec_brain.values.student_event_info_value import StudentEventInfoValue
 from jeec_brain.values.rewards_value import RewardsValue
 from jeec_brain.values.squads_rewards_value import SquadsRewardsValue
 from jeec_brain.values.jeecpot_rewards_value import JeecpotRewardsValue
 from jeec_brain.values.levels_value import LevelsValue
+from jeec_brain.values.companies_value import CompaniesValue
+from jeec_brain.values.partners_value import PartnersValue
 
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
@@ -42,14 +53,14 @@ def login_student():
 @bp.route('/redirect_uri')
 def redirect_uri():
     if request.args.get('error') == "access_denied":
-        return redirect(Config.STUDENT_APP_URL + 'login')
+        return redirect(Config.STUDENT_APP_URL)
     
     fenix_auth_code = request.args.get('code')
 
-    loggedin, encrypted_code = AuthHandler.login_student(fenix_auth_code)
+    student, encrypted_jwt = AuthHandler.login_student(fenix_auth_code)
     
-    if loggedin is True:
-        return redirect(Config.STUDENT_APP_URL + '?code=' + encrypted_code)
+    if student:
+        return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
 
     else:
         return redirect(Config.STUDENT_APP_URL)
@@ -57,6 +68,26 @@ def redirect_uri():
 @bp.route('/info', methods=['GET'])
 @requires_student_auth
 def get_info(student):    
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('/today-login', methods=['GET'])
+@requires_student_auth
+def today_login(student):
+    now = datetime.utcnow()
+    date = now.strftime('%d %b %Y, %a')
+    event = EventsFinder.get_default_event()
+    dates = EventsHandler.get_event_dates(event)
+
+    if date in dates:
+        student_login = StudentsFinder.get_student_login(student, date)
+        if student_login is None:
+            StudentsHandler.add_student_login(student, date)
+            StudentsHandler.add_points(student, int(Config.REWARD_LOGIN))
+        else:
+            return APIErrorValue("Already loggedin today").json(409)
+    else:
+        return APIErrorValue("Date out of event").json(409)
+            
     return StudentsValue(student, details=True).json(200)
 
 @bp.route('/students', methods=['GET'])
@@ -101,7 +132,7 @@ def create_squad(student):
     file = request.files['file']
 
     if file and file.filename != '':
-        squad = SquadsHandler.create_squad(name=name, cry=cry, captain_ist_id=student.ist_id)
+        squad = SquadsHandler.create_squad(name=name, cry=cry, captain_ist_id=student.user.username)
         if squad is None:
             return APIErrorValue('Error creating squad').json(500)
 
@@ -132,12 +163,36 @@ def invite_squad(student):
     else:
         return APIErrorValue('Failed to invite').json(500)
 
-@bp.route('/squad-invitations', methods=['GET'])
+@bp.route('/cancel-invitation', methods=['POST'])
 @requires_student_auth
-def get_squad_invitations(student):
+def cancel_invite(student):
+    try:
+        receiver_id = request.get_json()["id"]
+    except KeyError:
+        return APIErrorValue('Invalid members').json(500)
+
+    invitations = SquadsFinder.get_invitations_from_parameters({"sender_id":student.id, "receiver_id": receiver_id})
+    if(invitations is None or len(invitations) == 0):
+        return APIErrorValue("No invites found").json(404)
+
+    for invitation in invitations:
+        SquadsHandler.delete_squad_invitation(invitation)
+
+    return jsonify('Success'), 200
+
+@bp.route('/squad-invitations-received', methods=['GET'])
+@requires_student_auth
+def get_squad_invitations_received(student):
     invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
 
     return SquadInvitationsValue(invitations).json(200)
+
+@bp.route('/squad-invitations-sent', methods=['GET'])
+@requires_student_auth
+def get_squad_invitations_sent(student):
+    invitations = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
+
+    return SquadInvitationsSentValue([invitation.receiver for invitation in invitations]).json(200)
 
 @bp.route('/accept-invitation', methods=['POST'])
 @requires_student_auth
@@ -152,6 +207,8 @@ def accept_invitation(student):
         return APIErrorValue('Invitation not found').json(404)
 
     student = StudentsHandler.accept_invitation(student, invitation)
+    if(not student):
+        return APIErrorValue("Failed to join squad").json(500)
 
     return StudentsValue(student, details=True).json(200)
 
@@ -201,31 +258,61 @@ def kick_member(student):
 @requires_student_auth
 def redeem_code(student):
     try:
-        code = request.get_json()["code"]
+        code = request.get_json()["code"].replace("-","")
     except KeyError:
-        return APIErrorValue('Invalid code').json(500)
+        return APIErrorValue('Code not inserted').json(500)
 
-    student = ActivityCodesHandler.redeem_activity_code(student, code)
+    return APIErrorValue('Code submission closed').json(500)
 
-    if(student is None):
-        return APIErrorValue('Invalid code').json(500)
+    # error_msg, student = ActivityCodesHandler.redeem_activity_code(student, code)
 
-    return StudentsValue(student, details=True).json(200)
+    # if(error_msg == "Code not found"):
+    #     redeemed_student = StudentsFinder.get_from_referral_code(code)
+    #     if(not redeemed_student or redeemed_student.id == student.id):
+    #         return APIErrorValue('Invalid code').json(500)
+
+    #     error_msg, student = StudentsHandler.redeem_referral(student, redeemed_student)
+    #     if error_msg:
+    #         return APIErrorValue(error_msg).json(500)
+    
+    # elif(error_msg):
+    #     return APIErrorValue(error_msg).json(500)
+
+    # return StudentsValue(student, details=True).json(200)
 
 @bp.route('/activities', methods=['GET'])
 @requires_student_auth
 def get_activities(student):
     event = EventsFinder.get_default_event()
+    date = request.args.get('date', None)
+    if date is None:
+        activities = event.activities
+    else:
+        activities = ActivitiesFinder.get_from_parameters({"event_id":event.id,"day":date})
     
-    return StudentActivitiesValue(event, event.activities, student).json(200)
+    return StudentActivitiesValue(activities, student).json(200)
 
 @bp.route('/quests', methods=['GET'])
 @requires_student_auth
 def get_quests(student):
-    event = EventsFinder.get_default_event()
     activities = ActivitiesFinder.get_quests()
     
-    return StudentActivitiesValue(event, activities, student).json(200)
+    return StudentActivitiesValue(activities, student, True).json(200)
+
+@bp.route('/event-dates', methods=['GET'])
+@requires_student_auth
+def get_activity_dates(student):
+    event = EventsFinder.get_default_event()
+    dates = EventsHandler.get_event_dates(event)
+
+    return jsonify(dates)
+
+@bp.route('/event-info', methods=['GET'])
+@requires_student_auth
+def get_event_info(student):
+    event = EventsFinder.get_default_event()
+    
+    return StudentEventInfoValue(event).json(200)
 
 @bp.route('/add-linkedin', methods=['POST'])
 @requires_student_auth
@@ -235,30 +322,49 @@ def add_linkedin(student):
     except KeyError:
         return APIErrorValue('Invalid url').json(500)
 
-    student = StudentsHandler.add_linkedin(student, url)
+    if not student.linkedin_url:
+        StudentsHandler.add_points(student, int(Config.REWARD_LINKEDIN))
+    StudentsHandler.update_student(student, linkedin_url=url)
 
     return StudentsValue(student, details=True).json(200)
 
-# @bp.route('/add-cv', methods=['POST'])
-# @requires_student_auth
-# def add_cv(student):
-#     if 'cv' not in request.files:
-#         return APIErrorValue('No cv found').json(500)
+@bp.route('/add-cv', methods=['POST'])
+@requires_student_auth
+def add_cv(student):
+    if 'cv' not in request.files:
+        return APIErrorValue('No cv found').json(500)
 
-#     file = request.files['file']
-#     if file.filename == '':
-#         return APIErrorValue('No cv found').json(500)
+    file = request.files['cv']
+    if file.filename == '':
+        return APIErrorValue('No cv found').json(500)
 
-#     if file and allowed_file(file.filename):
-#         filename = 'cv-' + student.ist_id + '.pdf'
+    if file and FileHandler.allowed_file(file.filename):
+        filename = 'cv-' + student.user.username + '.pdf'
 
-#         # FileHandler.upload_file(file, filename)
-#         # logger.info('File uploaded sucessfuly!')
+        if not FileHandler.upload_file(file, filename):
+            return APIErrorValue('Error uploading file').json(500)
 
-#     else:
-#         return APIErrorValue('Wrong file extension').json(500)
+        if not student.uploaded_cv:
+            StudentsHandler.update_student(student, uploaded_cv=True)
+            StudentsHandler.add_points(student, int(Config.REWARD_CV))
 
-#     return StudentsValue(student, details=True).json(200)
+    else:
+        return APIErrorValue('Wrong file extension').json(500)
+
+    return StudentsValue(student, details=True).json(200)
+
+@bp.route('/cv', methods=['GET'])
+@requires_student_auth
+def get_cv(student):
+    if not student.uploaded_cv:
+        return APIErrorValue("No CV uploaded").json(404)
+
+    filename = 'cv-' + student.user.username + '.pdf'
+
+    with open(os.path.join(current_app.root_path, 'storage', filename), mode='rb') as file:
+        fileContent = file.read()
+
+    return jsonify({'data':str(base64.b64encode(fileContent), 'utf-8'), 'content-type':'application/pdf'})
 
 @bp.route('/tags', methods=['GET'])
 @requires_student_auth
@@ -309,17 +415,39 @@ def delete_tag(student):
 
     return StudentsValue(student, details=True).json(200)
 
+@bp.route('/partners', methods=['GET'])
+@requires_student_auth
+def get_partners(student):
+    companies = CompaniesFinder.get_chat_companies({'partnership_tier':'main_sponsor'})
+    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'gold'})
+    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'silver'})
+    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'bronze'})
+
+    return CompaniesValue(companies, False).json(200)
+
+@bp.route('/partner', methods=['GET'])
+@requires_student_auth
+def get_partner(student):
+    name = request.args.get('name', None)
+    if name is None:
+        return APIErrorValue("Invalid name").json(500)
+
+    company = CompaniesFinder.get_from_name(name)
+    if company is None:
+        return APIErrorValue('Company not found').json(404)
+
+    return PartnersValue(company, student).json(200)
+
 @bp.route('/companies', methods=['GET'])
 @requires_student_auth
 def get_companies(student):
-    companies = CompaniesFinder.get_all()
-    companies_names = []
+    company_names = []
+    companies = CompaniesFinder.get_companies_from_default_event()
 
     for company in companies:
-        companies_names.append(company.name)
+        company_names.append(company.name)
 
-    return jsonify(companies_names), 200
-
+    return jsonify(company_names), 200
 
 @bp.route('/add-companies', methods=['POST'])
 @requires_student_auth
@@ -361,14 +489,21 @@ def delete_company(student):
 @bp.route('/students-ranking', methods=['GET'])
 @requires_student_auth
 def get_students_ranking(student):
-    students = StudentsFinder.get_top_10()
+    students = StudentsFinder.get_top(20)
 
     return StudentsValue(students, details=False).json(200)
 
 @bp.route('/squads-ranking', methods=['GET'])
 @requires_student_auth
 def get_squads_ranking(student):
-    squads = SquadsFinder.get_top_10()
+    squads = SquadsFinder.get_top()
+
+    return SquadsValue(squads).json(200)
+
+@bp.route('/daily-squads-ranking', methods=['GET'])
+@requires_student_auth
+def get_daily_squads_ranking(student):
+    squads = SquadsFinder.get_daily_top()
 
     return SquadsValue(squads).json(200)
 
@@ -397,3 +532,65 @@ def get_jeecpot_rewards(student):
     jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
 
     return JeecpotRewardsValue(jeecpot_rewards[0], student).json(200)
+
+@bp.route('/chat-token', methods=['GET'])
+@requires_student_auth
+def get_chat_token(student):
+    token = UsersHandler.get_chat_user_token(student.user)
+
+    if token:
+        return jsonify({'token':token}), 200
+    else:
+        return APIErrorValue("Error getting token").json(500)
+
+@bp.route('/chat-room', methods=['GET'])
+@requires_student_auth
+def get_chat_room(student):
+    company_name = request.args.get('company', None)
+    user_id = request.args.get('member', None)
+
+    if company_name:
+        company = CompaniesFinder.get_from_name(company_name)
+        if company is None:
+            return APIErrorValue("Company not found").json(404)
+
+        result = UsersHandler.join_channel(student.user, company.chat_id, company.chat_code)
+        if result:
+            return jsonify({'result':True}), 200
+        else:
+            return APIErrorValue("Failed to join room").json(500)
+
+    elif user_id:
+        company_user = UsersFinder.get_from_external_id(user_id)
+        if company_user is None and not company_user.role.name == 'company':
+            return APIErrorValue("Invalid user").json(500)
+        
+        room_id = UsersHandler.create_direct_message(student.user, company_user)
+        if room_id is None:
+            return APIErrorValue("Failed to create direct message session").json(500)
+
+        return jsonify({"room_id":room_id}), 200
+
+    else:
+        return APIErrorValue("No room found").json(404)
+
+@bp.route('/notifications', methods=['GET'])
+@requires_student_auth
+def get_notifications(student):
+    notifications={}
+
+    if(student.squad):
+        notifications['squad_xp'] = student.squad.total_points
+    
+    notifications['invites'] = []
+    invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
+    for invitation in invitations:
+        sender = StudentsFinder.get_from_id(invitation.sender_id)
+        notifications['invites'].append(sender.user.name)
+    
+    notifications['activities'] = []
+    activities = ActivitiesFinder.get_next_activity()
+    for activity in activities:
+        notifications['activities'].append(activity.name)
+
+    return jsonify(notifications), 200

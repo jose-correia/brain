@@ -19,6 +19,8 @@
   <div class="nav-bar">
     <img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg">
 
+    <div class="company-dash-username right" style="color:black">{{user.name}}</div>
+
     <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
       <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
         out</button>
@@ -53,7 +55,7 @@
   {% endif %}
 
   <div class="center-align" style="margin-top:10px;">
-    <b>{{ role }}</b>
+    <b>{{ user.role.name }}</b>
   </div>
 
   <div class="flexbox-btns">
@@ -83,7 +85,7 @@
     </form>
   </div>
 
-  {% if role in ['admin'] %}
+  {% if user.role.name in ['admin'] %}
   <div class="flexbox-btns">
     <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
@@ -93,11 +95,6 @@
     <form action="{{ url_for('admin_api.events_dashboard') }}" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
           class="large material-icons left">event</i>Events</button>
-    </form>
-
-    <form action="{{ url_for('admin_api.resume_submissions_dashboard') }}" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
-          class="large material-icons left">folder_shared</i>Resumes</button>
     </form>
 
     <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">

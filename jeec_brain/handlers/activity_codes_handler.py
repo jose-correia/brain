@@ -11,6 +11,8 @@ from jeec_brain.finders.students_finder import StudentsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
 
+from datetime import datetime
+
 class ActivityCodesHandler():
 
     @classmethod
@@ -22,20 +24,25 @@ class ActivityCodesHandler():
     @classmethod
     def redeem_activity_code(cls, student, code):
         activity_code = ActivityCodesFinder.get_from_code(code)
-        if(activity_code is None or activity_code.activity in student.activities):
-            return None
+        if(activity_code is None):
+            return "Code not found", student
+        
+        if(activity_code.activity in student.activities):
+            return "Already participated", student
 
-        student_activity = StudentsFinder.get_student_activity_from_id_and_activity_id(student.id, activity_code.activity_id)
-        if(student_activity is None):
-            student_activity = ActivitiesHandler.add_student_activity(student, activity_code.activity)
-        # else:
-        #     student_activity = ActivitiesHandler.update_student_activity(student_activity, done=True)
-
-        cls.delete_activity_code(activity_code)
+        ActivitiesHandler.add_student_activity(student, activity_code.activity)
+        
+        now = datetime.utcnow()
+        today = now.strftime('%d %b %Y, %a')
+        if activity_code.activity.day != today:
+            return "Code expired", student
 
         points = activity_code.activity.points
         
-        return StudentsHandler.add_points(student, points)
+        if activity_code.activity.activity_type.name not in ["Speaker", "Discussion Panel", "Ceremony"]:
+            cls.delete_activity_code(activity_code)
+
+        return None, StudentsHandler.add_points(student, points)
 
     @classmethod
     def delete_activity_code(cls, activity_code):

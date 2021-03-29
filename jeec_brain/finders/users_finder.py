@@ -1,4 +1,5 @@
 from jeec_brain.models.users import Users
+from jeec_brain.models.company_users import CompanyUsers
 from jeec_brain.models.students import Students
 
 class UsersFinder():
@@ -24,8 +25,8 @@ class UsersFinder():
         return Users.all()
 
     @classmethod
-    def get_all_without_students(cls):
-        return Users.query.filter(Users.role != 'student').all()
+    def get_all_admin_users(cls):
+        return Users.query.filter((Users.role != 'student') & (Users.role != 'company')).all()
 
     @classmethod
     def search_by_username(cls, username):
@@ -33,9 +34,9 @@ class UsersFinder():
         return Users.query.filter(Users.username.ilike(search)).all()
 
     @classmethod
-    def search_by_username_without_students(cls, username):
+    def get_admin_users_by_username(cls, username):
         search = "%{}%".format(username)
-        return Users.query.filter(Users.username.ilike(search) & (Users.role != 'student')).all()
+        return Users.query.filter(Users.username.ilike(search) & (Users.role != 'student') & (Users.role != 'company')).all()
 
     @classmethod
     def get_from_parameters(cls, kwargs):
@@ -47,9 +48,9 @@ class UsersFinder():
         return users
 
     @classmethod
-    def get_from_parameters_without_students(cls, kwargs):
+    def get_admin_users_from_parameters(cls, kwargs):
         try:
-            users = Users.query.filter_by(**kwargs).filter(Users.role != 'student').all()
+            users = Users.query.filter_by(**kwargs).filter(Users.role != 'student' & Users.role != 'company').all()
         except Exception:
             return None
         
@@ -63,3 +64,15 @@ class UsersFinder():
             return None
         else:
             return student.user
+
+    @classmethod
+    def get_all_company_users(cls):
+        return CompanyUsers.all()
+
+    @classmethod
+    def get_company_user_from_user(cls, user):
+        return CompanyUsers.query.filter_by(user_id=user.id).first()
+
+    @classmethod
+    def get_company_users_from_username(cls, username):
+        return CompanyUsers.query.filter(CompanyUsers.user.username == username).all()

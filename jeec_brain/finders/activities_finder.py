@@ -1,12 +1,14 @@
 from jeec_brain.models.activities import Activities
+from jeec_brain.models.activity_types import ActivityTypes
 from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.models.speaker_activities import SpeakerActivities
 from jeec_brain.models.activities_tags import ActivitiesTags
 from jeec_brain.models.speakers import Speakers
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.tags import Tags
+from jeec_brain.models.events import Events
 from jeec_brain.finders.events_finder import EventsFinder
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class ActivitiesFinder():
 
@@ -42,7 +44,7 @@ class ActivitiesFinder():
     @classmethod
     def get_from_parameters(cls, kwargs):
         try:
-            return Activities.query.filter_by(**kwargs).order_by(Activities.activity_type_id, Activities.day, Activities.time).all()
+            return Activities.query.filter_by(**kwargs).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
         except Exception:
             return None
 
@@ -53,7 +55,7 @@ class ActivitiesFinder():
         if(event is None):
             event = EventsFinder.get_default_event()
 
-        return Activities.query.filter(Activities.name.ilike(search) & Activities.event_id == event.id).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
+        return Activities.query.filter(Activities.name.ilike(search) & (Activities.event_id == event.id)).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
     
     @classmethod
     def search_by_name(cls, name):
@@ -61,7 +63,6 @@ class ActivitiesFinder():
 
         return Activities.query.filter(Activities.name.ilike(search)).order_by(Activities.day, Activities.time, Activities.activity_type_id).all()
     
-
     @classmethod
     def get_company_activities_from_activity_id(cls, external_id):
         return CompanyActivities.query.join(Activities, Activities.id == CompanyActivities.activity_id).filter(Activities.external_id == external_id).all()
@@ -81,3 +82,37 @@ class ActivitiesFinder():
     @classmethod
     def get_activity_tags(cls, activity):
         return Tags.query.join(ActivitiesTags, ActivitiesTags.tag_id == Tags.id).filter(ActivitiesTags.activity_id == activity.id).order_by(Tags.name).all()
+
+    @classmethod
+    def get_next_company_activity(cls, company):
+        now = datetime.utcnow() - timedelta(minutes=5)
+        day = now.strftime('%d %b %Y, %a')
+
+        return Activities.query.join(CompanyActivities, Activities.id == CompanyActivities.activity_id).filter((CompanyActivities.company_id == company.id) & (Activities.day == day) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.name == 'Job Fair Booth')).first()
+
+    @classmethod
+    def get_activities_from_speaker_and_event(cls, speaker, event):
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (SpeakerActivities.activity_id == Activities.id) & (SpeakerActivities.speaker_id == speaker.id)).order_by(Activities.day, Activities.time).all()
+
+    @classmethod
+    def get_activities_from_company_and_event(cls, company, event):
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (CompanyActivities.activity_id == Activities.id) & (CompanyActivities.company_id == company.id)).order_by(Activities.day, Activities.time).all()
+
+    @classmethod
+    def get_activities_from_event(cls, event):
+        return Activities.query.filter((Events.id == event.id) & (Events.id == Activities.event_id) & (Activities.activity_type_id == ActivityTypes.id) & (ActivityTypes.show_in_schedule == True)).order_by(Activities.day, Activities.time).all()
+
+    @classmethod
+    def get_current_company_activities(cls, company):
+        return Activities.query.filter((Events.default == True) & (Events.id == Activities.event_id) & (Activities.id == CompanyActivities.activity_id) & (CompanyActivities.company_id == company.id)).order_by(Activities.day, Activities.time).all()
+
+    @classmethod
+    def get_next_activity(cls):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+        activity = Activities.query.filter(Activities.time >= current_time).order_by(Activities.time).first()
+
+        if activity:
+            return Activities.query.filter(Activities.time == activity.time).all()
+        else:
+            return []

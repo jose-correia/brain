@@ -1,5 +1,7 @@
 from jeec_brain.models.speakers import Speakers
 from jeec_brain.models.speaker_activities import SpeakerActivities
+from jeec_brain.models.activities import Activities
+from jeec_brain.models.events import Events
 
 class SpeakersFinder():
 
@@ -32,3 +34,7 @@ class SpeakersFinder():
             return None
         
         return speakers
+
+    @classmethod
+    def get_website_speakers(cls, event, kwargs={}):
+        return Speakers.query.filter((Speakers.id == SpeakerActivities.speaker_id) & (Activities.id == SpeakerActivities.activity_id) & (Activities.event_id == Events.id) & (Events.id == event.id)).filter_by(**kwargs).order_by(Speakers.updated_at).all()

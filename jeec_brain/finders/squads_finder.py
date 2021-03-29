@@ -7,7 +7,7 @@ from sqlalchemy import func
 class SquadsFinder():
 
     @classmethod
-    def search_by_squad(cls, name):
+    def search_by_name(cls, name):
         search = "%{}%".format(name)
         return Squads.query.filter(Squads.name.ilike(search)).all()
 
@@ -36,8 +36,17 @@ class SquadsFinder():
         return db_session.query(subquery).filter(subquery.c.id==id).first().rank
 
     @classmethod
-    def get_top_10(cls):
-        return Squads.query.order_by(Squads.total_points.desc()).limit(10).all()
+    def get_top(cls, number=10):
+        return Squads.query.order_by(Squads.total_points.desc()).limit(number).all()
+
+    @classmethod
+    def get_daily_top(cls, number=10):
+        return Squads.query.order_by(Squads.daily_points.desc()).limit(number).all()
+        
+    @classmethod
+    def get_first(cls):
+        max = db_session.query(func.max(Squads.daily_points)).subquery()
+        return Squads.query.filter_by(daily_points=max).all()
 
     @classmethod
     def get_invitation_from_external_id(cls, external_id):

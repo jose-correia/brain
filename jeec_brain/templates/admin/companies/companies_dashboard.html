@@ -82,6 +82,7 @@
               <th>Email</th>
               <th>Website</th>
               <th>Partnership</th>
+              <th>CV's Access</th>
               <th>Show in Website</th>
             </tr></thead>
             <tbody>
@@ -118,6 +119,14 @@
                         <div class="tier-indicator icon-red"><i class="material-icons">star</i></div>
                       {% elif company.partnership_tier=='sponsor' %}
                         <div class="tier-indicator icon-red"><i class="material-icons">attach_money</i></div>
+                      {% endif %}
+                    </td>
+                      
+                    <td>
+                      {% if company.cvs_access is sameas true %}
+                        <i class="material-icons icon-green">check</i>
+                      {% else %}
+                        <i class="material-icons icon-red">clear</i>
                       {% endif %}
                     </td>
 

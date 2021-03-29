@@ -3,10 +3,13 @@ from jeec_brain.apps.companies_api import bp
 from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
+from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.auctions_finder import AuctionsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
+from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.handlers.users_handler import UsersHandler
+from datetime import datetime
 
 
 @bp.route('/', methods=['GET'])
@@ -44,20 +47,41 @@ def company_logout():
 
 @bp.route('/dashboard', methods=['GET'])
 @require_company_login
-def dashboard():
-    if not current_user.accepted_terms:
-        return render_template('companies/terms_conditions.html', user=current_user)
+def dashboard(company_user):
+    if not company_user.user.accepted_terms:
+        return render_template('companies/terms_conditions.html', user=company_user.user)
 
-    company_auctions = CompaniesFinder.get_company_auctions(current_user.company)
+    if company_user.company.cvs_access:
+        event = EventsFinder.get_default_event()
+        today = datetime.now()
+        cvs_access_start = datetime.strptime(event.cvs_access_start, '%d %b %Y, %a')
+        cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
+        if today < cvs_access_start or today > cvs_access_end:
+            cvs_enabled = False
+        else:
+            cvs_enabled = True
+    else:
+        cvs_enabled = False
 
-    company_logo = CompaniesHandler.find_image(current_user.company.name)
+    company_auctions = CompaniesFinder.get_company_auctions(company_user.company)
 
-    return render_template('companies/dashboard.html', auctions=company_auctions, company_logo=company_logo, user=current_user)
+    company_logo = CompaniesHandler.find_image(company_user.company.name)
+
+    job_fair = False
+    activity_types = []
+    for activity in ActivitiesFinder.get_current_company_activities(company_user.company):
+        if (activity.activity_type not in activity_types) and (activity.activity_type.name not in ['Job Fair','Job Fair Booth']):
+            activity_types.append(activity.activity_type)
+
+        if (activity.activity_type.name in ['Job Fair','Job Fair Booth']):
+            job_fair = True
+
+    return render_template('companies/dashboard.html', auctions=company_auctions, job_fair=job_fair, company_logo=company_logo, activity_types=activity_types, user=company_user, cvs_enabled=cvs_enabled)
 
 
 @bp.route('/dashboard', methods=['POST'])
 @require_company_login
-def accept_terms():
-    UsersHandler.update_user(user=current_user, accepted_terms=True)
+def accept_terms(company_user):
+    UsersHandler.update_user(user=company_user.user, accepted_terms=True)
 
     return redirect(url_for('companies_api.dashboard'))

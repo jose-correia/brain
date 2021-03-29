@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for, current_app
 from flask_login import current_user
 # handlers
 from jeec_brain.handlers.companies_handler import CompaniesHandler
+from jeec_brain.handlers.company_users_handler import CompanyUsersHandler
 # finders
 from jeec_brain.finders.companies_finder import CompaniesFinder
 # values
@@ -53,6 +54,9 @@ def create_company():
     business_area = request.form.get('business_area')
     show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
+    evf_username = request.form.get('evf_username')
+    evf_password = request.form.get('evf_password')
+    cvs_access = request.form.get('cvs_access')
 
     if partnership_tier == "":
         partnership_tier = None
@@ -62,13 +66,21 @@ def create_company():
     else:
         show_in_website = False
 
+    if cvs_access == 'True':
+        cvs_access = True
+    else:
+        cvs_access = False
+
     company = CompaniesHandler.create_company(
         name=name,
         email=email,
         business_area=business_area,
         link=link,
         show_in_website=show_in_website,
-        partnership_tier=partnership_tier
+        partnership_tier=partnership_tier,
+        evf_username=evf_username,
+        evf_password=evf_password,
+        cvs_access=cvs_access
     )
     
     if company is None:
@@ -110,6 +122,9 @@ def update_company(company_external_id):
     business_area = request.form.get('business_area')
     show_in_website = request.form.get('show_in_website')
     partnership_tier = request.form.get('partnership_tier')
+    evf_username = request.form.get('evf_username')
+    evf_password = request.form.get('evf_password')
+    cvs_access = request.form.get('cvs_access')
 
     if partnership_tier == "":
         partnership_tier = None
@@ -118,6 +133,11 @@ def update_company(company_external_id):
         show_in_website = True
     else:
         show_in_website = False
+
+    if cvs_access == 'True':
+        cvs_access = True
+    else:
+        cvs_access = False
 
     image_path = CompaniesHandler.find_image(name)
     old_company_name = company.name
@@ -129,7 +149,10 @@ def update_company(company_external_id):
         business_area=business_area,
         link=link,
         show_in_website=show_in_website,
-        partnership_tier=partnership_tier
+        partnership_tier=partnership_tier,
+        evf_username=evf_username,
+        evf_password=evf_password,
+        cvs_access=cvs_access
     )
     
     if updated_company is None:
@@ -158,6 +181,9 @@ def delete_company(company_external_id):
         return APIErrorValue('Couldnt find company').json(500)
     
     name = company.name
+
+    for company_user in company.users:
+        CompanyUsersHandler.delete_company_user(company_user)
     
     if CompaniesHandler.delete_company(company):
         return redirect(url_for('admin_api.companies_dashboard'))

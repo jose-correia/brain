@@ -1,6 +1,5 @@
 from jeec_brain.apps.companies_api import bp
 from flask import render_template, session, request, redirect, url_for
-from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.finders.auctions_finder import AuctionsFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
@@ -11,10 +10,7 @@ from jeec_brain.values.api_error_value import APIErrorValue
 
 @bp.route('/auction/<string:auction_external_id>', methods=['GET'])
 @require_company_login
-def auction_dashboard(auction_external_id):
-    if current_user.company is None:
-        return APIErrorValue('Couldnt find company').json(400)
-
+def auction_dashboard(company_user, auction_external_id):
     # get auction
     auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
 
@@ -22,7 +18,7 @@ def auction_dashboard(auction_external_id):
         return APIErrorValue('Couldnt find auction').json(400)
 
     # check if company is allowed in auction
-    if current_user.company not in auction.participants:
+    if company_user.company not in auction.participants:
         return APIErrorValue('Company not allowed in this auction').json(400)
 
     # get auction highest bid
@@ -43,7 +39,7 @@ def auction_dashboard(auction_external_id):
             highest_bidder_name = highest_bidder.name
 
     # get all company bids
-    company_bids = AuctionsFinder.get_company_bids(auction, current_user.company)
+    company_bids = AuctionsFinder.get_company_bids(auction, company_user.company)
 
     # get all logos of companies in the auction
     participant_logos = []
@@ -59,17 +55,17 @@ def auction_dashboard(auction_external_id):
         company_bids=company_bids, \
         participant_logos=participant_logos, \
         error=None, \
-        user=current_user,
+        user=company_user,
         search=None)
 
 
 @bp.route('/auction/<string:auction_external_id>/bid', methods=['POST'])
 @require_company_login
-def auction_bid(auction_external_id):
+def auction_bid(company_user, auction_external_id):
     try:
         value = float(request.form.get('value'))
     except:
-        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
+        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction_external_id))
 
     is_anonymous = request.form.get('is_anonymous')
     
@@ -79,7 +75,7 @@ def auction_bid(auction_external_id):
         is_anonymous = False
 
     # get company
-    company = CompaniesFinder.get_from_name(current_user.company.name)
+    company = CompaniesFinder.get_from_name(company_user.company.name)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(400)

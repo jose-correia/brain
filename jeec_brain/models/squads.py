@@ -9,7 +9,7 @@ class Squads(db.Model, ModelMixin):
     name = db.Column(db.String(100), unique=True, nullable=False)
     cry = db.Column(db.String(100))
 
-    members = relationship("Students", back_populates='squad', lazy='dynamic', order_by="Students.name")
+    members = relationship("Students", back_populates='squad', lazy='dynamic', order_by="Students.total_points")
 
     captain_ist_id = db.Column(db.String(10), unique=True, nullable=False)
 

@@ -1,42 +1,153 @@
-<html>  
-  <head>
-    <title>JEEC|Brain</title>
-    <link rel="stylesheet" href="/static/admin/css/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<html>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+<head>
+  <title>JEEC|Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
-  </head>
-  <body>
-    <div class="nav-bar">
-        <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/jeec_logo_mobile.svg"></a>
+  <script src="/static/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-        <form action="{{ url_for('companies_api.company_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
-    <div class="section-header">
-      <h2>Student's Resumes</h2>
-      <p>Download student curriculums</p>
-    </div>
+</head>
 
-    <form action="{{ url_for('companies_api.dashboard') }}" method="get">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile"
+        src="/static/jeec_logo_mobile.svg"></a>
+
+    <form action="{{ url_for('companies_api.company_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
     </form>
 
-  </body>
-</html>  
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Student's Resumes</h2>
+    <p>Download student curriculums</p>
+  </div>
+
+  <form action="{{ url_for('companies_api.dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  <div class="flexbox-btns" style="justify-content: center; margin-top: 70px;">
+    <button id="all_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="margin-right: 50px;"><i
+        class="large material-icons left">people</i>All</button>
+
+    <button id="interested_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
+        class="large material-icons left">person_add</i>Interested</button>
+  </div>
+
+  {% if error is none %}
+  <div class="flexbox-btns" style="margin-bottom: 50px;">
+    <a class="waves-effect waves-light red btn back-btn" style="font-weight: 700; margin-left: 0;"
+      href="{{ url_for('companies_api.download_resumes') }}" download="JEEC21 CVs"><i
+        class="material-icons left">file_download</i>Download All</a>
+  </div>
+  <p
+    style="text-align: center; margin: 0; margin-top: -30px; margin-bottom: 30px; font-size: 20px; font-weight: 700; color: red;">
+    Be aware, students resumes submission closes on the 2nd April</p>
+  {% endif %}
+
+  <div id="all">
+    <div class="section-title center-align" style="margin-top:20px;">
+      List of Students Resumes
+    </div>
+
+    <div class="list">
+      {% if error is not none %}
+      <blockquote class="create-error">
+        {{ error }}
+      </blockquote>
+      {% else %}
+      <div class="counter right">
+        Students: {{ company_students|length }}
+      </div>
+
+      <table class="striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Degree</th>
+            <th>Entry Year</th>
+            <th>Email</th>
+            <th>Interested</th>
+            <th>Linkedin</th>
+            <th>CV's</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in company_students %}
+          <tr {% if student[6] is none %} class="not-interested" {% endif %}>
+            <td><b>{{ student[4] }}</b></td>
+
+            <td>
+              {{ student[1] }}
+            </td>
+
+            <td>
+              {{ student[0] }}
+            </td>
+
+            <td>
+              {{ student[5] }}
+            </td>
+
+            <td>
+              {% if student[6] %}
+              <i class="material-icons icon-green">check</i>
+              {% else %}
+              <i class="material-icons icon-red">clear</i>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if student[2] %}
+              <a href="{{ student[2] }}" target="_blank">{{ student[2] }}</a>
+              {% else %}
+              <i class="material-icons icon-red">clear</i>
+              {% endif %}
+            </td>
+
+            <td>
+              <a class="waves-effect waves-light btn-floating"
+                href="{{ url_for('companies_api.download_resume', student_external_id=student[3]) }}"
+                download="{{ student[4] }}-cv"><i class="material-icons left">download</i>CV</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      $("#all_btn").click(function () {
+        $(".not-interested").show();
+      });
+
+      $("#interested_btn").click(function () {
+        $(".not-interested").hide();
+      });
+    })
+  </script>
+</body>
+
+</html>

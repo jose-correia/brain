@@ -23,6 +23,7 @@ fenixedu.ini
 /__pycache__
 
 /venv
+.venv
 
 
 

@@ -277,6 +277,107 @@ button:hover {
     margin-bottom: 20px;
 }
 
+.carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80vw;
+}
+
+.left-arrow,
+.right-arrow {
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.right-arrow {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.activity-name {
+    font-size: 40px !important;
+    font-weight: 500;
+}
+
+.activity-description {
+    font-size: 20px !important;
+    min-height: 70px;
+}
+
+.activity-time {
+    margin-top: 60px;
+    font-size: 30px !important;
+}
+
+#code-input {
+    width: 300px !important;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    /* color: #707070; */
+    padding: 5px;
+    border: 2px solid #707070 !important;
+}
+
+#chat {
+    width: 100vw;
+    height: calc(100vh - 360px);
+    min-height: 600px;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+}
+
+.chat-frame {
+    width: 80%;
+    height: 100%;
+}
+
+.evf {
+    margin-top: 30px;
+    background-color: #F2F3F3;
+    width: 500px;
+    border-radius: 30px;
+    font-size: 20px;
+}
+
+.evf::before {
+    content: 'EVF Backend Booth Credentials';
+    font-size: 25px !important;
+    font-weight: bold;
+}
+
+.evf-user::before {
+    content: 'EVF User Booth Credentials';
+}
+
+.stats_app {
+    text-align: left;
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.total_stats {
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 30px;
+}
+
+.total_stats p {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.graph-btn {
+    width: 300px;
+    margin-left: 30px;
+}
 
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {

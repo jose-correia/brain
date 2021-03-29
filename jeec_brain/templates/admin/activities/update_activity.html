@@ -6,8 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="/static/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <meta charset="utf-8">
@@ -64,15 +63,15 @@
 
       <div class="row">
         <div class="input-field col s5">
-          <input id="name" name="name" type="text" class="validate" value="{{ activity.name }}">
+          <input id="name" name="name" type="text" class="validate" value="{{ activity.name }}" required>
           <label for="name">Name</label>
         </div>
 
         <div class="input-field col s2" style="margin-left: 30px;">
           <select name="type" class="form-control">
             {% for type in activity_types %}
-            <option value="{{ type.external_id }}" {% if activity.activity_type is sameas type %} selected="selected"
-              {% endif %}>{{ type.name }}</option>
+            <option value="{{ type.external_id }}" {% if activity.activity_type is sameas type %} selected="selected" {%
+              endif %}>{{ type.name }}</option>
             {% endfor %}
           </select>
           <label>Activity type</label>
@@ -103,15 +102,36 @@
           <label for="time">Time</label>
         </div>
 
-        <div class="input-field col s2">
-          <input id="points" name="points" type="number" min="0" class="validate" value="{{ activity.points }}">
-          <label for="points">Points</label>
+        <div class="input-field col s1">
+          <input id="end_time" name="end_time" type="text" class="timepicker" value="{{ activity.end_time }}">
+          <label for="end_time">Ending Time</label>
         </div>
       </div>
 
       <div class="row s7">
-        <div class="col s3">
-          Activity is a Quest in Student App:
+        <div class="col s2" style="margin-right: 20px;">
+          Create chat channel:
+          <p>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="chat" type="radio" value="general" {% if (activity.chat_type.name=='general'
+                ) %} checked {% endif %} />
+              <span>General</span>
+            </label>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="chat" type="radio" value="individual" {% if
+                (activity.chat_type.name=='individual' ) %} checked {% endif %} />
+              <span>Individual</span>
+            </label>
+            <label>
+              <input class="with-gap" name="chat" type="radio" value="none" {% if (activity.chat_type.name=='none' ) %}
+                checked {% endif %} />
+              <span>No</span>
+            </label>
+          </p>
+        </div>
+
+        <div class="col s2">
+          Activity is a Quest in the App:
           <p>
             <label style="margin-right: 20px;">
               <input class="with-gap" name="quest" type="radio" value="True" {% if activity.quest is sameas true %}
@@ -125,19 +145,33 @@
             </label>
           </p>
         </div>
+
+        <div class="input-field col s2">
+          <input id="points" name="points" type="number" min="0" class="validate" value="{{ activity.points }}">
+          <label for="points">Points</label>
+        </div>
+      </div>
+
+      <div class="row s10">
+        <div class="col s7">
+          <div class="input-field">
+            <input id="zoom_url" name="zoom_url" type="url" class="validate" value="{{ activity.zoom_link }}">
+            <label for="zoom_url">ZOOM URL</label>
+          </div>
+        </div>
       </div>
 
       Registration Open:
       <div class="row s10">
         <p class="col s2">
           <label style="margin-right: 20px;">
-            <input class="with-gap" name="registration_open" type="radio" value="True"
-              {% if activity.registration_open is sameas true %} checked {% endif %} />
+            <input class="with-gap" name="registration_open" type="radio" value="True" {% if activity.registration_open
+              is sameas true %} checked {% endif %} />
             <span>Yes</span>
           </label>
           <label>
-            <input class="with-gap" name="registration_open" type="radio" value="False"
-              {% if activity.registration_open is sameas false %} checked {% endif %} />
+            <input class="with-gap" name="registration_open" type="radio" value="False" {% if activity.registration_open
+              is sameas false %} checked {% endif %} />
             <span>No</span>
           </label>
         </p>
@@ -153,7 +187,7 @@
 
       <div class="row">
         <div class="input-field col s3">
-          <select multiple name="company">
+          <select multiple name="company" id="companies">
             {% for company in companies %}
             <option value="{{ company.name }}" {% if company.id in company_activities %} selected {% endif %}>
               {{ company.name }}</option>
@@ -163,7 +197,7 @@
         </div>
 
         <div class="input-field col s3">
-          <select multiple name="speaker">
+          <select multiple name="speaker" id="speakers">
             {% for speaker in speakers %}
             <option value="{{ speaker.name }}" {% if speaker.id in speaker_activities %} selected {% endif %}>
               {{ speaker.name }}</option>
@@ -173,6 +207,19 @@
         </div>
 
         <div class="input-field col s3">
+          <select name="moderator" id="moderator">
+            <option value=""></option>
+            {% for speaker in speakers %}
+            {% if speaker.id == activity.moderator_id %}
+            <option value="{{ speaker.name }}" selected>{{ speaker.name }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          <label>Choose Moderator</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s3">
           <select multiple name="tag">
             {% for tag in tags %}
             <option value="{{ tag.name }}" {% if tag.id in activity_tags %} selected {% endif %}>
@@ -181,6 +228,31 @@
           </select>
           <label>Choose tags</label>
         </div>
+
+        <div class="input-field col s3">
+          <select name="reward">
+            <option value=""></option>
+            {% for reward in rewards %}
+            <option value="{{ reward.id }}" {% if reward.id==activity.reward_id %} selected {% endif %}">{{ reward.name
+              }}</option>
+            {% endfor %}
+          </select>
+          <label>Choose Reward</label>
+        </div>
+      </div>
+
+      <div id="urls">
+        {% for company in companies %}
+        {% if company.id in company_activities %}
+        <div class="row url" style="margin-bottom:0" id="url{{ company.name | replace(' ','_') }}">
+          <div class="input-field col s5">
+            <input name="url" type="url" class="validate" {% if companies_zoom_url[company.id] %}
+              value="{{ companies_zoom_url[company.id] }} {% endif %}">
+            <label for="url{{ company.name }}">{{ company.name }} Zoom URL</label>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
       </div>
 
       <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
@@ -202,7 +274,84 @@
         $('.parallax').parallax();
 
       }); // end of document ready
-    })(jQuery); 
+    })(jQuery);
+
+    $(document).ready(function () {
+
+      $.each($('#speakers').val(), function (i, item) {
+        if (item !== '{{ activity.moderator.name|string() }}') {
+          $('#moderator').append($('<option>', {
+            value: item,
+            text: item
+          }));
+        }
+      });
+
+      $('#moderator').formSelect();
+
+
+      $('#speakers').change(function () {
+
+        $.each($('#moderator option'), function () {
+          $(this).remove();
+        });
+
+        $('#moderator').append($('<option>', {
+          value: "",
+          text: ""
+        }));
+
+        $.each($('#speakers').val(), function (i, item) {
+          $('#moderator').append($('<option>', {
+            value: item,
+            text: item
+          }));
+        });
+
+        $('#moderator').formSelect();
+      });
+
+
+      var companies = $('#companies').val();
+
+      $('#companies').change(function () {
+        var new_companies = $('#companies').val();
+
+        for (var i = 0; i < companies.length; i++) {
+          if (jQuery.inArray(companies[i], new_companies) === -1) {
+            $("#url" + companies[i].replaceAll(" ", "_")).remove();
+
+            companies = jQuery.grep(companies, function (value) {
+              return value != companies[i];
+            });
+
+            i--;
+          }
+        }
+
+        for (var i = 0; i < new_companies.length; i++) {
+          if (jQuery.inArray(new_companies[i], companies) === -1) {
+            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replaceAll(" ", "_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
+            var divs = $('.url');
+
+            var j = 0;
+            for (j = 0; j < divs.length; j++) {
+              if (new_companies[i] < divs[j].id.substring(3, divs[j].id.length)) {
+                $('#' + divs[j].id).before(input);
+                break;
+              }
+            }
+
+            if (j === divs.length) {
+              $('#urls').append(input);
+            }
+          }
+        }
+
+        companies = new_companies;
+
+      });
+    });
   </script>
 </body>
 

@@ -8,6 +8,7 @@ from flask_cors import CORS
 #from flask_socketio import SocketIO
 
 from datetime import timedelta
+import jwt
 
 from jeec_brain.database import db, create_tables
 from jeec_brain.finders.users_finder import UsersFinder
@@ -103,8 +104,8 @@ def load_user(username):
 def load_remote_user(request):
     token = request.headers.get('Authorization')
 
-    if(token is None):
+    try:
+        payload = jwt.decode(token, Config.JWT_SECRET, algorithms="HS256")
+        return UsersFinder.get_user_from_username(username=payload["user_id"])
+    except:
         return None
-    else:
-        code = token.replace("Bearer ", "", 1)
-        return UsersFinder.get_from_fenix_auth_code(code)

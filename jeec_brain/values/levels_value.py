@@ -14,8 +14,8 @@ class LevelsValue(ValueComposite):
 			if level is not None:
 				level_value = {
 				"value": level.value,
-				"end_points": level.points,
-				"start_points": 0 if level.value == 0 else LevelsFinder.get_level_by_value(level.value - 1).points + 1
+				"end_points": level.points + 1,
+				"start_points": 0 if level.value == 1 else LevelsFinder.get_level_by_value(level.value - 1).points + 1
 				}
 				
 				if(details and level.reward is not None):

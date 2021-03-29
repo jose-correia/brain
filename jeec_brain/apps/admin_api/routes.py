@@ -51,8 +51,8 @@ def admin_logout():
 def dashboard():
     event = EventsFinder.get_default_event()
     if(event is None):
-        return render_template('admin/dashboard.html', role=current_user.role.name, event=None, logo=None)
+        return render_template('admin/dashboard.html', event=None, logo=None, user=current_user)
 
     logo = EventsHandler.find_image(image_name=str(event.external_id))
-    return render_template('admin/dashboard.html', role=current_user.role.name, event=event, logo=logo)
+    return render_template('admin/dashboard.html', event=event, logo=logo, user=current_user)
 

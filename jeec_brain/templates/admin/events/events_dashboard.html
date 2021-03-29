@@ -82,6 +82,11 @@
               <th>End date</th>
               <th>Email</th>
               <th>Location</th>
+              <th>CV's Submission Start</th>
+              <th>CV's Submission End</th>
+              <th>CV's Access Start</th>
+              <th>CV's Access End</th>
+              <th>CV's purged</th>
               <th>Facebook event</th>
               <th>Default event</th>
             </tr></thead>
@@ -113,6 +118,38 @@
                         {{ event.location }}
                       {% endif %}
                     </td>
+
+                    <td>
+                      {% if event.cvs_submission_start %}
+                        {{ event.cvs_submission_start }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if event.cvs_submission_end %}
+                        {{ event.cvs_submission_end }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if event.cvs_access_start %}
+                        {{ event.cvs_access_start }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if event.cvs_access_start %}
+                        {{ event.cvs_access_end }}
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      {% if event.cvs_purged is sameas true %}
+                        <i class="material-icons icon-green">check</i>
+                      {% else %}
+                        <i class="material-icons icon-red">clear</i>
+                      {% endif %}
+                    </td>
                     
                     <td>
                       {% if event.facebook_event_link %}
@@ -128,6 +165,14 @@
                       {% endif %}
                     </td>
                     
+                    {% if event.cvs_purgeable is sameas true %}
+                    <td>
+                      <form action="/admin/events/{{event.external_id.hex}}/purge_cvs" method="post">
+                        <button title="Purge CV's" class="waves-effect red waves-light btn-floating"><i class="material-icons left">layers_clear</i>Purge CV's</button>
+                      </form>
+                    </td>
+                    {% endif %}
+
                     {% if role in ['admin'] %}
                     <td>
                       <form action="/admin/events/{{event.external_id.hex}}" method="get">

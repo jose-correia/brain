@@ -6,8 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="../static/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <meta charset="utf-8">
@@ -55,7 +54,7 @@
     <form class="col s12" id="event_form" method="get">
       <select name="event" id="event" class="form-control">
         {% for _event in events %}
-        <option value="{{ _event.external_id }}" {% if _event.id|int() == event.id|int() %}selected="selected" {%endif %}>
+        <option value="{{ _event.external_id }}" {% if _event.id|int()==event.id|int() %}selected="selected" {%endif %}>
           {{ _event.name }}</option>
         {% endfor %}
       </select>
@@ -138,7 +137,8 @@
           <th>Type</th>
           <th>Description</th>
           <th>Day</th>
-          <th>Time</th>
+          <th>Starting Time</th>
+          <th>Ending Time</th>
           <th>Location</th>
           <th>Points</th>
           <th>Quest</th>
@@ -156,13 +156,8 @@
 
           <td>
             {% if activity.description is not none %}
-            {% if activity.description|length < 75 %}
-            {{ activity.description }}
-            {% else %}
-            {{ activity.description[0:75] }}...
-            {% endif %}
-            {% endif %}
-          </td>
+            {% if activity.description|length < 75 %} {{ activity.description }} {% else %} {{
+              activity.description[0:75] }}... {% endif %} {% endif %} </td>
 
           <td>
             {% if activity.day is not none %}
@@ -173,6 +168,12 @@
           <td>
             {% if activity.time is not none %}
             {{ activity.time }}
+            {% endif %}
+          </td>
+
+          <td>
+            {% if activity.end_time is not none %}
+            {{ activity.end_time }}
             {% endif %}
           </td>
 
@@ -204,7 +205,24 @@
 
           {% if role in ['admin', 'activities_admin'] %}
           <td>
-            <form action="/admin/activity/{{activity.external_id.hex}}" method="get">
+            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
+            <button title="Create Code" data-target="modal1" data-name="{{ activity.external_id }}"
+              class="waves-effect waves-light green btn-floating modal-trigger code-btn"><i
+                class="material-icons left">qr_code</i>Generate Code</button>
+            {% endif %}
+          </td>
+          <td>
+            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
+            <button title="Create Code" data-name="{{ activity.external_id }}"
+              class="waves-effect waves-light red btn-floating modal-trigger delete-code-btn"><i
+                class="material-icons left">delete</i>Delete Code</button>
+            {% endif %}
+          </td>
+          {% endif %}
+
+          {% if role in ['admin', 'activities_admin'] %}
+          <td>
+            <form action="/admin/activity/{{activity.external_id.hex}}" method="get" style="margin: 0;">
               <button title="Edit activity" class="waves-effect waves-light btn-floating"><i
                   class="material-icons left">edit</i>Edit</button>
             </form>
@@ -218,7 +236,59 @@
   </div>
   {% endif %}
 
+  <div id="modal1" class="modal" style="height: auto;">
+    <div class="modal-content">
+      <center style="margin-top: 40px;">
+        <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" readonly>
+
+        <div style="margin-top: 40px;">
+          <button id="code" class="waves-effect red lighten-2 btn-large dashboard-btn"
+            style="width: auto; margin-right: 10px;"><i class="large material-icons left">qr_code</i>Generate
+            Code</button>
+
+          <button id="copy" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+            style="width: auto; margin-left: 10x;"><i class="large material-icons left">content_copy</i>Copy to
+            Clipboard</button>
+        </div>
+      </center>
+    </div>
+  </div>
+
   <script>
+    $(function () {
+      var activity_external_id = "";
+
+      $('.modal').modal();
+
+      $("#copy").click(function () {
+        var code = $("#code-input");
+        code.select();
+        document.execCommand("copy");
+      });
+
+      $(".code-btn").click(function () {
+        activity_external_id = jQuery(this).data('name');
+      });
+
+      $("#code").click(function () {
+        $.post("/admin/activity/" + activity_external_id + "/code", function (data) {
+          var code = data[0].substring(0, 4) + '-' + data[0].substring(4, 8) + '-' + data[0].substring(8, 12) + '-' + data[0].substring(12);
+          $('#code-input').val(code);
+        });
+      });
+
+      $(".delete-code-btn").click(function () {
+        if (!confirm("Are you sure about that?")) return;
+
+        $.post("/admin/activity/" + jQuery(this).data('name') + "/codes-delete", function (data) {
+          alert(data)
+          $('#code-input').val(code);
+        }).fail(function (error) {
+          alert('Error: ' + error);
+        });
+      });
+    });
+
     $(document).on('change', '#event', function () {
       $('#event_form').submit();
     });
