@@ -1,4 +1,10 @@
 # Docker
+- task: AzureKeyVault@1
+  inputs:
+    azureSubscription: 'Azure Resource Manager'
+    KeyVaultName: 'brain-vault'
+    SecretsFilter: '*'
+    RunAsPreJob: true
 # Build and push an image to Azure Container Registry
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
@@ -35,5 +41,6 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
+        arguments: --build-arg SECRET_KEY=$(SECRET_KEY),APP_ENV=$(APP_ENV),APP_DB=$(APP_DB),DATABASE_URL=$(DATABASE_URL),CLIENT_USERNAME=$(CLIENT_USERNAME),CLIENT_KEY=$(CLIENT_KEY),ROCKET_CHAT_ADMIN_PASSWORD=$(ROCKET_CHAT_ADMIN_PASSWORD),JWT_SECRET=$(JWT_SECRET),
         tags: |
           $(tag)
