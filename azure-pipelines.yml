@@ -1,13 +1,4 @@
 # Docker
-- task: AzureKeyVault@1
-  inputs:
-    azureSubscription: 'Azure Resource Manager'
-    KeyVaultName: 'brain-vault'
-    SecretsFilter: '*'
-    RunAsPreJob: true
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - master
 
