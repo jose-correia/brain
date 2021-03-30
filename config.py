@@ -24,28 +24,28 @@ class Config(object):
     MAX_IMG_SIZE = 200000
     ALLOWED_EXTENSIONS = ['pdf']
 
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', "/jeec_brain/storage/")
 
     APPINSIGHTS_INSTRUMENTATIONKEY = os.environ.get('APPINSIGHTS_INSTRUMENTATIONKEY')
 
     SEND_FILE_MAX_AGE_DEFAULT = 0
 
-    CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN')
+    CV_SUBMISSION_OPEN = os.environ.get('CV_SUBMISSION_OPEN', False)
 
     ACTIVITIES = ['Workshops', 'Speakers', 'Tech Talks', 'Panel Discussions', 'Job Fair', 'Matchmaking']
 
-    STUDENT_APP_URL = os.environ.get('STUDENT_APP_URL')
+    STUDENT_APP_URL = os.environ.get('STUDENT_APP_URL', "https://app.jeec.ist/")
 
-    ROCKET_CHAT_APP_URL = os.environ.get('ROCKET_CHAT_APP_URL')
-    ROCKET_CHAT_ADMIN_USERNAME = os.environ.get('ROCKET_CHAT_ADMIN_USERNAME')
+    ROCKET_CHAT_APP_URL = os.environ.get('ROCKET_CHAT_APP_URL', "https://chat.jeec.ist/")
+    ROCKET_CHAT_ADMIN_USERNAME = os.environ.get('ROCKET_CHAT_ADMIN_USERNAME', "JEEC")
     ROCKET_CHAT_ADMIN_PASSWORD = os.environ.get('ROCKET_CHAT_ADMIN_PASSWORD')
 
     JWT_SECRET = os.environ.get('JWT_SECRET')
 
-    REWARD_LOGIN = os.environ.get('REWARD_LOGIN')
-    REWARD_REFERRAL = os.environ.get('REWARD_REFERRAL')
-    REWARD_LINKEDIN = os.environ.get('REWARD_LINKEDIN')
-    REWARD_CV = os.environ.get('REWARD_CV')
+    REWARD_LOGIN = os.environ.get('REWARD_LOGIN', 15)
+    REWARD_REFERRAL = os.environ.get('REWARD_REFERRAL', 15)
+    REWARD_LINKEDIN = os.environ.get('REWARD_LINKEDIN', 30)
+    REWARD_CV = os.environ.get('REWARD_CV', 200)
 
 class DevelopmentConfig(Config):
     """Development configuration"""
