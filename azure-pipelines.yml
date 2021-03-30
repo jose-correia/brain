@@ -34,11 +34,6 @@ stages:
         arguments: --build-arg SECRET_KEY=$(SECRET_KEY),APP_ENV=$(APP_ENV),APP_DB=$(APP_DB),DATABASE_URL=$(DATABASE_URL),CLIENT_USERNAME=$(CLIENT_USERNAME),CLIENT_KEY=$(CLIENT_KEY),ROCKET_CHAT_ADMIN_PASSWORD=$(ROCKET_CHAT_ADMIN_PASSWORD),JWT_SECRET=$(JWT_SECRET)
         tags: |
           $(tag)
-  - job: Push
-    displayName: Push
-    pool:
-      vmImage: $(vmImageName)
-    steps:
     - task: Docker@2
       displayName: Push
       inputs:
