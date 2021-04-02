@@ -9,7 +9,7 @@ from jeec_brain.values.api_error_value import APIErrorValue
 
 # Auction routes
 @bp.route('/auctions', methods=['GET'])
-@allowed_roles(['admin'])
+@allow_all_roles
 def auctions_dashboard():
     auctions_list = AuctionsFinder.get_all()
 
@@ -65,7 +65,7 @@ def create_auction():
 
 
 @bp.route('/auctions/<string:auction_external_id>', methods=['GET'])
-@allowed_roles(['admin'])
+@allow_all_roles
 def get_auction(auction_external_id):
     auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
 
@@ -136,7 +136,7 @@ def delete_auction(auction_external_id):
 
 # Members management
 @bp.route('/auctions/<string:auction_external_id>/participants', methods=['GET'])
-@allowed_roles(['admin'])
+@allow_all_roles
 def auction_participants_dashboard(auction_external_id):
     auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
 

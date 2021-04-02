@@ -10,7 +10,7 @@ from datetime import datetime
 
 # Events routes
 @bp.route('/events', methods=['GET'])
-@allowed_roles(['admin'])
+@allow_all_roles
 def events_dashboard():
     search_parameters = request.args
     name = request.args.get('name')
@@ -51,7 +51,7 @@ def events_dashboard():
 
 
 @bp.route('/events', methods=['POST'])
-@allowed_roles(['admin'])
+@allow_all_roles
 def search_event():
     name = request.form.get('name')
     events_list = EventsFinder.search_by_name(name)
@@ -174,7 +174,7 @@ def create_event():
 
 
 @bp.route('/events/<string:event_external_id>', methods=['GET'])
-@allowed_roles(['admin'])
+@allow_all_roles
 def get_event(event_external_id):
     event = EventsFinder.get_from_external_id(event_external_id)
 

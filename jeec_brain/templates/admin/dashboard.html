@@ -85,7 +85,6 @@
     </form>
   </div>
 
-  {% if user.role.name in ['admin'] %}
   <div class="flexbox-btns">
     <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
@@ -97,6 +96,7 @@
           class="large material-icons left">event</i>Events</button>
     </form>
 
+    {% if user.role.name in ['admin'] %}
     <form action="{{ url_for('admin_api.students_app_dashboard') }}" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
           class="large material-icons left">settings_cell</i>Students App</button>
