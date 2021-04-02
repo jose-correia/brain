@@ -2,7 +2,6 @@ version: "3.4"
 services:
   nginx:
     container_name: nginx_proxy
-    network_mode: host
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./logs/nginx:/var/log/nginx
