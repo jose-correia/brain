@@ -3,7 +3,7 @@ from flask import render_template, current_app, request, redirect, url_for
 from jeec_brain.handlers.events_handler import EventsHandler
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.values.api_error_value import APIErrorValue
-from jeec_brain.apps.auth.wrappers import allowed_roles
+from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from flask_login import current_user
 from datetime import datetime
