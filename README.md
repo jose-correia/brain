@@ -1,23 +1,31 @@
-![jeec-logo](resources/images/jeec_logo.png)
 <p align="center">
   <img src="resources/images/brain.png">
 </p>
 
 ### Table of contents
-* [What is this?](#what-is-this)
-* [Administration API](#administration-api)
-* [CV Platform API](#cv-platform-api)
-* [Website API](#website-api)
-* [Tech Stack](#tech-stack)
-* [Instructions to deploy locally](#instructions-to-deploy-locally)
-* [Database Model](#database-model)
-* [Running migrations](#running-migrations)
-* [Authentication](#authentication)
-* [Useful links](#useful-links)
+- [What is this?](#what-is-this)
+- [Administration App](#administration-app)
+    - [Features:](#features)
+- [Companies App](#companies-app)
+    - [Features:](#features-1)
+- [Website Api](#website-api)
+- [Tech Stack](#tech-stack)
+- [Instructions to deploy locally](#instructions-to-deploy-locally)
+  - [Creating the database](#creating-the-database)
+  - [Configuring the secrets](#configuring-the-secrets)
+  - [Deploying using Docker:](#deploying-using-docker)
+  - [Deploying the app manually:](#deploying-the-app-manually)
+- [Database Model](#database-model)
+- [Running migrations](#running-migrations)
+- [Authentication](#authentication)
+    - [Authentication in Admin platform:](#authentication-in-admin-platform)
+    - [Authentication in Companies App:](#authentication-in-companies-app)
+    - [Authentication Website <-> Website API:](#authentication-website---website-api)
+- [Useful links](#useful-links)
 
 ## What is this?
-Welcome to the **JEEC Brain**! This system serves the purpose of managing
-all the technological services of the JEEC event, and serving both the applications for companies and students
+Welcome to the **Brain**! This system serves the purpose of managing
+all the technological services of an event, and serving both the applications for companies and attendees.
 
 It includes an Administration Dashboard were a user can access in order to **list/add/edit/delete** companies, speakers, activities, teams and colaborators.
 
@@ -116,25 +124,24 @@ and only the spotlight speakers will be requested. This **enables search queries
 
 
 ## Instructions to deploy locally
+### Creating the database
 1. Clone this repository;
 2. Install PostreSQL;
-3. Create virtual environment and install required dependencies with:
-    - `python3.6 -m virtualenv venv`
-    - `source venv/bin/activate`
-    - `python3.6 -m pip install -r requirements.txt`
-4. Run the database service with:
+3. Run the database service with:
     - `sudo service postgresql start`
-5. Create a new role in postgresql with all privileges:
+3. Create a new role in postgresql with all privileges:
     - `sudo -u postgres -i`
     - `psql postgres`
     - `CREATE ROLE '<your-computer-account-username>' WITH PASSWORD '<password>'`
     - `GRANT ALL PRIVILEGES ON SCHEMA public TO ROLE '<your-computer-account-username>'`
     - `\q`
     - `exit`
-6. Create a database in postgresql for the application:
+4. Create a database in postgresql for the application:
     - `psql postgres`
-    - `CREATE DATABASE jeec_brain;`
-7. Create a file in the root of the project named ".env" and fill in the missing variables:
+    - `CREATE DATABASE brain;`
+
+### Configuring the secrets
+1. Create a file in the root of the project named ".env" and fill in the missing variables:
     ```
         SECRET_KEY=somethingsomethingkey21313
         APP_ENV=development
@@ -153,25 +160,29 @@ and only the spotlight speakers will be requested. This **enables search queries
         CLIENT_KEY = 
     ```
 
-8. Ask JEEC devs for the fenixedu.ini file and insert it in the root of the project
+### Deploying using Docker:
+- `docker build --tag brain:latest .`
+- `docker run -p 8081:8081 --name brain_1 -d brain:latest`
 
-9. Migrate the database with:
+### Deploying the app manually:
+1. Create virtual environment and install required dependencies with:
+    - `python3.6 -m virtualenv venv`
+    - `source venv/bin/activate`
+    - `python3.6 -m pip install -r requirements.txt`
+
+3. Ask Devs for the fenixedu.ini file and insert it in the root of the project
+
+4. Migrate the database with:
     - `python3.6 manage.py db init`
     - `python3.6 manage.py db migrate`
     - `python3.6 manage.py db upgrade`
-
-    - Usually the file generated in `python3.6 manage.py db migrate` will have a bug which will result in a failure to upgrade. If so, do as follows:
-        - Go to `jeec_brain/database/migrations/versions`;
-        - Open the only file there;
-        - Add `import sqlalchemy_utils` in the top of the file;
-        - Search for `length=16` in the file, and delete all ocurrences
-
-10. Create a new amin user:
+  
+5.  Create a new amin user:
     - `python3.6 manage.py create_user --username johndoe --role admin`
     - The script then prints the password of the user.
 
-11. Deploy the Flask application with:
-    - `python3.6 manage.py runserver`
+6.  Deploy the Flask application using Gunicorn with:
+    - `exec gunicorn --config deployment/gunicorn_config.py manage:app`
 
 
 The application runs on port **8081**.
