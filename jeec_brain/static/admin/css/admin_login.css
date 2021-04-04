@@ -15,6 +15,11 @@
   font-weight: 700;
   margin-bottom: 10px;
   }
+
+  .brain-logo-login {
+    width: 110px;
+    margin-left: 30px;
+  }
   
   .section-header p {
   -webkit-font-smoothing: antialiased;
