@@ -6,7 +6,7 @@ certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
 dnspython==1.16.0
-eventlet==0.29.1
+eventlet==0.31.0
 fenixedu==1.0.0
 Flask==1.0.2
 Flask-Cors==3.0.7
@@ -57,7 +57,7 @@ certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
 dnspython==1.16.0
-eventlet==0.29.1
+eventlet==0.31.0
 fenixedu==1.0.0
 Flask==1.0.2
 Flask-Cors==3.0.7
