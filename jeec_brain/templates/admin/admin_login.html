@@ -24,11 +24,11 @@
     <div class="login-card center-align">
         <form method="post">
             <div class="input-field col s12">
-                <input type="text" placeholder="Username" class="username-input" name="username">
+                <input id="username" type="text" placeholder="Username" class="username-input" name="username">
             </div>
             
             <div class="input-field col s12">
-                <input type="password" placeholder="Password" class="password-input" name="password">
+                <input id="password" type="password" placeholder="Password" class="password-input" name="password">
             </div>
 
             {% if error %}
@@ -39,6 +39,34 @@
         </form>
     </div>
     </div>
+
+    <script>
+        function querySt(key) {
+            parameters = window.location.search.substring(1);
+            splitted_params = parameters.split("&");
+
+            for (i=0;i<splitted_params.length;i++) {
+                key_value_array = splitted_params[i].split("=");
+                if (key_value_array[0] == key) {
+                    return key_value_array[1];
+                }
+            }
+        }
+
+        var username = "";
+        var username = querySt("username");
+
+        var password = "";
+        var password = querySt("password");
+
+        if (username != undefined) {
+            document.getElementById('username').value = username;
+        }
+
+        if (password != undefined) {
+            document.getElementById('password').value = password;
+        }
+    </script>
 </body>
 
 </html>
