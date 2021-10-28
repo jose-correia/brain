@@ -33,7 +33,13 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         dockerfile: $(dockerfilePath)
         tags: 'latest'
-        arguments: --build-arg SECRET_KEY=$(SECRET_KEY),APP_ENV=$(APP_ENV),APP_DB=$(APP_DB),DATABASE_URL=$(DATABASE_URL),CLIENT_USERNAME=$(CLIENT_USERNAME),CLIENT_KEY=$(CLIENT_KEY),ROCKET_CHAT_ADMIN_PASSWORD=$(ROCKET_CHAT_ADMIN_PASSWORD),JWT_SECRET=$(JWT_SECRET)
+        arguments: --build-arg SECRET_KEY=$(SECRET_KEY) --build-arg APP_ENV=$(APP_ENV) --build-arg APP_DB=$(APP_DB)
+          --build-arg APPINSIGHTS_INSTRUMENTATIONKEY=$(APPINSIGHTS_INSTRUMENTATIONKEY) --build-arg CLIENT_USERNAME=$(CLIENT_USERNAME)
+          --build-arg CLIENT_KEY=$(CLIENT_KEY) --build-arg CV_SUBMISSION_OPEN=$(CV_SUBMISSION_OPEN) --build-arg DATABASE_URL=$(DATABASE_URL)
+          --build-arg FLASK_DEBUG=$(FLASK_DEBUG) --build-arg JWT_SECRET=$(JWT_SECRET) --build-arg REWARD_CV=$(REWARD_CV) --build-arg REWARD_LINKEDIN=$(REWARD_LINKEDIN)
+          --build-arg REWARD_LOGIN=$(REWARD_LOGIN) --build-arg REWARD_REFERRAL=$(REWARD_REFERRAL) --build-arg ROCKET_CHAT_ADMIN_USERNAME=$(ROCKET_CHAT_ADMIN_USERNAME)
+          --build-arg ROCKET_CHAT_ADMIN_PASSWORD=$(ROCKET_CHAT_ADMIN_PASSWORD) --build-arg ROCKET_CHAT_APP_URL=$(ROCKET_CHAT_APP_URL)
+          --build-arg SECRET_KEY=$(SECRET_KEY) --build-arg STUDENT_APP_URL=$(STUDENT_APP_URL) --build-arg UPLOAD_FOLDER=$(UPLOAD_FOLDER)
     - task: Docker@2
       displayName: Push
       inputs:
