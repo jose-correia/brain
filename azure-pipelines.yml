@@ -40,6 +40,15 @@ stages:
           --build-arg REWARD_LOGIN=$(REWARD_LOGIN) --build-arg REWARD_REFERRAL=$(REWARD_REFERRAL) --build-arg ROCKET_CHAT_ADMIN_USERNAME=$(ROCKET_CHAT_ADMIN_USERNAME)
           --build-arg ROCKET_CHAT_ADMIN_PASSWORD=$(ROCKET_CHAT_ADMIN_PASSWORD) --build-arg ROCKET_CHAT_APP_URL=$(ROCKET_CHAT_APP_URL)
           --build-arg SECRET_KEY=$(SECRET_KEY) --build-arg STUDENT_APP_URL=$(STUDENT_APP_URL) --build-arg UPLOAD_FOLDER=$(UPLOAD_FOLDER)
+
+- stage: Push
+  displayName: Push stage
+  jobs:
+  - job: Push
+    displayName: Push
+    pool:
+      vmImage: $(vmImageName)
+    steps:
     - task: Docker@2
       displayName: Push
       inputs:
@@ -48,6 +57,9 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: 'latest'
 
+- stage: Deployment
+  displayName: Deployment stage
+  jobs:
   - deployment: Deploy
     displayName: deploy
     pool:
