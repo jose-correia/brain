@@ -47,3 +47,16 @@ stages:
         repository: $(imageRepository)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: 'latest'
+
+  - deployment: Deploy
+    displayName: deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment:
+      name: Production
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo my first deployment
