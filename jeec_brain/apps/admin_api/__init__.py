@@ -1,6 +1,9 @@
-from flask import Blueprint
+#from flask import Blueprint
+from flask_openapi3 import APIBlueprint, Tag
 
-bp = Blueprint('admin_api', __name__)
+#bp = Blueprint('admin_api', __name__)
+tag = Tag(name='Admin API', description='Admin side api')
+bp = APIBlueprint('admin_api', __name__, url_prefix='/admin', abp_tags=[tag])
 
 from jeec_brain.apps.admin_api import routes
 from jeec_brain.apps.admin_api.companies import routes

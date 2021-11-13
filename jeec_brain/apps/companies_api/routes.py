@@ -12,7 +12,7 @@ from jeec_brain.handlers.users_handler import UsersHandler
 from datetime import datetime
 
 
-@bp.route('/', methods=['GET'])
+@bp.get('/')
 def get_company_login_form():
     if current_user.is_authenticated and current_user.role == 'company':
         return redirect(url_for('companies_api.dashboard'))

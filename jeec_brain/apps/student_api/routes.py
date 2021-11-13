@@ -46,7 +46,7 @@ from jeec_brain.values.partners_value import PartnersValue
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
 # Login routes
-@bp.route('/login')
+@bp.get('/login')
 def login_student():
     return AuthHandler.redirect_to_fenix_login()
 

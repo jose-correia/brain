@@ -25,7 +25,7 @@ from jeec_brain.apps.auth.wrappers import requires_client_auth
 
 
 # Activities routes
-@bp.route('/activities', methods=['GET'])
+@bp.get('/activities')
 @requires_client_auth
 def get_activities():
     search_parameters = request.args
