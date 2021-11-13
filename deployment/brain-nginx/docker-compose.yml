@@ -1,0 +1,20 @@
+version: "3.4"
+services:
+  nginx:
+    container_name: nginx_proxy
+    network_mode: host
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+      - ./nginx/ssl:/etc/nginx/ssl/
+    ports:
+      - "80:80"
+      - "443:443"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10M"
+        max-file: "20"
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
