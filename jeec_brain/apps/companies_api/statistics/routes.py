@@ -24,7 +24,7 @@ from sqlalchemy import func
 from datetime import datetime
 
 
-@bp.route('/statistics', methods=['GET'])
+@bp.get('/statistics')
 @require_company_login
 def statistics_dashboard(company_user):
     event = EventsFinder.get_default_event()

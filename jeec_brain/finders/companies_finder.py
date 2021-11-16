@@ -63,7 +63,7 @@ class CompaniesFinder():
         command = text (
             """
                 SELECT
-                    auctions.external_id, auctions.name
+                    auctions.external_id, auctions.name, auctions.closing_date, auctions.closing_time
                 FROM
                     auctions
                 INNER JOIN

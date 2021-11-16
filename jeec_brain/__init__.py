@@ -7,6 +7,7 @@ from flask import Flask, redirect, url_for, request, jsonify, session
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
+from flask_mail import Mail
 from flask_cors import CORS
 from flask_openapi3 import OpenAPI
 from flask_openapi3.models import Info, Tag
@@ -71,7 +72,9 @@ def create_app():
     # enable Cross-Origin Resource Sharing
     CORS(app)
     
-    #socketIO.init_app(app, cors_allowed_origins='*')
+    #mail init
+    mail = Mail(app)
+    app.mail = mail
 
     app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'storage')
 

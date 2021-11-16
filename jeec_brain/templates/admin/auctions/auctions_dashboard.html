@@ -65,7 +65,8 @@
               <th>Minimum bid value</th>
               <th>Highest bid</th>
               <th>Open</th>
-              <th>Closing Date</th>
+              <th>Start</th>
+              <th>End</th>
             </tr></thead>
             <tbody>
                 {% for auction in auctions %}
@@ -89,17 +90,21 @@
                       {{ auction.highest_bid.value }} €
                       {% endif %}
                     </td>
+
+                    <td>
+                      {% if auction.is_open is sameas true %}
+                        <i class="material-icons icon-green">check</i>
+                      {% else %}
+                        <i class="material-icons icon-red">clear</i>
+                      {% endif %}
+                  </td>
                     
                     <td>
-                        {% if auction.is_open is sameas true %}
-                          <i class="material-icons icon-green">check</i>
-                        {% else %}
-                          <i class="material-icons icon-red">clear</i>
-                        {% endif %}
+                      {{ auction.starting_date }} {{ auction.starting_time }}
                     </td>
 
                     <td>
-                      {{ auction.closing_date }}
+                      {{ auction.closing_date }} {{ auction.closing_time }}
                     </td>
                   
                     <td>

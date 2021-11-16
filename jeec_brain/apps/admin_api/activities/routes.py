@@ -1,6 +1,10 @@
+from jeec_brain.schemas.admin_api.activities.schemas import ActivityPath, ActivityTypePath, CodePath
 from .. import bp
 import uuid
 from flask import render_template, current_app, request, redirect, url_for, jsonify
+from flask_login import current_user
+from datetime import datetime
+
 from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 from jeec_brain.finders.companies_finder import CompaniesFinder
@@ -16,12 +20,11 @@ from jeec_brain.handlers.activity_codes_handler import ActivityCodesHandler
 from jeec_brain.models.enums.activity_chat_enum import ActivityChatEnum
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
-from flask_login import current_user
-from datetime import datetime
+from jeec_brain.schemas.admin_api.activities import *
 
 
 # Activities routes
-@bp.route('/activities', methods=['GET'])
+@bp.get('/activities')
 @allow_all_roles
 def activities_dashboard():
     search_parameters = request.args
@@ -71,7 +74,7 @@ def activities_dashboard():
 
 
 # Activities Types routes
-@bp.route('/activities/types', methods=['GET'])
+@bp.get('/activities/types')
 @allow_all_roles
 def activity_types_dashboard():
     events = EventsFinder.get_all()
@@ -88,7 +91,7 @@ def activity_types_dashboard():
     
     return render_template('admin/activities/activity_types_dashboard.html', event=event, events=events, error=None, role=current_user.role.name)
 
-@bp.route('/activities/types', methods=['POST'])
+@bp.post('/activities/types')
 @allow_all_roles
 def search_activity_types():
     events = EventsFinder.get_all()
@@ -106,7 +109,7 @@ def search_activity_types():
     return render_template('admin/activities/activity_types_dashboard.html', events=events, event=event, error=None, role=current_user.role.name)
 
 
-@bp.route('/new-activity-type', methods=['GET'])
+@bp.get('/new-activity-type')
 @allowed_roles(['admin', 'activities_admin'])
 def add_activity_type_dashboard():
     event_id = request.args.get('_event',None)
@@ -117,7 +120,7 @@ def add_activity_type_dashboard():
     return render_template('admin/activities/add_activity_type.html', event=event, error=None)
 
 
-@bp.route('/new-activity-type', methods=['POST'])
+@bp.post('/new-activity-type')
 @allowed_roles(['admin', 'activities_admin'])
 def create_activity_type():
     name = request.form.get('name')
@@ -165,19 +168,19 @@ def create_activity_type():
     return redirect(url_for('admin_api.activity_types_dashboard'))
 
 
-@bp.route('/activities/types/<string:activity_type_external_id>', methods=['GET'])
+@bp.get('/activities/types/<string:activity_type_external_id>')
 @allowed_roles(['admin', 'activities_admin'])
-def get_activity_type(activity_type_external_id):
-    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+def get_activity_type(path: ActivityTypePath):
+    activity_type = ActivityTypesFinder.get_from_external_id(path.activity_type_external_id)
 
     return render_template('admin/activities/update_activity_type.html', \
         activity_type=activity_type,
         error=None)
 
 
-@bp.route('/activities/types/<string:activity_type_external_id>', methods=['POST'])
+@bp.post('/activities/types/<string:activity_type_external_id>')
 @allowed_roles(['admin', 'activities_admin'])
-def update_activity_type(activity_type_external_id):
+def update_activity_type(path: ActivityTypePath):
     name = request.form.get('name')
     description = request.form.get('description')
     price = request.form.get('price')
@@ -200,7 +203,7 @@ def update_activity_type(activity_type_external_id):
     else:
         show_in_app = False
 
-    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+    activity_type = ActivityTypesFinder.get_from_external_id(path.activity_type_external_id)
 
     updated_activity_type = ActivityTypesHandler.update_activity_type(
         activity_type=activity_type,
@@ -219,10 +222,10 @@ def update_activity_type(activity_type_external_id):
 
     return redirect(url_for('admin_api.activity_types_dashboard'))
 
-@bp.route('/activities/types/<string:activity_type_external_id>/delete', methods=['GET'])
+@bp.get('/activities/types/<string:activity_type_external_id>/delete')
 @allowed_roles(['admin', 'activities_admin'])
-def delete_activity_type(activity_type_external_id):
-    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+def delete_activity_type(path: ActivityTypePath):
+    activity_type = ActivityTypesFinder.get_from_external_id(path.activity_type_external_id)
 
     if activity_type.activities:
         for activity in activity_type.activities:
@@ -250,7 +253,7 @@ def delete_activity_type(activity_type_external_id):
             activity_type=activity_type,
             error="Failed to update activity type!")
 
-@bp.route('/new-activity', methods=['GET'])
+@bp.get('/new-activity')
 @allowed_roles(['admin', 'activities_admin'])
 def add_activity_dashboard():
     companies = CompaniesFinder.get_all()
@@ -286,7 +289,7 @@ def add_activity_dashboard():
         error=None)
 
 
-@bp.route('/new-activity', methods=['POST'])
+@bp.post('/new-activity')
 @allowed_roles(['admin', 'activities_admin'])
 def create_activity():
     name = request.form.get('name')
@@ -433,10 +436,10 @@ def create_activity():
     return redirect(url_for('admin_api.activities_dashboard'))
 
 
-@bp.route('/activity/<string:activity_external_id>', methods=['GET'])
+@bp.get('/activity/<string:activity_external_id>')
 @allowed_roles(['admin', 'activities_admin'])
-def get_activity(activity_external_id):
-    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+def get_activity(path: ActivityPath):
+    activity = ActivitiesFinder.get_from_external_id(path.activity_external_id)
     companies = CompaniesFinder.get_all()
     speakers = SpeakersFinder.get_all()
     tags = TagsFinder.get_all()
@@ -448,9 +451,9 @@ def get_activity(activity_external_id):
         return render_template('admin/activities/activities_dashboard.html', event=None, error=error, role=current_user.role.name)
     
     activity_types = event[0].activity_types
-    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
-    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
-    activity_tags = TagsFinder.get_activity_tags_from_activity_id(activity_external_id)
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(path.activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(path.activity_external_id)
+    activity_tags = TagsFinder.get_activity_tags_from_activity_id(path.activity_external_id)
 
     try:
         minDate = datetime.strptime(event[0].start_date,'%d %b %Y, %a').strftime("%Y,%m,%d")
@@ -479,13 +482,13 @@ def get_activity(activity_external_id):
         error=None)
 
 
-@bp.route('/activity/<string:activity_external_id>', methods=['POST'])
+@bp.post('/activity/<string:activity_external_id>')
 @allowed_roles(['admin', 'activities_admin'])
-def update_activity(activity_external_id):
-    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
-    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
-    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
-    activity_tags = TagsFinder.get_activity_tags_from_activity_id(activity_external_id)
+def update_activity(path: ActivityPath):
+    activity = ActivitiesFinder.get_from_external_id(path.activity_external_id)
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(path.activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(path.activity_external_id)
+    activity_tags = TagsFinder.get_activity_tags_from_activity_id(path.activity_external_id)
 
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
@@ -649,13 +652,13 @@ def update_activity(activity_external_id):
     return redirect(url_for('admin_api.activities_dashboard'))
 
 
-@bp.route('/activity/<string:activity_external_id>/delete', methods=['GET'])
+@bp.get('/activity/<string:activity_external_id>/delete')
 @allowed_roles(['admin', 'activities_admin'])
-def delete_activity(activity_external_id):
-    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
-    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(activity_external_id)
-    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(activity_external_id)
-    activity_tags = TagsFinder.get_activity_tags_from_activity_id(activity_external_id)
+def delete_activity(path: ActivityPath):
+    activity = ActivitiesFinder.get_from_external_id(path.activity_external_id)
+    company_activities = ActivitiesFinder.get_company_activities_from_activity_id(path.activity_external_id)
+    speaker_activities = ActivitiesFinder.get_speaker_activities_from_activity_id(path.activity_external_id)
+    activity_tags = TagsFinder.get_activity_tags_from_activity_id(path.activity_external_id)
 
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(500)
@@ -678,10 +681,10 @@ def delete_activity(activity_external_id):
     else:
         return render_template('admin/activities/update_activity.html', activity=activity, error="Failed to delete activity!")
 
-@bp.route('/activity/<string:activity_external_id>/code', methods=['POST'])
+@bp.post('/activity/<string:activity_external_id>/code')
 @allowed_roles(['admin', 'activities_admin'])
-def generate_codes(activity_external_id):
-    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+def generate_codes(path: ActivityPath):
+    activity = ActivitiesFinder.get_from_external_id(path.activity_external_id)
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(404)
 
@@ -693,10 +696,10 @@ def generate_codes(activity_external_id):
 
     return jsonify(activity_codes)
 
-@bp.route('/activity/<string:activity_external_id>/codes-delete', methods=['POST'])
+@bp.post('/activity/<string:activity_external_id>/codes-delete')
 @allowed_roles(['admin', 'activities_admin'])
-def delete_activity_code(activity_external_id):
-    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+def delete_activity_code(path: ActivityPath):
+    activity = ActivitiesFinder.get_from_external_id(path.activity_external_id)
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(404)
 
@@ -707,10 +710,10 @@ def delete_activity_code(activity_external_id):
 
     return jsonify("Success")
 
-@bp.route('/code/<string:code>/delete', methods=['POST'])
+@bp.post('/code/<string:code>/delete')
 @allowed_roles(['admin', 'activities_admin'])
-def delete_code(code):
-    code = ActivityCodesFinder.get_from_code(code)
+def delete_code(path: CodePath):
+    code = ActivityCodesFinder.get_from_code(path.code)
     if code is None:
         return APIErrorValue('Couldnt find code').json(404)
 

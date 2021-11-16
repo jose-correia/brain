@@ -47,6 +47,14 @@ class Config(object):
     REWARD_LINKEDIN = os.environ.get('REWARD_LINKEDIN', 30)
     REWARD_CV = os.environ.get('REWARD_CV', 200)
 
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    MAIL_SUPPRESS_SEND = False
+
 class DevelopmentConfig(Config):
     """Development configuration"""
     SECRET_KEY = os.environ.get('SECRET_KEY')

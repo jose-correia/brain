@@ -9,6 +9,7 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.handlers.users_handler import UsersHandler
+
 from datetime import datetime
 
 
@@ -20,7 +21,7 @@ def get_company_login_form():
     return render_template('companies/companies_login.html')
 
 
-@bp.route('/', methods=['POST'])
+@bp.post('/')
 def company_login():    
     username = request.form.get('username')
     password = request.form.get('password')
@@ -36,7 +37,7 @@ def company_login():
     return redirect(url_for('companies_api.dashboard'))
 
 
-@bp.route('/company-logout', methods=['GET'])
+@bp.get('/company-logout')
 def company_logout():
     try:
         AuthHandler.logout_user()
@@ -45,7 +46,7 @@ def company_logout():
     return redirect(url_for('companies_api.get_company_login_form'))
 
 
-@bp.route('/dashboard', methods=['GET'])
+@bp.get('/dashboard')
 @require_company_login
 def dashboard(company_user):
     if not company_user.user.accepted_terms:
@@ -64,6 +65,13 @@ def dashboard(company_user):
         cvs_enabled = False
 
     company_auctions = CompaniesFinder.get_company_auctions(company_user.company)
+    auctions = []
+    now = datetime.utcnow()
+    for company_auction in company_auctions:
+        end = datetime.strptime(company_auction.closing_date + " " + company_auction.closing_time,'%d %b %Y, %a %H:%M')
+        auction = company_auction._asdict()
+        auction["is_open"] = True if now < end else False
+        auctions.append(auction)
 
     company_logo = CompaniesHandler.find_image(company_user.company.name)
 
@@ -76,10 +84,10 @@ def dashboard(company_user):
         if (activity.activity_type.name in ['Job Fair','Job Fair Booth']):
             job_fair = True
 
-    return render_template('companies/dashboard.html', auctions=company_auctions, job_fair=job_fair, company_logo=company_logo, activity_types=activity_types, user=company_user, cvs_enabled=cvs_enabled)
+    return render_template('companies/dashboard.html', auctions=auctions, job_fair=job_fair, company_logo=company_logo, activity_types=activity_types, user=company_user, cvs_enabled=cvs_enabled)
 
 
-@bp.route('/dashboard', methods=['POST'])
+@bp.post('/dashboard')
 @require_company_login
 def accept_terms(company_user):
     UsersHandler.update_user(user=company_user.user, accepted_terms=True)
