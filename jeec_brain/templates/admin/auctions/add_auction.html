@@ -69,25 +69,27 @@
           </div>
         </div>
 
-        Auction is open:
-        <div class="row s10">
-          <p class="col s2">
-            <label style="margin-right: 20px;">
-              <input class="with-gap" name="registration_open" type="radio" value="True"/>
-              <span>Yes</span>
-            </label>
-            <label>
-                <input class="with-gap" name="registration_open" type="radio" value="False" checked/>
-                <span>No</span>
-            </label>
-          </p>
-        </div>
+        <div class="row">
+          <div class="input-field col s3">
+            <input id="starting_date" name="starting_date" type="text" class="validate" required>
+            <label for="starting_date">Starting Date</label>
+          </div>
 
+          <div class="input-field col s1">
+            <input id="starting_time" name="starting_time" type="text" class="timepicker" required>
+            <label for="starting_time">Starting Time</label>
+          </div>
+        </div>
         
         <div class="row">
           <div class="input-field col s3">
             <input id="closing_date" name="closing_date" type="text" class="validate" required>
             <label for="closing_date">Closing Date</label>
+          </div>
+
+          <div class="input-field col s1">
+            <input id="closing_time" name="closing_time" type="text" class="timepicker" required>
+            <label for="closing_time">Closing Time</label>
           </div>
         </div>
     
@@ -99,7 +101,10 @@
       (function($){
         $(function(){
           
-          $('#closing_date').datepicker({ format: "dd mm yyyy"});
+          $('#closing_date').datepicker({ format: "dd mmm yyyy, ddd"});
+          $('#starting_date').datepicker({ format: "dd mmm yyyy, ddd"});
+          $('.timepicker').timepicker({ twelveHour: false });
+          $('.parallax').parallax();
 
         }); // end of document ready
       })(jQuery); 

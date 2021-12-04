@@ -7,10 +7,11 @@ from jeec_brain.finders.meals_finder import MealsFinder
 from jeec_brain.handlers.meals_handler import MealsHandler
 from jeec_brain.services.meals.get_dish_types_service import GetDishTypesService
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.companies_api.meals.schemas import *
 from datetime import datetime
 import json
 
-@bp.route('/meals', methods=['GET'])
+@bp.get('/meals')
 @require_company_login
 def meals_dashboard(company_user):
     meals_list = company_user.company.meals
@@ -35,11 +36,11 @@ def meals_dashboard(company_user):
     return render_template('companies/meals/meals_dashboard.html', meals=meals_list, open_registrations=open_registrations, error=None, company=company_user.company)
 
 
-@bp.route('/meal/<string:meal_external_id>', methods=['GET'])
+@bp.get('/meal/<string:meal_external_id>')
 @require_company_login
-def get_meal(company_user, meal_external_id):
+def get_meal(company_user, path: MealPath):
     # get meal
-    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
+    meal = MealsFinder.get_meal_from_external_id(path.meal_external_id)
 
     if meal is None:
         return APIErrorValue('Couldnt find meal').json(400)
@@ -55,7 +56,7 @@ def get_meal(company_user, meal_external_id):
         return APIErrorValue('Couldnt find company meal').json(400)
 
     # get dishes from meal
-    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+    dishes = MealsFinder.get_dishes_from_meal_id(path.meal_external_id)
 
     # get company dishes
     company_dishes = MealsFinder.get_company_dishes_from_meal_id_and_company_id(meal.id, company_user.company_id)
@@ -85,11 +86,11 @@ def get_meal(company_user, meal_external_id):
         user=company_user)
 
 
-@bp.route('/meal/<string:meal_external_id>', methods=['POST'])
+@bp.post('/meal/<string:meal_external_id>')
 @require_company_login
-def choose_dishes(company_user, meal_external_id):
+def choose_dishes(company_user, path: MealPath):
     # get meal
-    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
+    meal = MealsFinder.get_meal_from_external_id(path.meal_external_id)
     
     try:
         registration_time = datetime.strptime(meal.registration_day + ' ' + meal.registration_time, '%d %m %Y, %a %H:%M')

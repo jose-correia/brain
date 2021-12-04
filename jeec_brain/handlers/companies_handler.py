@@ -15,31 +15,31 @@ class CompaniesHandler():
     @classmethod
     def create_company(cls, **kwargs):
         name = kwargs.get('name', None)
-        chat_id, chat_code = CreateChannelService(name).call()
-        if not chat_id or not chat_code:
-            return None
+        # chat_id, chat_code = CreateChannelService(name).call()
+        # if not chat_id or not chat_code:
+        #     return None
 
-        return CreateCompanyService(kwargs={**kwargs, **{'chat_id':chat_id, 'chat_code':chat_code}}).call()
+        return CreateCompanyService(kwargs={**kwargs, **{'chat_id':None, 'chat_code':None}}).call()
 
     @classmethod
     def update_company(cls, company, **kwargs):
-        if not company.chat_id:
-            chat_id, chat_code = CreateChannelService(company.name.replace("&", " and ")).call()
-            if not chat_id or not chat_code:
-                return None
-        else:
-            chat_id = company.chat_id
-            chat_code = company.chat_code
+        # if not company.chat_id:
+        #     chat_id, chat_code = CreateChannelService(company.name.replace("&", " and ")).call()
+        #     if not chat_id or not chat_code:
+        #         return None
+        # else:
+        #     chat_id = company.chat_id
+        #     chat_code = company.chat_code
 
-        return UpdateCompanyService(company=company, kwargs={**kwargs, **{'chat_id':chat_id, 'chat_code':chat_code}}).call()
+        return UpdateCompanyService(company=company, kwargs={**kwargs, **{'chat_id':None, 'chat_code':None}}).call()
 
     @classmethod
     def delete_company(cls, company):
         company_name = company.name
 
-        result = DeleteChannelService(company.chat_id).call()
-        if not result:
-            return False
+        # result = DeleteChannelService(company.chat_id).call()
+        # if not result:
+        #     return False
 
         if DeleteCompanyService(company=company).call():
             for extension in current_app.config['ALLOWED_IMAGES']:

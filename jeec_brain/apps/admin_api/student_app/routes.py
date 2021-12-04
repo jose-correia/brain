@@ -15,18 +15,19 @@ from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.handlers.rewards_handler import RewardsHandler
 from jeec_brain.handlers.events_handler import EventsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
+from jeec_brain.schemas.admin_api.student_app.schemas import *
 from flask_login import current_user
 from datetime import datetime
 from random import choice
 
 # Student App routes
-@bp.route('/students-app', methods=['GET'])
+@bp.get('/students-app')
 @allowed_roles(['admin'])
 def students_app_dashboard():
     
     return render_template('admin/students_app/students_app_dashboard.html')
 
-@bp.route('/students', methods=['GET'])
+@bp.get('/students')
 @allowed_roles(['admin'])
 def students_dashboard():
     search = request.args.get('search')
@@ -44,10 +45,10 @@ def students_dashboard():
     
     return render_template('admin/students_app/students/students_dashboard.html', students=students_list, error=None, search=search, current_user=current_user)
 
-@bp.route('/student/<string:student_external_id>/ban', methods=['POST'])
+@bp.post('/student/<string:student_external_id>/ban')
 @allowed_roles(['admin'])
-def ban_student(student_external_id):
-    student = StudentsFinder.get_from_external_id(student_external_id)
+def ban_student(path: StudentPath):
+    student = StudentsFinder.get_from_external_id(path.student_external_id)
     if student is None:
         return APIErrorValue('Couldnt find student').json(500)
     
@@ -62,7 +63,7 @@ def ban_student(student_external_id):
 
     return redirect(url_for('admin_api.students_dashboard'))
 
-@bp.route('/banned-students', methods=['GET'])
+@bp.get('/banned-students')
 @allowed_roles(['admin'])
 def banned_students_dashboard():
     banned_students = StudentsFinder.get_all_banned()
@@ -73,10 +74,10 @@ def banned_students_dashboard():
     
     return render_template('admin/students_app/students/banned_students_dashboard.html', students=banned_students, error=None, current_user=current_user)
 
-@bp.route('/student/<string:student_external_id>/unban', methods=['POST'])
+@bp.post('/student/<string:student_external_id>/unban')
 @allowed_roles(['admin'])
-def unban_student(student_external_id):
-    banned_student = StudentsFinder.get_banned_student_from_external_id(student_external_id)
+def unban_student(path: StudentPath):
+    banned_student = StudentsFinder.get_banned_student_from_external_id(path.student_external_id)
     if banned_student is None:
         return APIErrorValue('Couldnt find student').json(500)
 
@@ -84,7 +85,7 @@ def unban_student(student_external_id):
 
     return redirect(url_for('admin_api.banned_students_dashboard'))
 
-@bp.route('/squads', methods=['GET'])
+@bp.get('/squads')
 @allowed_roles(['admin'])
 def squads_dashboard():
     search = request.args.get('search')
@@ -107,10 +108,10 @@ def squads_dashboard():
 
     return render_template('admin/students_app/squads/squads_dashboard.html', squads=squads, error=None, search=search, current_user=current_user)
 
-@bp.route('/squad/<string:squad_external_id>/ban', methods=['POST'])
+@bp.post('/squad/<string:squad_external_id>/ban')
 @allowed_roles(['admin'])
-def ban_squad(squad_external_id):
-    squad = SquadsFinder.get_from_external_id(squad_external_id)
+def ban_squad(path: SquadPath):
+    squad = SquadsFinder.get_from_external_id(path.squad_external_id)
     if squad is None:
         return APIErrorValue('Couldnt find squad').json(500)
 
@@ -126,7 +127,7 @@ def ban_squad(squad_external_id):
     return redirect(url_for('admin_api.squads_dashboard'))
 
 
-@bp.route('/levels', methods=['GET'])
+@bp.get('/levels')
 @allowed_roles(['admin'])
 def levels_dashboard():
     levels = LevelsFinder.get_all_levels()
@@ -136,7 +137,7 @@ def levels_dashboard():
 
     return render_template('admin/students_app/levels/levels_dashboard.html', levels=levels, rewards=rewards, error=None, current_user=current_user)
 
-@bp.route('/create-level', methods=['POST'])
+@bp.post('/create-level')
 @allowed_roles(['admin'])
 def create_level():
     value = request.form.get('value', None)
@@ -176,10 +177,10 @@ def create_level():
 
     return render_template('admin/students_app/levels/levels_dashboard.html', levels=levels, rewards=rewards, error=None, current_user=current_user)
 
-@bp.route('/level/<string:level_external_id>', methods=['POST'])
+@bp.post('/level/<string:level_external_id>')
 @allowed_roles(['admin'])
-def update_level(level_external_id):
-    level = LevelsFinder.get_level_from_external_id(level_external_id)
+def update_level(path: LevelPath):
+    level = LevelsFinder.get_level_from_external_id(path.level_external_id)
     if level is None:
         return APIErrorValue('Couldnt find level').json(500)
 
@@ -201,10 +202,10 @@ def update_level(level_external_id):
 
     return render_template('admin/students_app/levels/levels_dashboard.html', levels=levels, rewards=rewards, error=None, current_user=current_user)
 
-@bp.route('/level/<string:level_external_id>/delete', methods=['POST'])
+@bp.post('/level/<string:level_external_id>/delete')
 @allowed_roles(['admin'])
-def delete_level(level_external_id):
-    level = LevelsFinder.get_level_from_external_id(level_external_id)
+def delete_level(path: LevelPath):
+    level = LevelsFinder.get_level_from_external_id(path.level_external_id)
     if level is None:
         return APIErrorValue('Couldnt find level').json(500)
 
@@ -229,7 +230,7 @@ def delete_level(level_external_id):
 
     return render_template('admin/students_app/levels/levels_dashboard.html', levels=levels, rewards=rewards, error=None, current_user=current_user)
 
-@bp.route('/tags', methods=['GET'])
+@bp.get('/tags')
 @allowed_roles(['admin'])
 def tags_dashboard():
     tags = TagsFinder.get_all()
@@ -238,7 +239,7 @@ def tags_dashboard():
 
     return render_template('admin/students_app/tags/tags_dashboard.html', tags=tags, error=None, current_user=current_user)
 
-@bp.route('/new-tag', methods=['POST'])
+@bp.post('/new-tag')
 @allowed_roles(['admin'])
 def create_tag():
     tags = TagsFinder.get_all()
@@ -253,10 +254,10 @@ def create_tag():
 
     return render_template('admin/students_app/tags/tags_dashboard.html', tags=tags, error=None, current_user=current_user)
 
-@bp.route('/tag/<string:tag_external_id>/delete', methods=['POST'])
+@bp.post('/tag/<string:tag_external_id>/delete')
 @allowed_roles(['admin'])
-def delete_tag(tag_external_id):
-    tag = TagsFinder.get_from_external_id(tag_external_id)
+def delete_tag(path: TagPath):
+    tag = TagsFinder.get_from_external_id(path.tag_external_id)
     if tag is None:
         return APIErrorValue('Couldnt find tag').json(500)
 
@@ -268,7 +269,7 @@ def delete_tag(tag_external_id):
 
     return render_template('admin/students_app/tags/tags_dashboard.html', tags=tags, error=None, current_user=current_user)
 
-@bp.route('/rewards', methods=['GET'])
+@bp.get('/rewards')
 @allowed_roles(['admin'])
 def rewards_dashboard():
     search = request.args.get('search', None)
@@ -284,13 +285,13 @@ def rewards_dashboard():
 
     return render_template('admin/students_app/rewards/rewards_dashboard.html', search=search, error=None, rewards=rewards, current_user=current_user)
 
-@bp.route('/new-reward', methods=['GET'])
+@bp.get('/new-reward')
 @allowed_roles(['admin'])
 def add_reward_dashboard():
 
     return render_template('admin/students_app/rewards/add_reward.html')
 
-@bp.route('/new-reward', methods=['POST'])
+@bp.post('/new-reward')
 @allowed_roles(['admin'])
 def create_reward():
     name = request.form.get('name', None)
@@ -312,10 +313,10 @@ def create_reward():
 
     return render_template('admin/students_app/rewards/rewards_dashboard.html', search=None, error=None, rewards=RewardsFinder.get_all_rewards(), current_user=current_user)
 
-@bp.route('/rewards/<string:reward_external_id>', methods=['GET'])
+@bp.get('/rewards/<string:reward_external_id>')
 @allowed_roles(['admin'])
-def update_reward_dashboard(reward_external_id):
-    reward = RewardsFinder.get_reward_from_external_id(reward_external_id)
+def update_reward_dashboard(path: RewardPath):
+    reward = RewardsFinder.get_reward_from_external_id(path.reward_external_id)
     if(reward is None):
         redirect(url_for('admin_api.rewards_dashboard'))
 
@@ -323,10 +324,10 @@ def update_reward_dashboard(reward_external_id):
 
     return render_template('admin/students_app/rewards/update_reward.html', error=None, reward=reward, current_user=current_user, image=image)
 
-@bp.route('/rewards/<string:reward_external_id>', methods=['POST'])
+@bp.post('/rewards/<string:reward_external_id>')
 @allowed_roles(['admin'])
-def update_reward(reward_external_id):
-    reward = RewardsFinder.get_reward_from_external_id(reward_external_id)
+def update_reward(path: RewardPath):
+    reward = RewardsFinder.get_reward_from_external_id(path.reward_external_id)
     if(reward is None):
         redirect(url_for('admin_api.rewards_dashboard'))
 
@@ -350,10 +351,10 @@ def update_reward(reward_external_id):
     
     return render_template('admin/students_app/rewards/rewards_dashboard.html', search=None, error=None, rewards=RewardsFinder.get_all_rewards(), current_user=current_user)
 
-@bp.route('/reward/<string:reward_external_id>/delete', methods=['POST'])
+@bp.post('/reward/<string:reward_external_id>/delete')
 @allowed_roles(['admin'])
-def delete_reward(reward_external_id):
-    reward = RewardsFinder.get_reward_from_external_id(reward_external_id)
+def delete_reward(path: RewardPath):
+    reward = RewardsFinder.get_reward_from_external_id(path.reward_external_id)
     image = RewardsHandler.find_reward_image(str(reward.external_id))
 
     if RewardsHandler.delete_reward(reward):
@@ -362,7 +363,7 @@ def delete_reward(reward_external_id):
     else:
         return render_template('admin/students_app/rewards/update_reward.html', reward=reward, image=image, error="Failed to delete reward!")
 
-@bp.route('/jeecpot-rewards', methods=['GET'])
+@bp.get('/jeecpot-rewards')
 @allowed_roles(['admin'])
 def jeecpot_reward_dashboard():
     jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
@@ -374,10 +375,10 @@ def jeecpot_reward_dashboard():
 
     return render_template('admin/students_app/rewards/jeecpot_rewards_dashboard.html', error=None, jeecpot_rewards=jeecpot_rewards[0], rewards=rewards, current_user=current_user)
 
-@bp.route('/jeecpot-rewards/<string:jeecpot_rewards_external_id>', methods=['POST'])
+@bp.post('/jeecpot-rewards/<string:jeecpot_rewards_external_id>')
 @allowed_roles(['admin'])
-def update_jeecpot_reward(jeecpot_rewards_external_id):
-    jeecpot_rewards = RewardsFinder.get_jeecpot_reward_from_external_id(jeecpot_rewards_external_id)
+def update_jeecpot_reward(path: JeecpotRewardsPath):
+    jeecpot_rewards = RewardsFinder.get_jeecpot_reward_from_external_id(path.jeecpot_rewards_external_id)
     if(jeecpot_rewards is None):
         return APIErrorValue('JEECPOT Rewards not found').json(500)
 
@@ -503,7 +504,7 @@ def update_jeecpot_reward(jeecpot_rewards_external_id):
 
     return render_template('admin/students_app/rewards/jeecpot_rewards_dashboard.html', error=None, jeecpot_rewards=jeecpot_rewards, rewards=RewardsFinder.get_all_rewards(), current_user=current_user)
 
-@bp.route('/squad-rewards', methods=['GET'])
+@bp.get('/squad-rewards')
 @allowed_roles(['admin'])
 def squad_rewards_dashboard():
     squad_rewards = RewardsFinder.get_all_squad_rewards()
@@ -529,10 +530,10 @@ def squad_rewards_dashboard():
 
     return render_template('admin/students_app/rewards/squad_rewards_dashboard.html', error=None, squad_rewards=squad_rewards, rewards=rewards, current_user=current_user)
 
-@bp.route('/squad-rewards/<string:squad_reward_external_id>', methods=['POST'])
+@bp.post('/squad-rewards/<string:squad_reward_external_id>')
 @allowed_roles(['admin'])
-def update_squad_reward(squad_reward_external_id):
-    squad_reward = RewardsFinder.get_squad_reward_from_external_id(squad_reward_external_id)
+def update_squad_reward(path: SquadRewardPath):
+    squad_reward = RewardsFinder.get_squad_reward_from_external_id(path.squad_reward_external_id)
     if squad_reward is None:
         return APIErrorValue('Squad Reward not found').json(404)
 
@@ -551,7 +552,7 @@ def update_squad_reward(squad_reward_external_id):
     
     return render_template('admin/students_app/rewards/squad_rewards_dashboard.html', error=None, squad_rewards=RewardsFinder.get_all_squad_rewards(), rewards=RewardsFinder.get_all_rewards(), current_user=current_user)
 
-@bp.route('/reset-daily-points', methods=['POST'])
+@bp.post('/reset-daily-points')
 @allowed_roles(['admin'])
 def reset_daily_points():
     squads = SquadsFinder.get_all()
@@ -566,7 +567,7 @@ def reset_daily_points():
     
     return jsonify("Success"), 200
 
-@bp.route('/select-winners', methods=['POST'])
+@bp.post('/select-winners')
 @allowed_roles(['admin'])
 def select_winners():
     top_squads = SquadsFinder.get_first()

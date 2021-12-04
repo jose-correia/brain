@@ -25,7 +25,7 @@ from jeec_brain.apps.auth.wrappers import requires_client_auth
 
 
 # Activities routes
-@bp.route('/activities', methods=['GET'])
+@bp.get('/activities')
 @requires_client_auth
 def get_activities():
     search_parameters = request.args
@@ -88,7 +88,7 @@ def get_activities():
 
 
 # Companies routes
-@bp.route('/companies', methods=['GET'])
+@bp.get('/companies')
 @requires_client_auth
 def get_companies():
     search_parameters = request.args.to_dict()
@@ -112,7 +112,7 @@ def get_companies():
 
 
 # Speakers routes
-@bp.route('/speakers', methods=['GET'])
+@bp.get('/speakers')
 @requires_client_auth
 def get_speakers():
     search_parameters = request.args.to_dict()
@@ -140,7 +140,7 @@ def get_speakers():
     return SpeakersValue(speakers_list).json(200)
 
 # Team routes
-@bp.route('/teams', methods=['GET'])
+@bp.get('/teams')
 @requires_client_auth
 def get_teams():
     search_parameters = request.args
@@ -169,7 +169,7 @@ def get_teams():
 
     return TeamsValue(teams_list).json(200)
 
-@bp.route('/event', methods=['GET'])
+@bp.get('/event')
 @requires_client_auth
 def get_event():
     event = EventsFinder.get_default_event()

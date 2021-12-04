@@ -2,13 +2,15 @@ from .. import bp
 from flask import render_template, request, redirect, url_for, current_app
 from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.handlers.speakers_handler import SpeakersHandler
+from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.admin_api.speakers.schemas import *
 from flask_login import current_user
 from jeec_brain.services.files.rename_image_service import RenameImageService
 
 
-@bp.route('/speakers', methods=['GET'])
+@bp.get('/speakers')
 @allow_all_roles
 def speakers_dashboard():
     speakers_list = SpeakersFinder.get_all()
@@ -20,7 +22,7 @@ def speakers_dashboard():
     return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=None, role=current_user.role.name)
 
 
-@bp.route('/speakers', methods=['POST'])
+@bp.post('/speakers')
 @allow_all_roles
 def search_speaker():
     name = request.form.get('name')
@@ -33,13 +35,13 @@ def search_speaker():
     return render_template('admin/speakers/speakers_dashboard.html', speakers=speakers_list, error=None, search=name)
 
 
-@bp.route('/new-speaker', methods=['GET'])
+@bp.get('/new-speaker')
 @allowed_roles(['admin', 'speakers_admin'])
 def add_speaker_dashboard():
     return render_template('admin/speakers/add_speaker.html')
 
 
-@bp.route('/new-speaker', methods=['POST'])
+@bp.post('/new-speaker')
 @allowed_roles(['admin', 'speakers_admin'])
 def create_speaker():
     name = request.form.get('name')
@@ -93,10 +95,10 @@ def create_speaker():
     return redirect(url_for('admin_api.speakers_dashboard'))
 
 
-@bp.route('/speaker/<string:speaker_external_id>', methods=['GET'])
+@bp.get('/speaker/<string:speaker_external_id>')
 @allowed_roles(['admin', 'speakers_admin'])
-def get_speaker(speaker_external_id):
-    speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
+def get_speaker(path: SpeakerPath):
+    speaker = SpeakersFinder.get_from_external_id(path.speaker_external_id)
 
     image_path = SpeakersHandler.find_image(speaker.name)
 
@@ -111,11 +113,11 @@ def get_speaker(speaker_external_id):
         error=None)
 
 
-@bp.route('/speaker/<string:speaker_external_id>', methods=['POST'])
+@bp.post('/speaker/<string:speaker_external_id>')
 @allowed_roles(['admin', 'speakers_admin'])
-def update_speaker(speaker_external_id):
+def update_speaker(path: SpeakerPath):
 
-    speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
+    speaker = SpeakersFinder.get_from_external_id(path.speaker_external_id)
 
     if speaker is None:
         return APIErrorValue('Couldnt find speaker').json(500)
@@ -199,10 +201,10 @@ def update_speaker(speaker_external_id):
     return redirect(url_for('admin_api.speakers_dashboard'))
 
 
-@bp.route('/speaker/<string:speaker_external_id>/delete', methods=['GET'])
+@bp.get('/speaker/<string:speaker_external_id>/delete')
 @allowed_roles(['admin', 'speakers_admin'])
-def delete_speaker(speaker_external_id):
-    speaker = SpeakersFinder.get_from_external_id(speaker_external_id)
+def delete_speaker(path: SpeakerPath):
+    speaker = SpeakersFinder.get_from_external_id(path.speaker_external_id)
 
     if speaker is None:
         return APIErrorValue('Couldnt find speaker').json(500)
@@ -218,6 +220,6 @@ def delete_speaker(speaker_external_id):
         return render_template('admin/speakers/update_speaker.html', \
             speaker=speaker, \
             image=image_path, \
-            company_logo=company_logo_path, \
+            company_logo=CompaniesHandler.find_image(company.name), \
             error="Failed to delete speaker!")
 

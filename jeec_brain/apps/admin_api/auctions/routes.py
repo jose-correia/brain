@@ -1,3 +1,4 @@
+from re import I
 from .. import bp
 from flask import render_template, request, redirect, url_for
 from jeec_brain.finders.companies_finder import CompaniesFinder
@@ -5,17 +6,26 @@ from jeec_brain.finders.auctions_finder import AuctionsFinder
 from jeec_brain.handlers.auctions_handler import AuctionsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.admin_api.auctions.schemas import AuctionPath
+
+from datetime import datetime
 
 
 # Auction routes
-@bp.route('/auctions', methods=['GET'])
+@bp.get('/auctions')
 @allowed_roles(['admin'])
 def auctions_dashboard():
     auctions_list = AuctionsFinder.get_all()
 
     for auction in auctions_list:
         auction.highest_bid = AuctionsFinder.get_auction_highest_bid(auction)
-    
+
+        now = datetime.utcnow()
+        start = datetime.strptime(auction.starting_date + " " + auction.starting_time,'%d %b %Y, %a %H:%M')
+        end = datetime.strptime(auction.closing_date + " " + auction.closing_time,'%d %b %Y, %a %H:%M')
+
+        auction.is_open = True if now > start and now < end else False
+            
     if auctions_list is None:
         error = 'No results found'
         return render_template('admin/auctions/auctions_dashboard.html', auctions=None, error=error)
@@ -23,38 +33,42 @@ def auctions_dashboard():
     return render_template('admin/auctions/auctions_dashboard.html', auctions=auctions_list, error=None)
 
 
-@bp.route('/new-auction', methods=['GET'])
+@bp.get('/new-auction')
 @allowed_roles(['admin'])
 def add_auction_dashboard():
-    return render_template('admin/auctions/add_auction.html', \
-        error=None)
+    return render_template('admin/auctions/add_auction.html', error=None)
 
 
-@bp.route('/new-auction', methods=['POST'])
+@bp.post('/new-auction')
 @allowed_roles(['admin'])
 def create_auction():
     name = request.form.get('name')
     description = request.form.get('description')
-    is_open = request.form.get('is_open')
+    starting_date = request.form.get('starting_date')
     closing_date = request.form.get('closing_date')
+    starting_time = request.form.get('starting_time')
+    closing_time = request.form.get('closing_time')
 
     try:
         minimum_value = float(request.form.get('minimum_value'))
     except:
-        return 'Invalid minimum value inserted', 404
+        return 'Invalid minimum value inserted', 500
 
-    if is_open == 'True':
-        is_open = True
-    else:
-        is_open = False
+    start = datetime.strptime(starting_date + " " + starting_time,'%d %b %Y, %a %H:%M')
+    end = datetime.strptime(closing_date + " " + closing_time,'%d %b %Y, %a %H:%M')
+    if start > end:
+        return render_template('admin/auctions/add_auction.html', \
+            error="Starting date higher then closing!") 
 
     # create new auction
     auction = AuctionsHandler.create_auction(
             name=name,
             description=description,
-            is_open=is_open,
             minimum_value=minimum_value,
-            closing_date=closing_date
+            starting_date=starting_date,
+            closing_date=closing_date,
+            starting_time=starting_time,
+            closing_time=closing_time
         )
 
     if auction is None:
@@ -64,10 +78,10 @@ def create_auction():
     return redirect(url_for('admin_api.auctions_dashboard'))
 
 
-@bp.route('/auctions/<string:auction_external_id>', methods=['GET'])
+@bp.get('/auctions/<string:auction_external_id>')
 @allowed_roles(['admin'])
-def get_auction(auction_external_id):
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+def get_auction(path: AuctionPath):
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         error = 'Non existant auction'
@@ -78,37 +92,35 @@ def get_auction(auction_external_id):
         error=None)
 
 
-@bp.route('/auctions/<string:auction_external_id>', methods=['POST'])
+@bp.post('/auctions/<string:auction_external_id>')
 @allowed_roles(['admin'])
-def update_auction(auction_external_id):
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+def update_auction(path: AuctionPath):
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         return APIErrorValue('Couldnt find auction').json(500)
 
     name = request.form.get('name')
     description = request.form.get('description')
+    starting_date = request.form.get('starting_date')
     closing_date = request.form.get('closing_date')
+    starting_time = request.form.get('starting_time')
+    closing_time = request.form.get('closing_time')
 
     try:
         minimum_value = float(request.form.get('minimum_value'))
     except:
         return APIErrorValue('Wrong value format input').json(400)
 
-    is_open = request.form.get('is_open')
-
-    if is_open == 'True':
-        is_open = True
-    else:
-        is_open = False
-
     updated_auction = AuctionsHandler.update_auction(
         auction=auction,
         name=name,
         description=description,
         minimum_value=minimum_value,
-        is_open=is_open,
-        closing_date=closing_date
+        starting_date=starting_date,
+        closing_date=closing_date,
+        starting_time=starting_time,
+        closing_time=closing_time
     )
     
     if updated_auction is None:
@@ -119,10 +131,10 @@ def update_auction(auction_external_id):
     return redirect(url_for('admin_api.auctions_dashboard'))
 
 
-@bp.route('/auctions/<string:auction_external_id>/delete', methods=['GET'])
+@bp.get('/auctions/<string:auction_external_id>/delete')
 @allowed_roles(['admin'])
-def delete_auction(auction_external_id):
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+def delete_auction(path: AuctionPath):
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         return APIErrorValue('Couldnt find auction').json(500)
@@ -135,10 +147,10 @@ def delete_auction(auction_external_id):
 
 
 # Members management
-@bp.route('/auctions/<string:auction_external_id>/participants', methods=['GET'])
+@bp.get('/auctions/<string:auction_external_id>/participants')
 @allowed_roles(['admin'])
-def auction_participants_dashboard(auction_external_id):
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+def auction_participants_dashboard(path: AuctionPath):
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         return APIErrorValue('Couldnt find auction').json(400)
@@ -152,10 +164,10 @@ def auction_participants_dashboard(auction_external_id):
     return render_template('admin/auctions/auction_participants_dashboard.html', auction=auction, not_participants=not_participants, error=None)
 
 
-@bp.route('/auctions/<string:auction_external_id>/add-participant', methods=['POST'])
+@bp.post('/auctions/<string:auction_external_id>/add-participant')
 @allowed_roles(['admin'])
-def add_auction_participant(auction_external_id):
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+def add_auction_participant(path: AuctionPath):
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         return APIErrorValue('Couldnt find auction').json(400)
@@ -163,7 +175,7 @@ def add_auction_participant(auction_external_id):
     company_external_id = request.form.get('company_external_id')
 
     if company_external_id is None:
-        return redirect(url_for('admin_api.auction_participants_dashboard', auction_external_id=auction_external_id))
+        return redirect(url_for('admin_api.auction_participants_dashboard', auction_external_id=path.auction_external_id))
 
     company = CompaniesFinder.get_from_external_id(company_external_id)
 
@@ -172,4 +184,4 @@ def add_auction_participant(auction_external_id):
 
     AuctionsHandler.add_auction_participant(auction, company)
     
-    return redirect(url_for('admin_api.auction_participants_dashboard', auction_external_id=auction_external_id))
+    return redirect(url_for('admin_api.auction_participants_dashboard', auction_external_id=path.auction_external_id))

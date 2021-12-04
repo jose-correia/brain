@@ -15,11 +15,11 @@ class CompanyUsersHandler():
     def create_company_user(cls, name, username, email, company_id, post, food_manager, evf_username, evf_password):
         password = GenerateCredentialsService().call()
         
-        chat_id = UsersHandler.create_chat_user(name, username, email, password, 'Company')
-        if not chat_id:
-            return None
+        # chat_id = UsersHandler.create_chat_user(name, username, email, password, 'Company')
+        # if not chat_id:
+        #     return None
 
-        user = UsersHandler.create_user(name, username, RolesEnum['company'], email, password, chat_id)
+        user = UsersHandler.create_user(name, username, RolesEnum['company'], email, password, None)
         if not user:
             return None
 

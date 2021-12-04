@@ -1,107 +1,132 @@
-<html>  
-  <head>
-    <title>Brain</title>
-    <link rel="stylesheet" href="/static/admin/css/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="/static/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<html>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+<head>
+  <title>Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-  </head>
-  <body>
-    <div class="nav-bar">
-        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/brain.png"></a>
+  <script src="/static/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
+</head>
 
-    <div class="section-header" >
-      <h2>Auctions Management</h2>
-      <p>Update an auction</p>
-    </div>
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/brain.png"></a>
 
-    <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
     </form>
 
-    <br>
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
 
-    <div class="create-form">
-      {% if error is not none %}
-        <blockquote class="create-error">
-          {{ error }}
-        </blockquote>
-      {% endif %}
+  <div class="section-header">
+    <h2>Auctions Management</h2>
+    <p>Update an auction</p>
+  </div>
 
-      <form class="col s12" method="post">
-        <div class="row">
-          <div class="input-field col s4">
-            <input id="name" name="name" type="text" class="validate" value="{{ auction.name }}" required >
-            <label for="name">Name</label>
-          </div>
+  <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
 
-          <div class="row">
-            <div class="input-field col s2">
-              <input id="minimum_value" name="minimum_value" type="number" step="0.01" value="{{ auction.minimum_value }}">
-              <label for="minimum_value">Minimum bid amount (€)</label>
-            </div>
-          </div>
+  <br>
+
+  <div class="create-form">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% endif %}
+
+    <form class="col s12" method="post">
+      <div class="row">
+        <div class="input-field col s4">
+          <input id="name" name="name" type="text" class="validate" value="{{ auction.name }}" required>
+          <label for="name">Name</label>
         </div>
 
         <div class="row">
-          <div class="input-field col s8">
-            <textarea name="description" id="bio" class="materialize-textarea" maxlength="300" value="{{ auction.description }}">{{ auction.description }}</textarea>
-            <label for="description">Description</label>
+          <div class="input-field col s2">
+            <input id="minimum_value" name="minimum_value" type="number" step="0.01"
+              value="{{ auction.minimum_value }}">
+            <label for="minimum_value">Minimum bid amount (€)</label>
           </div>
         </div>
+      </div>
 
-        Auction is open:
-        <div class="row s10">
-          <p class="col s2">
-            <label style="margin-right: 20px;">
-              <input class="with-gap" name="is_open" type="radio" value="True" {% if auction.is_open is sameas true %} checked {% endif %}/>
-              <span>Yes</span>
-            </label>
-            <label>
-                <input class="with-gap" name="is_open" type="radio" value="False" {% if auction.is_open is sameas false %} checked {% endif %}/>
-                <span>No</span>
-            </label>
-          </p>
+      <div class="row">
+        <div class="input-field col s8">
+          <textarea name="description" id="bio" class="materialize-textarea" maxlength="300"
+            value="{{ auction.description }}">{{ auction.description }}</textarea>
+          <label for="description">Description</label>
         </div>
-        
-        <div class="row">
-          <div class="input-field col s3">
-            <input id="closing_date" name="closing_date" type="text" class="validate" required value="{{ auction.closing_date }}">
-            <label for="closing_date">Closing Date</label>
-          </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s3">
+          <input id="starting_date" name="starting_date" type="text" class="validate" required
+            value="{{ auction.starting_date }}">
+          <label for="starting_date">Starting Date</label>
         </div>
-    
-        <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">save</i>Save Auction</button>
-      </form>
-    </div>
 
-    <script>
-      (function($){
-        $(function(){
-          
-          $('#closing_date').datepicker({ format: "dd mm yyyy"});
+        <div class="input-field col s1">
+          <input id="starting_time" name="starting_time" type="text" class="timepicker" required
+            value="{{ auction.starting_time }}">
+          <label for="starting_time">Starting Time</label>
+        </div>
+      </div>
 
-        }); // end of document ready
-      })(jQuery); 
-    </script>
-  </body>
-</html>  
+      <div class="row">
+        <div class="input-field col s3">
+          <input id="closing_date" name="closing_date" type="text" class="validate" required
+            value="{{ auction.closing_date }}">
+          <label for="closing_date">Closing Date</label>
+        </div>
+
+        <div class="input-field col s1">
+          <input id="closing_time" name="closing_time" type="text" class="timepicker" required
+            value="{{ auction.closing_time }}">
+          <label for="closing_time">Closing Time</label>
+        </div>
+      </div>
+
+      <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
+          class="material-icons left">save</i>Save Auction</button>
+    </form>
+  </div>
+
+  <form action="/admin/auctions/{{ auction.external_id.hex }}/delete" method="get"
+    onclick="return confirm('Are you sure you want to delete this auction?')">
+    <button class="waves-effect red darken-2 btn delete-btn"><i class="material-icons left">clear</i>Delete
+      Auction</button>
+  </form>
+
+  <script>
+    (function ($) {
+      $(function () {
+
+        $('#closing_date').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('#starting_date').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('.timepicker').timepicker({ twelveHour: false });
+        $('.parallax').parallax();
+
+      }); // end of document ready
+    })(jQuery);
+  </script>
+</body>
+
+</html>
