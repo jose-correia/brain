@@ -1,3 +1,7 @@
+#!/bin/bash
+
+git pull
+
 docker stop jeec_brain_1
 docker rm jeec_brain_1
 docker build --tag jeec_brain:latest .

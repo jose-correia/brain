@@ -22,40 +22,40 @@ class ActivitiesHandler():
 
     @classmethod
     def create_activity(cls, event, activity_type, chat=False, **kwargs):
-        if chat:
-            chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
-            if not chat_id or not chat_code:
-                return None
-        else:
-            chat_id = None
-            chat_code = None
+        # if chat:
+        #     chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
+        #     if not chat_id or not chat_code:
+        #         return None
+        # else:
+        #     chat_id = None
+        #     chat_code = None
         
-        return CreateActivityService(event=event, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
+        return CreateActivityService(event=event, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":None, "chat_code":None}}).call()
 
     @classmethod
     def update_activity(cls, activity, activity_type, chat=False, **kwargs):
-        if activity.chat_id and not chat:
-            result = DeleteChannelService(activity.chat_id).call()
-            if not result:
-                return None
-            else:
-                return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":None, "chat_code":None}}).call()
+        # if activity.chat_id and not chat:
+        #     result = DeleteChannelService(activity.chat_id).call()
+        #     if not result:
+        #         return None
+        #     else:
+        #         return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":None, "chat_code":None}}).call()
 
-        elif not activity.chat_id and chat:
-            chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
-            if not chat_id or not chat_code:
-                return None
+        # elif not activity.chat_id and chat:
+        #     chat_id, chat_code = CreateChannelService(name = kwargs.get("name", None)).call()
+        #     if not chat_id or not chat_code:
+        #         return None
 
-            return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
+        #     return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs={**kwargs, **{"chat_id":chat_id, "chat_code":chat_code}}).call()
         
         return UpdateActivityService(activity=activity, activity_type=activity_type, kwargs=kwargs).call()
 
     @classmethod
     def delete_activity(cls, activity):
-        if activity.chat_id:
-            result = DeleteChannelService(activity.chat_id).call()
-            if not result:
-                return False
+        # if activity.chat_id:
+        #     result = DeleteChannelService(activity.chat_id).call()
+        #     if not result:
+        #         return False
                 
         return DeleteActivityService(activity=activity).call()
 

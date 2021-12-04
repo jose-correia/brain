@@ -6,6 +6,7 @@ from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.teams_handler import TeamsHandler
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.admin_api.team.schemas import *
 from flask_login import current_user
 from jeec_brain.services.files.rename_image_service import RenameImageService
 import os
@@ -13,7 +14,7 @@ import os
 
 
 # Team management
-@bp.route('/teams', methods=['GET'])
+@bp.get('/teams')
 @allow_all_roles
 def teams_dashboard():
     default_event = EventsFinder.get_default_event()
@@ -27,7 +28,7 @@ def teams_dashboard():
     return render_template('admin/teams/teams_dashboard.html', teams=teams_list, events=events, selected_event=default_event.id, error=None, search=None, role=current_user.role.name)
 
 
-@bp.route('/teams', methods=['POST'])
+@bp.post('/teams')
 @allow_all_roles
 def search_team():
     name = request.form.get('name', None)
@@ -49,14 +50,14 @@ def search_team():
     return render_template('admin/teams/teams_dashboard.html', teams=teams_list, events=events, selected_event=event_id, error=None, search=name, role=current_user.role.name)
 
 
-@bp.route('/new-team', methods=['GET'])
+@bp.get('/new-team')
 @allowed_roles(['admin', 'teams_admin'])
 def add_team_dashboard():
     events = EventsFinder.get_all()
     return render_template('admin/teams/add_team.html', events=events)
 
 
-@bp.route('/new-team', methods=['POST'])
+@bp.post('/new-team')
 @allowed_roles(['admin', 'teams_admin'])
 def create_team():
     name = request.form.get('name')
@@ -80,19 +81,19 @@ def create_team():
     return redirect(url_for('admin_api.teams_dashboard'))
 
 
-@bp.route('/team/<string:team_external_id>', methods=['GET'])
+@bp.get('/team/<string:team_external_id>')
 @allowed_roles(['admin', 'teams_admin'])
-def get_team(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def get_team(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
     events = EventsFinder.get_all()
 
     return render_template('admin/teams/update_team.html', team=team, events=events)
 
 
-@bp.route('/team/<string:team_external_id>', methods=['POST'])
+@bp.post('/team/<string:team_external_id>')
 @allowed_roles(['admin', 'teams_admin'])
-def update_team(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def update_team(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -116,10 +117,10 @@ def update_team(team_external_id):
     return redirect(url_for('admin_api.teams_dashboard'))
 
 
-@bp.route('/team/<string:team_external_id>/delete', methods=['GET'])
+@bp.get('/team/<string:team_external_id>/delete')
 @allowed_roles(['admin', 'teams_admin'])
-def delete_team(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def delete_team(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -132,10 +133,10 @@ def delete_team(team_external_id):
 
 
 # Members management
-@bp.route('/team/<string:team_external_id>/members', methods=['GET'])
+@bp.get('/team/<string:team_external_id>/members')
 @allow_all_roles
-def team_members_dashboard(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def team_members_dashboard(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -147,10 +148,10 @@ def team_members_dashboard(team_external_id):
     return render_template('admin/teams/team_members_dashboard.html', team=team, members=team.members, error=None, search=None, role=current_user.role.name)
 
 
-@bp.route('/team/<string:team_external_id>/members', methods=['POST'])
+@bp.post('/team/<string:team_external_id>/members')
 @allow_all_roles
-def search_team_members(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def search_team_members(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -165,10 +166,10 @@ def search_team_members(team_external_id):
     return render_template('admin/teams/team_members_dashboard.html', team=team, members=members_list, error=None, search=name, role=current_user.role.name)
 
 
-@bp.route('/team/<string:team_external_id>/erase', methods=['get'])
+@bp.get('/team/<string:team_external_id>/erase')
 @allowed_roles(['admin', 'teams_admin'])
-def delete_all_team_members(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def delete_all_team_members(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -180,13 +181,13 @@ def delete_all_team_members(team_external_id):
     
     for member in members:
         TeamsHandler.delete_team_member(member)
-    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
+    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=path.team_external_id))
 
 
-@bp.route('/team/<string:team_external_id>/new-member', methods=['GET'])
+@bp.get('/team/<string:team_external_id>/new-member')
 @allowed_roles(['admin', 'teams_admin'])
-def add_team_member_dashboard(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def add_team_member_dashboard(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -194,10 +195,10 @@ def add_team_member_dashboard(team_external_id):
     return render_template('admin/teams/add_team_member.html', team=team)
 
 
-@bp.route('/team/<string:team_external_id>/new-member', methods=['POST'])
+@bp.post('/team/<string:team_external_id>/new-member')
 @allowed_roles(['admin', 'teams_admin'])
-def create_team_member(team_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def create_team_member(path: TeamPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
@@ -226,18 +227,18 @@ def create_team_member(team_external_id):
             TeamsHandler.delete_team_member(member)
             return render_template('admin/teams/add_team_member.html', team=team, error=msg)
 
-    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
+    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=path.team_external_id))
 
 
-@bp.route('/team/<string:team_external_id>/members/<string:member_external_id>', methods=['GET'])
+@bp.get('/team/<string:team_external_id>/members/<string:member_external_id>')
 @allowed_roles(['admin', 'teams_admin'])
-def get_team_member(team_external_id, member_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def get_team_member(path: TeamMemberPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
 
-    member = ColaboratorsFinder.get_from_external_id(member_external_id)
+    member = ColaboratorsFinder.get_from_external_id(path.member_external_id)
 
     if member is None:
         return APIErrorValue('Couldnt find team member').json(500)
@@ -247,15 +248,15 @@ def get_team_member(team_external_id, member_external_id):
     return render_template('admin/teams/update_team_member.html', member=member, image=image_path, error=None)
 
 
-@bp.route('/team/<string:team_external_id>/members/<string:member_external_id>', methods=['POST'])
+@bp.post('/team/<string:team_external_id>/members/<string:member_external_id>')
 @allowed_roles(['admin', 'teams_admin'])
-def update_team_member(team_external_id, member_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def update_team_member(path: TeamMemberPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
 
-    member = ColaboratorsFinder.get_from_external_id(member_external_id)
+    member = ColaboratorsFinder.get_from_external_id(path.member_external_id)
 
     if member is None:
         return APIErrorValue('Couldnt find team member').json(500)
@@ -290,18 +291,18 @@ def update_team_member(team_external_id, member_external_id):
         if result == False:
             return render_template('admin/teams/update_team_member.html', member=updated_member, image=image_path, error=msg)
 
-    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
+    return redirect(url_for('admin_api.team_members_dashboard', team_external_id=path.team_external_id))
 
 
-@bp.route('/team/<string:team_external_id>/members/<string:member_external_id>/delete', methods=['GET'])
+@bp.get('/team/<string:team_external_id>/members/<string:member_external_id>/delete')
 @allowed_roles(['admin', 'teams_admin'])
-def delete_team_member(team_external_id, member_external_id):
-    team = TeamsFinder.get_from_external_id(team_external_id)
+def delete_team_member(path: TeamMemberPath):
+    team = TeamsFinder.get_from_external_id(path.team_external_id)
 
     if team is None:
         return APIErrorValue('Couldnt find team').json(500)
 
-    member = ColaboratorsFinder.get_from_external_id(member_external_id)
+    member = ColaboratorsFinder.get_from_external_id(path.member_external_id)
 
     if member is None:
         return APIErrorValue('Couldnt find team member').json(500)
@@ -309,7 +310,7 @@ def delete_team_member(team_external_id, member_external_id):
     name = member.name
 
     if TeamsHandler.delete_team_member(member):
-        return redirect(url_for('admin_api.team_members_dashboard', team_external_id=team_external_id))
+        return redirect(url_for('admin_api.team_members_dashboard', team_external_id=path.team_external_id))
 
     else:
         image_path = TeamsHandler.find_member_image(name)

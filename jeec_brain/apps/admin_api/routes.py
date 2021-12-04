@@ -1,4 +1,4 @@
-from flask import request, render_template, session, redirect, url_for, make_response
+from flask import request, render_template, session, redirect, url_for
 from . import bp
 
 from flask_login import current_user
@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@bp.route('/', methods=['GET'])
+@bp.get('/')
 def get_admin_login_form():
     if current_user.is_authenticated and current_user.role.name in ['admin', 'companies_admin', 'speakers_admin', 'teams_admin', 'activities_admin', 'viewer']:
         return redirect(url_for('admin_api.dashboard'))
@@ -19,7 +19,7 @@ def get_admin_login_form():
     return render_template('admin/admin_login.html')
 
 
-@bp.route('/', methods=['POST'])
+@bp.post('/')
 def admin_login():    
     username = request.form.get('username')
     password = request.form.get('password')
@@ -36,7 +36,7 @@ def admin_login():
 
 
 # content routes
-@bp.route('/admin-logout', methods=['GET'])
+@bp.get('/admin-logout')
 def admin_logout():
     try:
         AuthHandler.logout_user()
@@ -46,7 +46,7 @@ def admin_logout():
 
 
 # content routes
-@bp.route('/dashboard', methods=['GET'])
+@bp.get('/dashboard')
 @allow_all_roles
 def dashboard():
     event = EventsFinder.get_default_event()
@@ -55,4 +55,3 @@ def dashboard():
 
     logo = EventsHandler.find_image(image_name=str(event.external_id))
     return render_template('admin/dashboard.html', event=event, logo=logo, user=current_user)
-

@@ -46,7 +46,7 @@ from jeec_brain.values.partners_value import PartnersValue
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
 # Login routes
-@bp.route('/login')
+@bp.get('/login')
 def login_student():
     return AuthHandler.redirect_to_fenix_login()
 
@@ -65,12 +65,12 @@ def redirect_uri():
     else:
         return redirect(Config.STUDENT_APP_URL)
 
-@bp.route('/info', methods=['GET'])
+@bp.get('/info')
 @requires_student_auth
 def get_info(student):    
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/today-login', methods=['GET'])
+@bp.get('/today-login')
 @requires_student_auth
 def today_login(student):
     now = datetime.utcnow()
@@ -90,7 +90,7 @@ def today_login(student):
             
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/students', methods=['GET'])
+@bp.get('/students')
 @requires_student_auth
 def get_students(student):
     search = request.args.get('search', None)
@@ -99,14 +99,14 @@ def get_students(student):
 
     return StudentsValue(students, details=False).json(200)
 
-@bp.route('/levels', methods=['GET'])
+@bp.get('/levels')
 @requires_student_auth
 def get_levels(student):
     levels = LevelsFinder.get_all_levels()
 
     return LevelsValue(levels, True).json(200)
 
-@bp.route('/squad', methods=['GET'])
+@bp.get('/squad')
 @requires_student_auth
 def get_squad(student):
     if(student.squad is None):
@@ -114,7 +114,7 @@ def get_squad(student):
     
     return SquadsValue(student.squad).json(200)
 
-@bp.route('/squad', methods=['POST'])
+@bp.post('/squad')
 @requires_student_auth
 def create_squad(student):
     if(student.squad is not None):
@@ -147,7 +147,7 @@ def create_squad(student):
     
     return SquadsValue(squad).json(200)
 
-@bp.route('/invite-squad', methods=['POST'])
+@bp.post('/invite-squad')
 @requires_student_auth
 def invite_squad(student):
     if(student.squad is None):
@@ -163,7 +163,7 @@ def invite_squad(student):
     else:
         return APIErrorValue('Failed to invite').json(500)
 
-@bp.route('/cancel-invitation', methods=['POST'])
+@bp.post('/cancel-invitation')
 @requires_student_auth
 def cancel_invite(student):
     try:
@@ -180,21 +180,21 @@ def cancel_invite(student):
 
     return jsonify('Success'), 200
 
-@bp.route('/squad-invitations-received', methods=['GET'])
+@bp.get('/squad-invitations-received')
 @requires_student_auth
 def get_squad_invitations_received(student):
     invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
 
     return SquadInvitationsValue(invitations).json(200)
 
-@bp.route('/squad-invitations-sent', methods=['GET'])
+@bp.get('/squad-invitations-sent')
 @requires_student_auth
 def get_squad_invitations_sent(student):
     invitations = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
 
     return SquadInvitationsSentValue([invitation.receiver for invitation in invitations]).json(200)
 
-@bp.route('/accept-invitation', methods=['POST'])
+@bp.post('/accept-invitation')
 @requires_student_auth
 def accept_invitation(student):
     try:
@@ -212,7 +212,7 @@ def accept_invitation(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('reject-invitation', methods=['POST'])
+@bp.post('reject-invitation')
 @requires_student_auth
 def reject_invitation(student):
     try:
@@ -228,14 +228,14 @@ def reject_invitation(student):
 
     return jsonify('Success'), 200
 
-@bp.route('leave-squad', methods=['POST'])
+@bp.post('leave-squad')
 @requires_student_auth
 def leave_squad(student):
     student = StudentsHandler.leave_squad(student)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('kick-member', methods=['POST'])
+@bp.post('kick-member')
 @requires_student_auth
 def kick_member(student):
     if(not student.is_captain()):
@@ -254,7 +254,7 @@ def kick_member(student):
 
     return SquadsValue(student.squad).json(200)
 
-@bp.route('/redeem-code', methods=['POST'])
+@bp.post('/redeem-code')
 @requires_student_auth
 def redeem_code(student):
     try:
@@ -280,7 +280,7 @@ def redeem_code(student):
 
     # return StudentsValue(student, details=True).json(200)
 
-@bp.route('/activities', methods=['GET'])
+@bp.get('/activities')
 @requires_student_auth
 def get_activities(student):
     event = EventsFinder.get_default_event()
@@ -292,14 +292,14 @@ def get_activities(student):
     
     return StudentActivitiesValue(activities, student).json(200)
 
-@bp.route('/quests', methods=['GET'])
+@bp.get('/quests')
 @requires_student_auth
 def get_quests(student):
     activities = ActivitiesFinder.get_quests()
     
     return StudentActivitiesValue(activities, student, True).json(200)
 
-@bp.route('/event-dates', methods=['GET'])
+@bp.get('/event-dates')
 @requires_student_auth
 def get_activity_dates(student):
     event = EventsFinder.get_default_event()
@@ -307,14 +307,14 @@ def get_activity_dates(student):
 
     return jsonify(dates)
 
-@bp.route('/event-info', methods=['GET'])
+@bp.get('/event-info')
 @requires_student_auth
 def get_event_info(student):
     event = EventsFinder.get_default_event()
     
     return StudentEventInfoValue(event).json(200)
 
-@bp.route('/add-linkedin', methods=['POST'])
+@bp.post('/add-linkedin')
 @requires_student_auth
 def add_linkedin(student):
     try:
@@ -328,7 +328,7 @@ def add_linkedin(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/add-cv', methods=['POST'])
+@bp.post('/add-cv')
 @requires_student_auth
 def add_cv(student):
     if 'cv' not in request.files:
@@ -353,7 +353,7 @@ def add_cv(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/cv', methods=['GET'])
+@bp.get('/cv')
 @requires_student_auth
 def get_cv(student):
     if not student.uploaded_cv:
@@ -366,7 +366,7 @@ def get_cv(student):
 
     return jsonify({'data':str(base64.b64encode(fileContent), 'utf-8'), 'content-type':'application/pdf'})
 
-@bp.route('/tags', methods=['GET'])
+@bp.get('/tags')
 @requires_student_auth
 def get_tags(student):
     tags = TagsFinder.get_all()
@@ -378,7 +378,7 @@ def get_tags(student):
     return jsonify(tags_names), 200
 
 
-@bp.route('/add-tags', methods=['POST'])
+@bp.post('/add-tags')
 @requires_student_auth
 def add_tags(student):
     try:
@@ -395,7 +395,7 @@ def add_tags(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/delete-tag', methods=['POST'])
+@bp.post('/delete-tag')
 @requires_student_auth
 def delete_tag(student):
     try:
@@ -415,7 +415,7 @@ def delete_tag(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/partners', methods=['GET'])
+@bp.get('/partners')
 @requires_student_auth
 def get_partners(student):
     companies = CompaniesFinder.get_chat_companies({'partnership_tier':'main_sponsor'})
@@ -425,7 +425,7 @@ def get_partners(student):
 
     return CompaniesValue(companies, False).json(200)
 
-@bp.route('/partner', methods=['GET'])
+@bp.get('/partner')
 @requires_student_auth
 def get_partner(student):
     name = request.args.get('name', None)
@@ -438,7 +438,7 @@ def get_partner(student):
 
     return PartnersValue(company, student).json(200)
 
-@bp.route('/companies', methods=['GET'])
+@bp.get('/companies')
 @requires_student_auth
 def get_companies(student):
     company_names = []
@@ -449,7 +449,7 @@ def get_companies(student):
 
     return jsonify(company_names), 200
 
-@bp.route('/add-companies', methods=['POST'])
+@bp.post('/add-companies')
 @requires_student_auth
 def add_companies(student):
     try:
@@ -466,7 +466,7 @@ def add_companies(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/delete-company', methods=['POST'])
+@bp.post('/delete-company')
 @requires_student_auth
 def delete_company(student):
     try:
@@ -486,28 +486,28 @@ def delete_company(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.route('/students-ranking', methods=['GET'])
+@bp.get('/students-ranking')
 @requires_student_auth
 def get_students_ranking(student):
     students = StudentsFinder.get_top(20)
 
     return StudentsValue(students, details=False).json(200)
 
-@bp.route('/squads-ranking', methods=['GET'])
+@bp.get('/squads-ranking')
 @requires_student_auth
 def get_squads_ranking(student):
     squads = SquadsFinder.get_top()
 
     return SquadsValue(squads).json(200)
 
-@bp.route('/daily-squads-ranking', methods=['GET'])
+@bp.get('/daily-squads-ranking')
 @requires_student_auth
 def get_daily_squads_ranking(student):
     squads = SquadsFinder.get_daily_top()
 
     return SquadsValue(squads).json(200)
 
-@bp.route('/today-squad-reward', methods=['GET'])
+@bp.get('/today-squad-reward')
 @requires_student_auth
 def get_today_squad_reward(student):
     now = datetime.utcnow().strftime('%d %b %Y, %a')
@@ -519,21 +519,21 @@ def get_today_squad_reward(student):
 
     return RewardsValue(squad_reward.reward).json(200)
 
-@bp.route('/squads-rewards', methods=['GET'])
+@bp.get('/squads-rewards')
 @requires_student_auth
 def get_squads_rewards(student):
     squads_rewards = RewardsFinder.get_all_squad_rewards()
 
     return SquadsRewardsValue(squads_rewards, student.squad).json(200)
 
-@bp.route('/jeecpot-rewards', methods=['GET'])
+@bp.get('/jeecpot-rewards')
 @requires_student_auth
 def get_jeecpot_rewards(student):
     jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
 
     return JeecpotRewardsValue(jeecpot_rewards[0], student).json(200)
 
-@bp.route('/chat-token', methods=['GET'])
+@bp.get('/chat-token')
 @requires_student_auth
 def get_chat_token(student):
     token = UsersHandler.get_chat_user_token(student.user)
@@ -543,7 +543,7 @@ def get_chat_token(student):
     else:
         return APIErrorValue("Error getting token").json(500)
 
-@bp.route('/chat-room', methods=['GET'])
+@bp.get('/chat-room')
 @requires_student_auth
 def get_chat_room(student):
     company_name = request.args.get('company', None)
@@ -574,7 +574,7 @@ def get_chat_room(student):
     else:
         return APIErrorValue("No room found").json(404)
 
-@bp.route('/notifications', methods=['GET'])
+@bp.get('/notifications')
 @requires_student_auth
 def get_notifications(student):
     notifications={}

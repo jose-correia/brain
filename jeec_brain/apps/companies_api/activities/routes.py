@@ -9,10 +9,11 @@ from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
 from jeec_brain.finders.activity_codes_finder import ActivityCodesFinder
 from jeec_brain.handlers.activity_codes_handler import ActivityCodesHandler
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.companies_api.activities.schemas import *
 from datetime import datetime
 from config import Config
 
-@bp.route('/activities', methods=['GET'])
+@bp.get('/activities')
 @require_company_login
 def activities_dashboard(company_user):
     activities = company_user.company.activities
@@ -22,10 +23,10 @@ def activities_dashboard(company_user):
     return render_template('companies/activities/activities_dashboard.html', activities=activities, error=None, company=company_user.company)
 
 
-@bp.route('/activity/<string:activity_external_id>', methods=['GET'])
+@bp.get('/activity/<string:activity_external_id>')
 @require_company_login
-def get_activity(company_user, activity_external_id):
-    activity = ActivitiesFinder.get_from_external_id(activity_external_id)
+def get_activity(company_user, path: ActivityPath):
+    activity = ActivitiesFinder.get_from_external_id(path.activity_external_id)
     if activity is None:
         return APIErrorValue('Couldnt find activity').json(400)
 
@@ -37,10 +38,10 @@ def get_activity(company_user, activity_external_id):
         codes=codes, \
         user=company_user)
 
-@bp.route('/activity_type/<string:activity_type_external_id>', methods=['GET'])
+@bp.get('/activity_type/<string:activity_type_external_id>')
 @require_company_login
-def get_activity_type(company_user, activity_type_external_id):
-    activity_type = ActivityTypesFinder.get_from_external_id(activity_type_external_id)
+def get_activity_type(company_user, path: ActivityTypePath):
+    activity_type = ActivityTypesFinder.get_from_external_id(path.activity_type_external_id)
     if activity_type is None:
         return APIErrorValue("No activity type found").json(404)
 
@@ -67,7 +68,7 @@ def get_activity_type(company_user, activity_type_external_id):
         error=None, \
         user=company_user)
 
-@bp.route('/job_fair', methods=['GET'])
+@bp.get('/job_fair')
 @require_company_login
 def get_job_fair(company_user):
     job_fairs = []
@@ -100,7 +101,7 @@ def get_job_fair(company_user):
         error=None, \
         user=company_user)
 
-@bp.route('/activity/code', methods=['POST'])
+@bp.post('/activity/code')
 @require_company_login
 def generate_code(company_user):
     now = datetime.utcnow()

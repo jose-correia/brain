@@ -12,10 +12,12 @@ class Auctions(db.Model, ModelMixin):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300))
 
+    starting_date = db.Column(db.String(200))
+    starting_time = db.Column(db.String(10))
     closing_date = db.Column(db.String(200))
+    closing_time = db.Column(db.String(10))
 
     minimum_value = db.Column(db.Float())
-    is_open = db.Column(db.Boolean, default=False)
 
     bids = relationship("Bids", back_populates='auction', lazy='dynamic', cascade="all,delete")
 

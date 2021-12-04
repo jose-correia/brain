@@ -11,10 +11,12 @@ from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 # services
 from jeec_brain.services.files.rename_image_service import RenameImageService
+#schemas
+from jeec_brain.schemas.admin_api.companies.schemas import *
 
 
 
-@bp.route('/companies', methods=['GET'])
+@bp.get('/companies')
 @allow_all_roles
 def companies_dashboard():
     companies_list = CompaniesFinder.get_all()
@@ -26,7 +28,7 @@ def companies_dashboard():
     return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=None, role=current_user.role.name)
 
 
-@bp.route('/companies', methods=['POST'])
+@bp.post('/companies')
 @allow_all_roles
 def search_company():
     name = request.form.get('name')
@@ -39,13 +41,13 @@ def search_company():
     return render_template('admin/companies/companies_dashboard.html', companies=companies_list, error=None, search=name, role=current_user.role.name)
 
 
-@bp.route('/new-company', methods=['GET'])
+@bp.get('/new-company')
 @allowed_roles(['admin', 'companies_admin'])
 def add_company_dashboard():
     return render_template('admin/companies/add_company.html', error=None)
 
 
-@bp.route('/new-company', methods=['POST'])
+@bp.post('/new-company')
 @allowed_roles(['admin', 'companies_admin'])
 def create_company():
     name = request.form.get('name')
@@ -97,21 +99,21 @@ def create_company():
     return redirect(url_for('admin_api.companies_dashboard'))
 
 
-@bp.route('/company/<string:company_external_id>', methods=['GET'])
+@bp.get('/company/<string:company_external_id>')
 @allowed_roles(['admin', 'companies_admin'])
-def get_company(company_external_id):
-    company = CompaniesFinder.get_from_external_id(company_external_id)
+def get_company(path: CompanyPath):
+    company = CompaniesFinder.get_from_external_id(path.company_external_id)
 
     image_path = CompaniesHandler.find_image(company.name)
 
     return render_template('admin/companies/update_company.html', company=company, image=image_path, error=None)
 
 
-@bp.route('/company/<string:company_external_id>', methods=['POST'])
+@bp.post('/company/<string:company_external_id>')
 @allowed_roles(['admin', 'companies_admin'])
-def update_company(company_external_id):
+def update_company(path: CompanyPath):
 
-    company = CompaniesFinder.get_from_external_id(company_external_id)
+    company = CompaniesFinder.get_from_external_id(path.company_external_id)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)
@@ -172,10 +174,10 @@ def update_company(company_external_id):
     return redirect(url_for('admin_api.companies_dashboard'))
 
 
-@bp.route('/company/<string:company_external_id>/delete', methods=['GET'])
+@bp.get('/company/<string:company_external_id>/delete')
 @allowed_roles(['admin', 'companies_admin'])
-def delete_company(company_external_id):
-    company = CompaniesFinder.get_from_external_id(company_external_id)
+def delete_company(path: CompanyPath):
+    company = CompaniesFinder.get_from_external_id(path.company_external_id)
 
     if company is None:
         return APIErrorValue('Couldnt find company').json(500)

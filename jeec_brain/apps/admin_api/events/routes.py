@@ -5,11 +5,12 @@ from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.services.files.delete_image_service import DeleteImageService
+from jeec_brain.schemas.admin_api.events.schemas import *
 from flask_login import current_user
 from datetime import datetime
 
 # Events routes
-@bp.route('/events', methods=['GET'])
+@bp.get('/events')
 @allowed_roles(['admin'])
 def events_dashboard():
     search_parameters = request.args
@@ -50,7 +51,7 @@ def events_dashboard():
     return render_template('admin/events/events_dashboard.html', events=events_list, error=None, search=search, role=current_user.role.name)
 
 
-@bp.route('/events', methods=['POST'])
+@bp.post('/events')
 @allowed_roles(['admin'])
 def search_event():
     name = request.form.get('name')
@@ -63,13 +64,13 @@ def search_event():
     return render_template('admin/events/events_dashboard.html', events=events_list, error=None, search=name, role=current_user.role.name)
 
 
-@bp.route('/new-event', methods=['GET'])
+@bp.get('/new-event')
 @allowed_roles(['admin'])
 def add_event_dashboard():
     return render_template('admin/events/add_event.html', error=None)
 
 
-@bp.route('/new-event', methods=['POST'])
+@bp.post('/new-event')
 @allowed_roles(['admin'])
 def create_event():
     name = request.form.get('name')
@@ -173,10 +174,10 @@ def create_event():
     return redirect(url_for('admin_api.events_dashboard'))
 
 
-@bp.route('/events/<string:event_external_id>', methods=['GET'])
+@bp.get('/events/<string:event_external_id>')
 @allowed_roles(['admin'])
-def get_event(event_external_id):
-    event = EventsFinder.get_from_external_id(event_external_id)
+def get_event(path: EventPath):
+    event = EventsFinder.get_from_external_id(path.event_external_id)
 
     if event is None:
         return render_template(url_for('admin_api.add_event_dashboard'))
@@ -191,10 +192,10 @@ def get_event(event_external_id):
 
     return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=None)
 
-@bp.route('/events/<string:event_external_id>', methods=['POST'])
+@bp.post('/events/<string:event_external_id>')
 @allowed_roles(['admin'])
-def update_event(event_external_id):
-    event = EventsFinder.get_from_external_id(event_external_id)
+def update_event(path: EventPath):
+    event = EventsFinder.get_from_external_id(path.event_external_id)
     if event is None:
         return APIErrorValue('Couldnt find event').json(500)
 
@@ -259,7 +260,7 @@ def update_event(event_external_id):
     blueprint = EventsHandler.find_image(image_name=blueprint_name)
 
     if updated_event is None:
-        return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error=msg)
+        return render_template('admin/events/update_event.html', event=event, logo=logo, logo_mobile=logo_mobile, schedule=schedule, blueprint=blueprint, error="Failed to update event")
 
     # there can only be one default
     if default:
@@ -301,13 +302,13 @@ def update_event(event_external_id):
 
     return redirect(url_for('admin_api.events_dashboard'))
 
-@bp.route('/events/<string:event_external_id>/purge_cvs', methods=['POST'])
-@allowed_roles(['admin'])
-def purge_cvs(event_external_id):
-    event = EventsFinder.get_from_external_id(event_external_id)
-    if event is None:
-        return APIErrorValue('Couldnt find event').json(500)
+# @bp.post('/events/<string:event_external_id>/purge_cvs')
+# @allowed_roles(['admin'])
+# def purge_cvs(event_external_id):
+#     event = EventsFinder.get_from_external_id(event_external_id)
+#     if event is None:
+#         return APIErrorValue('Couldnt find event').json(500)
 
-    #
-    #
-    #
+#     #
+#     #
+#     #

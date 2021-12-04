@@ -10,11 +10,12 @@ from jeec_brain.services.users.generate_credentials_service import GenerateCrede
 from jeec_brain.apps.auth.wrappers import allowed_roles
 from jeec_brain.models.enums.roles_enum import RolesEnum
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.admin_api.users.schemas import *
 from flask_login import current_user
 
 
 # Users routes
-@bp.route('/users', methods=['GET'])
+@bp.get('/users')
 @allowed_roles(['admin'])
 def users_dashboard():
     search_parameters = request.args
@@ -47,7 +48,7 @@ def users_dashboard():
     return render_template('admin/users/users_dashboard.html', users=users_list, company_users=company_users_list, error=None, search=search, current_user=current_user)
 
 
-@bp.route('/new-user', methods=['GET'])
+@bp.get('/new-user')
 @allowed_roles(['admin'])
 def add_user_dashboard():
     roles = GetRolesService.call()
@@ -62,7 +63,7 @@ def add_user_dashboard():
         error=None)
 
 
-@bp.route('/new-organization-user', methods=['GET'])
+@bp.get('/new-organization-user')
 @allowed_roles(['admin'])
 def add_company_user_dashboard():
     companies = CompaniesFinder.get_all()
@@ -73,7 +74,7 @@ def add_company_user_dashboard():
         error=None)
 
 
-@bp.route('/new-user', methods=['POST'])
+@bp.post('/new-user')
 @allowed_roles(['admin'])
 def create_user():
     # extract form parameters
@@ -114,23 +115,23 @@ def create_user():
                     roles=GetRolesService.call(), \
                     error="Failed to create user!")
 
-        if not UsersHandler.join_channel(company_user.user, company.chat_id, company.chat_code):
-            CompanyUsersHandler.delete_company_user(company_user)
-            return render_template('admin/users/add_company_user.html', \
-                    user=current_user, \
-                    companies=CompaniesFinder.get_all(), \
-                    roles=GetRolesService.call(), \
-                    error="Failed to create user!")
+        # if not UsersHandler.join_channel(company_user.user, company.chat_id, company.chat_code):
+        #     CompanyUsersHandler.delete_company_user(company_user)
+        #     return render_template('admin/users/add_company_user.html', \
+        #             user=current_user, \
+        #             companies=CompaniesFinder.get_all(), \
+        #             roles=GetRolesService.call(), \
+        #             error="Failed to create user!")
 
-        for activity in company_user.company.activities:
-            if activity.chat_id:
-                if not ActivitiesHandler.join_channel(company_user.user, activity):
-                    CompanyUsersHandler.delete_company_user(company_user)
-                    return render_template('admin/users/add_company_user.html', \
-                        user=current_user, \
-                        companies=CompaniesFinder.get_all(), \
-                        roles=GetRolesService.call(), \
-                        error="Failed to create user!")
+        # for activity in company_user.company.activities:
+        #     if activity.chat_id:
+        #         if not ActivitiesHandler.join_channel(company_user.user, activity):
+        #             CompanyUsersHandler.delete_company_user(company_user)
+        #             return render_template('admin/users/add_company_user.html', \
+        #                 user=current_user, \
+        #                 companies=CompaniesFinder.get_all(), \
+        #                 roles=GetRolesService.call(), \
+        #                 error="Failed to create user!")
 
     else:
         if role not in GetRolesService.call():
@@ -154,10 +155,10 @@ def create_user():
     return redirect(url_for('admin_api.users_dashboard'))
 
 
-@bp.route('/user/<string:user_external_id>/delete', methods=['GET'])
+@bp.get('/user/<string:user_external_id>/delete')
 @allowed_roles(['admin'])
-def delete_user(user_external_id):
-    user = UsersFinder.get_from_external_id(user_external_id)
+def delete_user(path: UserPath):
+    user = UsersFinder.get_from_external_id(path.user_external_id)
 
     if user is None:
         return APIErrorValue('Couldnt find user').json(500)
@@ -175,10 +176,10 @@ def delete_user(user_external_id):
     return redirect(url_for('admin_api.users_dashboard'))
 
 
-@bp.route('/user/<string:user_external_id>/credentials', methods=['GET'])
+@bp.get('/user/<string:user_external_id>/credentials')
 @allowed_roles(['admin'])
-def generate_user_credentials(user_external_id):
-    user = UsersFinder.get_from_external_id(user_external_id)
+def generate_user_credentials(path: UserPath):
+    user = UsersFinder.get_from_external_id(path.user_external_id)
 
     if user is None:
         return APIErrorValue('Couldnt find user').json(500)

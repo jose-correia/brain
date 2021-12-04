@@ -1,0 +1,65 @@
+# Docker
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'e3b9ad4a-0e73-4d36-937e-22329ed1eec5'
+  imageRepository: 'jeecbrain'
+  containerRegistry: 'neecist.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: 'latest'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        dockerfile: $(dockerfilePath)
+        tags: 'latest'
+        arguments: --build-arg SECRET_KEY=$(SECRET_KEY) --build-arg APP_ENV=$(APP_ENV) --build-arg APP_DB=$(APP_DB)
+          --build-arg APPINSIGHTS_INSTRUMENTATIONKEY=$(APPINSIGHTS_INSTRUMENTATIONKEY) --build-arg CLIENT_USERNAME=$(CLIENT_USERNAME)
+          --build-arg CLIENT_KEY=$(CLIENT_KEY) --build-arg CV_SUBMISSION_OPEN=$(CV_SUBMISSION_OPEN) --build-arg DATABASE_URL=$(DATABASE_URL)
+          --build-arg FLASK_DEBUG=$(FLASK_DEBUG) --build-arg JWT_SECRET=$(JWT_SECRET) --build-arg REWARD_CV=$(REWARD_CV) --build-arg REWARD_LINKEDIN=$(REWARD_LINKEDIN)
+          --build-arg REWARD_LOGIN=$(REWARD_LOGIN) --build-arg REWARD_REFERRAL=$(REWARD_REFERRAL) --build-arg ROCKET_CHAT_ADMIN_USERNAME=$(ROCKET_CHAT_ADMIN_USERNAME)
+          --build-arg ROCKET_CHAT_ADMIN_PASSWORD=$(ROCKET_CHAT_ADMIN_PASSWORD) --build-arg ROCKET_CHAT_APP_URL=$(ROCKET_CHAT_APP_URL)
+          --build-arg SECRET_KEY=$(SECRET_KEY) --build-arg STUDENT_APP_URL=$(STUDENT_APP_URL) --build-arg UPLOAD_FOLDER=$(UPLOAD_FOLDER)
+    - task: Docker@2
+      displayName: Push
+      inputs:
+        command: push
+        repository: $(imageRepository)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: 'latest'
+
+- stage: Deployment
+  displayName: Deployment stage
+  jobs:
+  - deployment: Deploy
+    displayName: deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment:
+      name: Production
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo my first deployment

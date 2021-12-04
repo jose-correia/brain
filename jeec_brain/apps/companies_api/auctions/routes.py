@@ -1,3 +1,4 @@
+from logging import warning
 from jeec_brain.apps.companies_api import bp
 from flask import render_template, session, request, redirect, url_for
 from jeec_brain.apps.auth.wrappers import require_company_login
@@ -6,13 +7,16 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.handlers.auctions_handler import AuctionsHandler
 from jeec_brain.values.api_error_value import APIErrorValue
+from jeec_brain.schemas.companies_api.auctions.schemas import AuctionPath
+
+from datetime import datetime
 
 
-@bp.route('/auction/<string:auction_external_id>', methods=['GET'])
+@bp.get('/auction/<string:auction_external_id>')
 @require_company_login
-def auction_dashboard(company_user, auction_external_id):
+def auction_dashboard(company_user, path: AuctionPath):
     # get auction
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         return APIErrorValue('Couldnt find auction').json(400)
@@ -20,6 +24,12 @@ def auction_dashboard(company_user, auction_external_id):
     # check if company is allowed in auction
     if company_user.company not in auction.participants:
         return APIErrorValue('Company not allowed in this auction').json(400)
+
+    #check if auction is open
+    start = datetime.strptime(auction.starting_date + " " + auction.starting_time,'%d %b %Y, %a %H:%M')
+    end = datetime.strptime(auction.closing_date + " " + auction.closing_time,'%d %b %Y, %a %H:%M')
+    now = datetime.utcnow()
+    auction.is_open = True if now > start and now < end else False
 
     # get auction highest bid
     highest_bid = AuctionsFinder.get_auction_highest_bid(auction)
@@ -56,16 +66,17 @@ def auction_dashboard(company_user, auction_external_id):
         participant_logos=participant_logos, \
         error=None, \
         user=company_user,
+        warning=request.args.get("warning",""),
         search=None)
 
 
-@bp.route('/auction/<string:auction_external_id>/bid', methods=['POST'])
+@bp.post('/auction/<string:auction_external_id>/bid')
 @require_company_login
-def auction_bid(company_user, auction_external_id):
+def auction_bid(company_user, path: AuctionPath):
     try:
         value = float(request.form.get('value'))
     except:
-        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction_external_id))
+        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=path.auction_external_id))
 
     is_anonymous = request.form.get('is_anonymous')
     
@@ -81,7 +92,7 @@ def auction_bid(company_user, auction_external_id):
         return APIErrorValue('Couldnt find company').json(400)
     
     # get auction
-    auction = AuctionsFinder.get_auction_by_external_id(auction_external_id)
+    auction = AuctionsFinder.get_auction_by_external_id(path.auction_external_id)
 
     if auction is None:
         return APIErrorValue('Couldnt find auction').json(400)
@@ -95,8 +106,10 @@ def auction_bid(company_user, auction_external_id):
         highest_bid_value = highest_bid.value
 
     # check if value is bigger than current highest bid
-    if value <= highest_bid_value or value < auction.minimum_value:
-        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
+    if value <= auction.minimum_value:
+        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id, warning="Must be higher than minimum bid"))
+    elif value < highest_bid_value:
+        return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id, warning="Must be higher than current highest bid"))
 
     AuctionsHandler.create_auction_bid(
         auction=auction,

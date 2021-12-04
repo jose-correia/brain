@@ -9,12 +9,13 @@ from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.apps.auth.wrappers import allowed_roles, allow_all_roles
 from jeec_brain.models.enums.meal_type_enum import MealTypeEnum
 from jeec_brain.models.enums.dish_type_enum import DishTypeEnum
+from jeec_brain.schemas.admin_api.meals.schemas import *
 from datetime import datetime
 from flask_login import current_user
 
 
 # Meals routes
-@bp.route('/meals', methods=['GET'])
+@bp.get('/meals')
 @allow_all_roles
 def meals_dashboard():
     search_parameters = request.args
@@ -44,7 +45,7 @@ def meals_dashboard():
     return render_template('admin/meals/meals_dashboard.html', meals=meals_list, error=None, search=search, role=current_user.role.name)
 
 
-@bp.route('/new-meal', methods=['GET'])
+@bp.get('/new-meal')
 @allowed_roles(['admin', 'companies_admin'])
 def add_meal_dashboard():
     companies = CompaniesFinder.get_all()
@@ -57,7 +58,7 @@ def add_meal_dashboard():
         error=None)
 
 
-@bp.route('/new-meal', methods=['POST'])
+@bp.post('/new-meal')
 @allowed_roles(['admin', 'companies_admin'])
 def create_meal():
     # extract form parameters
@@ -147,15 +148,15 @@ def create_meal():
     return redirect(url_for('admin_api.meals_dashboard'))
 
 
-@bp.route('/meal/<string:meal_external_id>', methods=['GET'])
+@bp.get('/meal/<string:meal_external_id>')
 @allowed_roles(['admin', 'companies_admin'])
-def get_meal(meal_external_id):
-    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
+def get_meal(path: MealPath):
+    meal = MealsFinder.get_meal_from_external_id(path.meal_external_id)
     companies = CompaniesFinder.get_all()
     meal_types = GetMealTypesService.call()
     dish_types = GetDishTypesService.call()
-    company_meals = MealsFinder.get_company_meals_from_meal_id(meal_external_id)
-    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+    company_meals = MealsFinder.get_company_meals_from_meal_id(path.meal_external_id)
+    dishes = MealsFinder.get_dishes_from_meal_id(path.meal_external_id)
 
     return render_template('admin/meals/update_meal.html', \
         meal=meal, \
@@ -166,12 +167,12 @@ def get_meal(meal_external_id):
         dishes=dishes, \
         error=None)
 
-@bp.route('/meal/<string:meal_external_id>', methods=['POST'])
+@bp.post('/meal/<string:meal_external_id>')
 @allowed_roles(['admin', 'companies_admin'])
-def update_meal(meal_external_id):
-    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
-    company_meals = MealsFinder.get_company_meals_from_meal_id(meal_external_id)
-    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+def update_meal(path: MealPath):
+    meal = MealsFinder.get_meal_from_external_id(path.meal_external_id)
+    company_meals = MealsFinder.get_company_meals_from_meal_id(path.meal_external_id)
+    dishes = MealsFinder.get_dishes_from_meal_id(path.meal_external_id)
 
     if meal is None:
         return APIErrorValue('Couldnt find meal').json(500)
@@ -326,12 +327,12 @@ def update_meal(meal_external_id):
     return redirect(url_for('admin_api.meals_dashboard'))
 
 
-@bp.route('/meal/<string:meal_external_id>/delete', methods=['GET'])
+@bp.get('/meal/<string:meal_external_id>/delete')
 @allowed_roles(['admin', 'companies_admin'])
-def delete_meal(meal_external_id):
-    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
-    company_meals = MealsFinder.get_company_meals_from_meal_id(meal_external_id)
-    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+def delete_meal(path: MealPath):
+    meal = MealsFinder.get_meal_from_external_id(path.meal_external_id)
+    company_meals = MealsFinder.get_company_meals_from_meal_id(path.meal_external_id)
+    dishes = MealsFinder.get_dishes_from_meal_id(path.meal_external_id)
 
     if meal is None:
         return APIErrorValue('Couldnt find meal').json(500)
@@ -357,16 +358,16 @@ def delete_meal(meal_external_id):
         return render_template('admin/meals/update_meal.html', meal=meal, error="Failed to delete meal!")
 
 
-@bp.route('/meal/<string:meal_external_id>/dishes', methods=['GET'])
+@bp.get('/meal/<string:meal_external_id>/dishes')
 @allowed_roles(['admin', 'companies_admin'])
-def meal_dishes(meal_external_id):
-    meal = MealsFinder.get_meal_from_external_id(meal_external_id)
+def meal_dishes(path: MealPath):
+    meal = MealsFinder.get_meal_from_external_id(path.meal_external_id)
 
     if meal is None:
         return APIErrorValue('Couldnt find meal').json(500)
 
     company_dishes = MealsFinder.get_dishes_per_company_from_meal_id(meal.id)
-    dishes = MealsFinder.get_dishes_from_meal_id(meal_external_id)
+    dishes = MealsFinder.get_dishes_from_meal_id(path.meal_external_id)
     dishes_per_companies = {}
 
     for company_dish in company_dishes:
