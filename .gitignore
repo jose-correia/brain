@@ -8,17 +8,17 @@ fenixedu.ini
 # add an exception (using !) to the preceding rule to track a specific file
 !package.json
 
-jeec_brain/storage/
-jeec_brain/static/companies/images/
-jeec_brain/static/members/
-jeec_brain/static/speakers/
-jeec_brain/static/event/
-jeec_brain/static/website/
-jeec_brain/static/cv_platform/
-jeec_brain/static/events/
-jeec_brain/static/news/
-jeec_brain/static/squads/
-jeec_brain/static/rewards/
+/jeec_brain/storage/
+/jeec_brain/static/companies/images/
+/jeec_brain/static/members/
+/jeec_brain/static/speakers/
+/jeec_brain/static/event/
+/jeec_brain/static/website/
+/jeec_brain/static/cv_platform/
+/jeec_brain/static/events/
+/jeec_brain/static/news/
+/jeec_brain/static/squads/
+/jeec_brain/static/rewards/
 
 /__pycache__
 
