@@ -24,8 +24,7 @@ fenixedu.ini
 
 /venv
 .venv
-
-
+azagent/
 
 # Editor directories and files
 .idea
