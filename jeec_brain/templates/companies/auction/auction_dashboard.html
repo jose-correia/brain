@@ -78,17 +78,21 @@
           <form action="/companies/auction/{{ auction.external_id }}/bid" method="post">
             <div class="row">
               <div class="input-field col s6">
-                <input id="value" name="value" type="number" required {% if auction.is_open is not sameas true %} disabled {% endif %}>
                 {% if auction.bids.count() == 0 %}
+                <input id="value" name="value" type="number" min="{{ auction.minimum_value }}" required {% if
+                  auction.is_open is not sameas true %} disabled {% endif %}>
                 <label for="value">Minimum of {{ auction.minimum_value }} €</label>
                 {% else %}
+                <input id="value" name="value" type="number" min="{{ highest_bid.value + 1 }}" required {% if
+                  auction.is_open is not sameas true %} disabled {% endif %}>
                 <label for="value">Minimum of {{ highest_bid.value + 1 }} €</label>
                 {% endif %}
                 <div class="left red-text">{{ warning }}</div>
               </div>
 
               <label>
-                <input type="checkbox" name="is_anonymous" value="True" {% if auction.is_open is not sameas true %} disabled {% endif %} />
+                <input type="checkbox" name="is_anonymous" value="True" {% if auction.is_open is not sameas true %}
+                  disabled {% endif %} />
                 <span class="black-text right" style="margin-top:25px;">Anonymous bid</span>
               </label>
             </div>
@@ -102,8 +106,16 @@
     </div>
 
     <div class="center">
-      <p><b>Closing date:</b></p>
-      <p>{{ auction.closing_date }} - {{ auction.closing_time }}</p>
+      <div class="row">
+        <div class="col s6">
+          <p><b>Starting date:</b></p>
+          <p>{{ auction.starting_date }} - {{ auction.starting_time }}</p>
+        </div>
+        <div class="col s6">
+          <p><b>Closing date:</b></p>
+          <p>{{ auction.closing_date }} - {{ auction.closing_time }}</p>
+        </div>
+      </div>
     </div>
   </div>
 

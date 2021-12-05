@@ -5,11 +5,7 @@ class SendMailService():
     def __init__(self, recipients, subject, content=""):
         self.subject = subject
         self.content = content
-
-        if type(recipients) is str:
-            self.recipients = [recipients]
-        elif type(recipients) is List:
-            self.recipients = recipients
+        self.recipients = recipients
 
     def call(self):
         try:

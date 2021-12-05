@@ -1,6 +1,7 @@
 from jeec_brain.models.bids import Bids
 from jeec_brain.models.auctions import Auctions
 from jeec_brain.models.company_auctions import CompanyAuctions
+from jeec_brain.models.companies import Companies
 from jeec_brain.database import db_session
 from sqlalchemy import text
 
@@ -22,6 +23,10 @@ class AuctionsFinder():
     @classmethod
     def get_auction_highest_bid(cls, auction):
         return Bids.query.filter_by(auction_id=auction.id).order_by(Bids.value.desc()).first()
+
+    @classmethod
+    def get_auction_company_with_bid(cls, auction, bid):
+        return Companies.query.filter((Auctions.id==auction.id) & (Bids.auction_id==auction.id) & (Bids.id==bid.id) & (Companies.id==bid.company_id)).first()
 
     @classmethod
     def get_company_bids(cls, auction, company):

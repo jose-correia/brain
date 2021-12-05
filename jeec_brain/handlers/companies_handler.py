@@ -8,6 +8,7 @@ from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 from jeec_brain.services.chat.create_channel_service import CreateChannelService
 from jeec_brain.services.chat.delete_channel_service import DeleteChannelService
+from jeec_brain.services.mail.send_mail_service import SendMailService
 
 
 class CompaniesHandler():
@@ -55,3 +56,7 @@ class CompaniesHandler():
     @classmethod
     def find_image(cls, company_name):
         return FindImageService(company_name, 'static/companies/images').call()
+
+    @classmethod
+    def send_mail_to_company_users(cls, company, subject, content):
+        return SendMailService([user.user.email for user in company.users], subject, content).call()
