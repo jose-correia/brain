@@ -43,13 +43,13 @@ def auction_dashboard(company_user, path: AuctionPath):
             highest_bidder_logo = '/static/jeec_logo_mobile.svg'
             highest_bidder_name = 'Anonymous bidder'
         else:
-            highest_bidder = CompaniesFinder.get_from_id(highest_bid.company_id)
+            highest_bidder = CompaniesFinder.get_from_company_user_id(highest_bid.company_user_id)
             company_logo = CompaniesHandler.find_image(highest_bidder.name)
             highest_bidder_logo = company_logo
             highest_bidder_name = highest_bidder.name
 
     # get all company bids
-    company_bids = AuctionsFinder.get_company_bids(auction, company_user.company)
+    company_bids = AuctionsFinder.get_company_bids_from_user(auction, company_user)
 
     # get all logos of companies in the auction
     participant_logos = []
@@ -111,14 +111,12 @@ def auction_bid(company_user, path: AuctionPath):
     elif value < highest_bid_value:
         return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id, warning="Must be higher than current highest bid"))
 
-    if AuctionsHandler.create_auction_bid(auction=auction, company=company, value=value, is_anonymous=is_anonymous):
+    if AuctionsHandler.create_auction_bid(auction=auction, company_user=company_user, value=value, is_anonymous=is_anonymous):
         if highest_bid:
-            if not company.id == highest_bid.company_id:
-                highest_bidder = CompaniesFinder.get_from_id(highest_bid.company_id)
-                if highest_bidder:
-                    CompaniesHandler.send_mail_to_company_users(highest_bidder, \
-                        f"{auction.name} - New highest bidder", \
-                        f"You are no longer the top bidder in the {auction.name}. A bid of {value}€ was submitted!")
+            highest_bidder = CompaniesFinder.get_from_company_user_id(highest_bid.company_user_id)
+            if highest_bidder and not highest_bidder.id == company.id:
+                company_particiants = AuctionsFinder.get_company_users_from_auction(highest_bidder, auction)
+                AuctionsHandler.send_bid_update_email(company_particiants, auction, value)
 
     return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
 

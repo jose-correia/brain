@@ -5,7 +5,7 @@ from jeec_brain.models.model_mixin import ModelMixin
 class Bids(db.Model, ModelMixin):
     __tablename__ = 'bids'
     
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), index=True)
+    company_user_id = db.Column(db.Integer, db.ForeignKey('company_users.id'), index=True)
     is_anonymous = db.Column(db.Boolean, default=False)
 
     value = db.Column(db.Float(), nullable=False)

@@ -58,5 +58,5 @@ class CompaniesHandler():
         return FindImageService(company_name, 'static/companies/images').call()
 
     @classmethod
-    def send_mail_to_company_users(cls, company, subject, content):
-        return SendMailService([user.user.email for user in company.users], subject, content).call()
+    def send_mail_to_company_users(cls, company_users, subject, content):
+        return SendMailService([user.user.email for user in company_users], subject, content).call()
