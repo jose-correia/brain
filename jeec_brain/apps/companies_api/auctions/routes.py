@@ -106,17 +106,19 @@ def auction_bid(company_user, path: AuctionPath):
         highest_bid_value = highest_bid.value
 
     # check if value is bigger than current highest bid
-    if value <= auction.minimum_value:
+    if value < auction.minimum_value:
         return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id, warning="Must be higher than minimum bid"))
     elif value < highest_bid_value:
         return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id, warning="Must be higher than current highest bid"))
 
-    AuctionsHandler.create_auction_bid(
-        auction=auction,
-        company=company,
-        value=value,
-        is_anonymous=is_anonymous
-    )
+    if AuctionsHandler.create_auction_bid(auction=auction, company=company, value=value, is_anonymous=is_anonymous):
+        if highest_bid:
+            if not company.id == highest_bid.company_id:
+                highest_bidder = CompaniesFinder.get_from_id(highest_bid.company_id)
+                if highest_bidder:
+                    CompaniesHandler.send_mail_to_company_users(highest_bidder, \
+                        f"{auction.name} - New highest bidder", \
+                        f"You are no longer the top bidder in the {auction.name}. A bid of {value}€ was submitted!")
 
     return redirect(url_for('companies_api.auction_dashboard', auction_external_id=auction.external_id))
 

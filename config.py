@@ -11,9 +11,6 @@ class Config(object):
     APP_ENV = os.environ.get('APP_ENV', 'development')
 
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    
-    DEBUG = True
-    TESTING = False
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'] + os.environ['APP_DB'] + "?client_encoding=utf8"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
