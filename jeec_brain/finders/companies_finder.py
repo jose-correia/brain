@@ -1,5 +1,6 @@
 from jeec_brain.models.companies import Companies
 from jeec_brain.models.company_activities import CompanyActivities
+from jeec_brain.models.company_users import CompanyUsers
 from jeec_brain.models.activities import Activities
 from jeec_brain.models.activity_types import ActivityTypes
 from jeec_brain.models.events import Events
@@ -34,6 +35,10 @@ class CompaniesFinder():
     @classmethod
     def get_from_activity(cls, activity):
         return Companies.query.filter(Companies.id == CompanyActivities.company_id, CompanyActivities.activity_id == activity.id).all()
+
+    @classmethod
+    def get_from_company_user_id(cls, company_user_id):
+        return Companies.query.filter(Companies.id == CompanyUsers.company_id, CompanyUsers.id == company_user_id).first()
         
     @classmethod
     def get_all(cls):
