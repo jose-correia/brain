@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Teams(db.Model, ModelMixin):
     __tablename__ = 'teams'
     
-    name = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(100), unique=False)
     description = db.Column(db.String(300))
 
     website_priority = db.Column(db.Integer(), default=0) # for sorting the teams in the website
