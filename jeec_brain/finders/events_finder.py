@@ -7,6 +7,10 @@ class EventsFinder():
         return Events.query.filter_by(name=name).first()
 
     @classmethod
+    def get_from_id(cls, id):
+        return Events.query.filter_by(id=id).first()
+
+    @classmethod
     def get_from_external_id(cls, external_id):
         return Events.query.filter_by(external_id=external_id).first()
     

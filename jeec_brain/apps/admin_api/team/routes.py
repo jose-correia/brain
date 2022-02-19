@@ -65,6 +65,10 @@ def create_team():
     website_priority = request.form.get('website_priority')
     event_id = request.form.get('event')
 
+    event = EventsFinder.get_from_id(event_id)
+    if name in [team.name for team in event.teams]:
+        return render_template('admin/teams/add_team.html', error="Failed to create team! Team name already exists")
+
     if not website_priority:
         website_priority = 0
 
