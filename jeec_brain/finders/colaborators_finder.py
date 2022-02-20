@@ -18,9 +18,9 @@ class ColaboratorsFinder():
 
     @classmethod
     def get_from_event_and_name(cls, event_id, name):
-        return Colaborators.query.filter((Colaborators.name == name) & (Teams.id == Colaborators.team_id) & (Teams.event_id == event_id))
+        return Colaborators.query.filter((Colaborators.name == name) & (Teams.id == Colaborators.team_id) & (Teams.event_id == event_id)).all()
     
     @classmethod
     def get_all(cls):
-        return Colaborators.query.order_by(Colaborators.name)
+        return Colaborators.query.order_by(Colaborators.name).all()
     
