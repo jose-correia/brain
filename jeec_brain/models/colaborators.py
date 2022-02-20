@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Colaborators(db.Model, ModelMixin):
     __tablename__ = 'colaborators'
     
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=False, nullable=False)
     ist_id = db.Column(db.String(10))
     email = db.Column(db.String(100))
 

@@ -9,7 +9,6 @@ from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.schemas.admin_api.team.schemas import *
 from flask_login import current_user
 from jeec_brain.services.files.rename_image_service import RenameImageService
-import os
 
 
 
@@ -105,14 +104,19 @@ def update_team(path: TeamPath):
     name = request.form.get('name')
     description = request.form.get('description')
     website_priority = request.form.get('website_priority')
-    event = request.form.get('event')
+    event_id = request.form.get('event')
+
+    event = EventsFinder.get_from_id(event_id)
+    if name in [team.name for team in event.teams]:
+        return render_template('admin/teams/add_team.html', error="Failed to update team! Team name already exists")
+
 
     updated_team = TeamsHandler.update_team(
         team=team,
         name=name,
         description=description,
         website_priority=website_priority,
-        event_id=event
+        event_id=event_id
     )
     
     if updated_team is None:
@@ -212,6 +216,9 @@ def create_team_member(path: TeamPath):
     email = request.form.get('email')
     linkedin_url = request.form.get('linkedin_url')
 
+    if len(ColaboratorsFinder.get_from_event_and_name(team.event_id, name)) > 0:
+        return render_template('admin/teams/add_team_member.html', team=team, error="Failed to create team member! Colaborator already exists")
+
     member = TeamsHandler.create_team_member(
         team=team,
         name=name,
@@ -271,6 +278,9 @@ def update_team_member(path: TeamMemberPath):
     linkedin_url = request.form.get('linkedin_url')
 
     old_member_name = member.name
+
+    if len(ColaboratorsFinder.get_from_event_and_name(team.event_id, name)) > 1:
+        return render_template('admin/teams/add_team_member.html', team=team, error="Failed to create team member! Colaborator already exists")
 
     updated_member = TeamsHandler.update_team_member(
         member=member,

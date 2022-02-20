@@ -17,6 +17,10 @@ class TeamsFinder():
         return Teams.query.order_by(Teams.name).all()
 
     @classmethod
+    def get_from_event_id(cls, event_id):
+        return Teams.query.filter_by(event_id=event_id)
+
+    @classmethod
     def get_from_parameters(cls, kwargs):
         try:
             teams = Teams.query.filter_by(**kwargs).all()

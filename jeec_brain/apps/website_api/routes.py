@@ -160,7 +160,8 @@ def get_teams():
     # request endpoint with no parameters should return all activities
     else:
         search = None
-        teams_list = TeamsFinder.get_all()
+        event = EventsFinder.get_default_event()
+        teams_list = TeamsFinder.get_from_event_id(event.id)
     
     if teams_list is None or len(teams_list) == 0:
         return APIErrorValue('No results found').json(400)
