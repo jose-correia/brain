@@ -18,7 +18,7 @@ class TeamsFinder():
 
     @classmethod
     def get_from_event_id(cls, event_id):
-        return Teams.query.filter_by(event_id=event_id)
+        return Teams.query.filter_by(event_id=event_id).first()
 
     @classmethod
     def get_from_parameters(cls, kwargs):
