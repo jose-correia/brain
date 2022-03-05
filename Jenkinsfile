@@ -26,7 +26,7 @@ pipeline {
       steps {
         script {
             sh '''
-                if [ "$(docker ps -q -f name=jeec_brain)" ];then
+                if [ "$(docker ps -q -a -f name=jeec_brain)" ];then
                 echo "Stopping old jeec_brain Docker container..."
                 docker stop jeec_brain
                 docker rm jeec_brain
