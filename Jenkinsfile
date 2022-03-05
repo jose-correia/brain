@@ -1,19 +1,28 @@
 pipeline {
   agent any
+
+  environment {
+    DOTENV_FILE_ID = credentials('.env')
+  }
+
   stages {
     stage('Build Docker image') {
       steps {
+        sh 'cp ${DOTENV_FILE_ID} .'
         sh 'docker build --tag jeec_brain:latest .'
       }
     }
+
     stage('Deploy Production') {
       when {
         beforeInput true
         branch 'master'
       }
+
       input {
         message "Deploy to production?"
       }
+
       steps {
         script {
             sh '''
