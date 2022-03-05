@@ -1,19 +1,34 @@
 pipeline {
   agent any
   stages {
-  stage('Stage 1') {
+    stage('Build Docker image') {
       steps {
         script {
-          echo 'Stage 1'
+            docker build --tag jeec_brain:latest .
         }
       }
     }
-  stage('Stage 2') {
+    stage('Deploy Production') {
       steps {
         script {
-          echo 'Stage 2'
+            if( "${env.BRANCH_NAME}" == "master" ) {
+                sh(returnStdout: true, script: '''#!/bin/bash
+                    if [ "$(docker ps -q -f name=jeec_brain)" ];then
+                    echo "Stopping old jeec_brain Docker container..."
+                    docker stop jeec_brain
+                    docker rm jeec_brain
+                    echo "Old jeec_brain Docker container stopped!"
+                    fi
+
+                    echo "Starting new Docker container..."
+                    docker run -p 8081:8081 --name jeec_brain -d jeec_brain:latest
+                    echo "Docker container started!"
+                '''.stripIndent())
+            }
+           
         }
       }
     }
+  
   }
 }
