@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Build Docker image') {
       steps {
-        sh 'cp ${DOTENV_FILE_ID} .'
+        sh 'cp -n ${DOTENV_FILE_ID} .'
         sh 'docker build --tag jeec_brain:latest .'
       }
     }
