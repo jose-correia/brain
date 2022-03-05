@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOTENV_FILE_ID = credentials('.env')
+    DOTENV_FILE_ID = credentials('brain-environment-variables')
   }
 
   stages {
