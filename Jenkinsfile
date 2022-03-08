@@ -34,7 +34,7 @@ pipeline {
                 fi
 
                 echo "Starting new Docker container..."
-                docker-compose up
+                docker-compose up &
                 echo "Docker container started!"
             '''
         }
