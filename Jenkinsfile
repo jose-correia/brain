@@ -13,6 +13,27 @@ pipeline {
       }
     }
 
+    stage('Migrate Database') {
+      when {
+        beforeInput true
+        branch 'master'
+      }
+
+      input {
+        message "Run database migration?"
+      }
+
+      steps {
+        script {
+            sh '''
+                echo "Starting database migration..."
+                docker-compose up db_migration
+                echo "Database migrated successfuly!!"
+            '''
+        }
+      }
+    }
+
     stage('Deploy Production') {
       when {
         beforeInput true
