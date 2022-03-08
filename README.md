@@ -126,12 +126,12 @@ and only the spotlight speakers will be requested. This **enables search queries
 
 ## Instructions to deploy to production
 To access JEEC Jenkins server go to:
-- https://jenkins.jeec.ist/job/jeec-brain/job/master/
+- https://jenkins.jeec.ist
 
 Each commit that is done to master branch will trigger a new pipeline in Jenkins. This pipeline builds the Docker image and creates a manually triggered step to deploy to the production server. 
 
 The pipeline to deploy to production can be accessed in the following address:
-- https://jenkins.jeec.ist/job/jeec-brain/job/master/
+- https://jenkins.jeec.ist/job/jeec-brain/job/master
 
 ## Instructions to deploy locally
 ### Creating the database
