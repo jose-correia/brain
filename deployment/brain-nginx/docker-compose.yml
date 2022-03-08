@@ -5,7 +5,6 @@ services:
     network_mode: host
     volumes:
       - ./logs/nginx:/var/log/nginx
-      - ./nginx/ssl:/etc/nginx/ssl/
     ports:
       - "80:80"
       - "443:443"
