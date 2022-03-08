@@ -9,7 +9,7 @@ pipeline {
     stage('Build Docker image') {
       steps {
         sh 'cp -n ${DOTENV_FILE_ID} .'
-        sh 'docker-compose build'
+        sh 'docker build --tag jeec_brain:latest .'
       }
     }
 
@@ -34,7 +34,7 @@ pipeline {
                 fi
 
                 echo "Starting new Docker container..."
-                docker-compose up &
+                docker-compose up -d jeec_brain
                 echo "Docker container started!"
             '''
         }
