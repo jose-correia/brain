@@ -33,3 +33,7 @@ azagent/
 *.ntvs*
 *.njsproj
 *.sln
+
+deployment/brain-nginx/logs
+deployment/brain-nginx/nginx/ssl
+

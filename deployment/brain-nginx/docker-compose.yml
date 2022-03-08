@@ -4,7 +4,6 @@ services:
     container_name: nginx_proxy
     network_mode: host
     volumes:
-      - ./nginx:/etc/nginx/conf.d
       - ./logs/nginx:/var/log/nginx
       - ./nginx/ssl:/etc/nginx/ssl/
     ports:
