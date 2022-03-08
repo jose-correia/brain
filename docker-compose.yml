@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   jeec-brain:
-    container_name: jeec_brain_2
+    container_name: jeec_brain
     ports:
       - "8081:8081"
     build:
