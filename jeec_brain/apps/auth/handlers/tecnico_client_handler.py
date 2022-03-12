@@ -1,7 +1,9 @@
-from jeec_brain.apps.auth.services.create_tecnico_client_service import CreateTecnicoClientService
+from jeec_brain.apps.auth.services.create_tecnico_client_service import (
+    CreateTecnicoClientService,
+)
+
 
 class TecnicoClientHandler(object):
-
     @staticmethod
     def create_client(fenix_config_file):
         return CreateTecnicoClientService(fenix_config_file=fenix_config_file).call()

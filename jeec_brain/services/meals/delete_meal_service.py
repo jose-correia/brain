@@ -1,8 +1,7 @@
 from jeec_brain.models.meals import Meals
 
 
-class DeleteMealService():
-
+class DeleteMealService:
     def __init__(self, meal: Meals):
         self.meal = meal
 

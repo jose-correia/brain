@@ -7,8 +7,8 @@ from sqlalchemy import sql
 
 
 class Auctions(db.Model, ModelMixin):
-    __tablename__ = 'auctions'
-    
+    __tablename__ = "auctions"
+
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300))
 
@@ -19,12 +19,15 @@ class Auctions(db.Model, ModelMixin):
 
     minimum_value = db.Column(db.Float())
 
-    bids = relationship("Bids", back_populates='auction', lazy='dynamic', cascade="all,delete")
+    bids = relationship(
+        "Bids", back_populates="auction", lazy="dynamic", cascade="all,delete"
+    )
 
-    participants = relationship("Companies",
+    participants = relationship(
+        "Companies",
         secondary="company_auctions",
-        secondaryjoin=sql.and_(CompanyAuctions.company_id == Companies.id))
-   
-    def __repr__(self):
-        return 'Name: {}'.format(self.name)
+        secondaryjoin=sql.and_(CompanyAuctions.company_id == Companies.id),
+    )
 
+    def __repr__(self):
+        return "Name: {}".format(self.name)

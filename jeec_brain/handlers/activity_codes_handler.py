@@ -1,7 +1,11 @@
 # SERVICES
-from jeec_brain.services.activity_codes.create_activity_code_service import CreateActivityCodeService
+from jeec_brain.services.activity_codes.create_activity_code_service import (
+    CreateActivityCodeService,
+)
 from jeec_brain.services.activity_codes.generate_code_service import GenerateCodeService
-from jeec_brain.services.activity_codes.delete_activity_code_service import DeleteActivityCodeService
+from jeec_brain.services.activity_codes.delete_activity_code_service import (
+    DeleteActivityCodeService,
+)
 
 # FINDERS
 from jeec_brain.finders.activity_codes_finder import ActivityCodesFinder
@@ -11,10 +15,12 @@ from jeec_brain.finders.students_finder import StudentsFinder
 from jeec_brain.handlers.activities_handler import ActivitiesHandler
 from jeec_brain.handlers.students_handler import StudentsHandler
 
+from jeec_brain.models.enums.code_flow_enum import CodeFlowEnum
+
 from datetime import datetime
 
-class ActivityCodesHandler():
 
+class ActivityCodesHandler:
     @classmethod
     def create_activity_code(cls, **kwargs):
         code = GenerateCodeService().call()
@@ -24,22 +30,38 @@ class ActivityCodesHandler():
     @classmethod
     def redeem_activity_code(cls, student, code):
         activity_code = ActivityCodesFinder.get_from_code(code)
-        if(activity_code is None):
+        if activity_code is None:
             return "Code not found", student
-        
-        if(activity_code.activity in student.activities):
+
+        if activity_code.activity.code_work_flow not in [
+            CodeFlowEnum.AdminCode,
+            CodeFlowEnum.CompanyCode,
+        ]:
+            return "Invalid code", student
+
+        if activity_code.activity in student.activities:
             return "Already participated", student
 
-        ActivitiesHandler.add_student_activity(student, activity_code.activity)
-        
+        if (
+            ActivitiesHandler.add_student_activity(
+                student, activity_code.activity, code
+            )
+            is None
+        ):
+            return "Failed to redeem code", student
+
         now = datetime.utcnow()
-        today = now.strftime('%d %b %Y, %a')
+        today = now.strftime("%d %b %Y, %a")
         if activity_code.activity.day != today:
             return "Code expired", student
 
         points = activity_code.activity.points
-        
-        if activity_code.activity.activity_type.name not in ["Speaker", "Discussion Panel", "Ceremony"]:
+
+        if activity_code.activity.activity_type.name not in [
+            "Speaker",
+            "Discussion Panel",
+            "Ceremony",
+        ]:
             cls.delete_activity_code(activity_code)
 
         return None, StudentsHandler.add_points(student, points)

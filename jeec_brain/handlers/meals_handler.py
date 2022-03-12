@@ -3,17 +3,22 @@ from jeec_brain.services.meals.add_company_dish_service import AddCompanyDishSer
 from jeec_brain.services.meals.add_company_meal_service import AddCompanyMealService
 from jeec_brain.services.meals.create_dish_service import CreateDishService
 from jeec_brain.services.meals.create_meal_service import CreateMealService
-from jeec_brain.services.meals.delete_company_meals_service import DeleteCompanyMealsService
+from jeec_brain.services.meals.delete_company_meals_service import (
+    DeleteCompanyMealsService,
+)
 from jeec_brain.services.meals.delete_dish_service import DeleteDishService
 from jeec_brain.services.meals.delete_meal_service import DeleteMealService
-from jeec_brain.services.meals.update_company_meals_service import UpdateCompanyMealsService
+from jeec_brain.services.meals.update_company_meals_service import (
+    UpdateCompanyMealsService,
+)
 from jeec_brain.services.meals.update_meal_service import UpdateMealService
 from jeec_brain.services.meals.update_dish_service import UpdateDishService
-from jeec_brain.services.meals.delete_company_dishes_service import DeleteCompanyDishesService
+from jeec_brain.services.meals.delete_company_dishes_service import (
+    DeleteCompanyDishesService,
+)
 
 
-class MealsHandler():
-
+class MealsHandler:
     @classmethod
     def add_company_meal(cls, company, meal, max_dish_quantity):
         return AddCompanyMealService(company.id, meal.id, max_dish_quantity).call()

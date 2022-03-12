@@ -2,12 +2,15 @@ from config import Config
 import requests
 import json
 
-class DeleteChatUserService():
 
+class DeleteChatUserService:
     def __init__(self, user):
         self.user = user
-        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/login'
-        payload = {"user":Config.ROCKET_CHAT_ADMIN_USERNAME, "password":Config.ROCKET_CHAT_ADMIN_PASSWORD}
+        url = Config.ROCKET_CHAT_APP_URL + "api/v1/login"
+        payload = {
+            "user": Config.ROCKET_CHAT_ADMIN_USERNAME,
+            "password": Config.ROCKET_CHAT_ADMIN_PASSWORD,
+        }
 
         try:
             admin = requests.post(url, data=json.dumps(payload))
@@ -15,25 +18,24 @@ class DeleteChatUserService():
             self.auth_token = None
             self.user_id = None
 
-        if not admin or not admin.json()['status'] == 'success':
+        if not admin or not admin.json()["status"] == "success":
             self.auth_token = None
             self.user_id = None
         else:
-            self.auth_token = admin.json()['data']['authToken']
-            self.user_id = admin.json()['data']['userId']
-
+            self.auth_token = admin.json()["data"]["authToken"]
+            self.user_id = admin.json()["data"]["userId"]
 
     def call(self):
-        url = Config.ROCKET_CHAT_APP_URL + 'api/v1/users.delete'
-        headers={"X-Auth-Token":self.auth_token, "X-User-Id":self.user_id}
-        payload={"username":self.user.username}
-        
+        url = Config.ROCKET_CHAT_APP_URL + "api/v1/users.delete"
+        headers = {"X-Auth-Token": self.auth_token, "X-User-Id": self.user_id}
+        payload = {"username": self.user.username}
+
         try:
             result = requests.post(url, data=json.dumps(payload), headers=headers)
         except:
             return False
 
-        if not result or not result.json()['success']:
+        if not result or not result.json()["success"]:
             return False
 
         return True

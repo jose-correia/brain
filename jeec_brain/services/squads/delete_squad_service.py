@@ -1,8 +1,7 @@
 from jeec_brain.models.squads import Squads
 
 
-class DeleteSquadService():
-
+class DeleteSquadService:
     def __init__(self, squad: Squads):
         self.squad = squad
 

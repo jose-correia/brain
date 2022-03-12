@@ -1,5 +1,6 @@
 import enum
 
+
 class RolesEnum(enum.Enum):
     admin = 1
 
@@ -16,5 +17,3 @@ class RolesEnum(enum.Enum):
     company = 11
 
     student = 12
-    
-

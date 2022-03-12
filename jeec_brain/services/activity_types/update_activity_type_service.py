@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.activity_types import ActivityTypes
 
 
-class UpdateActivityTypeService():
-    
+class UpdateActivityTypeService:
     def __init__(self, activity_type: ActivityTypes, kwargs: Dict):
         self.activity_type = activity_type
         self.kwargs = kwargs

@@ -133,6 +133,7 @@
     <table class="striped">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Name</th>
           <th>Type</th>
           <th>Description</th>
@@ -148,6 +149,8 @@
       <tbody>
         {% for activity in activities %}
         <tr>
+          <td>{{ activity.id }}</td>
+
           <td><b>{{ activity.name }}</b></td>
 
           <td>
@@ -204,20 +207,22 @@
           </td>
 
           {% if role in ['admin', 'activities_admin'] %}
+          {% if activity.code_work_flow.value in ['Admin generates code, student uses it and its deleted', 'Admin
+          generates code, multiple students use it, admin deletes it'] %}
           <td>
-            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
             <button title="Create Code" data-target="modal1" data-name="{{ activity.external_id }}"
               class="waves-effect waves-light green btn-floating modal-trigger code-btn"><i
                 class="material-icons left">qr_code</i>Generate Code</button>
-            {% endif %}
           </td>
+          {% endif %}
+          {% if activity.code_work_flow.value in ['Admin generates code, multiple students use it, admin deletes it',
+          'Company generates code, multiple students use it, admin deletes it'] %}
           <td>
-            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
-            <button title="Create Code" data-name="{{ activity.external_id }}"
+            <button title="Delete Code" data-name="{{ activity.external_id }}"
               class="waves-effect waves-light red btn-floating modal-trigger delete-code-btn"><i
                 class="material-icons left">delete</i>Delete Code</button>
-            {% endif %}
           </td>
+          {% endif %}
           {% endif %}
 
           {% if role in ['admin', 'activities_admin'] %}

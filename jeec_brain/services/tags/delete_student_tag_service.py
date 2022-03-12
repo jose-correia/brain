@@ -1,8 +1,7 @@
 from jeec_brain.models.students_tags import StudentsTags
 
 
-class DeleteStudentTagService():
-
+class DeleteStudentTagService:
     def __init__(self, student_tag: StudentsTags):
         self.student_tag = student_tag
 

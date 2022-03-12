@@ -15,8 +15,8 @@ from sqlalchemy import sql
 
 
 class Companies(db.Model, ModelMixin):
-    __tablename__ = 'companies'
-    
+    __tablename__ = "companies"
+
     name = db.Column(db.String(100), unique=True)
     email = db.Column(db.String(100))
     link = db.Column(db.String(100))
@@ -30,27 +30,38 @@ class Companies(db.Model, ModelMixin):
     show_in_website = db.Column(db.Boolean, default=True)
     cvs_access = db.Column(db.Boolean, default=False)
 
-    evf_username = db.Column(db.String)
-    evf_password = db.Column(db.String)
-
-    activities = relationship("Activities",
+    activities = relationship(
+        "Activities",
         secondary="company_activities",
         order_by="Activities.day, Activities.time",
-        secondaryjoin=sql.and_(CompanyActivities.activity_id == Activities.id, Activities.event_id == Events.id, Events.default == True))
+        secondaryjoin=sql.and_(
+            CompanyActivities.activity_id == Activities.id,
+            Activities.event_id == Events.id,
+            Events.default == True,
+        ),
+    )
 
-    dishes = relationship("Dishes",
+    dishes = relationship(
+        "Dishes",
         secondary="company_dishes",
-        secondaryjoin=sql.and_(CompanyDishes.dish_id == Dishes.id))
+        secondaryjoin=sql.and_(CompanyDishes.dish_id == Dishes.id),
+    )
 
-    meals = relationship("Meals",
+    meals = relationship(
+        "Meals",
         secondary="company_meals",
-        secondaryjoin=sql.and_(CompanyMeals.meal_id == Meals.id))
+        secondaryjoin=sql.and_(CompanyMeals.meal_id == Meals.id),
+    )
 
-    tags = relationship("Tags",
+    tags = relationship(
+        "Tags",
         secondary="companies_tags",
-        secondaryjoin=sql.and_(CompaniesTags.tag_id == Tags.id))
-    
-    users = relationship("CompanyUsers", back_populates='company', lazy='dynamic', cascade="all,delete")
+        secondaryjoin=sql.and_(CompaniesTags.tag_id == Tags.id),
+    )
+
+    users = relationship(
+        "CompanyUsers", back_populates="company", lazy="dynamic", cascade="all,delete"
+    )
 
     def __repr__(self):
-        return 'Name: {}'.format(self.name)
+        return "Name: {}".format(self.name)

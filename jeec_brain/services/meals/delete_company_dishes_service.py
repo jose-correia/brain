@@ -1,8 +1,7 @@
 from jeec_brain.models.company_dishes import CompanyDishes
 
 
-class DeleteCompanyDishesService():
-
+class DeleteCompanyDishesService:
     def __init__(self, company_dish: CompanyDishes):
         self.company_dish = company_dish
 

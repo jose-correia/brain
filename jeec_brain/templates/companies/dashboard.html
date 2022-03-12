@@ -41,29 +41,12 @@
 
   <img src="{{ company_logo }}" class="company-logo-company-side centered-image">
 
-  <!-- <center>
-    <div class="evf" style="margin-top: 30px;">
-      <p><b>user:</b> {{ user.company.evf_username }}</p>
-      <p><b>password:</b> {{ user.company.evf_password }}</p>
-      <form action="https://tecnicoevents.easyvirtualfair.com/backend" target="_blank">
-        <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
-            class="large material-icons left">language</i>Log In</button>
-      </form>
-    </div>
-  </center> -->
-
   <div class="flexbox-btns">
-    {% for activity_type in activity_types %}
-    <form action="/companies/activity_type/{{activity_type.external_id.hex}}" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ activity_type.name }}</button>
+    {% for activity in activities %}
+    <form action="/companies/activity/{{activity.external_id.hex}}" method="get">
+      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">{{ activity.name }}</button>
     </form>
     {% endfor %}
-
-    {% if job_fair == true %}
-    <form action="/companies/job_fair" method="get">
-      <button class="waves-effect blue lighten-2 btn-large dashboard-btn">Job Fair</button>
-    </form>
-    {% endif %}
   </div>
 
   <div class="flexbox-btns">
@@ -72,11 +55,6 @@
       <button class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;" {% if not auction.is_open %} disabled {% endif %}>{{ auction.name }}</button>
     </form>
     {% endfor %}
-
-    <!-- <form action="/companies/activities" method="get">
-      <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
-          class="large material-icons left">build</i>Activities</button>
-    </form> -->
 
     {% if user.food_manager is sameas true %}
     <form action="/companies/meals" method="get">

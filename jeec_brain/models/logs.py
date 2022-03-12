@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 
 
 class Logs(db.Model):
-    __tablename__ = 'logs'
-    
+    __tablename__ = "logs"
+
     id = db.Column(db.Integer, primary_key=True)
 
     user_id = db.Column(db.String(20))
@@ -12,4 +12,4 @@ class Logs(db.Model):
     create_date = db.Column(db.DateTime, server_default=db.func.now())
 
     def __repr__(self):
-        return 'Id: {}'.format(self.id)
+        return "Id: {}".format(self.id)

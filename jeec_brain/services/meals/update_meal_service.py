@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.meals import Meals
 
 
-class UpdateMealService():
-    
+class UpdateMealService:
     def __init__(self, meal: Meals, kwargs: Dict):
         self.meal = meal
         self.kwargs = kwargs

@@ -1,8 +1,7 @@
 from jeec_brain.models.rewards import Rewards
 
 
-class DeleteRewardService():
-
+class DeleteRewardService:
     def __init__(self, reward: Rewards):
         self.reward = reward
 

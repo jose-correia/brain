@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 
 
 class Events(db.Model, ModelMixin):
-    __tablename__ = 'events'
-    
+    __tablename__ = "events"
+
     name = db.Column(db.String(100), nullable=False)
 
     start_date = db.Column(db.String(30))
@@ -30,9 +30,30 @@ class Events(db.Model, ModelMixin):
     cvs_access_end = db.Column(db.String(30))
     cvs_purged = db.Column(db.Boolean, default=False)
 
-    activity_types = relationship("ActivityTypes", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="ActivityTypes.name")
-    activities = relationship("Activities", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="Activities.day, Activities.time")
-    teams = relationship("Teams", back_populates='event', lazy='dynamic', cascade="all,delete", order_by="Teams.website_priority")
+    end_game_day = db.Column(db.String(20))
+    end_game_time = db.Column(db.String(10))
+
+    activity_types = relationship(
+        "ActivityTypes",
+        back_populates="event",
+        lazy="dynamic",
+        cascade="all,delete",
+        order_by="ActivityTypes.name",
+    )
+    activities = relationship(
+        "Activities",
+        back_populates="event",
+        lazy="dynamic",
+        cascade="all,delete",
+        order_by="Activities.day, Activities.time",
+    )
+    teams = relationship(
+        "Teams",
+        back_populates="event",
+        lazy="dynamic",
+        cascade="all,delete",
+        order_by="Teams.website_priority",
+    )
 
     def __repr__(self):
-        return 'Name: {} | date: {}'.format(self.name, self.start_date)
+        return "Name: {} | date: {}".format(self.name, self.start_date)

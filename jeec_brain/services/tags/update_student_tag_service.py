@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.students_tags import StudentsTags
 
 
-class UpdateStudentTagService():
-    
+class UpdateStudentTagService:
     def __init__(self, student_tag: StudentsTags, kwargs: Dict):
         self.student_tag = student_tag
         self.kwargs = kwargs

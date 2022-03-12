@@ -127,6 +127,18 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="input-field col s2">
+          <input id="end_game_day" name="end_game_day" type="text" class="validate">
+          <label for="end_game_day">App Game End date</label>
+        </div>
+
+        <div class="input-field col s1">
+          <input id="end_game_time" name="end_game_time" type="text" class="timepicker">
+          <label for="end_game_time">Ending Time</label>
+        </div>
+      </div>
+
       Default event for the rest of the Platform:
       <p>
         <label style="margin-right: 20px;">
@@ -225,13 +237,15 @@
   <script>
     (function ($) {
       $(function () {
-
         $('#start_date').datepicker({ format: "dd mmm yyyy, ddd" });
         $('#end_date').datepicker({ format: "dd mmm yyyy, ddd" });
         $('#cvs_submission_start').datepicker({ format: "dd mmm yyyy, ddd" });
         $('#cvs_submission_end').datepicker({ format: "dd mmm yyyy, ddd" });
         $('#cvs_access_start').datepicker({ format: "dd mmm yyyy, ddd" });
         $('#cvs_access_end').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('#end_game_day').datepicker({ format: "dd mmm yyyy, ddd" });
+        $('.timepicker').timepicker({ twelveHour: false });
+        $('.parallax').parallax();
       }); // end of document ready
     })(jQuery); 
   </script>

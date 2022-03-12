@@ -5,13 +5,12 @@ from typing import Dict, Optional
 logger = logging.getLogger(__name__)
 
 
-class CreateSquadDailyPointsService():
-
+class CreateSquadDailyPointsService:
     def __init__(self, kwargs: Dict):
         self.kwargs = kwargs
 
     def call(self) -> Optional[SquadDailyPoints]:
-        
+
         squad_daily_points = SquadDailyPoints.create(**self.kwargs)
 
         if not squad_daily_points:

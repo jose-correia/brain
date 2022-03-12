@@ -1,8 +1,7 @@
 from jeec_brain.models.levels import Levels
 
 
-class DeleteLevelService():
-
+class DeleteLevelService:
     def __init__(self, level: Levels):
         self.level = level
 

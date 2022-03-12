@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.squad_invitations import SquadInvitations
 
 
-class UpdateSquadInvitationService():
-    
+class UpdateSquadInvitationService:
     def __init__(self, squad_invitation: SquadInvitations, kwargs: Dict):
         self.squad_invitation = squad_invitation
         self.kwargs = kwargs

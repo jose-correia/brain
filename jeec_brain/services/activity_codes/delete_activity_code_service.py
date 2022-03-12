@@ -1,8 +1,7 @@
 from jeec_brain.models.activity_codes import ActivityCodes
 
 
-class DeleteActivityCodeService():
-
+class DeleteActivityCodeService:
     def __init__(self, activity_code: ActivityCodes):
         self.activity_code = activity_code
 

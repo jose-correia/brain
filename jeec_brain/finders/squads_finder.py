@@ -4,8 +4,7 @@ from jeec_brain.database import db_session
 from sqlalchemy import func
 
 
-class SquadsFinder():
-
+class SquadsFinder:
     @classmethod
     def search_by_name(cls, name):
         search = "%{}%".format(name)
@@ -14,7 +13,7 @@ class SquadsFinder():
     @classmethod
     def get_from_external_id(cls, external_id):
         return Squads.query.filter_by(external_id=external_id).first()
-    
+
     @classmethod
     def get_all(cls):
         return Squads.query.order_by(Squads.name).all()
@@ -25,15 +24,17 @@ class SquadsFinder():
             squads = Squads.query.filter_by(**kwargs).all()
         except Exception:
             return None
-        
+
         return squads
 
     @classmethod
     def get_rank(cls, id):
-        subquery = db_session.query(Squads.id, func.rank().over(
-            order_by=Squads.total_points.desc()).label('rank')).subquery()
+        subquery = db_session.query(
+            Squads.id,
+            func.rank().over(order_by=Squads.total_points.desc()).label("rank"),
+        ).subquery()
 
-        return db_session.query(subquery).filter(subquery.c.id==id).first().rank
+        return db_session.query(subquery).filter(subquery.c.id == id).first().rank
 
     @classmethod
     def get_top(cls, number=10):
@@ -42,7 +43,7 @@ class SquadsFinder():
     @classmethod
     def get_daily_top(cls, number=10):
         return Squads.query.order_by(Squads.daily_points.desc()).limit(number).all()
-        
+
     @classmethod
     def get_first(cls):
         max = db_session.query(func.max(Squads.daily_points)).subquery()
@@ -51,7 +52,7 @@ class SquadsFinder():
     @classmethod
     def get_invitation_from_external_id(cls, external_id):
         return SquadInvitations.query.filter_by(external_id=external_id).first()
-    
+
     @classmethod
     def get_all_invitations(cls):
         return SquadInvitations.query.all()
@@ -62,5 +63,5 @@ class SquadsFinder():
             squad_invitations = SquadInvitations.query.filter_by(**kwargs).all()
         except Exception:
             return None
-        
+
         return squad_invitations

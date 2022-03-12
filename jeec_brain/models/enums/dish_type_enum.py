@@ -1,5 +1,6 @@
 import enum
 
+
 class DishTypeEnum(enum.Enum):
     MainCourse = 1
     Starter = 2

@@ -1,5 +1,14 @@
 from . import bp
-from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify, send_file
+from flask import (
+    render_template,
+    current_app,
+    request,
+    redirect,
+    url_for,
+    make_response,
+    jsonify,
+    send_file,
+)
 from flask_login import current_user, login_required
 from config import Config
 from datetime import datetime
@@ -46,35 +55,38 @@ from jeec_brain.values.partners_value import PartnersValue
 from jeec_brain.apps.auth.wrappers import requires_student_auth
 
 # Login routes
-@bp.get('/login')
+@bp.get("/login")
 def login_student():
     return AuthHandler.redirect_to_fenix_login()
 
-@bp.route('/redirect_uri')
+
+@bp.route("/redirect_uri")
 def redirect_uri():
-    if request.args.get('error') == "access_denied":
+    if request.args.get("error") == "access_denied":
         return redirect(Config.STUDENT_APP_URL)
-    
-    fenix_auth_code = request.args.get('code')
+
+    fenix_auth_code = request.args.get("code")
 
     student, encrypted_jwt = AuthHandler.login_student(fenix_auth_code)
-    
+
     if student:
-        return redirect(Config.STUDENT_APP_URL + '?token=' + encrypted_jwt)
+        return redirect(Config.STUDENT_APP_URL + "?token=" + encrypted_jwt)
 
     else:
         return redirect(Config.STUDENT_APP_URL)
 
-@bp.get('/info')
+
+@bp.get("/info")
 @requires_student_auth
-def get_info(student):    
+def get_info(student):
     return StudentsValue(student, details=True).json(200)
 
-@bp.get('/today-login')
+
+@bp.get("/today-login")
 @requires_student_auth
 def today_login(student):
     now = datetime.utcnow()
-    date = now.strftime('%d %b %Y, %a')
+    date = now.strftime("%d %b %Y, %a")
     event = EventsFinder.get_default_event()
     dates = EventsHandler.get_event_dates(event)
 
@@ -87,219 +99,249 @@ def today_login(student):
             return APIErrorValue("Already loggedin today").json(409)
     else:
         return APIErrorValue("Date out of event").json(409)
-            
+
     return StudentsValue(student, details=True).json(200)
 
-@bp.get('/students')
+
+@bp.get("/students")
 @requires_student_auth
 def get_students(student):
-    search = request.args.get('search', None)
+    search = request.args.get("search", None)
 
-    students = StudentsFinder.get_from_search_without_student(search, student.external_id)
+    students = StudentsFinder.get_from_search_without_student(
+        search, student.external_id
+    )
 
     return StudentsValue(students, details=False).json(200)
 
-@bp.get('/levels')
+
+@bp.get("/levels")
 @requires_student_auth
 def get_levels(student):
     levels = LevelsFinder.get_all_levels()
 
     return LevelsValue(levels, True).json(200)
 
-@bp.get('/squad')
+
+@bp.get("/squad")
 @requires_student_auth
 def get_squad(student):
-    if(student.squad is None):
-        return APIErrorValue('No squad found').json(404)
-    
+    if student.squad is None:
+        return APIErrorValue("No squad found").json(404)
+
     return SquadsValue(student.squad).json(200)
 
-@bp.post('/squad')
+
+@bp.post("/squad")
 @requires_student_auth
 def create_squad(student):
-    if(student.squad is not None):
-        return APIErrorValue('Student already has squad').json(401)
+    if student.squad is not None:
+        return APIErrorValue("Student already has squad").json(401)
 
-    name = request.form.get('name', None)
-    cry = request.form.get('cry', None)
-    
+    name = request.form.get("name", None)
+    cry = request.form.get("cry", None)
+
     if name is None or cry is None:
-        return APIErrorValue('Invalid squad info').json(500)
+        return APIErrorValue("Invalid squad info").json(500)
 
-    if 'file' not in request.files:
-        return APIErrorValue('No image detected').json(500)
+    if "file" not in request.files:
+        return APIErrorValue("No image detected").json(500)
 
-    file = request.files['file']
+    file = request.files["file"]
 
-    if file and file.filename != '':
-        squad = SquadsHandler.create_squad(name=name, cry=cry, captain_ist_id=student.user.username)
+    if file and file.filename != "":
+        squad = SquadsHandler.create_squad(
+            name=name, cry=cry, captain_ist_id=student.user.username
+        )
         if squad is None:
-            return APIErrorValue('Error creating squad').json(500)
+            return APIErrorValue("Error creating squad").json(500)
 
         result, msg = SquadsHandler.upload_squad_image(file, str(squad.external_id))
         if not result:
             SquadsHandler.delete_squad(squad)
             return APIErrorValue(msg).json(500)
-        
+
         StudentsHandler.add_squad_member(student, squad)
     else:
-        return APIErrorValue('No image found').json(500)
-    
+        return APIErrorValue("No image found").json(500)
+
     return SquadsValue(squad).json(200)
 
-@bp.post('/invite-squad')
+
+@bp.post("/invite-squad")
 @requires_student_auth
 def invite_squad(student):
-    if(student.squad is None):
-        return APIErrorValue('No squad found').json(401)
+    if student.squad is None:
+        return APIErrorValue("No squad found").json(401)
 
     try:
         members = request.get_json()["members"]
     except KeyError:
-        return APIErrorValue('Invalid members').json(500)
+        return APIErrorValue("Invalid members").json(500)
 
-    if(StudentsHandler.invite_squad_members(student, members)):
-        return jsonify('Success'), 200
+    if StudentsHandler.invite_squad_members(student, members):
+        return jsonify("Success"), 200
     else:
-        return APIErrorValue('Failed to invite').json(500)
+        return APIErrorValue("Failed to invite").json(500)
 
-@bp.post('/cancel-invitation')
+
+@bp.post("/cancel-invitation")
 @requires_student_auth
 def cancel_invite(student):
     try:
         receiver_id = request.get_json()["id"]
     except KeyError:
-        return APIErrorValue('Invalid members').json(500)
+        return APIErrorValue("Invalid members").json(500)
 
-    invitations = SquadsFinder.get_invitations_from_parameters({"sender_id":student.id, "receiver_id": receiver_id})
-    if(invitations is None or len(invitations) == 0):
+    invitations = SquadsFinder.get_invitations_from_parameters(
+        {"sender_id": student.id, "receiver_id": receiver_id}
+    )
+    if invitations is None or len(invitations) == 0:
         return APIErrorValue("No invites found").json(404)
 
     for invitation in invitations:
         SquadsHandler.delete_squad_invitation(invitation)
 
-    return jsonify('Success'), 200
+    return jsonify("Success"), 200
 
-@bp.get('/squad-invitations-received')
+
+@bp.get("/squad-invitations-received")
 @requires_student_auth
 def get_squad_invitations_received(student):
-    invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
+    invitations = SquadsFinder.get_invitations_from_parameters(
+        {"receiver_id": student.id}
+    )
 
     return SquadInvitationsValue(invitations).json(200)
 
-@bp.get('/squad-invitations-sent')
+
+@bp.get("/squad-invitations-sent")
 @requires_student_auth
 def get_squad_invitations_sent(student):
-    invitations = SquadsFinder.get_invitations_from_parameters({"sender_id": student.id})
+    invitations = SquadsFinder.get_invitations_from_parameters(
+        {"sender_id": student.id}
+    )
 
-    return SquadInvitationsSentValue([invitation.receiver for invitation in invitations]).json(200)
+    return SquadInvitationsSentValue(
+        [invitation.receiver for invitation in invitations]
+    ).json(200)
 
-@bp.post('/accept-invitation')
+
+@bp.post("/accept-invitation")
 @requires_student_auth
 def accept_invitation(student):
     try:
         invitation_id = request.get_json()["invitation_id"]
     except KeyError:
-        return APIErrorValue('Invalid invitation').json(500)
+        return APIErrorValue("Invalid invitation").json(500)
 
     invitation = SquadsFinder.get_invitation_from_external_id(invitation_id)
-    if(invitation is None):
-        return APIErrorValue('Invitation not found').json(404)
+    if invitation is None:
+        return APIErrorValue("Invitation not found").json(404)
 
     student = StudentsHandler.accept_invitation(student, invitation)
-    if(not student):
+    if not student:
         return APIErrorValue("Failed to join squad").json(500)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.post('reject-invitation')
+
+@bp.post("reject-invitation")
 @requires_student_auth
 def reject_invitation(student):
     try:
         invitation_id = request.get_json()["invitation_id"]
     except KeyError:
-        return APIErrorValue('Invalid invitation').json(500)
+        return APIErrorValue("Invalid invitation").json(500)
 
     invitation = SquadsFinder.get_invitation_from_external_id(invitation_id)
-    if(invitation is None):
-        return APIErrorValue('Invitation not found').json(404)
+    if invitation is None:
+        return APIErrorValue("Invitation not found").json(404)
 
     SquadsHandler.delete_squad_invitation(invitation)
 
-    return jsonify('Success'), 200
+    return jsonify("Success"), 200
 
-@bp.post('leave-squad')
+
+@bp.post("leave-squad")
 @requires_student_auth
 def leave_squad(student):
     student = StudentsHandler.leave_squad(student)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.post('kick-member')
+
+@bp.post("kick-member")
 @requires_student_auth
 def kick_member(student):
-    if(not student.is_captain()):
-        return APIErrorValue('Student is not captain').json(401)
+    if not student.is_captain():
+        return APIErrorValue("Student is not captain").json(401)
 
     try:
         member_ist_id = request.get_json()["ist_id"]
     except KeyError:
-        return APIErrorValue('Invalid IST id').json(500)
-    
+        return APIErrorValue("Invalid IST id").json(500)
+
     member = StudentsFinder.get_from_ist_id(member_ist_id)
-    if(member is None):
-        return APIErrorValue('Member not found').json(404)
+    if member is None:
+        return APIErrorValue("Member not found").json(404)
 
     StudentsHandler.leave_squad(member)
 
     return SquadsValue(student.squad).json(200)
 
-@bp.post('/redeem-code')
+
+@bp.post("/redeem-code")
 @requires_student_auth
 def redeem_code(student):
     try:
-        code = request.get_json()["code"].replace("-","")
+        code = request.get_json()["code"].replace("-", "")
     except KeyError:
-        return APIErrorValue('Code not inserted').json(500)
+        return APIErrorValue("Code not inserted").json(500)
 
-    return APIErrorValue('Code submission closed').json(500)
+    error_msg, student = ActivityCodesHandler.redeem_activity_code(student, code)
 
-    # error_msg, student = ActivityCodesHandler.redeem_activity_code(student, code)
+    if error_msg == "Code not found":
+        redeemed_student = StudentsFinder.get_from_referral_code(code)
+        if not redeemed_student or redeemed_student.id == student.id:
+            return APIErrorValue("Invalid code").json(500)
 
-    # if(error_msg == "Code not found"):
-    #     redeemed_student = StudentsFinder.get_from_referral_code(code)
-    #     if(not redeemed_student or redeemed_student.id == student.id):
-    #         return APIErrorValue('Invalid code').json(500)
+        error_msg, student = StudentsHandler.redeem_referral(
+            student, redeemed_student, code
+        )
+        if error_msg:
+            return APIErrorValue(error_msg).json(500)
 
-    #     error_msg, student = StudentsHandler.redeem_referral(student, redeemed_student)
-    #     if error_msg:
-    #         return APIErrorValue(error_msg).json(500)
-    
-    # elif(error_msg):
-    #     return APIErrorValue(error_msg).json(500)
+    elif error_msg:
+        return APIErrorValue(error_msg).json(500)
 
-    # return StudentsValue(student, details=True).json(200)
+    return StudentsValue(student, details=True).json(200)
 
-@bp.get('/activities')
+
+@bp.get("/activities")
 @requires_student_auth
 def get_activities(student):
     event = EventsFinder.get_default_event()
-    date = request.args.get('date', None)
+    date = request.args.get("date", None)
     if date is None:
         activities = event.activities
     else:
-        activities = ActivitiesFinder.get_from_parameters({"event_id":event.id,"day":date})
-    
+        activities = ActivitiesFinder.get_from_parameters(
+            {"event_id": event.id, "day": date}
+        )
+
     return StudentActivitiesValue(activities, student).json(200)
 
-@bp.get('/quests')
+
+@bp.get("/quests")
 @requires_student_auth
 def get_quests(student):
     activities = ActivitiesFinder.get_quests()
-    
+
     return StudentActivitiesValue(activities, student, True).json(200)
 
-@bp.get('/event-dates')
+
+@bp.get("/event-dates")
 @requires_student_auth
 def get_activity_dates(student):
     event = EventsFinder.get_default_event()
@@ -307,20 +349,22 @@ def get_activity_dates(student):
 
     return jsonify(dates)
 
-@bp.get('/event-info')
+
+@bp.get("/event-info")
 @requires_student_auth
 def get_event_info(student):
     event = EventsFinder.get_default_event()
-    
+
     return StudentEventInfoValue(event).json(200)
 
-@bp.post('/add-linkedin')
+
+@bp.post("/add-linkedin")
 @requires_student_auth
 def add_linkedin(student):
     try:
         url = request.get_json()["url"]
     except KeyError:
-        return APIErrorValue('Invalid url').json(500)
+        return APIErrorValue("Invalid url").json(500)
 
     if not student.linkedin_url:
         StudentsHandler.add_points(student, int(Config.REWARD_LINKEDIN))
@@ -328,45 +372,55 @@ def add_linkedin(student):
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.post('/add-cv')
+
+@bp.post("/add-cv")
 @requires_student_auth
 def add_cv(student):
-    if 'cv' not in request.files:
-        return APIErrorValue('No cv found').json(500)
+    if "cv" not in request.files:
+        return APIErrorValue("No cv found").json(500)
 
-    file = request.files['cv']
-    if file.filename == '':
-        return APIErrorValue('No cv found').json(500)
+    file = request.files["cv"]
+    if file.filename == "":
+        return APIErrorValue("No cv found").json(500)
 
     if file and FileHandler.allowed_file(file.filename):
-        filename = 'cv-' + student.user.username + '.pdf'
+        filename = "cv-" + student.user.username + ".pdf"
 
         if not FileHandler.upload_file(file, filename):
-            return APIErrorValue('Error uploading file').json(500)
+            return APIErrorValue("Error uploading file").json(500)
 
         if not student.uploaded_cv:
             StudentsHandler.update_student(student, uploaded_cv=True)
             StudentsHandler.add_points(student, int(Config.REWARD_CV))
 
     else:
-        return APIErrorValue('Wrong file extension').json(500)
+        return APIErrorValue("Wrong file extension").json(500)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.get('/cv')
+
+@bp.get("/cv")
 @requires_student_auth
 def get_cv(student):
     if not student.uploaded_cv:
         return APIErrorValue("No CV uploaded").json(404)
 
-    filename = 'cv-' + student.user.username + '.pdf'
+    filename = "cv-" + student.user.username + ".pdf"
 
-    with open(os.path.join(current_app.root_path, 'storage', filename), mode='rb') as file:
+    with open(
+        os.path.join(current_app.root_path, "storage", filename), mode="rb"
+    ) as file:
         fileContent = file.read()
 
-    return jsonify({'data':str(base64.b64encode(fileContent), 'utf-8'), 'content-type':'application/pdf'})
+    return jsonify(
+        {
+            "data": str(base64.b64encode(fileContent), "utf-8"),
+            "content-type": "application/pdf",
+        }
+    )
 
-@bp.get('/tags')
+
+@bp.get("/tags")
 @requires_student_auth
 def get_tags(student):
     tags = TagsFinder.get_all()
@@ -378,67 +432,77 @@ def get_tags(student):
     return jsonify(tags_names), 200
 
 
-@bp.post('/add-tags')
+@bp.post("/add-tags")
 @requires_student_auth
 def add_tags(student):
     try:
         tags = request.get_json()["tags"]
     except KeyError:
-        return APIErrorValue('Invalid tag').json(500)
+        return APIErrorValue("Invalid tag").json(500)
 
     for tag in tags:
         tag = TagsFinder.get_by_name(tag)
-        if(tag is None or tag in student.tags):
+        if tag is None or tag in student.tags:
             continue
 
         TagsHandler.add_student_tag(student, tag)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.post('/delete-tag')
+
+@bp.post("/delete-tag")
 @requires_student_auth
 def delete_tag(student):
     try:
         tag = request.get_json()["tag"]
     except KeyError:
-        return APIErrorValue('Invalid tag').json(500)
+        return APIErrorValue("Invalid tag").json(500)
 
     tag = TagsFinder.get_by_name(tag)
-    if(tag is None):
-        return APIErrorValue('Tag not found').json(404)
+    if tag is None:
+        return APIErrorValue("Tag not found").json(404)
 
     student_tag = TagsFinder.get_student_tag(student, tag)
-    if(student_tag is None):
-        return APIErrorValue('Student tag not found').json(404)
-    
+    if student_tag is None:
+        return APIErrorValue("Student tag not found").json(404)
+
     TagsHandler.delete_student_tag_service(student_tag)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.get('/partners')
+
+@bp.get("/partners")
 @requires_student_auth
 def get_partners(student):
-    companies = CompaniesFinder.get_chat_companies({'partnership_tier':'main_sponsor'})
-    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'gold'})
-    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'silver'})
-    companies = companies + CompaniesFinder.get_chat_companies({'partnership_tier':'bronze'})
+    companies = CompaniesFinder.get_chat_companies({"partnership_tier": "main_sponsor"})
+    companies = companies + CompaniesFinder.get_chat_companies(
+        {"partnership_tier": "gold"}
+    )
+    companies = companies + CompaniesFinder.get_chat_companies(
+        {"partnership_tier": "silver"}
+    )
+    companies = companies + CompaniesFinder.get_chat_companies(
+        {"partnership_tier": "bronze"}
+    )
 
     return CompaniesValue(companies, False).json(200)
 
-@bp.get('/partner')
+
+@bp.get("/partner")
 @requires_student_auth
 def get_partner(student):
-    name = request.args.get('name', None)
+    name = request.args.get("name", None)
     if name is None:
         return APIErrorValue("Invalid name").json(500)
 
     company = CompaniesFinder.get_from_name(name)
     if company is None:
-        return APIErrorValue('Company not found').json(404)
+        return APIErrorValue("Company not found").json(404)
 
     return PartnersValue(company, student).json(200)
 
-@bp.get('/companies')
+
+@bp.get("/companies")
 @requires_student_auth
 def get_companies(student):
     company_names = []
@@ -449,148 +513,163 @@ def get_companies(student):
 
     return jsonify(company_names), 200
 
-@bp.post('/add-companies')
+
+@bp.post("/add-companies")
 @requires_student_auth
 def add_companies(student):
     try:
         companies = request.get_json()["companies"]
     except KeyError:
-        return APIErrorValue('Invalid company').json(500)
+        return APIErrorValue("Invalid company").json(500)
 
     for company in companies:
         company = CompaniesFinder.get_from_name(company)
-        if(company is None or company in student.companies):
+        if company is None or company in student.companies:
             continue
 
         StudentsHandler.add_student_company(student, company)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.post('/delete-company')
+
+@bp.post("/delete-company")
 @requires_student_auth
 def delete_company(student):
     try:
         company = request.get_json()["company"]
     except KeyError:
-        return APIErrorValue('Invalid company').json(500)
+        return APIErrorValue("Invalid company").json(500)
 
     company = CompaniesFinder.get_from_name(company)
-    if(company is None):
-        return APIErrorValue('Company not found').json(404)
+    if company is None:
+        return APIErrorValue("Company not found").json(404)
 
     student_company = StudentsFinder.get_student_company(student, company)
-    if(student_company is None):
-        return APIErrorValue('Student company not found').json(404)
-    
+    if student_company is None:
+        return APIErrorValue("Student company not found").json(404)
+
     StudentsHandler.delete_student_company(student_company)
 
     return StudentsValue(student, details=True).json(200)
 
-@bp.get('/students-ranking')
+
+@bp.get("/students-ranking")
 @requires_student_auth
 def get_students_ranking(student):
     students = StudentsFinder.get_top(20)
 
     return StudentsValue(students, details=False).json(200)
 
-@bp.get('/squads-ranking')
+
+@bp.get("/squads-ranking")
 @requires_student_auth
 def get_squads_ranking(student):
     squads = SquadsFinder.get_top()
 
     return SquadsValue(squads).json(200)
 
-@bp.get('/daily-squads-ranking')
+
+@bp.get("/daily-squads-ranking")
 @requires_student_auth
 def get_daily_squads_ranking(student):
     squads = SquadsFinder.get_daily_top()
 
     return SquadsValue(squads).json(200)
 
-@bp.get('/today-squad-reward')
+
+@bp.get("/today-squad-reward")
 @requires_student_auth
 def get_today_squad_reward(student):
-    now = datetime.utcnow().strftime('%d %b %Y, %a')
-    
+    now = datetime.utcnow().strftime("%d %b %Y, %a")
+
     squad_reward = RewardsFinder.get_squad_reward_from_date(now)
 
-    if(squad_reward is None):
+    if squad_reward is None:
         return RewardsValue(None).json(200)
 
     return RewardsValue(squad_reward.reward).json(200)
 
-@bp.get('/squads-rewards')
+
+@bp.get("/squads-rewards")
 @requires_student_auth
 def get_squads_rewards(student):
     squads_rewards = RewardsFinder.get_all_squad_rewards()
 
     return SquadsRewardsValue(squads_rewards, student.squad).json(200)
 
-@bp.get('/jeecpot-rewards')
+
+@bp.get("/jeecpot-rewards")
 @requires_student_auth
 def get_jeecpot_rewards(student):
     jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
 
     return JeecpotRewardsValue(jeecpot_rewards[0], student).json(200)
 
-@bp.get('/chat-token')
+
+@bp.get("/chat-token")
 @requires_student_auth
 def get_chat_token(student):
     token = UsersHandler.get_chat_user_token(student.user)
 
     if token:
-        return jsonify({'token':token}), 200
+        return jsonify({"token": token}), 200
     else:
         return APIErrorValue("Error getting token").json(500)
 
-@bp.get('/chat-room')
+
+@bp.get("/chat-room")
 @requires_student_auth
 def get_chat_room(student):
-    company_name = request.args.get('company', None)
-    user_id = request.args.get('member', None)
+    company_name = request.args.get("company", None)
+    user_id = request.args.get("member", None)
 
     if company_name:
         company = CompaniesFinder.get_from_name(company_name)
         if company is None:
             return APIErrorValue("Company not found").json(404)
 
-        result = UsersHandler.join_channel(student.user, company.chat_id, company.chat_code)
+        result = UsersHandler.join_channel(
+            student.user, company.chat_id, company.chat_code
+        )
         if result:
-            return jsonify({'result':True}), 200
+            return jsonify({"result": True}), 200
         else:
             return APIErrorValue("Failed to join room").json(500)
 
     elif user_id:
         company_user = UsersFinder.get_from_external_id(user_id)
-        if company_user is None and not company_user.role.name == 'company':
+        if company_user is None and not company_user.role.name == "company":
             return APIErrorValue("Invalid user").json(500)
-        
+
         room_id = UsersHandler.create_direct_message(student.user, company_user)
         if room_id is None:
             return APIErrorValue("Failed to create direct message session").json(500)
 
-        return jsonify({"room_id":room_id}), 200
+        return jsonify({"room_id": room_id}), 200
 
     else:
         return APIErrorValue("No room found").json(404)
 
-@bp.get('/notifications')
+
+@bp.get("/notifications")
 @requires_student_auth
 def get_notifications(student):
-    notifications={}
+    notifications = {}
 
-    if(student.squad):
-        notifications['squad_xp'] = student.squad.total_points
-    
-    notifications['invites'] = []
-    invitations = SquadsFinder.get_invitations_from_parameters({"receiver_id": student.id})
+    if student.squad:
+        notifications["squad_xp"] = student.squad.total_points
+
+    notifications["invites"] = []
+    invitations = SquadsFinder.get_invitations_from_parameters(
+        {"receiver_id": student.id}
+    )
     for invitation in invitations:
         sender = StudentsFinder.get_from_id(invitation.sender_id)
-        notifications['invites'].append(sender.user.name)
-    
-    notifications['activities'] = []
+        notifications["invites"].append(sender.user.name)
+
+    notifications["activities"] = []
     activities = ActivitiesFinder.get_next_activity()
     for activity in activities:
-        notifications['activities'].append(activity.name)
+        notifications["activities"].append(activity.name)
 
     return jsonify(notifications), 200

@@ -2,8 +2,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class PKCS7Encoder(object):
 
+class PKCS7Encoder(object):
     def __init__(self, block_size=16):
         self.block_size = block_size
 
