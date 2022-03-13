@@ -112,6 +112,6 @@ def requires_student_auth(func):
         if student is None:
             return Response("No student found, access denied", status=401)
 
-        return func(*args, student=student)
+        return func(student=student, *args, **kwargs)
 
     return decorated

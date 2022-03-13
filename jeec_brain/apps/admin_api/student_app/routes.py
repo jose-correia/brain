@@ -811,6 +811,25 @@ def update_jeecpot_reward(path: JeecpotRewardsPath):
         if jeecpot_rewards is None:
             return APIErrorValue("Failed to update reward").json(500)
 
+    cv_platform_raffle_reward_id = request.form.get("cv_platform_raffle_reward", None)
+    if cv_platform_raffle_reward_id is not None:
+        if cv_platform_raffle_reward_id == "":
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(
+                jeecpot_rewards, cv_platform_raffle_reward_id=None
+            )
+        else:
+            cv_platform_raffle_reward = RewardsFinder.get_reward_from_external_id(
+                cv_platform_raffle_reward_id
+            )
+            if cv_platform_raffle_reward is None:
+                return APIErrorValue("Reward not found").json(404)
+            jeecpot_rewards = RewardsHandler.update_jeecpot_reward(
+                jeecpot_rewards,
+                cv_platform_raffle_reward_id=cv_platform_raffle_reward.id,
+            )
+        if jeecpot_rewards is None:
+            return APIErrorValue("Failed to update reward").json(500)
+
     return render_template(
         "admin/students_app/rewards/jeecpot_rewards_dashboard.html",
         error=None,

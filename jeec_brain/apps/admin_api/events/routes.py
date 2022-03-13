@@ -115,6 +115,7 @@ def create_event():
     instagram_link = request.form.get("instagram_link")
     show_schedule = request.form.get("show_schedule")
     show_registrations = request.form.get("show_registrations")
+    show_prizes = request.form.get("show_prizes")
 
     if default == "True":
         default = True
@@ -131,6 +132,11 @@ def create_event():
     else:
         show_registrations = False
 
+    if show_prizes == "True":
+        show_prizes = True
+    else:
+        show_prizes = False
+
     event = EventsHandler.create_event(
         name=name,
         start_date=start_date,
@@ -144,6 +150,7 @@ def create_event():
         instagram_link=instagram_link,
         show_schedule=show_schedule,
         show_registrations=show_registrations,
+        show_prizes=show_prizes,
         cvs_submission_start=cvs_submission_start,
         cvs_submission_end=cvs_submission_end,
         cvs_access_start=cvs_access_start,
@@ -256,6 +263,7 @@ def update_event(path: EventPath):
     instagram_link = request.form.get("instagram_link")
     show_schedule = request.form.get("show_schedule")
     show_registrations = request.form.get("show_registrations")
+    show_prizes = request.form.get('show_prizes')
 
     if default == "True":
         default = True
@@ -272,6 +280,11 @@ def update_event(path: EventPath):
     else:
         show_registrations = False
 
+    if show_prizes == 'True':
+        show_prizes = True
+    else:
+        show_prizes = False
+
     updated_event = EventsHandler.update_event(
         event=event,
         name=name,
@@ -286,6 +299,7 @@ def update_event(path: EventPath):
         instagram_link=instagram_link,
         show_schedule=show_schedule,
         show_registrations=show_registrations,
+        show_prizes=show_prizes,
         cvs_submission_start=cvs_submission_start,
         cvs_submission_end=cvs_submission_end,
         cvs_access_start=cvs_access_start,

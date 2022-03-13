@@ -37,6 +37,7 @@ class EventsValue(ValueComposite):
                 "dates": EventsHandler.get_event_dates(event),
                 "show_schedule": event.show_schedule,
                 "show_registrations": event.show_registrations,
+                "show_prizes": event.show_prizes,
             }
             events_array.append(event_value)
         self.serialize_with(data=events_array)

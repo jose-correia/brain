@@ -23,6 +23,7 @@ class Events(db.Model, ModelMixin):
 
     show_schedule = db.Column(db.Boolean, default=False)
     show_registrations = db.Column(db.Boolean, default=False)
+    show_prizes = db.Column(db.Boolean, default=False)
 
     cvs_submission_start = db.Column(db.String(30))
     cvs_submission_end = db.Column(db.String(30))

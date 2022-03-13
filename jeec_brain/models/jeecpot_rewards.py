@@ -115,5 +115,18 @@ class JeecpotRewards(db.Model, ModelMixin):
         "Students", foreign_keys=king_networking_winner_id
     )
 
+    cv_platform_raffle_reward_id = db.Column(
+        db.Integer, db.ForeignKey("rewards.id", ondelete="SET NULL")
+    )
+    cv_platform_raffle_reward = relationship(
+        "Rewards", foreign_keys=cv_platform_raffle_reward_id
+    )
+    cv_platform_raffle_winner_id = db.Column(
+        db.Integer, db.ForeignKey("students.id", ondelete="SET NULL")
+    )
+    cv_platform_raffle_winner = relationship(
+        "Students", foreign_keys=cv_platform_raffle_winner_id
+    )
+
     def __repr__(self):
         return "Name: {}".format(self.name)

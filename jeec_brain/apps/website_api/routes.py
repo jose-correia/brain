@@ -9,6 +9,8 @@ from jeec_brain.finders.speakers_finder import SpeakersFinder
 from jeec_brain.finders.teams_finder import TeamsFinder
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
+from jeec_brain.finders.levels_finder import LevelsFinder
+from jeec_brain.finders.rewards_finder import RewardsFinder
 
 # Values
 from jeec_brain.values.activities_value import ActivitiesValue
@@ -17,6 +19,8 @@ from jeec_brain.values.speakers_value import SpeakersValue
 from jeec_brain.values.teams_value import TeamsValue
 from jeec_brain.values.api_error_value import APIErrorValue
 from jeec_brain.values.events_value import EventsValue
+from jeec_brain.values.website_rewards_value import WebsiteRewardsValue
+
 
 # Handlers
 from jeec_brain.handlers.events_handler import EventsHandler
@@ -184,6 +188,43 @@ def get_event():
     event = EventsFinder.get_default_event()
 
     return EventsValue(event).json(200)
+
+
+@bp.get("/prizes")
+def get_prizes():
+    """Retrieve the prizes for the current event
+    <b>Returns:</b>
+        PrizesValue: Returns list with the prizes for the current event
+    """
+
+    jeecpot_rewards = RewardsFinder.get_all_jeecpot_rewards()
+    levels = LevelsFinder.get_all_levels()
+    event = EventsFinder.get_default_event()
+    squad_rewards = RewardsFinder.get_all_squad_rewards()
+
+    for level in levels:
+        if level.reward_id is not None:
+            level_reward = RewardsFinder.get_rewards_from_parameters(
+                {"id": level.reward_id}
+            )
+
+    for activity in event.activities:
+        if activity.reward_id is not None:
+            activity_reward = RewardsFinder.get_rewards_from_parameters(
+                {"id": activity.reward_id}
+            )
+            break
+
+    for squad_reward in squad_rewards:
+        if squad_reward.reward_id is not None:
+            daily_squad_reward = RewardsFinder.get_rewards_from_parameters(
+                {"id": squad_reward.reward_id}
+            )
+            break
+
+    return WebsiteRewardsValue(
+        jeecpot_rewards[0], level_reward[0], activity_reward[0], daily_squad_reward[0]
+    ).json(200)
 
 
 def removeDuplicates(listofElements):

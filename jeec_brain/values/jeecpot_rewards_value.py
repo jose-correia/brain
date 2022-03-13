@@ -102,3 +102,13 @@ class JeecpotRewardsValue(ValueComposite):
             king_networking_winner=student.id
             == jeecpot_rewards.king_networking_winner_id
         )
+
+        self.serialize_with(
+            cv_platform_raffle_reward=RewardsValue(
+                jeecpot_rewards.cv_platform_raffle_reward
+            ).to_dict()
+        )
+        self.serialize_with(
+            cv_platform_raffle_winner=student.id
+            == jeecpot_rewards.cv_platform_raffle_winner_id
+        )

@@ -111,22 +111,26 @@
 
       <div class="row">
         <div class="input-field col s2">
-          <input id="cvs_submission_start" name="cvs_submission_start" type="text" class="validate" value="{{ event.cvs_submission_start }}">
+          <input id="cvs_submission_start" name="cvs_submission_start" type="text" class="validate"
+            value="{{ event.cvs_submission_start }}">
           <label for="cvs_submission_start">CV's Submission Start date</label>
         </div>
 
         <div class="input-field col s2">
-          <input id="cvs_submission_end" name="cvs_submission_end" type="text" class="validate" value="{{ event.cvs_submission_end }}">
+          <input id="cvs_submission_end" name="cvs_submission_end" type="text" class="validate"
+            value="{{ event.cvs_submission_end }}">
           <label for="cvs_submission_end">CV's Submission End date</label>
         </div>
 
         <div class="input-field col s2">
-          <input id="cvs_access_start" name="cvs_access_start" type="text" class="validate" value="{{ event.cvs_access_start }}">
+          <input id="cvs_access_start" name="cvs_access_start" type="text" class="validate"
+            value="{{ event.cvs_access_start }}">
           <label for="cvs_access_start">CV's Access Start date</label>
         </div>
 
         <div class="input-field col s2">
-          <input id="cvs_access_end" name="cvs_access_end" type="text" class="validate"  value="{{ event.cvs_access_end }}">
+          <input id="cvs_access_end" name="cvs_access_end" type="text" class="validate"
+            value="{{ event.cvs_access_end }}">
           <label for="cvs_access_end">CV's Access End date</label>
         </div>
       </div>
@@ -138,7 +142,8 @@
         </div>
 
         <div class="input-field col s1">
-          <input id="end_game_time" name="end_game_time" type="text" class="timepicker" value="{{ event.end_game_time }}">
+          <input id="end_game_time" name="end_game_time" type="text" class="timepicker"
+            value="{{ event.end_game_time }}">
           <label for="end_game_time">Ending Time</label>
         </div>
       </div>
@@ -162,13 +167,13 @@
       Show schedule in the JEEC website:
       <p>
         <label style="margin-right: 20px;">
-          <input class="with-gap" name="show_schedule" type="radio" value="True"
-            {% if event.show_schedule is sameas true %} checked {% endif %} />
+          <input class="with-gap" name="show_schedule" type="radio" value="True" {% if event.show_schedule is sameas
+            true %} checked {% endif %} />
           <span>Yes</span>
         </label>
         <label>
-          <input class="with-gap" name="show_schedule" type="radio" value="False"
-            {% if event.show_schedule is sameas false %} checked {% endif %} />
+          <input class="with-gap" name="show_schedule" type="radio" value="False" {% if event.show_schedule is sameas
+            false %} checked {% endif %} />
           <span>No</span>
         </label>
       </p>
@@ -178,13 +183,29 @@
       Show registrations in the JEEC website:
       <p>
         <label style="margin-right: 20px;">
-          <input class="with-gap" name="show_registrations" type="radio" value="True"
-            {% if event.show_registrations is sameas true %} checked {% endif %} />
+          <input class="with-gap" name="show_registrations" type="radio" value="True" {% if event.show_registrations is
+            sameas true %} checked {% endif %} />
           <span>Yes</span>
         </label>
         <label>
-          <input class="with-gap" name="show_registrations" type="radio" value="False"
-            {% if event.show_registrations is sameas false %} checked {% endif %} />
+          <input class="with-gap" name="show_registrations" type="radio" value="False" {% if event.show_registrations is
+            sameas false %} checked {% endif %} />
+          <span>No</span>
+        </label>
+      </p>
+
+      <br>
+
+      Show prizes in the JEEC website:
+      <p>
+        <label style="margin-right: 20px;">
+          <input class="with-gap" name="show_prizes" type="radio" value="True" {% if event.show_prizes is sameas true %}
+            checked {% endif %} />
+          <span>Yes</span>
+        </label>
+        <label>
+          <input class="with-gap" name="show_prizes" type="radio" value="False" {% if event.show_prizes is sameas false
+            %} checked {% endif %} />
           <span>No</span>
         </label>
       </p>
