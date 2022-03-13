@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.users import Users
 
 
-class UpdateUserService():
-    
+class UpdateUserService:
     def __init__(self, user: Users, kwargs: Dict):
         self.user = user
         self.kwargs = kwargs
@@ -13,5 +12,5 @@ class UpdateUserService():
             update_result = self.user.update(**self.kwargs)
         except:
             return None
-            
+
         return update_result

@@ -7,8 +7,7 @@ from jeec_brain.database import db_session
 from sqlalchemy import text
 
 
-class AuctionsFinder():
-
+class AuctionsFinder:
     @classmethod
     def get_all(cls):
         return Auctions.query.order_by(Auctions.name).all()
@@ -23,24 +22,41 @@ class AuctionsFinder():
 
     @classmethod
     def get_auction_highest_bid(cls, auction):
-        return Bids.query.filter_by(auction_id=auction.id).order_by(Bids.value.desc()).first()
+        return (
+            Bids.query.filter_by(auction_id=auction.id)
+            .order_by(Bids.value.desc())
+            .first()
+        )
 
     @classmethod
     def get_auction_company_with_bid(cls, auction, bid):
-        return Companies.query.filter((Auctions.id==auction.id) & (Bids.auction_id==auction.id) & (Bids.id==bid.id) & (Companies.id==bid.company_id)).first()
+        return Companies.query.filter(
+            (Auctions.id == auction.id)
+            & (Bids.auction_id == auction.id)
+            & (Bids.id == bid.id)
+            & (Companies.id == bid.company_id)
+        ).first()
 
     @classmethod
     def get_company_bids_from_user(cls, auction, company_user):
         company_user_ids = [user.id for user in company_user.company.users]
-        return Bids.query.filter_by(auction_id=auction.id).filter(Bids.company_user_id.in_(company_user_ids)).order_by(Bids.value.desc())
+        return (
+            Bids.query.filter_by(auction_id=auction.id)
+            .filter(Bids.company_user_id.in_(company_user_ids))
+            .order_by(Bids.value.desc())
+        )
 
     @classmethod
     def get_company_users_from_auction(cls, company, auction):
-        return CompanyUsers.query.filter(CompanyUsers.id == Bids.company_user_id, CompanyUsers.company_id == company.id, Bids.auction_id == auction.id).all()
+        return CompanyUsers.query.filter(
+            CompanyUsers.id == Bids.company_user_id,
+            CompanyUsers.company_id == company.id,
+            Bids.auction_id == auction.id,
+        ).all()
 
     @classmethod
     def get_not_participants(cls, auction):
-        command = text (
+        command = text(
             """
                 SELECT
                     *
@@ -61,4 +77,9 @@ class AuctionsFinder():
                         c_auc2.auction_id=:auction_id
                 );"""
         )
-        return db_session.execute(command, {"auction_id": auction.id,}).fetchall()
+        return db_session.execute(
+            command,
+            {
+                "auction_id": auction.id,
+            },
+        ).fetchall()

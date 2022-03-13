@@ -8,8 +8,7 @@ from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 
 
-class SpeakersHandler():
-
+class SpeakersHandler:
     @classmethod
     def create_speaker(cls, **kwargs):
         return CreateSpeakerService(kwargs=kwargs).call()
@@ -22,29 +21,37 @@ class SpeakersHandler():
     def delete_speaker(cls, speaker):
         speaker_name = speaker.name
         speaker_company_name = speaker.company
-        
-        if DeleteSpeakerService(speaker=speaker).call():
-            for extension in current_app.config['ALLOWED_IMAGES']:
-                image_filename = speaker_name.lower().replace(' ', '_') + '.' + extension
-                company_logo_filename = speaker_company_name.lower().replace(' ', '_') + '.' + extension
 
-                DeleteImageService(image_filename, 'static/speakers').call()
-                DeleteImageService(company_logo_filename, 'static/speakers/companies').call()
+        if DeleteSpeakerService(speaker=speaker).call():
+            for extension in current_app.config["ALLOWED_IMAGES"]:
+                image_filename = (
+                    speaker_name.lower().replace(" ", "_") + "." + extension
+                )
+                company_logo_filename = (
+                    speaker_company_name.lower().replace(" ", "_") + "." + extension
+                )
+
+                DeleteImageService(image_filename, "static/speakers").call()
+                DeleteImageService(
+                    company_logo_filename, "static/speakers/companies"
+                ).call()
             return True
         return False
 
     @staticmethod
     def upload_image(file, speaker_name):
-        return UploadImageService(file, speaker_name, 'static/speakers').call()
+        return UploadImageService(file, speaker_name, "static/speakers").call()
 
     @staticmethod
     def find_image(speaker_name):
-        return FindImageService(speaker_name, 'static/speakers').call()
+        return FindImageService(speaker_name, "static/speakers").call()
 
     @staticmethod
     def upload_company_logo(file, company_name):
-        return UploadImageService(file, company_name, 'static/speakers/companies').call()
+        return UploadImageService(
+            file, company_name, "static/speakers/companies"
+        ).call()
 
     @staticmethod
     def find_company_logo(company_name):
-        return FindImageService(company_name, 'static/speakers/companies').call()
+        return FindImageService(company_name, "static/speakers/companies").call()

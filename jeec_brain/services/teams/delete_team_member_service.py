@@ -1,8 +1,7 @@
 from jeec_brain.models.colaborators import Colaborators
 
 
-class DeleteTeamMemberService():
-
+class DeleteTeamMemberService:
     def __init__(self, member: Colaborators):
         self.member = member
 

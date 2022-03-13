@@ -15,4 +15,3 @@ class ValueComposite(object):
 
     def json(self, code=200):
         return make_response(jsonify(self.message), code)
-

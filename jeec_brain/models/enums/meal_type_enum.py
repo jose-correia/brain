@@ -1,5 +1,6 @@
 import enum
 
+
 class MealTypeEnum(enum.Enum):
     Breakfast = 1
     Lunch = 2

@@ -7,15 +7,14 @@ from typing import Dict, Optional
 logger = logging.getLogger(__name__)
 
 
-class CreateActivityService():
-
+class CreateActivityService:
     def __init__(self, event: Events, activity_type: ActivityTypes, kwargs: Dict):
         self.kwargs = kwargs
         self.event = event
         self.activity_type = activity_type
 
     def call(self) -> Optional[Activities]:
-        
+
         activity = Activities.create(**self.kwargs)
 
         if not activity:
@@ -25,14 +24,14 @@ class CreateActivityService():
             self.activity_type.activities.append(activity)
             self.activity_type.save()
         except Exception:
-            logger.exception('Failed to add new activity to type')
+            logger.exception("Failed to add new activity to type")
             return None
 
         try:
             self.event.activities.append(activity)
             self.event.save()
         except Exception:
-            logger.exception('Failed to add new activity to event')
+            logger.exception("Failed to add new activity to event")
             return None
 
         return activity

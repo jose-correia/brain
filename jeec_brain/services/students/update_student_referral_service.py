@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.student_referrals import StudentReferrals
 
 
-class UpdateStudentReferralService():
-    
+class UpdateStudentReferralService:
     def __init__(self, student_referral: StudentReferrals, kwargs: Dict):
         self.student_referral = student_referral
         self.kwargs = kwargs

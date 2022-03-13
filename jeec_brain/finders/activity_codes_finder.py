@@ -1,8 +1,7 @@
 from jeec_brain.models.activity_codes import ActivityCodes
 
 
-class ActivityCodesFinder():
-
+class ActivityCodesFinder:
     @classmethod
     def get_from_code(cls, code):
         return ActivityCodes.query.filter_by(code=code).first()
@@ -10,7 +9,7 @@ class ActivityCodesFinder():
     @classmethod
     def get_from_external_id(cls, external_id):
         return ActivityCodes.query.filter_by(external_id=external_id).first()
-    
+
     @classmethod
     def get_all(cls):
         return ActivityCodes.all()

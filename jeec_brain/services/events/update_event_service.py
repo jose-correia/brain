@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.events import Events
 
 
-class UpdateEventService():
-    
+class UpdateEventService:
     def __init__(self, event: Events, kwargs: Dict):
         self.event = event
         self.kwargs = kwargs

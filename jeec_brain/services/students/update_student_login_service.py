@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.student_logins import StudentLogins
 
 
-class UpdateStudentLoginService():
-    
+class UpdateStudentLoginService:
     def __init__(self, student_login: StudentLogins, kwargs: Dict):
         self.student_login = student_login
         self.kwargs = kwargs

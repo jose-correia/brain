@@ -220,11 +220,21 @@
           <label>Choose Reward</label>
         </div>
       </div>
-
-      <div id="urls"></div>
-
+      
+      <div class="row">
+        <div class="input-field col s5">
+          <select name="code_work_flow" class="form-control">
+            {% for flow in code_workflows %}
+            <option value="{{ flow.value }}">{{ flow.value }}</option>
+            {% endfor %}
+          </select>
+          <label>Code workflow</label>
+        </div>
+      </div>
+        
       <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
           class="material-icons left">save</i>Save Activity</button>
+
     </form>
   </div>
   <script>
@@ -259,48 +269,6 @@
         });
 
         $('#moderator').formSelect()
-      });
-
-      var companies = [];
-
-      $('#companies').change(function () {
-        var new_companies = $('#companies').val();
-
-        //delete unused companies
-        for (var i = 0; i < companies.length; i++) {
-          if (jQuery.inArray(companies[i], new_companies) === -1) {
-            $("#url" + companies[i].replaceAll(" ", "_")).remove();
-
-            companies = jQuery.grep(companies, function (value) {
-              return value != companies[i];
-            });
-
-            i--;
-          }
-        }
-
-        //create new companies
-        for (var i = 0; i < new_companies.length; i++) {
-          if (jQuery.inArray(new_companies[i], companies) === -1) {
-            var input = '<div class="row url" style="margin-bottom:0" id="url' + new_companies[i].replaceAll(" ", "_") + '"><div class="input-field col s5"><input name="url" type="url" class="validate"><label for=""url' + new_companies[i] + '">' + new_companies[i] + ' Zoom URL</label></div></div>';
-            var divs = $('.url');
-
-            var j = 0;
-            for (j = 0; j < divs.length; j++) {
-              if (new_companies[i] < divs[j].id.substring(3, divs[j].id.length)) {
-                $('#' + divs[j].id).before(input);
-                break;
-              }
-            }
-
-            if (j === divs.length) {
-              $('#urls').append(input);
-            }
-          }
-        }
-
-        companies = new_companies;
-
       });
     });
   </script>

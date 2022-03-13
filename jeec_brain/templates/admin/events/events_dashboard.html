@@ -1,190 +1,208 @@
-<html>  
-  <head>
-    <title>Brain</title>
-    <link rel="stylesheet" href="/static/admin/css/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<html>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
-    <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
+<head>
+  <title>Brain</title>
+  <link rel="stylesheet" href="/static/admin/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
-    
-  </head>
-  <body>
-    <div class="nav-bar">
-        <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/brain.png"></a>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-        <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
-          <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log out</button>
-        </form>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="./static/j_logo.png">
 
-        <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
-          <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i class="large material-icons left">web</i>Visit website</button>
-        </a>
-    </div>
+  <link href="https://fonts.googleapis.com/css?family=Karla|Lato|Roboto|Raleway|Source+Sans+Pro" rel="stylesheet">
 
-    <div class="section-header">
-      <h2>Events Management</h2>
-      <p>Add or edit event editions</p>
-    </div>
+</head>
 
-    <form action="{{ url_for('admin_api.dashboard') }}" method="get">
-        <button class="waves-effect waves-light btn back-btn left"><i class="material-icons left">arrow_back</i>back</button>
+<body>
+  <div class="nav-bar">
+    <a href="{{ url_for('admin_api.dashboard') }}"><img class="jeec-logo-mobile" src="/static/brain.png"></a>
+
+    <form action="{{ url_for('admin_api.admin_logout') }}" method="get">
+      <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
+        out</button>
     </form>
-    
-    {% if role in ['admin'] %}
-    <form action="{{ url_for('admin_api.add_event_dashboard') }}" method="get">
-        <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Event</button>
+
+    <a target="_blank" rel="noopener noreferrer" href="https://jeec.ist" method="get">
+      <button class="waves-effect waves-light btn-small right" style="margin-top: -3px; margin-right: 50px;"><i
+          class="large material-icons left">web</i>Visit website</button>
+    </a>
+  </div>
+
+  <div class="section-header">
+    <h2>Events Management</h2>
+    <p>Add or edit event editions</p>
+  </div>
+
+  <form action="{{ url_for('admin_api.dashboard') }}" method="get">
+    <button class="waves-effect waves-light btn back-btn left"><i
+        class="material-icons left">arrow_back</i>back</button>
+  </form>
+
+  {% if role in ['admin'] %}
+  <form action="{{ url_for('admin_api.add_event_dashboard') }}" method="get">
+    <button class="waves-effect blue lighten-2 btn add-btn right"><i class="material-icons left">add</i>Event</button>
+  </form>
+  {% endif %}
+
+  <div class="section-title center-align" style="margin-top:90px;">
+    List of Events
+  </div>
+
+  <div class="search-bar">
+    <form class="col s12" method="post">
+      <div class="row">
+        <div class="input-field col s8">
+          <input class="col s12" id="name" name="name" type="text" class="validate" required>
+
+          <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
+        </div>
+        <button type="submit" class="btn-floating blue lighten-2 search-btn"><i
+            class="material-icons">search</i>Search</button>
+      </div>
     </form>
+
+    {% if search %}
+    <a class="clear-search" href="{{ url_for('admin_api.events_dashboard') }}">clear search results</a>
     {% endif %}
+  </div>
 
-    <div class="section-title center-align" style="margin-top:90px;">
-        List of Events
+  <div class="list">
+    {% if error is not none %}
+    <blockquote class="create-error">
+      {{ error }}
+    </blockquote>
+    {% else %}
+    <div class="counter right">
+      Events: {{ events|length }}
     </div>
 
-    <div class="search-bar">
-      <form class="col s12" method="post">
-        <div class="row">
-          <div class="input-field col s8">
-            <input class="col s12" id="name" name="name" type="text" class="validate" required>
-            
-            <label for="name">{% if search is not none %}{{ search }}{% else %}search name{% endif %}</label>
-          </div>
-          <button type="submit" class="btn-floating blue lighten-2 search-btn"><i class="material-icons">search</i>Search</button>
-        </div>
-      </form>
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Start date</th>
+          <th>End date</th>
+          <th>Email</th>
+          <th>Location</th>
+          <th>CV's Submission Start</th>
+          <th>CV's Submission End</th>
+          <th>CV's Access Start</th>
+          <th>CV's Access End</th>
+          <th>End Game Date</th>
+          <th>CV's purged</th>
+          <th>Facebook event</th>
+          <th>Default event</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td><b>{{ event.name }}</b></td>
 
-      {% if search %}
-        <a class="clear-search" href="{{ url_for('admin_api.events_dashboard') }}">clear search results</a>
-      {% endif %}
-    </div>
+          <td>
+            {% if event.start_date %}
+            {{ event.start_date }}
+            {% endif %}
+          </td>
 
-    <div class="list">
-      {% if error is not none %}
-        <blockquote class="create-error">
-          {{ error }}
-        </blockquote>
-      {% else %}
-        <div class="counter right">
-          Events: {{ events|length }}
-        </div>
+          <td>
+            {% if event.end_date %}
+            {{ event.end_date }}
+            {% endif %}
+          </td>
 
-        <table class="striped">
-            <thead><tr>
-              <th>Name</th>
-              <th>Start date</th>
-              <th>End date</th>
-              <th>Email</th>
-              <th>Location</th>
-              <th>CV's Submission Start</th>
-              <th>CV's Submission End</th>
-              <th>CV's Access Start</th>
-              <th>CV's Access End</th>
-              <th>CV's purged</th>
-              <th>Facebook event</th>
-              <th>Default event</th>
-            </tr></thead>
-            <tbody>
-                {% for event in events %}
-                  <tr>
-                    <td><b>{{ event.name }}</b></td>
+          <td>
+            {% if event.email %}
+            {{ event.email }}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.start_date %}
-                        {{ event.start_date }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.location %}
+            {{ event.location }}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.end_date %}
-                        {{ event.end_date }}
-                      {% endif %}
-                    </td>
-                    
-                    <td>
-                      {% if event.email %}
-                        {{ event.email }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.cvs_submission_start %}
+            {{ event.cvs_submission_start }}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.location %}
-                        {{ event.location }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.cvs_submission_end %}
+            {{ event.cvs_submission_end }}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.cvs_submission_start %}
-                        {{ event.cvs_submission_start }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.cvs_access_start %}
+            {{ event.cvs_access_start }}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.cvs_submission_end %}
-                        {{ event.cvs_submission_end }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.cvs_access_start %}
+            {{ event.cvs_access_end }}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.cvs_access_start %}
-                        {{ event.cvs_access_start }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.end_game_day %}
+            {{ event.end_game_day }} {% if event.end_game_time %} {{ event.end_game_time }} {% endif %}
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.cvs_access_start %}
-                        {{ event.cvs_access_end }}
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.cvs_purged is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.cvs_purged is sameas true %}
-                        <i class="material-icons icon-green">check</i>
-                      {% else %}
-                        <i class="material-icons icon-red">clear</i>
-                      {% endif %}
-                    </td>
-                    
-                    <td>
-                      {% if event.facebook_event_link %}
-                        <a href="{{ event.facebook_event_link }}">Facebook event</a>
-                      {% endif %}
-                    </td>
+          <td>
+            {% if event.facebook_event_link %}
+            <a href="{{ event.facebook_event_link }}">Facebook event</a>
+            {% endif %}
+          </td>
 
-                    <td>
-                      {% if event.default is sameas true %}
-                        <i class="material-icons icon-green">check</i>
-                      {% else %}
-                        <i class="material-icons icon-red">clear</i>
-                      {% endif %}
-                    </td>
-                    
-                    {% if event.cvs_purgeable is sameas true %}
-                    <td>
-                      <form action="/admin/events/{{event.external_id.hex}}/purge_cvs" method="post">
-                        <button title="Purge CV's" class="waves-effect red waves-light btn-floating"><i class="material-icons left">layers_clear</i>Purge CV's</button>
-                      </form>
-                    </td>
-                    {% endif %}
+          <td>
+            {% if event.default is sameas true %}
+            <i class="material-icons icon-green">check</i>
+            {% else %}
+            <i class="material-icons icon-red">clear</i>
+            {% endif %}
+          </td>
 
-                    {% if role in ['admin'] %}
-                    <td>
-                      <form action="/admin/events/{{event.external_id.hex}}" method="get">
-                        <button title="Edit event" class="waves-effect waves-light btn-floating"><i class="material-icons left">edit</i>Edit</button>
-                      </form>
-                    </td>
-                    {% endif %}
-                  </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      {% endif %}
-    </div>
-  </body>
-</html>  
+          {% if event.cvs_purgeable is sameas true %}
+          <td>
+            <form action="/admin/events/{{event.external_id.hex}}/purge_cvs" method="post">
+              <button title="Purge CV's" class="waves-effect red waves-light btn-floating"><i
+                  class="material-icons left">layers_clear</i>Purge CV's</button>
+            </form>
+          </td>
+          {% endif %}
+
+          {% if role in ['admin'] %}
+          <td>
+            <form action="/admin/events/{{event.external_id.hex}}" method="get">
+              <button title="Edit event" class="waves-effect waves-light btn-floating"><i
+                  class="material-icons left">edit</i>Edit</button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</body>
+
+</html>

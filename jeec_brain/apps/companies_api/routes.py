@@ -13,51 +13,57 @@ from jeec_brain.handlers.users_handler import UsersHandler
 from datetime import datetime
 
 
-@bp.get('/')
+@bp.get("/")
 def get_company_login_form():
-    if current_user.is_authenticated and current_user.role == 'company':
-        return redirect(url_for('companies_api.dashboard'))
+    if current_user.is_authenticated and current_user.role == "company":
+        return redirect(url_for("companies_api.dashboard"))
 
-    return render_template('companies/companies_login.html')
+    return render_template("companies/companies_login.html")
 
 
-@bp.post('/')
-def company_login():    
-    username = request.form.get('username')
-    password = request.form.get('password')
+@bp.post("/")
+def company_login():
+    username = request.form.get("username")
+    password = request.form.get("password")
 
     # if credentials are sent in json (for stress testing purposes)
     if not username and not password:
-        username = request.json.get('username')
-        password = request.json.get('password')
+        username = request.json.get("username")
+        password = request.json.get("password")
 
     if AuthHandler.login_company(username, password) is False:
-        return render_template('companies/companies_login.html', error="Invalid credentials!")
+        return render_template(
+            "companies/companies_login.html", error="Invalid credentials!"
+        )
 
-    return redirect(url_for('companies_api.dashboard'))
+    return redirect(url_for("companies_api.dashboard"))
 
 
-@bp.get('/company-logout')
+@bp.get("/company-logout")
 def company_logout():
     try:
         AuthHandler.logout_user()
     except:
         pass
-    return redirect(url_for('companies_api.get_company_login_form'))
+    return redirect(url_for("companies_api.get_company_login_form"))
 
 
-@bp.get('/dashboard')
+@bp.get("/dashboard")
 @require_company_login
 def dashboard(company_user):
     if not company_user.user.accepted_terms:
-        return render_template('companies/terms_conditions.html', user=company_user.user)
+        return render_template(
+            "companies/terms_conditions.html", user=company_user.user
+        )
+
+    now = datetime.now()
+    today = now.strftime("%d %b %Y, %a")
 
     if company_user.company.cvs_access:
         event = EventsFinder.get_default_event()
-        today = datetime.now()
-        cvs_access_start = datetime.strptime(event.cvs_access_start, '%d %b %Y, %a')
-        cvs_access_end = datetime.strptime(event.cvs_access_end, '%d %b %Y, %a')
-        if today < cvs_access_start or today > cvs_access_end:
+        cvs_access_start = datetime.strptime(event.cvs_access_start, "%d %b %Y, %a")
+        cvs_access_end = datetime.strptime(event.cvs_access_end, "%d %b %Y, %a")
+        if now < cvs_access_start or now > cvs_access_end:
             cvs_enabled = False
         else:
             cvs_enabled = True
@@ -68,28 +74,36 @@ def dashboard(company_user):
     auctions = []
     now = datetime.utcnow()
     for company_auction in company_auctions:
-        end = datetime.strptime(company_auction.closing_date + " " + company_auction.closing_time,'%d %b %Y, %a %H:%M')
+        end = datetime.strptime(
+            company_auction.closing_date + " " + company_auction.closing_time,
+            "%d %b %Y, %a %H:%M",
+        )
         auction = company_auction._asdict()
         auction["is_open"] = True if now < end else False
         auctions.append(auction)
 
     company_logo = CompaniesHandler.find_image(company_user.company.name)
 
-    job_fair = False
-    activity_types = []
-    for activity in ActivitiesFinder.get_current_company_activities(company_user.company):
-        if (activity.activity_type not in activity_types) and (activity.activity_type.name not in ['Job Fair','Job Fair Booth']):
-            activity_types.append(activity.activity_type)
+    activities = []
+    for activity in ActivitiesFinder.get_current_company_activities(
+        company_user.company
+    ):
+        if activity.day == today:
+            activities.append(activity)
 
-        if (activity.activity_type.name in ['Job Fair','Job Fair Booth']):
-            job_fair = True
+    return render_template(
+        "companies/dashboard.html",
+        auctions=auctions,
+        company_logo=company_logo,
+        activities=activities,
+        user=company_user,
+        cvs_enabled=cvs_enabled,
+    )
 
-    return render_template('companies/dashboard.html', auctions=auctions, job_fair=job_fair, company_logo=company_logo, activity_types=activity_types, user=company_user, cvs_enabled=cvs_enabled)
 
-
-@bp.post('/dashboard')
+@bp.post("/dashboard")
 @require_company_login
 def accept_terms(company_user):
     UsersHandler.update_user(user=company_user.user, accepted_terms=True)
 
-    return redirect(url_for('companies_api.dashboard'))
+    return redirect(url_for("companies_api.dashboard"))

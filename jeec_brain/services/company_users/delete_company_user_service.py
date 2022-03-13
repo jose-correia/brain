@@ -2,8 +2,7 @@ from jeec_brain.models.company_users import CompanyUsers
 from jeec_brain.database import db
 
 
-class DeleteCompanyUserService():
-
+class DeleteCompanyUserService:
     def __init__(self, company_user: CompanyUsers):
         self.company_user = company_user
 

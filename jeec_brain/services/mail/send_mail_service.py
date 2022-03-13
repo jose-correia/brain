@@ -1,7 +1,8 @@
 from typing import List
 from flask import current_app
 
-class SendMailService():
+
+class SendMailService:
     def __init__(self, recipients, subject, content=""):
         self.subject = subject
         self.content = content
@@ -9,7 +10,9 @@ class SendMailService():
 
     def call(self):
         try:
-            current_app.mail.send_message(subject=self.subject, recipients=self.recipients, html=self.content)
+            current_app.mail.send_message(
+                subject=self.subject, recipients=self.recipients, html=self.content
+            )
             return True
         except:
             return False

@@ -1,8 +1,7 @@
 from jeec_brain.models.activities_tags import ActivitiesTags
 
 
-class DeleteActivityTagService():
-
+class DeleteActivityTagService:
     def __init__(self, activity_tag: ActivitiesTags):
         self.activity_tag = activity_tag
 

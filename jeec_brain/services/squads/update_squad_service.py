@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.squads import Squads
 
 
-class UpdateSquadService():
-    
+class UpdateSquadService:
     def __init__(self, squad: Squads, kwargs: Dict):
         self.squad = squad
         self.kwargs = kwargs
