@@ -13,7 +13,7 @@ class DeleteChannelService:
         }
 
         try:
-            admin = requests.post(url, data=json.dumps(payload))
+            admin = requests.post(url, json=payload)
         except:
             self.auth_token = None
             self.user_id = None
@@ -31,7 +31,7 @@ class DeleteChannelService:
         payload = {"roomId": self.id}
 
         try:
-            result = requests.post(url, data=json.dumps(payload), headers=headers)
+            result = requests.post(url, json=payload, headers=headers)
         except:
             return False
 

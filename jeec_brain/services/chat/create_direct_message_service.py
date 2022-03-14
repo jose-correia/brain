@@ -10,7 +10,7 @@ class CreateDirectMessageService:
         payload = {"user": user_sender.username, "password": user_sender.password}
 
         try:
-            user = requests.post(url, data=json.dumps(payload))
+            user = requests.post(url, json=payload)
         except:
             self.auth_token = None
             self.user_id = None
@@ -28,7 +28,7 @@ class CreateDirectMessageService:
         payload = {"username": self.receiver_username}
 
         try:
-            room = requests.post(url, data=json.dumps(payload), headers=headers)
+            room = requests.post(url, json=payload, headers=headers)
         except:
             return None
 

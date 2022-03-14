@@ -13,7 +13,7 @@ class LoginChatUserService:
         payload = {"user": self.username, "password": self.password}
 
         try:
-            user = requests.post(url, data=json.dumps(payload))
+            user = requests.post(url, json=payload)
         except:
             return None
 

@@ -21,7 +21,7 @@ class CreateChannelService:
         }
 
         try:
-            admin = requests.post(url, data=json.dumps(payload))
+            admin = requests.post(url, json=payload)
         except:
             self.auth_token = None
             self.user_id = None
@@ -39,7 +39,7 @@ class CreateChannelService:
         payload = {"name": self.name, "members": self.members}
 
         try:
-            channel = requests.post(url, data=json.dumps(payload), headers=headers)
+            channel = requests.post(url, json=payload, headers=headers)
         except Exception as e:
             logger.warning(e)
             return None, None
@@ -52,7 +52,7 @@ class CreateChannelService:
         payload = {"roomId": channel.json()["channel"]["_id"], "joinCode": joinCode}
 
         try:
-            channel = requests.post(url, data=json.dumps(payload), headers=headers)
+            channel = requests.post(url, json=payload, headers=headers)
         except:
             return None, None
 

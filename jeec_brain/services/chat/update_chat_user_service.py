@@ -15,7 +15,7 @@ class UpdateChatUserService:
         }
 
         try:
-            admin = requests.post(url, data=json.dumps(payload))
+            admin = requests.post(url, json=payload)
         except:
             self.auth_token = None
             self.user_id = None
@@ -44,9 +44,7 @@ class UpdateChatUserService:
         try:
             user = requests.post(
                 url,
-                data=json.dumps(
-                    {"userId": user.json()["user"]["_id"], "data": self.kwargs}
-                ),
+                json={"userId": user.json()["user"]["_id"], "data": self.kwargs},
                 headers=headers,
             )
         except:
