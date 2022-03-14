@@ -15,7 +15,7 @@ class CreateChatUserService:
         }
 
         try:
-            admin = requests.post(url, data=json.dumps(payload))
+            admin = requests.post(url, json=payload)
         except:
             self.auth_token = None
             self.user_id = None
@@ -40,7 +40,7 @@ class CreateChatUserService:
 
         try:
             user = requests.post(
-                url, data=json.dumps({**self.kwargs, **payload}), headers=headers
+                url, json={**self.kwargs, **payload}, headers=headers
             )
         except:
             return None

@@ -11,7 +11,7 @@ class JoinChannelService:
         payload = {"user": user.username, "password": user.password}
 
         try:
-            user = requests.post(url, data=json.dumps(payload))
+            user = requests.post(url, json=payload)
         except:
             self.auth_token = None
             self.user_id = None
@@ -29,7 +29,7 @@ class JoinChannelService:
         payload = {"roomId": self.channel_id, "joinCode": self.channel_code}
 
         try:
-            channel = requests.post(url, data=json.dumps(payload), headers=headers)
+            channel = requests.post(url, json=payload, headers=headers)
         except:
             return False
 

@@ -3,9 +3,8 @@ import requests
 import json
 
 
-class GetChannelInfoService:
-    def __init__(self, name):
-        self.name = name
+class DeleteAllChatUsersService:
+    def __init__(self):
         url = Config.ROCKET_CHAT_APP_URL + "api/v1/login"
         payload = {
             "user": Config.ROCKET_CHAT_ADMIN_USERNAME,
@@ -26,15 +25,26 @@ class GetChannelInfoService:
             self.user_id = admin.json()["data"]["userId"]
 
     def call(self):
-        url = Config.ROCKET_CHAT_APP_URL + "api/v1/channels.info?roomName=" + self.name
+        url = Config.ROCKET_CHAT_APP_URL + "api/v1/users.list"
         headers = {"X-Auth-Token": self.auth_token, "X-User-Id": self.user_id}
 
         try:
-            channel = requests.post(url, headers=headers)
+            users = requests.post(url, json=payload, headers=headers)
+            users = users.json()["users"]
         except:
-            return None
+            return False
 
-        if not channel or not channel.json()["success"]:
-            return None
+        for user in users:
+            if not users["username"] == Config.ROCKET_CHAT_ADMIN_USERNAME and "admin" not in user["roles"]:
+                url = Config.ROCKET_CHAT_APP_URL + "api/v1/users.delete"
+                payload = {"username": self.user.username}
 
-        return channel.json()["channel"]
+                try:
+                    result = requests.post(url, json=payload, headers=headers)
+                except:
+                    return False
+
+                if not result or not result.json()["success"]:
+                    return False
+
+        return True
