@@ -43,7 +43,7 @@ class Config(object):
 
     STUDENT_APP_URL = os.environ.get("STUDENT_APP_URL", "https://app.jeec.ist/")
 
-    ROCKET_CHAT_ENABLE = os.environ.get("ROCKET_CHAT_ENABLE", False) == True
+    ROCKET_CHAT_ENABLE = os.environ.get("ROCKET_CHAT_ENABLE", False) == "True"
     ROCKET_CHAT_APP_URL = os.environ.get(
         "ROCKET_CHAT_APP_URL", "https://chat.jeec.ist/"
     )
