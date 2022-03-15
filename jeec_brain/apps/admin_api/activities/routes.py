@@ -719,30 +719,6 @@ def update_activity(path: ActivityPath):
             if company_activity is None:
                 return APIErrorValue("Failed to create company activity").json(500)
 
-            if activity_type.name == "Job Fair":
-                job_fair_booth = ActivityTypesFinder.get_from_name("Job Fair Booth")
-                if not ActivitiesFinder.get_from_parameters(
-                    {"name": company.name + " Booth", "day": day}
-                ):
-                    job_fair_booth_activity = ActivitiesHandler.create_activity(
-                        chat_enabled=Config.ROCKET_CHAT_ENABLE,
-                        name=company.name + " Booth",
-                        description="Visit "
-                        + company.name
-                        + " booth to earn extra points",
-                        activity_type=job_fair_booth,
-                        event=activity.event,
-                        location="Job Fair",
-                        day=day,
-                        time="10:30",
-                        end_time="16:30",
-                        points=40,
-                        quest=False,
-                    )
-                    ActivitiesHandler.add_company_activity(
-                        Config.ROCKET_CHAT_ENABLE, company, job_fair_booth_activity
-                    )
-
     if speakers:
         for name in speakers:
             speaker = SpeakersFinder.get_from_name(name)
