@@ -247,7 +247,7 @@ class StudentsHandler:
             if not referral:
                 return "Failed to redeem code", None
 
-            cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
+            #cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
             redeemer = cls.add_points(redeemer, int(Config.REWARD_REFERRAL))
 
             return None, redeemer
