@@ -445,7 +445,7 @@ def redeem_code(student):  # , body:ReferralCode):
         if(not redeemed_student or redeemed_student.id == student.id):
             return APIErrorValue('Invalid code').json(500)
 
-        error_msg, student = StudentsHandler.redeem_referral(student, redeemed_student)
+        error_msg, student = StudentsHandler.redeem_referral(student, redeemed_student, code)
         if error_msg:
             return APIErrorValue(error_msg).json(500)
 
