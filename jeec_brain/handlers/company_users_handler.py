@@ -36,7 +36,7 @@ class CompanyUsersHandler:
             chat_id = None
 
         user = UsersHandler.create_user(
-            name, username, RolesEnum["company"], email, password, None
+            name, username, RolesEnum["company"], email, password, chat_id
         )
         if not user:
             return None
