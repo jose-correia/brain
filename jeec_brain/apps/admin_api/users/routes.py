@@ -181,7 +181,7 @@ def delete_user(path: UserPath):
         if not company_user:
             return APIErrorValue("Couldnt find user").json(500)
 
-        CompanyUsersHandler.delete_company_user(company_user)
+        CompanyUsersHandler.delete_company_user(Config.ROCKET_CHAT_ENABLE, company_user)
 
     else:
         UsersHandler.delete_user(Config.ROCKET_CHAT_ENABLE, user)
