@@ -43,7 +43,7 @@ class CreateChannelService:
         except Exception as e:
             logger.warning(e)
             return None, None
-        logger.warning(channel.json())
+
         if not channel or not channel.json()["success"]:
             return None, None
 
