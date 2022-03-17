@@ -120,11 +120,12 @@ def create_company():
 
     if "file" in request.files:
         file = request.files["file"]
-        result, msg = CompaniesHandler.upload_image(file, name)
+        if file.filename:
+            result, msg = CompaniesHandler.upload_image(file, name)
 
-        if result == False:
-            CompaniesHandler.delete_company(company)
-            return render_template("admin/companies/add_company.html", error=msg)
+            if result == False:
+                CompaniesHandler.delete_company(company)
+                return render_template("admin/companies/add_company.html", error=msg)
 
     return redirect(url_for("admin_api.companies_dashboard"))
 
@@ -202,16 +203,16 @@ def update_company(path: CompanyPath):
 
     if "file" in request.files:
         file = request.files["file"]
+        if file.filename:
+            result, msg = CompaniesHandler.upload_image(file, name)
 
-        result, msg = CompaniesHandler.upload_image(file, name)
-
-        if result == False:
-            return render_template(
-                "admin/companies/update_company.html",
-                company=updated_company,
-                image=image_path,
-                error=msg,
-            )
+            if result == False:
+                return render_template(
+                    "admin/companies/update_company.html",
+                    company=updated_company,
+                    image=image_path,
+                    error=msg,
+                )
 
     return redirect(url_for("admin_api.companies_dashboard"))
 

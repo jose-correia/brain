@@ -310,13 +310,14 @@ def create_team_member(path: TeamPath):
 
     if "file" in request.files:
         file = request.files["file"]
-        result, msg = TeamsHandler.upload_member_image(file, name)
+        if file.filename:
+            result, msg = TeamsHandler.upload_member_image(file, name)
 
-        if result == False:
-            TeamsHandler.delete_team_member(member)
-            return render_template(
-                "admin/teams/add_team_member.html", team=team, error=msg
-            )
+            if result == False:
+                TeamsHandler.delete_team_member(member)
+                return render_template(
+                    "admin/teams/add_team_member.html", team=team, error=msg
+                )
 
     return redirect(
         url_for(
@@ -394,15 +395,16 @@ def update_team_member(path: TeamMemberPath):
 
     if "file" in request.files:
         file = request.files["file"]
-        result, msg = TeamsHandler.upload_member_image(file, name)
+        if file.filename:
+            result, msg = TeamsHandler.upload_member_image(file, name)
 
-        if result == False:
-            return render_template(
-                "admin/teams/update_team_member.html",
-                member=updated_member,
-                image=image_path,
-                error=msg,
-            )
+            if result == False:
+                return render_template(
+                    "admin/teams/update_team_member.html",
+                    member=updated_member,
+                    image=image_path,
+                    error=msg,
+                )
 
     return redirect(
         url_for(

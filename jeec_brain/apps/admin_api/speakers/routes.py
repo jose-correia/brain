@@ -102,19 +102,21 @@ def create_speaker():
 
     if "speaker_image" in request.files:
         file = request.files["speaker_image"]
-        result, msg = SpeakersHandler.upload_image(file, name)
+        if file.filename:
+            result, msg = SpeakersHandler.upload_image(file, name)
 
-        if result == False:
-            SpeakersHandler.delete_speaker(speaker)
-            return render_template("admin/speakers/add_speaker.html", error=msg)
+            if result == False:
+                SpeakersHandler.delete_speaker(speaker)
+                return render_template("admin/speakers/add_speaker.html", error=msg)
 
     if speaker.company and "company_logo" in request.files:
         file = request.files["company_logo"]
-        result, msg = SpeakersHandler.upload_company_logo(file, company)
+        if file.filename:
+            result, msg = SpeakersHandler.upload_company_logo(file, company)
 
-        if result == False:
-            SpeakersHandler.delete_speaker(speaker)
-            return render_template("admin/speakers/add_speaker.html", error=msg)
+            if result == False:
+                SpeakersHandler.delete_speaker(speaker)
+                return render_template("admin/speakers/add_speaker.html", error=msg)
 
     return redirect(url_for("admin_api.speakers_dashboard"))
 
@@ -199,17 +201,18 @@ def update_speaker(path: SpeakerPath):
 
     if "file" in request.files:
         file = request.files["file"]
+        if file.filename:
 
-        result, msg = SpeakersHandler.upload_image(file, name)
+            result, msg = SpeakersHandler.upload_image(file, name)
 
-        if result == False:
-            return render_template(
-                "admin/speakers/update_speaker.html",
-                speaker=updated_speaker,
-                image=image_path,
-                company_logo=company_logo_path,
-                error=msg,
-            )
+            if result == False:
+                return render_template(
+                    "admin/speakers/update_speaker.html",
+                    speaker=updated_speaker,
+                    image=image_path,
+                    company_logo=company_logo_path,
+                    error=msg,
+                )
 
     # Handle Speaker's Company image ---------------------------
     if old_company_name != company:
@@ -219,16 +222,17 @@ def update_speaker(path: SpeakerPath):
 
     if updated_speaker.company and "company_logo" in request.files:
         file = request.files["company_logo"]
-        result, msg = SpeakersHandler.upload_company_logo(file, company)
+        if file.filename:
+            result, msg = SpeakersHandler.upload_company_logo(file, company)
 
-        if result == False:
-            return render_template(
-                "admin/speakers/update_speaker.html",
-                speaker=updated_speaker,
-                image=image_path,
-                company_logo=company_logo_path,
-                error=msg,
-            )
+            if result == False:
+                return render_template(
+                    "admin/speakers/update_speaker.html",
+                    speaker=updated_speaker,
+                    image=image_path,
+                    company_logo=company_logo_path,
+                    error=msg,
+                )
 
     return redirect(url_for("admin_api.speakers_dashboard"))
 
