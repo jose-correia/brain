@@ -43,7 +43,7 @@ class CompaniesHandler:
 
             return UpdateCompanyService(
                 company=company,
-                kwargs={**kwargs, **{"chat_id": None, "chat_code": None}},
+                kwargs={**kwargs, **{"chat_id": chat_id, "chat_code": chat_code}},
             ).call()
 
         return UpdateCompanyService(company=company, kwargs=kwargs).call()
