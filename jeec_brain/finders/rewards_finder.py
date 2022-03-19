@@ -7,6 +7,10 @@ class RewardsFinder:
     @classmethod
     def get_reward_from_external_id(cls, external_id):
         return Rewards.query.filter_by(external_id=external_id).first()
+    
+    @classmethod
+    def get_reward_from_id(cls, id):
+        return Rewards.query.filter_by(id=id).first()
 
     @classmethod
     def get_all_rewards(cls):
