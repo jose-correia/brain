@@ -201,29 +201,25 @@ def get_prizes():
     levels = LevelsFinder.get_all_levels()
     event = EventsFinder.get_default_event()
     squad_rewards = RewardsFinder.get_all_squad_rewards()
-
+    level_reward = activity_reward = daily_squad_reward = None
+    
     for level in levels:
         if level.reward_id is not None:
-            level_reward = RewardsFinder.get_rewards_from_parameters(
-                {"id": level.reward_id}
-            )
+            level_reward = RewardsFinder.get_reward_from_id(level.reward_id)
+            break
 
     for activity in event.activities:
         if activity.reward_id is not None:
-            activity_reward = RewardsFinder.get_rewards_from_parameters(
-                {"id": activity.reward_id}
-            )
+            activity_reward = RewardsFinder.get_reward_from_id(activity.reward_id)
             break
 
     for squad_reward in squad_rewards:
         if squad_reward.reward_id is not None:
-            daily_squad_reward = RewardsFinder.get_rewards_from_parameters(
-                {"id": squad_reward.reward_id}
-            )
+            daily_squad_reward = RewardsFinder.get_reward_from_id(squad_reward.reward_id)
             break
 
     return WebsiteRewardsValue(
-        jeecpot_rewards[0], level_reward[0], activity_reward[0], daily_squad_reward[0]
+        jeecpot_rewards[0], level_reward, activity_reward, daily_squad_reward
     ).json(200)
 
 
