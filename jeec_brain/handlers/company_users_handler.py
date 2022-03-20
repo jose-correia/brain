@@ -49,7 +49,7 @@ class CompanyUsersHandler:
             if not UsersHandler.join_channel(
                 company_user.user, company.chat_id, company.chat_code
             ):
-                CompanyUsersHandler.delete_company_user(company_user)
+                CompanyUsersHandler.delete_company_user(chat_enabled, company_user)
                 return None
 
             for activity in company_user.company.activities:
