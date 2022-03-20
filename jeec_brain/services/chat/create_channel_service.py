@@ -46,7 +46,7 @@ class CreateChannelService:
         try:
             channel = requests.post(url, json=payload, headers=headers)
         except Exception as e:
-            logger.warning(e)
+            logger.error(e)
             return None, None
 
         if not channel or not channel.json()["success"]:

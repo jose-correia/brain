@@ -1,9 +1,9 @@
-import logging
 import os
 from flask import current_app
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,13 +16,16 @@ class UploadImageService(object):
 
     def call(self):
         if not self.file or self.file.filename == "":
+            logger.error("No file selected for uploading")
             return False, "No file selected for uploading"
 
         if not self.__allowed_image(self.file.filename):
+            logger.error(f"{self.file.filename} extension not allowed")
             return False, "File extension is not allowed"
 
         size_limit = current_app.config["MAX_IMG_SIZE"]
         if not self.__allowed_size(self.file, size_limit):
+            logger.error(f"{self.file.filename} size must be under {size_limit/1000} kB")
             error = f"File size must be under {size_limit/1000} kB"
             return False, error
 
@@ -42,7 +45,7 @@ class UploadImageService(object):
             return True, None
 
         except Exception as e:
-            logger.error(e)
+            logger.error(f"Image upload failed, {e}")
             return False, "Image upload failed"
 
     def __allowed_image(self, filename):

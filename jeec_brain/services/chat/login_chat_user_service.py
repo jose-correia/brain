@@ -2,6 +2,9 @@ from config import Config
 import requests
 import json
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class LoginChatUserService:
     def __init__(self, username, password):
@@ -14,7 +17,8 @@ class LoginChatUserService:
 
         try:
             user = requests.post(url, json=payload)
-        except:
+        except Exception as e:
+            logger.error(e)
             return None
 
         if not user or not user.json()["status"] == "success":

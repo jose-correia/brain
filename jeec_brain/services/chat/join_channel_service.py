@@ -2,6 +2,9 @@ from config import Config
 import requests
 import json
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class JoinChannelService:
     def __init__(self, user, channel_id, channel_code):
@@ -30,7 +33,8 @@ class JoinChannelService:
 
         try:
             channel = requests.post(url, json=payload, headers=headers)
-        except:
+        except Exception as e:
+            logger.exception(e)
             return False
 
         if not channel or not channel.json()["success"]:

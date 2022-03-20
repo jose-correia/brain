@@ -19,8 +19,8 @@ class UpdateActivityService:
             if self.activity not in self.activity_type.activities:
                 self.activity_type.activities.append(update_result)
                 self.activity_type.save()
-        except Exception:
-            current_app.logger.exception("Failed to add new activity to type")
+        except Exception as e:
+            current_app.logger.exception("Failed to add new activity to type. " + str(e))
             return None
 
         return update_result

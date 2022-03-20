@@ -14,7 +14,8 @@ class DeleteImageService(object):
         try:
             os.remove(os.path.join(current_app.root_path, self.folder, self.filename))
             return True
-        except Exception:
+        except Exception as e:
+            logger.error(e)
             pass
 
         return False

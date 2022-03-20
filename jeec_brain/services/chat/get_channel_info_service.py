@@ -2,6 +2,9 @@ from config import Config
 import requests
 import json
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class GetChannelInfoService:
     def __init__(self, name):
@@ -31,7 +34,8 @@ class GetChannelInfoService:
 
         try:
             channel = requests.post(url, headers=headers)
-        except:
+        except Exception as e:
+            logger.error(e)
             return None
 
         if not channel or not channel.json()["success"]:
