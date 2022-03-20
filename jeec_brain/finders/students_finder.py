@@ -66,12 +66,13 @@ class StudentsFinder:
                 Users.username,
                 Users.email,
                 Students.linkedin_url,
-                Students.level,
+                Levels.value,
                 Students.daily_points,
                 Students.total_points,
                 Students.uploaded_cv,
-                Students.squad,
+                Squads.name,
                 Students.external_id,
+                Students.id,
             )
             .all()
         )
@@ -96,12 +97,13 @@ class StudentsFinder:
                 Users.username,
                 Users.email,
                 Students.linkedin_url,
-                Students.level,
+                Levels.value,
                 Students.daily_points,
                 Students.total_points,
                 Students.uploaded_cv,
-                Students.squad,
+                Squads.name,
                 Students.external_id,
+                Students.id,
             )
             .all()
         )

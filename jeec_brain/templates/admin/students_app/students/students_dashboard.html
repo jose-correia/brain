@@ -85,6 +85,7 @@
     <table class="striped">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Name</th>
           <th>IST Id</th>
           <th>Email</th>
@@ -99,6 +100,10 @@
       <tbody>
         {% for student in students %}
         <tr>
+          <td>
+            {{ student[10] }}
+          </td>
+
           <td><b>
               {{ student[0] }}
             </b></td>
@@ -140,7 +145,9 @@
           </td>
 
           <td>
+            {% if student[8] %}
             {{ student[8] }}
+            {% endif %}
           </td>
 
           {% if current_user.role.name == 'admin' %}
