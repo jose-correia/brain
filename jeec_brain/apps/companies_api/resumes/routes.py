@@ -34,7 +34,9 @@ def resumes_dashboard(company_user):
             error="Not authorized",
         )
 
-    company_students = StudentsFinder.get_company_students(company_user.company, uploaded_cv=True)
+    company_students = StudentsFinder.get_company_students(
+        company_user.company, uploaded_cv=True
+    )
 
     return render_template(
         "companies/resumes/resumes_dashboard.html",

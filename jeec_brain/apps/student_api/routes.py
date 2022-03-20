@@ -440,16 +440,18 @@ def redeem_code(student):  # , body:ReferralCode):
     # return APIErrorValue("Code submission closed").json(500)
 
     error_msg, student = ActivityCodesHandler.redeem_activity_code(student, code)
-    if(error_msg == "Code not found"):
+    if error_msg == "Code not found":
         redeemed_student = StudentsFinder.get_from_referral_code(code)
-        if(not redeemed_student or redeemed_student.id == student.id):
-            return APIErrorValue('Invalid code').json(500)
+        if not redeemed_student or redeemed_student.id == student.id:
+            return APIErrorValue("Invalid code").json(500)
 
-        error_msg, student = StudentsHandler.redeem_referral(student, redeemed_student, code)
+        error_msg, student = StudentsHandler.redeem_referral(
+            student, redeemed_student, code
+        )
         if error_msg:
             return APIErrorValue(error_msg).json(500)
 
-    elif(error_msg):
+    elif error_msg:
         return APIErrorValue(error_msg).json(500)
 
     return StudentsValue(student, details=True).json(200)

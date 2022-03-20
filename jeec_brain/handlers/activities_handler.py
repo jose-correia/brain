@@ -162,7 +162,10 @@ class ActivitiesHandler:
             student.id, activity.id, code, company_id
         ).call()
         if student_activity:
-            if len(StudentsFinder.get_student_activities_from_student_id(student.id)) == 1:
+            if (
+                len(StudentsFinder.get_student_activities_from_student_id(student.id))
+                == 1
+            ):
                 referral = StudentsFinder.get_referral_redeemer(student)
                 if referral:
                     redeemed = StudentsFinder.get_from_id(referral.redeemed_id)

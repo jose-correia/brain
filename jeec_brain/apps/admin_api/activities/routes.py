@@ -476,7 +476,7 @@ def create_activity():
         chat=(chat == "general"),
         reward_id=reward_id,
         code_work_flow=CodeFlowEnum(code_work_flow),
-        code_per_company=code_per_company
+        code_per_company=code_per_company,
     )
 
     if activity is None:
@@ -668,7 +668,7 @@ def update_activity(path: ActivityPath):
         quest = True
     else:
         quest = False
-    
+
     if code_per_company == "True":
         code_per_company = True
     else:
@@ -700,7 +700,7 @@ def update_activity(path: ActivityPath):
         chat=(chat == "general"),
         reward_id=reward_id,
         code_work_flow=CodeFlowEnum(code_work_flow),
-        code_per_company=code_per_company
+        code_per_company=code_per_company,
     )
 
     if company_activities:

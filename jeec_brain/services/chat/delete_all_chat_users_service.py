@@ -35,7 +35,10 @@ class DeleteAllChatUsersService:
             return False
 
         for user in users:
-            if not users["username"] == Config.ROCKET_CHAT_ADMIN_USERNAME and "admin" not in user["roles"]:
+            if (
+                not users["username"] == Config.ROCKET_CHAT_ADMIN_USERNAME
+                and "admin" not in user["roles"]
+            ):
                 url = Config.ROCKET_CHAT_APP_URL + "api/v1/users.delete"
                 payload = {"username": self.user.username}
 

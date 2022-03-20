@@ -39,9 +39,7 @@ class CreateChatUserService:
         }
 
         try:
-            user = requests.post(
-                url, json={**self.kwargs, **payload}, headers=headers
-            )
+            user = requests.post(url, json={**self.kwargs, **payload}, headers=headers)
         except:
             return None
 

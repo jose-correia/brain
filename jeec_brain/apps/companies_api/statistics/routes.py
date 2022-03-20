@@ -45,6 +45,7 @@ def get_statistics(query, event, company) -> Iterable[Tuple[str, str, str, int]]
         .all()
     )
 
+
 def get_interactions(db_session) -> Iterable[Tuple[str, str, str, int]]:
     return (
         db_session.query(Logs)
@@ -70,7 +71,9 @@ def get_participations(company_id) -> Iterable[Tuple[str, str, str, int]]:
     )
 
 
-def calc_statistics(query_results, group_job_fair: bool) -> Tuple[int, Dict, Dict, Dict, Dict, Dict]:
+def calc_statistics(
+    query_results, group_job_fair: bool
+) -> Tuple[int, Dict, Dict, Dict, Dict, Dict]:
     total_count = 0
     total_by_activity = {}
     total_by_course = {}
@@ -90,34 +93,22 @@ def calc_statistics(query_results, group_job_fair: bool) -> Tuple[int, Dict, Dic
             total_by_activity[activity_name] = interaction_count
 
             count_by_course[activity_name] = {}
-            count_by_course[activity_name][
-                student_course
-            ] = interaction_count
+            count_by_course[activity_name][student_course] = interaction_count
 
             count_by_year[activity_name] = {}
-            count_by_year[activity_name][
-                student_year
-            ] = interaction_count
+            count_by_year[activity_name][student_year] = interaction_count
         else:
             total_by_activity[activity_name] += interaction_count
 
             if student_course not in count_by_course[activity_name]:
-                count_by_course[activity_name][
-                    student_course
-                ] = interaction_count
+                count_by_course[activity_name][student_course] = interaction_count
             else:
-                count_by_course[activity_name][
-                    student_course
-                ] += interaction_count
+                count_by_course[activity_name][student_course] += interaction_count
 
             if student_year not in count_by_year[activity_name]:
-                count_by_year[activity_name][
-                    student_year
-                ] = interaction_count
+                count_by_year[activity_name][student_year] = interaction_count
             else:
-                count_by_year[activity_name][
-                    student_year
-                ] += interaction_count
+                count_by_year[activity_name][student_year] += interaction_count
 
         if student_course not in total_by_course:
             total_by_course[student_course] = interaction_count
@@ -129,7 +120,6 @@ def calc_statistics(query_results, group_job_fair: bool) -> Tuple[int, Dict, Dic
         else:
             total_by_year[student_year] += interaction_count
 
-    
     count_by_course["Total"] = total_by_course
     count_by_year["Total"] = total_by_year
 
@@ -143,14 +133,13 @@ def calc_statistics(query_results, group_job_fair: bool) -> Tuple[int, Dict, Dic
     )
 
 
-def get_data(query, event, company, group_job_fair: bool) -> Tuple[int, Dict, Dict, Dict, Dict, Dict]:
-    query_results = get_statistics(
-        query=query, 
-        event=event, 
-        company=company
-    )
+def get_data(
+    query, event, company, group_job_fair: bool
+) -> Tuple[int, Dict, Dict, Dict, Dict, Dict]:
+    query_results = get_statistics(query=query, event=event, company=company)
 
     return calc_statistics(query_results=query_results, group_job_fair=group_job_fair)
+
 
 @bp.get("/statistics")
 @require_company_login
@@ -163,7 +152,9 @@ def statistics_dashboard(company_user):
     )
     company = company_user.company
 
-    interested_students = StudentsFinder.get_company_students(company_user.company, uploaded_cv=False)
+    interested_students = StudentsFinder.get_company_students(
+        company_user.company, uploaded_cv=False
+    )
     total_interested = len(interested_students)
 
     (
@@ -172,12 +163,12 @@ def statistics_dashboard(company_user):
         total_interactions_by_course,
         total_interactions_by_year,
         interactions_by_course,
-        interactions_by_year
+        interactions_by_year,
     ) = get_data(
         query=get_interactions(db_session=db_session),
         event=event,
         company=company,
-        group_job_fair=False
+        group_job_fair=False,
     )
 
     (
@@ -186,12 +177,12 @@ def statistics_dashboard(company_user):
         total_participations_by_course,
         total_participations_by_year,
         participations_by_course,
-        participations_by_year
+        participations_by_year,
     ) = get_data(
         query=get_participations(company_id=company.id),
         event=event,
         company=company,
-        group_job_fair=False
+        group_job_fair=False,
     )
 
     return render_template(
