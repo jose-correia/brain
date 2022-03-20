@@ -143,19 +143,19 @@ def statistics_dashboard(company_user):
     for participation_type in participations:
         total_participations += participation_type[3]
 
-        if "Booth" in participation_type[0]:
+        if "Job" in participation_type[0]:
             week_day = participation_type[4][-3:]
             participation_type = list(participation_type)
             if week_day == "Mon":
-                participation_type[0] = "Job Fair Monday"
+                participation_type[0] = "Monday Job Fair"
             elif week_day == "Tue":
-                participation_type[0] = "Job Fair Tuesday"
+                participation_type[0] = "Tuesday Job Fair"
             elif week_day == "Wed":
-                participation_type[0] = "Job Fair Wednesday"
+                participation_type[0] = "Wednesday Job Fair"
             elif week_day == "Thu":
-                participation_type[0] = "Job Fair Thursday"
+                participation_type[0] = "Thursday Job Fair"
             elif week_day == "Fri":
-                participation_type[0] = "Job Fair Friday"
+                participation_type[0] = "Friday Job Fair"
 
         if participation_type[0] not in total_participations_by_activity:
             total_participations_by_activity[
