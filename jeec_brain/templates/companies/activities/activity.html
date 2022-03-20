@@ -62,12 +62,6 @@
   </div>
 
   <div class="flexbox-btns" style="margin-top: 50px; justify-content: space-evenly;">
-    {% if chat_url %}
-    <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"
-      style="margin-left: 50px; margin-right: 50px; width: 250px;"><i class="large material-icons left">chat</i>Chat
-      Rooms</button>
-    {% endif %}
-
     <button class="waves-effect lighten-2 btn-large dashboard-btn add-calender-btn" style="width: auto;"><i
         class="large material-icons left">event</i>Add To Calendar</button>
 
@@ -86,12 +80,6 @@
         class="large material-icons left">school</i>Insert Student ID</button>
     {% endif %}
   </div>
-
-  {% if chat_url %}
-  <div id="chat">
-    <iframe id="chat-frame" class="chat-frame" src="{{ chat_url }}" frameborder="0"></iframe>
-  </div>
-  {% endif %}
 
   {% if activity.code_work_flow.value in ['Company generates code, student uses it and its deleted'] %}
   <div id="code" style="height: auto;">

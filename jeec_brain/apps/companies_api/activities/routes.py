@@ -25,17 +25,9 @@ def get_activity_type(company_user, path: ActivityPath):
     if activity is None:
         return APIErrorValue("No activity found").json(404)
 
-    chat_token = UsersHandler.get_chat_user_token(company_user.user)
-    chat_url = (
-        (Config.ROCKET_CHAT_APP_URL + "home?resumeToken=" + chat_token)
-        if chat_token
-        else None
-    )
-
     return render_template(
         "companies/activities/activity.html",
         activity=activity,
-        chat_url=chat_url,
         error=None,
         user=company_user,
     )

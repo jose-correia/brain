@@ -63,6 +63,11 @@
     </form>
     {% endif %}
 
+    <form action="/companies/chat" method="get">
+      <button class="waves-effect red lighten-2 btn-large dashboard-btn"><i
+          class="large material-icons left">chat</i>Chat</button>
+    </form>
+
     <form action="/companies/resumes" method="get">
       <button class="waves-effect red lighten-2 btn-large dashboard-btn" style="width: auto;" {% if not cvs_enabled %}
         disabled {% endif%}><i class="large material-icons left">person_outline</i>Students & CV's</button>
