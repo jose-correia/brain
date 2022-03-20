@@ -55,7 +55,9 @@ class CompanyUsersHandler:
             for activity in company_user.company.activities:
                 if activity.chat_id:
                     if not ActivitiesHandler.join_channel(company_user.user, activity):
-                        CompanyUsersHandler.delete_company_user(chat_enabled, company_user)
+                        CompanyUsersHandler.delete_company_user(
+                            chat_enabled, company_user
+                        )
                         return None
 
         return company_user

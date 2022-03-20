@@ -7,7 +7,9 @@ class StudentActivities(db.Model, ModelMixin):
     __tablename__ = "student_activities"
 
     __table_args__ = (
-        db.UniqueConstraint("student_id", "activity_id", "company_id", name="uix_student_activities"),
+        db.UniqueConstraint(
+            "student_id", "activity_id", "company_id", name="uix_student_activities"
+        ),
     )
 
     student_id = db.Column(

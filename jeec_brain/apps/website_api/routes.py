@@ -202,7 +202,7 @@ def get_prizes():
     event = EventsFinder.get_default_event()
     squad_rewards = RewardsFinder.get_all_squad_rewards()
     level_reward = activity_reward = daily_squad_reward = None
-    
+
     for level in levels:
         if level.reward_id is not None:
             level_reward = RewardsFinder.get_reward_from_id(level.reward_id)
@@ -215,7 +215,9 @@ def get_prizes():
 
     for squad_reward in squad_rewards:
         if squad_reward.reward_id is not None:
-            daily_squad_reward = RewardsFinder.get_reward_from_id(squad_reward.reward_id)
+            daily_squad_reward = RewardsFinder.get_reward_from_id(
+                squad_reward.reward_id
+            )
             break
 
     return WebsiteRewardsValue(

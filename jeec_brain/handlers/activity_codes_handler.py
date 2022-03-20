@@ -61,7 +61,7 @@ class ActivityCodesHandler:
 
         if activity_code.activity.code_work_flow not in [
             CodeFlowEnum.AdminMultiUseCode,
-            CodeFlowEnum.CompanyMultiUseCode
+            CodeFlowEnum.CompanyMultiUseCode,
         ]:
             cls.delete_activity_code(activity_code)
 

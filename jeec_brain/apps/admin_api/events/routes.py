@@ -263,7 +263,7 @@ def update_event(path: EventPath):
     instagram_link = request.form.get("instagram_link")
     show_schedule = request.form.get("show_schedule")
     show_registrations = request.form.get("show_registrations")
-    show_prizes = request.form.get('show_prizes')
+    show_prizes = request.form.get("show_prizes")
 
     if default == "True":
         default = True
@@ -280,7 +280,7 @@ def update_event(path: EventPath):
     else:
         show_registrations = False
 
-    if show_prizes == 'True':
+    if show_prizes == "True":
         show_prizes = True
     else:
         show_prizes = False
