@@ -164,7 +164,6 @@ def statistics_dashboard(company_user):
     company = company_user.company
 
     interested_students = StudentsFinder.get_company_students(company_user.company, uploaded_cv=False)
-    logger.error(interested_students)
     total_interested = len(interested_students)
 
     (
@@ -178,7 +177,7 @@ def statistics_dashboard(company_user):
         query=get_interactions(db_session=db_session),
         event=event,
         company=company,
-        group_job_fair=True
+        group_job_fair=False
     )
 
     (
