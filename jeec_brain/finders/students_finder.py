@@ -122,6 +122,10 @@ class StudentsFinder:
         ).first()
 
     @classmethod
+    def get_student_activities_from_student_id(cls, student_id):
+        return StudentActivities.query.filter_by(student_id=student_id).all()
+
+    @classmethod
     def get_students_from_activity_id(cls, activity_id):
         return (
             Students.query.join(

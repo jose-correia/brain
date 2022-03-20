@@ -24,7 +24,6 @@ class FileHandler(object):
             file.save(os.path.join(current_app.root_path, "storage", filename))
             return True
         except Exception as e:
-            print(e)
             logger.error(e)
             return False
 

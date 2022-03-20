@@ -88,7 +88,7 @@
           <label for="location">Location</label>
         </div>
 
-        <div class="input-field col s1">
+        <div class="input-field col s2">
           <input id="day" name="day" type="text" class="validate">
           <label for="day">Day</label>
         </div>
@@ -220,7 +220,7 @@
           <label>Choose Reward</label>
         </div>
       </div>
-      
+
       <div class="row">
         <div class="input-field col s5">
           <select name="code_work_flow" class="form-control">
@@ -230,8 +230,22 @@
           </select>
           <label>Code workflow</label>
         </div>
+
+        <div class="col">
+          Code uniqueness:
+          <p>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="code_per_company" type="radio" value="True" />
+              <span>Code per company</span>
+            </label>
+            <label>
+              <input class="with-gap" name="code_per_company" type="radio" value="False" checked />
+              <span>Code per activity</span>
+            </label>
+          </p>
+        </div>
       </div>
-        
+
       <button type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
           class="material-icons left">save</i>Save Activity</button>
 

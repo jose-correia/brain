@@ -207,8 +207,7 @@
           </td>
 
           {% if role in ['admin', 'activities_admin'] %}
-          {% if activity.code_work_flow.value in ['Admin generates code, student uses it and its deleted', 'Admin
-          generates code, multiple students use it, admin deletes it'] %}
+          {% if activity.code_work_flow.value in ['Admin generates code, student uses it and its deleted', 'Admin generates code, multiple students use it, admin deletes it'] %}
           <td>
             <button title="Create Code" data-target="modal1" data-name="{{ activity.external_id }}"
               class="waves-effect waves-light green btn-floating modal-trigger code-btn"><i

@@ -12,7 +12,6 @@ def require_student_login(func):
     def check_student_login(*args, **kwargs):
 
         # Check to see if it's in their session
-        print(session["name"] if session.get("name") else "None")
         if current_user.is_anonymous:
             # If it isn't return our access denied message (you can also return a redirect or render_template)
             return Response("Access denied", status=401)

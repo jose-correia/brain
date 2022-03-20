@@ -14,7 +14,6 @@ from jeec_brain.services.mail.send_mail_service import SendMailService
 class CompaniesHandler:
     @classmethod
     def create_company(cls, chat_enabled, **kwargs):
-        print("here", chat_enabled, type(chat_enabled))
         if chat_enabled:
             name = kwargs.get("name", None)
             chat_id, chat_code = CreateChannelService(name).call()

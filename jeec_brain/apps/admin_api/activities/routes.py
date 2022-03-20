@@ -414,6 +414,7 @@ def create_activity():
     reward_id = request.form.get("reward") or None
     moderator = request.form.get("moderator") or None
     code_work_flow = request.form.get("code_work_flow")
+    code_per_company = request.form.get("code_per_company")
 
     if registration_open == "True":
         registration_open = True
@@ -424,6 +425,11 @@ def create_activity():
         quest = True
     else:
         quest = False
+
+    if code_per_company == "True":
+        code_per_company = True
+    else:
+        code_per_company = False
 
     activity_type_external_id = request.form.get("type")
     activity_type = ActivityTypesFinder.get_from_external_id(
@@ -470,6 +476,7 @@ def create_activity():
         chat=(chat == "general"),
         reward_id=reward_id,
         code_work_flow=CodeFlowEnum(code_work_flow),
+        code_per_company=code_per_company
     )
 
     if activity is None:
@@ -647,6 +654,7 @@ def update_activity(path: ActivityPath):
     reward_id = request.form.get("reward") or None
     moderator = request.form.get("moderator") or None
     code_work_flow = request.form.get("code_workflow")
+    code_per_company = request.form.get("code_per_company")
 
     if time > end_time is None:
         return APIErrorValue("Activity starting time after ending time").json(500)
@@ -660,6 +668,11 @@ def update_activity(path: ActivityPath):
         quest = True
     else:
         quest = False
+    
+    if code_per_company == "True":
+        code_per_company = True
+    else:
+        code_per_company = False
 
     chat_type = ActivityChatEnum[chat] if chat else None
 
@@ -687,6 +700,7 @@ def update_activity(path: ActivityPath):
         chat=(chat == "general"),
         reward_id=reward_id,
         code_work_flow=CodeFlowEnum(code_work_flow),
+        code_per_company=code_per_company
     )
 
     if company_activities:
