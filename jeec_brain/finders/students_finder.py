@@ -166,13 +166,12 @@ class StudentsFinder:
         return Students.query.filter_by(uploaded_cv=True).all()
 
     @classmethod
-    def get_company_students(cls, company):
+    def get_company_students(cls, company, uploaded_cv: bool):
         return (
             Students.query.join(
                 StudentCompanies,
                 (StudentCompanies.student_id == Students.id)
                 & (StudentCompanies.company_id == company.id),
-                isouter=True,
             )
             .join(Users, Students.user_id == Users.id)
             .with_entities(
@@ -184,6 +183,6 @@ class StudentsFinder:
                 Users.email,
                 StudentCompanies.company_id,
             )
-            .filter(Students.uploaded_cv == True)
+            .filter((Students.uploaded_cv == uploaded_cv) if uploaded_cv else True)
             .all()
         )
