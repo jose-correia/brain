@@ -9,6 +9,7 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.handlers.users_handler import UsersHandler
+from config import Config
 
 from datetime import datetime
 
@@ -107,3 +108,16 @@ def accept_terms(company_user):
     UsersHandler.update_user(user=company_user.user, accepted_terms=True)
 
     return redirect(url_for("companies_api.dashboard"))
+
+
+@bp.get("/chat")
+@require_company_login
+def chat(company_user):
+    chat_token = UsersHandler.get_chat_user_token(company_user.user)
+    chat_url = (
+        (Config.ROCKET_CHAT_APP_URL + "home?resumeToken=" + chat_token)
+        if chat_token
+        else None
+    )
+
+    return render_template("companies/chat/chat.html", user=company_user, chat_url=chat_url)
