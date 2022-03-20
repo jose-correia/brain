@@ -1,6 +1,9 @@
 import os
 from flask import current_app
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class RenameImageService(object):
     def __init__(self, folder, old_name, new_name):
@@ -28,4 +31,6 @@ class RenameImageService(object):
                 os.rename(old_file, new_file)
 
             return True
+        
+        logger.error(f"{self.folder}/{self.old_name} not found, cant create {self.folder}/{self.new_name}")
         return False

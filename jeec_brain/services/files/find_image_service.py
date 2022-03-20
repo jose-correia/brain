@@ -1,6 +1,9 @@
 import os
 from flask import current_app
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class FindImageService(object):
     def __init__(self, name, folder):
@@ -15,5 +18,6 @@ class FindImageService(object):
                 os.path.join(current_app.root_path, self.folder, image_filename)
             ):
                 return f"/{self.folder}/{image_filename}"
-
+        
+        logger.error(f"{self.folder}/{self.name} not found")
         return None

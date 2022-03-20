@@ -4,6 +4,10 @@ from typing import Dict
 import requests
 import json
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class CreateChatUserService:
     def __init__(self, kwargs: Dict):
@@ -40,7 +44,8 @@ class CreateChatUserService:
 
         try:
             user = requests.post(url, json={**self.kwargs, **payload}, headers=headers)
-        except:
+        except Exception as e:
+            logger.error(e)
             return None
 
         if user is None:
@@ -53,6 +58,7 @@ class CreateChatUserService:
             data = self.kwargs
             return UpdateChatUserService(data.pop("username"), data).call()
         elif not user.json()["success"]:
+            logger.error(user.json())
             return None
 
         return user.json()["user"]["_id"]

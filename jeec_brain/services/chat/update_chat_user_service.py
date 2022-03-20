@@ -3,6 +3,9 @@ from typing import Dict
 import requests
 import json
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class UpdateChatUserService:
     def __init__(self, username, kwargs: Dict):
@@ -33,7 +36,8 @@ class UpdateChatUserService:
 
         try:
             user = requests.get(url + "?username=" + self.username, headers=headers)
-        except:
+        except Exception as e:
+            logger.error(e)
             return None
 
         if not user or not user.json()["success"]:
