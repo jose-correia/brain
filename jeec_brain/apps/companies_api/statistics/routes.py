@@ -143,9 +143,9 @@ def calc_statistics(query_results, group_job_fair: bool) -> Tuple[int, Dict, Dic
     )
 
 
-def get_data(query: Callable, event, company, group_job_fair: bool) -> Tuple[int, Dict, Dict, Dict, Dict, Dict]:
+def get_data(query, event, company, group_job_fair: bool) -> Tuple[int, Dict, Dict, Dict, Dict, Dict]:
     query_results = get_statistics(
-        query=query(), 
+        query=query, 
         event=event, 
         company=company
     )
@@ -175,7 +175,7 @@ def statistics_dashboard(company_user):
         interactions_by_course,
         interactions_by_year
     ) = get_data(
-        query=lambda: get_interactions(db_session=db_session),
+        query=get_interactions(db_session=db_session),
         event=event,
         company=company,
         group_job_fair=True
@@ -189,7 +189,7 @@ def statistics_dashboard(company_user):
         participations_by_course,
         participations_by_year
     ) = get_data(
-        query=lambda: get_participations(company_id=company.id),
+        query=get_participations(company_id=company.id),
         event=event,
         company=company,
         group_job_fair=False
