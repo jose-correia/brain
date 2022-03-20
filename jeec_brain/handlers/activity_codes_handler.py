@@ -34,8 +34,10 @@ class ActivityCodesHandler:
             return "Code not found", student
 
         if activity_code.activity.code_work_flow not in [
-            CodeFlowEnum.AdminCode,
-            CodeFlowEnum.CompanyCode,
+            CodeFlowEnum.AdminOneUseCode,
+            CodeFlowEnum.AdminMultiUseCode,
+            CodeFlowEnum.CompanyOneUseCode,
+            CodeFlowEnum.CompanyMultiUseCode,
         ]:
             return "Invalid code", student
 
@@ -57,10 +59,9 @@ class ActivityCodesHandler:
 
         points = activity_code.activity.points
 
-        if activity_code.activity.activity_type.name not in [
-            "Speaker",
-            "Discussion Panel",
-            "Ceremony",
+        if activity_code.activity.code_work_flow not in [
+            CodeFlowEnum.AdminMultiUseCode,
+            CodeFlowEnum.CompanyMultiUseCode
         ]:
             cls.delete_activity_code(activity_code)
 

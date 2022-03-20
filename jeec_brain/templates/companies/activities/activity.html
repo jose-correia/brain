@@ -46,6 +46,21 @@
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
+  <div style="padding-left: 15vw; padding-right: 15vw;">
+    <div class="activity-basic-info">
+      <div class="activity-location">
+        Location: {{ activity.location }}
+      </div>
+      <div class="activity-time">
+        Time: {{ activity.time }}
+      </div>
+    </div>
+
+    <center class="activity-description">
+      {{ activity.description }}
+    </center>
+  </div>
+
   <div class="flexbox-btns" style="margin-top: 50px; justify-content: space-evenly;">
     {% if chat_url %}
     <button id="chat_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn"

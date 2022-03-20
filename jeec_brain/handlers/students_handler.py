@@ -130,9 +130,9 @@ class StudentsHandler:
         if now > end_game_time:
             return student
 
-        student.daily_points += points
-        student.total_points += points
-        student.squad_points += points
+        student.daily_points += int(points)
+        student.total_points += int(points)
+        student.squad_points += int(points)
 
         while student.total_points > student.level.points:
             level = LevelsFinder.get_level_by_value(student.level.value + 1)
@@ -247,8 +247,9 @@ class StudentsHandler:
             if not referral:
                 return "Failed to redeem code", None
 
-            #cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
             redeemer = cls.add_points(redeemer, int(Config.REWARD_REFERRAL))
+            if len(redeemer.activities) > 0:
+                cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
 
             return None, redeemer
 

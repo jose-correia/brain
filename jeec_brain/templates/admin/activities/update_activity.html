@@ -92,7 +92,7 @@
           <label for="location">Location</label>
         </div>
 
-        <div class="input-field col s1">
+        <div class="input-field col s2">
           <input id="day" name="day" type="text" class="validate" value="{{ activity.day }}">
           <label for="day">Day</label>
         </div>
@@ -249,6 +249,20 @@
             {% endfor %}
           </select>
           <label>Code workflow</label>
+        </div>
+
+        <div class="col">
+          Code uniqueness:
+          <p>
+            <label style="margin-right: 20px;">
+              <input class="with-gap" name="code_per_company" type="radio" value="True" {% if activity.code_per_company is sameas true %} checked {% endif %} />
+              <span>Code per company</span>
+            </label>
+            <label>
+              <input class="with-gap" name="code_per_company" type="radio" value="False" {% if activity.code_per_company is sameas false %} checked {% endif %} />
+              <span>Code per activity</span>
+            </label>
+          </p>
         </div>
       </div>
 

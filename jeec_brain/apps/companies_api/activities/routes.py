@@ -76,7 +76,7 @@ def use_istid(company_user, path: ActivityPath):
             return APIErrorValue("Student not found").json(401)
 
         student_activity = ActivitiesHandler.add_student_activity(
-            student, activity, ist_id
+            student, activity, ist_id, company_user.company
         )
         if student_activity:
             StudentsHandler.add_points(student, activity.points)

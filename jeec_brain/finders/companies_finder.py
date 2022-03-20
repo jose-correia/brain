@@ -103,8 +103,6 @@ class CompaniesFinder:
                 (Companies.id == CompanyActivities.company_id)
                 & (Activities.id == CompanyActivities.activity_id)
                 & (Activities.day == day)
-                & (Activities.activity_type_id == ActivityTypes.id)
-                & (ActivityTypes.name == "Job Fair")
                 & (Activities.event_id == Events.id)
                 & (Events.default == True)
             )

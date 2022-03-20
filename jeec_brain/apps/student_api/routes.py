@@ -698,7 +698,6 @@ def get_partners(student):
     companies = companies + CompaniesFinder.get_chat_companies(
         {"partnership_tier": "bronze"}
     )
-    print(companies)
     return CompaniesValue(companies, False).json(200)
 
 

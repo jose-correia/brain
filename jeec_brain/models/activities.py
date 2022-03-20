@@ -38,6 +38,8 @@ class Activities(db.Model, ModelMixin):
 
     code_work_flow = db.Column(db.Enum(CodeFlowEnum))
 
+    code_per_company = db.Column(db.Boolean, default=False)
+
     zoom_link = db.Column(db.String)
 
     reward_id = db.Column(db.Integer, db.ForeignKey("rewards.id", ondelete="SET NULL"))
