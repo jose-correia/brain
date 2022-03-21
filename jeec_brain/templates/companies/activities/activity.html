@@ -131,179 +131,173 @@
 
   <script type="module">
     import QrScanner from "/static/qr-scanner.min.js";
-    try {
-      QrScanner.WORKER_PATH = '/static/qr-scanner-worker.min.js';
-      const video = document.getElementById('qr-video');
-      const camHasCamera = document.getElementById('cam-has-camera');
+    QrScanner.WORKER_PATH = '/static/qr-scanner-worker.min.js';
+    const video = document.getElementById('qr-video');
+    const camHasCamera = document.getElementById('cam-has-camera');
 
-      // ####### Web Cam Scanning #######
-      QrScanner.hasCamera().then(hasCamera => camHasCamera.textContent = hasCamera);
-      const scanner = new QrScanner(video, result => {
-        scanner.stop();
-        $.post("/companies/activity/{{ activity.external_id.hex }}/istid", { "istid": result }, function (data) {
-          alert(data);
-          scanner.start();
-        }).fail(function (error) {
-          alert(error.responseJSON.error);
-          scanner.start();
-        });
+    // ####### Web Cam Scanning #######
+    QrScanner.hasCamera().then(hasCamera => camHasCamera.textContent = hasCamera);
+    const scanner = new QrScanner(video, result => {
+      scanner.stop();
+      $.post("/companies/activity/{{ activity.external_id.hex }}/istid", { "istid": result }, function (data) {
+        alert(data);
+        scanner.start();
+      }).fail(function (error) {
+        alert(error.responseJSON.error);
+        scanner.start();
+      });
+    });
+
+    $(function () {
+      var activity = {
+        name: "{{activity.name}}",
+        location: "{{activity.location}}",
+        registration_link: "{{activity.registration_link}}",
+        zoom_link: "{{activity.zoom_link}}",
+        time: "{{activity.time}}",
+        registration_open: "{{activity.registration_open}}",
+        day: "{{activity.day}}",
+        end_time: "{{activity.end_time}}",
+        external_id: "{{activity.external_id.hex}}"
+      }
+
+
+      $("#code").hide();
+      $("#scanner").hide();
+      $("#istid").hide();
+      scanner.stop();
+
+      $("#qrcode_btn").click(function () {
+        $("#code").hide();
+        $("#scanner").show();
+        $("#istid").hide();
+        $(".activity_info").hide();
+        scanner.start();
       });
 
-      $(function () {
-        var activity = {
-          name: "{{activity.name}}",
-          location: "{{activity.location}}",
-          registration_link: "{{activity.registration_link}}",
-          zoom_link: "{{activity.zoom_link}}",
-          time: "{{activity.time}}",
-          registration_open: "{{activity.registration_open}}",
-          day: "{{activity.day}}",
-          end_time: "{{activity.end_time}}",
-          external_id: "{{activity.external_id.hex}}"
-        }
-
-
-        $("#code").hide();
+      $("#code_btn").click(function () {
+        $("#code").show();
         $("#scanner").hide();
         $("#istid").hide();
+        $(".activity_info").show();
         scanner.stop();
+      });
 
-        $("#qrcode_btn").click(function () {
-          $("#code").hide();
-          $("#scanner").show();
-          $("#istid").hide();
-          $(".activity_info").hide();
-          scanner.start();
-        });
+      $("#istid_btn").click(function () {
+        $("#code").hide();
+        $("#scanner").hide();
+        $("#istid").show();
+        $(".activity_info").show();
+        scanner.stop();
+      });
 
-        $("#code_btn").click(function () {
-          $("#code").show();
-          $("#scanner").hide();
-          $("#istid").hide();
-          $(".activity_info").show();
-          scanner.stop();
-        });
-
-        $("#istid_btn").click(function () {
-          $("#code").hide();
-          $("#scanner").hide();
-          $("#istid").show();
-          $(".activity_info").show();
-          scanner.stop();
-        });
-
-        $("#code-generate").click(function () {
-          $.post("/companies/activity/" + activity.external_id + "/code", function (data) {
-            var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
-            $('#code-input').val(code);
-          });
-        });
-
-        $("#istid-submit").click(function () {
-          let ist_id = $("#istid-input").val();
-          $.post("/companies/activity/" + activity.external_id + "/istid", { "istid": ist_id }, function (data) {
-            alert(data);
-          }).fail(function (error) {
-            alert(error.responseJSON.error);
-          });
-        });
-
-        $("#copy").click(function () {
-          var code = $("#code-input");
-          code.select();
-          document.execCommand("copy");
-        });
-
-        $(".add-calender-btn").click(function () {
-          var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
-          url = url + "&text=" + activity.name;
-          url = url + "&ctz=" + "Europe/Lisbon";
-          url = url + "&location=" + activity.location;
-          url = url + "&dates=" + get_date(activity);
-          url =
-            url +
-            "&sprop=website:" +
-            activity.registration_link +
-            "&sprop=name:" +
-            activity.name;
-
-          if (activity.zoom_link) {
-            url =
-              url +
-              "&details=" +
-              "Zoom Link: " +
-              activity.zoom_link;
-          }
-
-          var date = new Date();
-
-          if (
-            date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
-          ) {
-            url = url + "&crm=" + "BUSY"; //busy
-          } else if (!activity.registration_open) {
-            url = url + "&crm=" + "BLOCKING"; //blocking
-          } else {
-            url = url + "&crm=" + "AVAILABLE"; //available
-          }
-
-          var win = window.open(url, '_blank');
-          win.focus();
+      $("#code-generate").click(function () {
+        $.post("/companies/activity/" + activity.external_id + "/code", function (data) {
+          var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
+          $('#code-input').val(code);
         });
       });
 
-      function get_date(activity) {
-        var start_date = new Date(
-          activity.day.substring(0, 11) + " " + activity.time + ":00"
-        );
-        var end_date = new Date(
-          activity.day.substring(0, 11) +
-          " " +
-          activity.end_time +
-          ":00"
-        );
+      $("#istid-submit").click(function () {
+        let ist_id = $("#istid-input").val();
+        $.post("/companies/activity/" + activity.external_id + "/istid", { "istid": ist_id }, function (data) {
+          alert(data);
+        }).fail(function (error) {
+          alert(error.responseJSON.error);
+        });
+      });
 
-        start_date =
-          start_date.getFullYear().toString() +
-          (start_date.getMonth() + 1 < 10
-            ? "0" + (start_date.getMonth() + 1).toString()
-            : (start_date.getMonth() + 1).toString()) +
-          (start_date.getDate() < 10
-            ? "0" + (start_date.getDate()).toString()
-            : (start_date.getDate()).toString()) +
-          "T" +
-          (start_date.getHours() < 10
-            ? "0" + start_date.getHours()
-            : start_date.getHours()) +
-          (start_date.getMinutes() < 10
-            ? "0" + start_date.getMinutes()
-            : start_date.getMinutes()) +
-          "00";
+      $("#copy").click(function () {
+        var code = $("#code-input");
+        code.select();
+        document.execCommand("copy");
+      });
 
-        end_date =
-          end_date.getFullYear().toString() +
-          (end_date.getMonth() + 1 < 10
-            ? "0" + (end_date.getMonth() + 1).toString()
-            : (end_date.getMonth() + 1).toString()) +
-          (end_date.getDate() < 10
-            ? "0" + (end_date.getDate()).toString()
-            : (end_date.getDate()).toString()) +
-          "T" +
-          (end_date.getHours() < 10
-            ? "0" + end_date.getHours()
-            : end_date.getHours()) +
-          (end_date.getMinutes() < 10
-            ? "0" + end_date.getMinutes()
-            : end_date.getMinutes()) +
-          "00";
+      $(".add-calender-btn").click(function () {
+        var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+        url = url + "&text=" + activity.name;
+        url = url + "&ctz=" + "Europe/Lisbon";
+        url = url + "&location=" + activity.location;
+        url = url + "&dates=" + get_date(activity);
+        url =
+          url +
+          "&sprop=website:" +
+          activity.registration_link +
+          "&sprop=name:" +
+          activity.name;
 
-        return start_date + "/" + end_date;
-      };
-    } catch (e) {
-      alert(e)
-    }
+        if (activity.zoom_link) {
+          url =
+            url +
+            "&details=" +
+            "Zoom Link: " +
+            activity.zoom_link;
+        }
 
+        var date = new Date();
 
+        if (
+          date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
+        ) {
+          url = url + "&crm=" + "BUSY"; //busy
+        } else if (!activity.registration_open) {
+          url = url + "&crm=" + "BLOCKING"; //blocking
+        } else {
+          url = url + "&crm=" + "AVAILABLE"; //available
+        }
+
+        var win = window.open(url, '_blank');
+        win.focus();
+      });
+    });
+
+    function get_date(activity) {
+      var start_date = new Date(
+        activity.day.substring(0, 11) + " " + activity.time + ":00"
+      );
+      var end_date = new Date(
+        activity.day.substring(0, 11) +
+        " " +
+        activity.end_time +
+        ":00"
+      );
+
+      start_date =
+        start_date.getFullYear().toString() +
+        (start_date.getMonth() + 1 < 10
+          ? "0" + (start_date.getMonth() + 1).toString()
+          : (start_date.getMonth() + 1).toString()) +
+        (start_date.getDate() < 10
+          ? "0" + (start_date.getDate()).toString()
+          : (start_date.getDate()).toString()) +
+        "T" +
+        (start_date.getHours() < 10
+          ? "0" + start_date.getHours()
+          : start_date.getHours()) +
+        (start_date.getMinutes() < 10
+          ? "0" + start_date.getMinutes()
+          : start_date.getMinutes()) +
+        "00";
+
+      end_date =
+        end_date.getFullYear().toString() +
+        (end_date.getMonth() + 1 < 10
+          ? "0" + (end_date.getMonth() + 1).toString()
+          : (end_date.getMonth() + 1).toString()) +
+        (end_date.getDate() < 10
+          ? "0" + (end_date.getDate()).toString()
+          : (end_date.getDate()).toString()) +
+        "T" +
+        (end_date.getHours() < 10
+          ? "0" + end_date.getHours()
+          : end_date.getHours()) +
+        (end_date.getMinutes() < 10
+          ? "0" + end_date.getMinutes()
+          : end_date.getMinutes()) +
+        "00";
+
+      return start_date + "/" + end_date;
+    };
   </script>
 </body>
 
