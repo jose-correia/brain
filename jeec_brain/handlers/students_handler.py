@@ -142,8 +142,8 @@ class StudentsHandler:
                 break
 
         if student.squad:
-            student.squad.daily_points += points
-            student.squad.total_points += points
+            student.squad.daily_points += int(points)
+            student.squad.total_points += int(points)
             SquadsHandler.update_squad(
                 student.squad,
                 daily_points=student.squad.daily_points,
