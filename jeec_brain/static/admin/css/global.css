@@ -370,6 +370,10 @@ button:hover {
     margin-left: 30px;
 }
 
+#qr-video {
+    width: 55%;
+}
+
 /* On screens that are 500px wide*/
 @media only screen and (max-width: 500px) {
     button {
@@ -377,6 +381,11 @@ button:hover {
         height: 70px;
         font-size: 18px;
     }
+
+    #qr-video {
+        width: 95%;
+    }
+
 }
 
 .participants-flex {

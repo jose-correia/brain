@@ -46,7 +46,7 @@
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
-  <div style="padding-left: 15vw; padding-right: 15vw;">
+  <div class="activity_info" style="padding-left: 15vw; padding-right: 15vw;">
     <div class="activity-basic-info">
       <div class="activity-location">
         Location: {{ activity.location }}
@@ -78,6 +78,11 @@
     {% if activity.code_work_flow.value in ['Company uses student IST id'] %}
     <button id="istid_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="width: auto;"><i
         class="large material-icons left">school</i>Insert Student ID</button>
+    {% endif %}
+
+    {% if activity.code_work_flow.value in ['Company uses student IST id'] %}
+    <button id="qrcode_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn activity_info"
+      style="width: auto;"><i class="large material-icons left">filter_center_focus</i>Scan student QR Code</button>
     {% endif %}
   </div>
 
@@ -113,9 +118,31 @@
   </div>
   </center>
   </div>
+
+  <center><p id="scanner-code"></p></center>
+  <div id="scanner">
+    <center>
+      <video muted playsinline id="qr-video"></video>
+    </center>
+  </div>
   {% endif %}
 
-  <script>
+  <script type="module">
+    import QrScanner from "/static/qr-scanner.min.js";
+    QrScanner.WORKER_PATH = '/static/qr-scanner-worker.min.js';
+    const video = document.getElementById('qr-video');
+    const camHasCamera = document.getElementById('cam-has-camera');
+
+    // ####### Web Cam Scanning #######
+    QrScanner.hasCamera().then(hasCamera => camHasCamera.textContent = hasCamera);
+    const scanner = new QrScanner(video, result => {
+      $.post("/companies/activity/{{ activity.external_id.hex }}/istid", { "istid": result }, function (data) {
+        $("#scanner-code").text(data)
+      }).fail(function (error) {
+        $("#scanner-code").text(error.responseJSON.error)
+      });
+    });
+
     $(function () {
       var activity = {
         name: "{{activity.name}}",
@@ -130,26 +157,30 @@
       }
 
 
-      $("#chat").hide();
       $("#code").hide();
+      $("#scanner").hide();
       $("#istid").hide();
 
-      $("#chat_btn").click(function () {
+      $("#qrcode_btn").click(function () {
         $("#code").hide();
-        $("#chat").show();
+        $("#scanner").show();
         $("#istid").hide();
+        $(".activity_info").hide();
+        scanner.start();
       });
 
       $("#code_btn").click(function () {
         $("#code").show();
-        $("#chat").hide();
+        $("#scanner").hide();
         $("#istid").hide();
+        $(".activity_info").show();
       });
 
       $("#istid_btn").click(function () {
         $("#code").hide();
-        $("#chat").hide();
+        $("#scanner").hide();
         $("#istid").show();
+        $(".activity_info").show();
       });
 
       $("#code-generate").click(function () {
