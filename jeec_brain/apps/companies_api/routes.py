@@ -9,6 +9,7 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.handlers.companies_handler import CompaniesHandler
 from jeec_brain.handlers.users_handler import UsersHandler
+from jeec_brain.finders.users_finder import UsersFinder
 from config import Config
 
 from datetime import datetime
