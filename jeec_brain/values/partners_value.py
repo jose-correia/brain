@@ -13,10 +13,4 @@ class PartnersValue(ValueComposite):
         self.serialize_with(logo=CompaniesHandler.find_image(partner.name))
         self.serialize_with(team=CompanyUsersValue(partner.users).to_dict())
         self.serialize_with(interest=partner in student.companies)
-
-        activity = ActivitiesFinder.get_next_company_activity(partner)
-        if activity is None:
-            zoom_url = None
-        else:
-            zoom_url = activity.zoom_link
-        self.serialize_with(zoom_url=zoom_url)
+        self.serialize_with(zoom_url=None)

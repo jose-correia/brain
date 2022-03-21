@@ -73,7 +73,7 @@ def use_istid(company_user, path: ActivityPath):
         if student_activity:
             StudentsHandler.add_points(student, activity.points)
 
-            return jsonify("Code redeem successfully")
+            return jsonify(f"Code scanned successfully, for {student.user.name}")
 
         return APIErrorValue("Failed to redeem code").json(500)
 
