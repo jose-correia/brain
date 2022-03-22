@@ -371,7 +371,9 @@ button:hover {
 }
 
 #qr-video {
-    width: 55%;
+    width: 55vw;
+    height: 55vw;
+    object-fit: cover;
 }
 
 /* On screens that are 500px wide*/
@@ -383,7 +385,8 @@ button:hover {
     }
 
     #qr-video {
-        width: 95%;
+        width: 95vw;
+        height: 95vw;
     }
 
 }
