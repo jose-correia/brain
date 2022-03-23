@@ -101,7 +101,7 @@ def add_points(path: StudentPath):
             return APIErrorValue("Student already participated in that activity").json(
                 500
             )
-        if not ActivitiesHandler.add_student_activity(student, activity):
+        if not ActivitiesHandler.add_student_activity(student, activity, "admin"):
             return APIErrorValue("Failed to add activity to student").json(500)
         points = activity.points
     else:
