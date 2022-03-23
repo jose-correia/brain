@@ -40,7 +40,11 @@
   </div>
 
   <img src="{{ company_logo }}" class="company-logo-company-side centered-image">
-
+  {% if user.user.username == "mfidalgo-unbabel" %}
+  <center>
+  <img src="https://c.tenor.com/GryShD35-psAAAAM/troll-face-creepy-smile.gif" alt="">
+  </center>
+  {% endif %}
   <div class="flexbox-btns">
     {% for activity in activities %}
     <form action="/companies/activity/{{activity.external_id.hex}}" method="get">
