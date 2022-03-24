@@ -22,8 +22,9 @@ from datetime import datetime
 
 class ActivityCodesHandler:
     @classmethod
-    def create_activity_code(cls, **kwargs):
-        code = GenerateCodeService().call()
+    def create_activity_code(cls, code=None, **kwargs):
+        if code is None:
+            code = GenerateCodeService().call()
 
         return CreateActivityCodeService(dict(kwargs, code=code)).call()
 

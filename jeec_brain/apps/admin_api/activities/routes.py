@@ -862,9 +862,15 @@ def generate_codes(path: ActivityPath):
     number = request.form.get("number", 1)
     activity_codes = []
 
+    code = request.form.get("code", None)
+    if code is not None and len(code) == 19:
+        code = code.replace("-","")
+    else:
+        code = None
+
     for _ in range(int(number)):
         activity_codes.append(
-            ActivityCodesHandler.create_activity_code(activity_id=activity.id).code
+            ActivityCodesHandler.create_activity_code(code=code, activity_id=activity.id).code
         )
 
     return jsonify(activity_codes)
