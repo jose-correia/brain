@@ -124,7 +124,7 @@ def create_company():
             result, msg = CompaniesHandler.upload_image(file, name)
 
             if result == False:
-                CompaniesHandler.delete_company(company)
+                CompaniesHandler.delete_company(Config.ROCKET_CHAT_ENABLE, company)
                 return render_template("admin/companies/add_company.html", error=msg)
 
     return redirect(url_for("admin_api.companies_dashboard"))

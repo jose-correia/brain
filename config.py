@@ -20,7 +20,7 @@ class Config(object):
 
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16Mb
 
-    ALLOWED_IMAGES = ["png", "svg", "jpg"]
+    ALLOWED_IMAGES = ["png", "svg", "jpg", "jpeg"]
     MAX_IMG_SIZE = 200000
     ALLOWED_EXTENSIONS = ["pdf"]
 
