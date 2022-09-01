@@ -27,7 +27,7 @@ class UsersFinder:
     @classmethod
     def get_all_admin_users(cls):
         return Users.query.filter(
-            (Users.role != "student") & (Users.role != "company")
+            (Users.role == "admin")
         ).all()
 
     @classmethod
@@ -85,4 +85,9 @@ class UsersFinder:
 
     @classmethod
     def get_company_users_from_username(cls, username):
-        return CompanyUsers.query.filter(CompanyUsers.user.username == username).all()
+        search = "%{}%".format(username)
+        return Users.query.filter(
+            Users.username.ilike(search)
+            & (Users.role == "company")
+        ).all()
+
