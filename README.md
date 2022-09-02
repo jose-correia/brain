@@ -142,8 +142,8 @@ The pipeline to deploy to production can be accessed in the following address:
 3. Create a new role in postgresql with all privileges:
     - `sudo -u postgres -i`
     - `psql postgres`
-    - `CREATE ROLE '<your-computer-account-username>' WITH PASSWORD '<password>'`
-    - `GRANT ALL PRIVILEGES ON SCHEMA public TO ROLE '<your-computer-account-username>'`
+    - `CREATE ROLE <your-computer-account-username> WITH PASSWORD '<password>'`
+    - `GRANT ALL PRIVILEGES ON SCHEMA public TO <your-computer-account-username>`
     - `\q`
     - `exit`
 4. Create a database in postgresql for the application:
