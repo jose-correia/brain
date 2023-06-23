@@ -15,12 +15,12 @@ class Activities(db.Model, ModelMixin):
     description = db.Column(db.String(300))
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
-    day = db.Column(db.String(20))
+    day = db.Column(db.String)
     time = db.Column(db.String(10))
     end_time = db.Column(db.String(10))
 
     registration_open = db.Column(db.Boolean, default=False)
-    registration_link = db.Column(db.String(100))
+    registration_link = db.Column(db.String())
 
     activity_type = relationship(
         "ActivityTypes", back_populates="activities", uselist=False
@@ -36,9 +36,10 @@ class Activities(db.Model, ModelMixin):
     chat_code = db.Column(db.String)
     chat_type = db.Column(db.Enum(ActivityChatEnum))
 
-    code_work_flow = db.Column(db.Enum(CodeFlowEnum))
 
-    code_per_company = db.Column(db.Boolean, default=False)
+    prize_attributed = db.Column(db.Boolean, default=False)
+
+    winner = db.Column(db.String)
 
     zoom_link = db.Column(db.String)
 
@@ -58,6 +59,9 @@ class Activities(db.Model, ModelMixin):
 
     points = db.Column(db.Integer())
     quest = db.Column(db.Boolean, default=False)
+    volunteers_id = db.Column(
+        db.ARRAY(db.Integer)
+    )
 
     def __repr__(self):
         return "Type: {}  |  Name: {}".format(self.activity_type.name, self.name)

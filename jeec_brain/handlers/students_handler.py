@@ -1,3 +1,5 @@
+from jeec_brain.handlers.reward_student_handler import StudentRewardsHandler
+from jeec_brain.finders.student_rewards_finder import StudentRewardsFinder
 from config import Config
 
 # SERVICES
@@ -86,7 +88,7 @@ class StudentsHandler:
             chat_id = None
 
         user = UsersHandler.create_user(
-            name, ist_id, RolesEnum["student"], email, password, chat_id
+            name, ist_id, "student", email, password, chat_id
         )
         if not user:
             return None
@@ -119,27 +121,34 @@ class StudentsHandler:
 
     @classmethod
     def add_points(cls, student, points):
+        get_reward = True
         event = EventsFinder.get_default_event()
         if not event.end_game_day or not event.end_game_time:
             return student
 
         now = datetime.utcnow()
         end_game_time = datetime.strptime(
-            event.end_game_day + " " + event.end_game_time, "%d %b %Y, %a %H:%M"
+            event.end_game_day + " " + event.end_game_time, "%d %m %Y, %A %H:%M"
         )
         if now > end_game_time:
             return student
+        
+        if(student.total_points>=student.level.points):
+                get_reward = False
 
         student.daily_points += int(points)
         student.total_points += int(points)
         student.squad_points += int(points)
 
-        while student.total_points > student.level.points:
-            level = LevelsFinder.get_level_by_value(student.level.value + 1)
-            if level is not None:
-                student.level = level
-            else:
-                break
+        if get_reward:
+            while student.total_points >= student.level.points:
+                level = LevelsFinder.get_level_by_value(student.level.value)
+                StudentRewardsHandler.add_reward_student(student=student.id,reward=level.reward_id)
+                level = LevelsFinder.get_level_by_value(student.level.value+1)
+                if level is not None:
+                    student.level = level
+                else:
+                    break
 
         if student.squad:
             student.squad.daily_points += int(points)
@@ -156,7 +165,7 @@ class StudentsHandler:
             total_points=student.total_points,
             squad_points=student.squad_points,
         )
-
+        
     @classmethod
     def add_squad_member(cls, student, squad):
         return cls.update_student(student, squad_id=squad.id)
@@ -248,8 +257,8 @@ class StudentsHandler:
                 return "Failed to redeem code", None
 
             redeemer = cls.add_points(redeemer, int(Config.REWARD_REFERRAL))
-            if len(redeemer.activities) > 0:
-                cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
+           
+            cls.add_points(redeemed, int(Config.REWARD_REFERRAL))
 
             return None, redeemer
 
@@ -313,3 +322,56 @@ class StudentsHandler:
     # @classmethod
     # def upload_student_cv(cls, file, username):
     #     return UploadImageService(file, username, 'static/cv_platform/cvs').call()
+
+    @classmethod
+    def remove_points(cls, student, points):
+        event = EventsFinder.get_default_event()
+        if not event.end_game_day or not event.end_game_time:
+            return student
+
+        now = datetime.utcnow()
+        end_game_time = datetime.strptime(
+            event.end_game_day + " " + event.end_game_time, "%d %m %Y, %A %H:%M"
+        )
+        if now > end_game_time:
+            return student
+
+        student.daily_points -= int(points)
+        student.total_points -= int(points)
+        student.squad_points -= int(points)
+        if(student.total_points<0):
+            return None
+        if(student.daily_points<0):
+            student.daily_points=0
+        if(student.squad_points<0):
+            student.squad_points=0
+        previous_level = LevelsFinder.get_level_by_value(student.level.value - 1)
+        if previous_level != None:
+            while student.total_points < previous_level.points:
+                student.level = previous_level
+                student_reward = StudentRewardsFinder.get_from_student_and_prize(student_id=student.id,reward_id=previous_level.reward_id)
+                StudentRewardsHandler.remove_reward_student(student_reward = student_reward[0])
+                previous_level = LevelsFinder.get_level_by_value(student.level.value - 1)
+                if (previous_level == None):
+                    break
+
+
+        if student.squad:
+            student.squad.daily_points -= int(points)
+            if(student.squad.daily_points<0):
+                student.squad.daily_points=0
+            student.squad.total_points -= int(points)
+            if(student.squad.total_points<0):
+                student.squad.total_points=0
+            SquadsHandler.update_squad(
+                student.squad,
+                daily_points=student.squad.daily_points,
+                total_points=student.squad.total_points,
+            )
+
+        return cls.update_student(
+            student,
+            daily_points=student.daily_points,
+            total_points=student.total_points,
+            squad_points=student.squad_points,
+        )

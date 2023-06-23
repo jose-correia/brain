@@ -7,10 +7,10 @@ class Meals(db.Model, ModelMixin):
     __tablename__ = "meals"
 
     location = db.Column(db.String(100), default="Instituto Superior Técnico")
-    day = db.Column(db.String(20), nullable=False)
+    day = db.Column(db.String(), nullable=False)
     time = db.Column(db.String(10))
 
-    registration_day = db.Column(db.String(20), nullable=False)
+    registration_day = db.Column(db.String(), nullable=False)
     registration_time = db.Column(db.String(10))
 
     type = db.Column(db.Enum(MealTypeEnum), nullable=False)

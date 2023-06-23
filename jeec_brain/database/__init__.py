@@ -54,11 +54,16 @@ def create_tables():
     from jeec_brain.models.student_logins import StudentLogins
     from jeec_brain.models.student_referrals import StudentReferrals
     from jeec_brain.models.student_daily_points import StudentDailyPoints
+    from jeec_brain.models.quests import Quests
 
     # Rewards
     from jeec_brain.models.rewards import Rewards
     from jeec_brain.models.jeecpot_rewards import JeecpotRewards
     from jeec_brain.models.squads_rewards import SquadsRewards
+    from jeec_brain.models.reward_student import StudentRewards
+
+    # Schedule
+    from jeec_brain.models.student_schedule import ScheduleStudent
 
     from jeec_brain.models.logs import Logs
 

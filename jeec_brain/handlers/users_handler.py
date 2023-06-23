@@ -2,6 +2,7 @@
 from jeec_brain.services.users.create_user_service import CreateUserService
 from jeec_brain.services.users.delete_user_service import DeleteUserService
 from jeec_brain.services.users.update_user_service import UpdateUserService
+from jeec_brain.services.users.change_user_password_service import ChangeUserPasswordService
 from jeec_brain.services.users.generate_credentials_service import (
     GenerateCredentialsService,
 )
@@ -80,3 +81,10 @@ class UsersHandler:
     @classmethod
     def create_direct_message(cls, user_sender, user_receiver):
         return CreateDirectMessageService(user_sender, user_receiver).call()
+
+    @classmethod
+    def change_password(cls, user, new_password):
+        if(ChangeUserPasswordService(user).call(new_password)):
+            return True
+        return False
+

@@ -24,6 +24,7 @@ from jeec_brain.services.rewards.delete_squad_reward_service import (
 from jeec_brain.services.files.upload_image_service import UploadImageService
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
+from jeec_brain.services.files.get_file_service import GetFileImage
 
 
 class RewardsHandler:
@@ -48,6 +49,10 @@ class RewardsHandler:
     @staticmethod
     def upload_reward_image(file, reward_name):
         return UploadImageService(file, reward_name, "static/rewards").call()
+    
+    @staticmethod
+    def get_image_reward(reward_name):
+        return GetFileImage(reward_name, "static/rewards").call()
 
     @staticmethod
     def find_reward_image(reward_name):

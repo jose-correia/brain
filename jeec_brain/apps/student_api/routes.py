@@ -1,3 +1,7 @@
+from jeec_brain.finders.activity_types_finder import ActivityTypesFinder
+from jeec_brain.finders.quests_finder import QuestsFinder
+from jeec_brain.handlers.reward_student_handler import StudentRewardsHandler
+from jeec_brain.handlers.rewards_handler import RewardsHandler
 from . import bp
 from flask import (
     current_app,
@@ -6,9 +10,12 @@ from flask import (
     jsonify,
 )
 from config import Config
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import base64
+import json
+from flask import make_response, jsonify
+
 
 # Handlers
 from jeec_brain.apps.auth.handlers.auth_handler import AuthHandler
@@ -19,6 +26,10 @@ from jeec_brain.handlers.squads_handler import SquadsHandler
 from jeec_brain.handlers.tags_handler import TagsHandler
 from jeec_brain.handlers.events_handler import EventsHandler
 from jeec_brain.handlers.file_handler import FileHandler
+from jeec_brain.handlers.schedule_student_handler import ScheduleStudentHandler
+from jeec_brain.handlers.companies_handler import CompaniesHandler
+from jeec_brain.handlers.speakers_handler import SpeakersHandler
+
 
 # Finders
 from jeec_brain.finders.students_finder import StudentsFinder
@@ -30,6 +41,8 @@ from jeec_brain.finders.companies_finder import CompaniesFinder
 from jeec_brain.finders.rewards_finder import RewardsFinder
 from jeec_brain.finders.levels_finder import LevelsFinder
 from jeec_brain.finders.users_finder import UsersFinder
+from jeec_brain.finders.schedule_student_finder import ScheduleStudentFinder
+
 
 # Values
 from jeec_brain.values.api_error_value import APIErrorValue
@@ -51,6 +64,12 @@ from jeec_brain.apps.auth.wrappers import requires_student_auth
 
 from jeec_brain.schemas.student_api.schemas import *
 
+
+def get_time_score(day,time):
+    day_score = int(day[0:2])*60*24
+    hour_score = int(time[0:2])*60
+    minute_score = int(time[3:5])
+    return day_score+hour_score+minute_score
 # Login routes
 @bp.get("/login")
 def login_student():
@@ -468,15 +487,130 @@ def get_activities(student, query: DateQuery):
     event = EventsFinder.get_default_event()
     # date = request.args.get('date', None)
     date = query.date
-
+    now = datetime.utcnow() - timedelta(minutes=15)
+    today = now.strftime("%d %m %Y, %A")
+    hour = now.strftime("%H:%M")
+    now_score = get_time_score(today,hour)
     if date is None:
         activities = event.activities
-    else:
+    elif (date<today):
+        print(40*'*')
+        return [],200
+    elif(date>today):
         activities = ActivitiesFinder.get_from_parameters(
             {"event_id": event.id, "day": date}
         )
+    else:
+        all_activities = ActivitiesFinder.get_from_parameters(
+            {"event_id": event.id, "day": date}
+        )
+        activities=[]
+        for activity in all_activities:
+            activity_score = get_time_score(activity.day,activity.time)
+            if(activity_score>=now_score):
+                activities.append(activity)
 
     return StudentActivitiesValue(activities, student).json(200)
+
+@bp.get("/past-activities", responses={"200": ActivityList})
+@requires_student_auth
+def get_past_activities(student, query: DateQuery):
+    """Check activity list
+    Retrieves a list with the activities
+    <b>Returns:</b>
+        StudentActivitiesValue: List of the activities
+    """
+    event = EventsFinder.get_default_event()
+    # date = request.args.get('date', None)
+    date = query.date
+    now = datetime.utcnow() - timedelta(minutes=15)
+    today = now.strftime("%d %m %Y, %A")
+    hour = now.strftime("%H:%M")
+    now_score = get_time_score(today,hour)
+    if date is None:
+        activities = event.activities
+    elif (date>today):
+        return [],200
+    elif(date<today):
+        activities = ActivitiesFinder.get_from_parameters(
+            {"event_id": event.id, "day": date}
+        )
+    else:
+        all_activities = ActivitiesFinder.get_from_parameters(
+            {"event_id": event.id, "day": date}
+        )
+        activities=[]
+        for activity in all_activities:
+            activity_score = get_time_score(activity.day,activity.time)
+            if(activity_score<now_score):
+                activities.append(activity)
+
+    return StudentActivitiesValue(activities, student).json(200)
+
+@bp.get("/next_activity", responses={"200": ActivityList})
+@requires_student_auth
+def get_next_activity(student):
+
+    """Check activity list
+    Retrieves a list with the activities
+    <b>Returns:</b>
+        StudentActivitiesValue: List of the activities
+    """
+    event = EventsFinder.get_default_event()
+    # date = request.args.get('date', None)
+    today = datetime.utcnow().strftime("%d %m %Y, %A")
+    now = datetime.utcnow().strftime("%H:%M")
+    now_score = get_time_score(today,now)
+    best_score_diff = 1000000000
+    next_activity = None
+    activities = ActivitiesFinder.get_from_parameters({"event_id": event.id})
+        
+    if activities:
+
+        for activity in activities:
+            new_score = get_time_score(activity.day,activity.time)
+            print(new_score)
+            if(new_score-now_score>0 and new_score-now_score<best_score_diff):
+                    next_activity = activity
+                    best_score_diff = new_score-now_score
+
+        if(next_activity==None):
+                return make_response(
+                    jsonify({
+                        "activity":None,
+                        "error":"No more activities",
+                    }))
+        
+             
+        companies = ActivitiesFinder.get_activity_companies(next_activity)
+        speakers = ActivitiesFinder.get_activity_speakers(next_activity)
+        images=[]
+        if companies:
+            for company in companies:
+                images.append(CompaniesHandler.find_image(company.name))
+
+        elif speakers:
+            for speaker in speakers:
+                images.append(SpeakersHandler.find_image(speaker.name))
+        
+        vue_activity={
+            'name':next_activity.name,
+            'start_time':next_activity.time,
+            'end_time':next_activity.end_time,
+            'activity_type':next_activity.activity_type.name,
+            'images':images
+        }
+            
+        return make_response(
+            jsonify({"activity":vue_activity,
+                     "error":""
+            }))
+
+    return make_response(
+            jsonify({"activity":None,
+                     "error":"No activities created"
+            }))
+
 
 
 @bp.get("/quests", responses={"200": ActivityList})
@@ -570,6 +704,37 @@ def add_cv(student):
         if not student.uploaded_cv:
             StudentsHandler.update_student(student, uploaded_cv=True)
             StudentsHandler.add_points(student, int(Config.REWARD_CV))
+            reward = RewardsFinder.get_reward_from_name('Bolinho')
+            StudentRewardsHandler.add_reward_student(student=student.id,reward=reward.id)
+            now = datetime.utcnow()
+            today = now.strftime("%d %m %Y, %A")
+            quests = QuestsFinder.get_all()
+            progress=0
+            total=0
+            for quest in quests:
+                if quest.day == today:
+                    reward = RewardsFinder.get_reward_from_id(quest.reward_id)
+                    if quest.activity_type_id == -1:
+                        list_of_activities_id = quest.activities_id
+                        total = len(list_of_activities_id)
+                        student_list_of_activities = StudentsFinder.get_student_activities_from_student_id(student.id)
+                        activities_id = []
+                        for activity in student_list_of_activities:
+                            activities_id.append(activity.id)
+                        for quest_activity_id in list_of_activities_id:
+                            if(quest_activity_id in activities_id):
+                                progress+=1
+                    else:
+                        activity_type = ActivityTypesFinder.get_from_activity_type_id(quest.activity_type_id)
+                        activities_of_activity_type = ActivitiesFinder.get_all_from_type(activity_type=activity_type)
+                        total = quest.number_of_activities
+                        student_list_of_activities = StudentsFinder.get_student_activities_from_student_id(student.id)
+                        for elem1 in student_list_of_activities:
+                            for elem2 in activities_of_activity_type:
+                                if elem1.activity_id == elem2.id:
+                                    progress += 1  
+                    if progress==total:
+                        StudentRewardsHandler.add_reward_student(student=student.id,reward=reward.id)
 
     else:
         return APIErrorValue("Wrong file extension").json(500)
@@ -585,7 +750,7 @@ def get_cv(student):
         Json: Returns the current student's cv in json
     """
     if not student.uploaded_cv:
-        return APIErrorValue("No CV uploaded").json(404)
+        return "No CV uploaded",200
 
     filename = "cv-" + student.user.username + ".pdf"
 
@@ -850,10 +1015,8 @@ def get_today_squad_reward(student):
     <b>Returns:</b>
         RewardsValue: Information about the reward
     """
-    now = datetime.utcnow().strftime("%d %b %Y, %a")
-
+    now = datetime.utcnow().strftime("%d/%m")
     squad_reward = RewardsFinder.get_squad_reward_from_date(now)
-
     if squad_reward is None:
         return RewardsValue(None).json(200)
 
@@ -980,3 +1143,347 @@ def get_notifications(student):
         notifications["activities"].append(activity.name)
 
     return jsonify(notifications), 200
+
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/get_classes_vue")
+def get_classes_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    
+    ist_id = student.user.username
+    schedule = ScheduleStudentFinder.get_from_student_id(ist_id)
+    
+    error = ''
+    
+    if schedule == None:
+        response = make_response(jsonify(
+        {'classes': '', 'error': 'No classes',
+        }),
+        )
+        return response
+    
+    res = list(eval(schedule.classes))
+
+    
+    classes = []
+    
+    if schedule.showFenix:
+        for classs in res:        
+            new_class = {
+                'id': classs['id'],
+                'start': classs['start'],
+                'end': classs['end'],
+                'text': classs['text'],
+                'backColor': classs['backColor'],
+                'borderColor': classs['borderColor'],  
+                'type': classs['type'],
+            }
+            classes.append(new_class)
+    
+    if schedule.activities != None and schedule.activities != '':
+        res2 = list(eval(schedule.activities))
+        for classs in res2:        
+            new_class = {
+                'id': classs['id'],
+                'start': classs['start'],
+                'end': classs['end'],
+                'text': classs['text'],
+                'backColor': classs['backColor'],
+                'borderColor': classs['borderColor'],  
+                'type': classs['type'],
+            }
+            classes.append(new_class)
+    
+    event = EventsFinder.get_default_event()
+    dates = EventsHandler.get_event_dates(event)
+    vue_dates = []
+    for date in dates:
+        vue_date = date[6:10] + '-' + date[3:5] + '-' + date[0:2]
+        vue_dates.append(vue_date)
+    response = make_response(jsonify(
+        {'classes': classes, 'error': error, 'showFenix': schedule.showFenix, 'dates':vue_dates
+        }),
+    )
+    return response
+
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/add_to_schedule_vue")
+def add_to_schedule_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    
+    ist_id = student.user.username
+    schedule = ScheduleStudentFinder.get_from_student_id(ist_id)
+    
+    activity = ActivitiesFinder.get_from_name(response['activity_name'])
+    if activity is None:
+        return APIErrorValue("Couldnt find activity").json(404)
+    
+    print(activity)
+    
+    activities = list(eval(schedule.activities))
+    
+    for act in activities:
+        if act['text'] == activity.name + ' ' + activity.location:
+            error = ''
+            response = make_response(jsonify(
+                {'error': 'Activity already added',
+                }),
+            )
+            return response
+    
+    activity_color = "#12b0ef"
+    
+    #activity.day-06 03 2023, Monday
+    #activity.time-10:01
+    #activity.end_time-10:01
+    # objetivo:2023-03-06T01:00:00
+    activity_start = activity.day[6] + activity.day[7] + activity.day[8] + activity.day[9] + '-' + activity.day[3] + activity.day[4] + '-' + activity.day[0] + activity.day[1] + 'T' + activity.time[0] + activity.time[1] + ':' + activity.time[3] + activity.time[4] + ':00'                  
+                        
+    activity_end = activity.day[6] + activity.day[7] + activity.day[8] + activity.day[9] + '-' + activity.day[3] + activity.day[4] + '-' + activity.day[0] + activity.day[1] + 'T' + activity.end_time[0] + activity.end_time[1] + ':' + activity.end_time[3] + activity.end_time[4] + ':00' 
+                           
+    new_activity = {
+            'id': activity.id,
+            'start': activity_start,
+            'end': activity_end,
+            'text': activity.name + ' ' + activity.location,
+            'backColor': activity_color,
+            'borderColor': activity_color,  
+            'type': activity.activity_type_id,
+        }
+    
+    activities.append(new_activity)
+    
+    ScheduleStudentHandler.update_schedule_student(schedule, student_id=ist_id, classes=str(schedule.classes), activities=str(activities)) 
+    
+    error = ''
+    response = make_response(jsonify(
+        {'error': error,
+        }),
+    )
+    return response
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/is_activity_in_schedule_vue")
+def is_activity_in_schedule_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    
+    ist_id = student.user.username
+    schedule = ScheduleStudentFinder.get_from_student_id(ist_id)
+    
+    activity = ActivitiesFinder.get_from_name(response['activity_name'])
+    if activity is None:
+        return APIErrorValue("Couldnt find activity").json(404)
+    
+    print(activity)
+    
+    activities = list(eval(schedule.activities))
+    
+    
+    for act in activities:
+        print(act['text'])
+        if act['text'] == activity.name + ' ' + activity.location:
+            response = make_response(jsonify(
+                {'inSchedule': True,
+                }),
+            )
+            return response
+    
+    response = make_response(jsonify(
+            {'inSchedule': False,
+            }),
+        )
+    return response
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/delete_from_schedule_vue")
+def delete_from_schedule_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    
+    ist_id = student.user.username
+    schedule = ScheduleStudentFinder.get_from_student_id(ist_id)
+    
+    activity = ActivitiesFinder.get_from_name(response['activity_name'])
+    if activity is None:
+        return APIErrorValue("Couldnt find activity").json(404)
+    
+    activities = list(eval(schedule.activities))
+
+    flag = 0
+    for act in activities:
+        #print(act)
+        if act['text'] == activity.name + ' ' + activity.location:
+            flag = 1
+    
+    if flag == 0:
+        error = ''
+        response = make_response(jsonify(
+            {'error': 'Activity not exist',
+            }),
+        )
+        return response
+    
+    
+    activity_color = "#12b0ef"
+    
+    #activity.day-06 03 2023, Monday
+    #activity.time-10:01
+    #activity.end_time-10:01
+    # objetivo:2023-03-06T01:00:00
+    activity_start = activity.day[6] + activity.day[7] + activity.day[8] + activity.day[9] + '-' + activity.day[3] + activity.day[4] + '-' + activity.day[0] + activity.day[1] + 'T' + activity.time[0] + activity.time[1] + ':' + activity.time[3] + activity.time[4] + ':00'                  
+                        
+    activity_end = activity.day[6] + activity.day[7] + activity.day[8] + activity.day[9] + '-' + activity.day[3] + activity.day[4] + '-' + activity.day[0] + activity.day[1] + 'T' + activity.end_time[0] + activity.end_time[1] + ':' + activity.end_time[3] + activity.end_time[4] + ':00' 
+                           
+    new_activity = {
+            'id': activity.id,
+            'start': activity_start,
+            'end': activity_end,
+            'text': activity.name + ' ' + activity.location,
+            'backColor': activity_color,
+            'borderColor': activity_color,  
+            'type': activity.activity_type_id,
+        }
+    
+    activities.remove(new_activity)
+    
+    ScheduleStudentHandler.update_schedule_student(schedule, student_id=ist_id, classes=str(schedule.classes), activities=str(activities)) 
+
+    error = ''
+    response = make_response(jsonify(
+        {'error': error,
+        }),
+    )
+    return response
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/istid-externalid")
+def istid_externalid_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    #print(response['student_ist_id'])
+
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    error = ''
+    response = make_response(jsonify(
+        {'error': error, 'external_id': student.external_id
+        }),
+    )
+    return response
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/toggle_classes_vue")
+def toggle_fenix_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    
+    ist_id = student.user.username
+    schedule = ScheduleStudentFinder.get_from_student_id(ist_id)
+    
+    ScheduleStudentHandler.update_schedule_student(schedule, student_id=ist_id, classes=schedule.classes, activities = schedule.activities, showFenix=False) 
+
+    error = ''
+    response = make_response(jsonify(
+        {'error': error,
+        }),
+    )
+    return response
+
+# Activities routes
+# @allow_all_roles
+@bp.post("/showww_classes_vue")
+def showww_fenix_vue():
+    response = json.loads(request.data.decode('utf-8'))
+    
+    student = StudentsFinder.get_from_ist_id(response['student_ist_id'])
+    if student is None:
+        return APIErrorValue("Couldnt find student").json(404)
+    
+    ist_id = student.user.username
+    schedule = ScheduleStudentFinder.get_from_student_id(ist_id)
+    
+    ScheduleStudentHandler.update_schedule_student(schedule, student_id=ist_id, classes=schedule.classes, activities = schedule.activities, showFenix=True) 
+
+    error = ''
+    response = make_response(jsonify(
+        {'error': error,
+        }),
+    )
+    return response
+
+@bp.get("/quest")
+@requires_student_auth
+def get_quest_progress(student):
+    now = datetime.utcnow()
+    today = now.strftime("%d %m %Y, %A")
+    quests = QuestsFinder.get_all()
+    progress=0
+    total=0
+    for quest in quests:
+        if quest.day == today:
+            reward = RewardsFinder.get_reward_from_id(quest.reward_id)
+            image=RewardsHandler.find_reward_image(str(reward.external_id))
+            if quest.activity_type_id == -1:
+                list_of_activities_id = quest.activities_id
+                total = len(list_of_activities_id)
+                student_list_of_activities = StudentsFinder.get_student_activities_from_student_id(student.id)
+                activities_id = []
+                for activity in student_list_of_activities:
+                    activities_id.append(activity.id)
+                for quest_activity_id in list_of_activities_id:
+                    if(quest_activity_id in activities_id):
+                        progress+=1
+                
+            else:
+                activity_type = ActivityTypesFinder.get_from_activity_type_id(quest.activity_type_id)
+                activities_of_activity_type = ActivitiesFinder.get_all_from_type(activity_type=activity_type)
+                total = quest.number_of_activities
+                student_list_of_activities = StudentsFinder.get_student_activities_from_student_id(student.id)
+                for elem1 in student_list_of_activities:
+                    for elem2 in activities_of_activity_type:
+                        if elem1.activity_id == elem2.id:
+                            progress += 1          
+
+            return  make_response(jsonify(
+                {'progress': progress,
+                'total': total,
+                'name':quest.name,
+                'image':image,
+                'description':quest.description,
+                'error':''
+                }),
+            )
+    return  make_response(jsonify(
+            {'progress': '',
+            'total': '',
+            'name':'',
+            'image':'',
+            'error':'No quest found'
+            }),
+        )
+

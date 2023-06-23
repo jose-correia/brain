@@ -25,7 +25,7 @@ def require_student_login(func):
 def require_company_login(func):
     @wraps(func)
     def check_company_login(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role.name is not "company":
+        if not current_user.is_authenticated or current_user.role is not "company":
             return Response("Access denied", status=401)
 
         company_user = UsersFinder.get_company_user_from_user(current_user)
@@ -46,7 +46,7 @@ def allowed_roles(role_names):
 
             user = UsersFinder.get_user_from_username(current_user.username)
 
-            if user is None or current_user.role.name not in role_names:
+            if user is None or current_user.role not in role_names:
                 return Response("Access denied", status=401)
 
             return view_function(*args, **kwargs)
@@ -62,7 +62,7 @@ def allow_all_roles(func):
         if not current_user.is_authenticated:
             return Response("Access denied", status=401)
 
-        if current_user.role.name not in [
+        if current_user.role not in [
             "admin",
             "companies_admin",
             "speakers_admin",
@@ -81,7 +81,6 @@ def requires_client_auth(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         http_auth = request.environ.get("HTTP_AUTHORIZATION")
-
         if http_auth:
             auth_type, data = http_auth.split(" ", 1)
 

@@ -46,8 +46,14 @@ class CompaniesFinder:
             Companies.id == CompanyActivities.company_id,
             CompanyActivities.activity_id == activity.id,
         ).all()
+    #the one below
+    @classmethod 
+    def get_from_company_id(cls, company_id):
+        return Companies.query.filter(
+            Companies.id == company_id
+        ).first()
 
-    @classmethod
+    @classmethod 
     def get_from_company_user_id(cls, company_user_id):
         return Companies.query.filter(
             Companies.id == CompanyUsers.company_id, CompanyUsers.id == company_user_id
@@ -83,12 +89,7 @@ class CompaniesFinder:
     @classmethod
     def get_website_companies(cls, event, kwargs={}):
         return (
-            Companies.query.filter(
-                (Companies.id == CompanyActivities.company_id)
-                & (Activities.id == CompanyActivities.activity_id)
-                & (Activities.event_id == Events.id)
-                & (Events.id == event.id)
-            )
+            Companies.query
             .filter_by(show_in_website=True, **kwargs)
             .all()
         )

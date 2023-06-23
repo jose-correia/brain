@@ -3,7 +3,7 @@ from typing import Callable, Dict, Tuple, Iterable
 import logging
 
 from jeec_brain.apps.companies_api import bp
-from flask import Response, send_file, render_template, send_from_directory
+from flask import Response, send_file, render_template, send_from_directory, jsonify, make_response, request
 from flask_login import current_user
 from jeec_brain.apps.auth.wrappers import require_company_login
 from jeec_brain.handlers.file_handler import FileHandler
@@ -12,6 +12,7 @@ from jeec_brain.finders.users_finder import UsersFinder
 from jeec_brain.finders.events_finder import EventsFinder
 from jeec_brain.finders.activities_finder import ActivitiesFinder
 from jeec_brain.finders.activity_codes_finder import ActivityCodesFinder
+from jeec_brain.finders.companies_finder import CompaniesFinder
 
 from jeec_brain.models.logs import Logs
 from jeec_brain.models.users import Users
@@ -21,6 +22,10 @@ from jeec_brain.models.events import Events
 from jeec_brain.models.company_activities import CompanyActivities
 from jeec_brain.models.student_activities import StudentActivities
 from jeec_brain.database import db_session
+
+import json
+
+from jeec_brain.apps.auth.wrappers import requires_client_auth
 
 from sqlalchemy import func
 
@@ -204,3 +209,74 @@ def statistics_dashboard(company_user):
         company_activities=company_activities,
         error=None,
     )
+
+
+@bp.post("/statistics/vue")
+@requires_client_auth
+def statistics_dashboard_vue():
+    event = EventsFinder.get_default_event()
+
+    print(event)
+
+    company_name = json.loads(request.data.decode('utf-8'))['company']
+
+    company = CompaniesFinder.get_from_name(company_name)
+
+    print(company)
+    company_activities = ActivitiesFinder.get_activities_from_company_and_event(
+        company, event
+    )
+
+    interested_students = StudentsFinder.get_company_students(
+        company, uploaded_cv=False
+    )
+    total_interested = len(interested_students)
+
+    (
+        total_interactions,
+        total_interactions_by_activity,
+        total_interactions_by_course,
+        total_interactions_by_year,
+        interactions_by_course,
+        interactions_by_year,
+    ) = get_data(
+        query=get_interactions(db_session=db_session),
+        event=event,
+        company=company,
+        group_job_fair=False,
+    )
+
+    (
+        total_participations,
+        total_participations_by_activity,
+        total_participations_by_course,
+        total_participations_by_year,
+        participations_by_course,
+        participations_by_year,
+    ) = get_data(
+        query=get_participations(company_id=company.id),
+        event=event,
+        company=company,
+        group_job_fair=False,
+    )
+
+    print(total_interactions_by_activity)
+
+    return make_response(
+        jsonify({
+            "participations_by_course":participations_by_course,
+            "participations_by_year":participations_by_year,
+            "interactions_by_course":interactions_by_course,
+            "interactions_by_year":interactions_by_year,
+            "total_interested":total_interested,
+            "total_participations_by_year":total_participations_by_year,
+            "total_participations":total_participations,
+            "total_participations_by_activity":total_participations_by_activity,
+            "total_participations_by_course":total_participations_by_course,
+            "total_interactions_by_year":total_interactions_by_year,
+            "total_interactions":total_interactions,
+            "total_interactions_by_course":total_interactions_by_course,
+            "total_interactions_by_activity":total_interactions_by_activity,
+            "error":"",
+        })
+        )

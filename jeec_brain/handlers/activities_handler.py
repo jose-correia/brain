@@ -156,7 +156,7 @@ class ActivitiesHandler:
     @classmethod
     def add_student_activity(cls, student, activity, code, company=None):
         company_id = (
-            company.id if (company is not None and activity.code_per_company) else None
+            company.id if (company is not None) else None
         )
         student_activity = AddStudentActivityService(
             student.id, activity.id, code, company_id

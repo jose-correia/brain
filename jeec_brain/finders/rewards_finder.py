@@ -11,6 +11,10 @@ class RewardsFinder:
     @classmethod
     def get_reward_from_id(cls, id):
         return Rewards.query.filter_by(id=id).first()
+    
+    @classmethod
+    def get_reward_from_name(cls, name):
+        return Rewards.query.filter_by(name=name).first()
 
     @classmethod
     def get_all_rewards(cls):
@@ -61,3 +65,5 @@ class RewardsFinder:
             return JeecpotRewards.query.filter_by(**kwargs).all()
         except Exception:
             return None
+        
+    

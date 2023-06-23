@@ -231,3 +231,11 @@ class ActivitiesFinder:
             return Activities.query.filter(Activities.time == activity.time).all()
         else:
             return []
+
+
+    @classmethod
+    def get_all_from_prize_attributed(cls,prize_attributed):
+        return (
+            Activities.query.filter_by(prize_attributed=prize_attributed)
+            .all()
+        )

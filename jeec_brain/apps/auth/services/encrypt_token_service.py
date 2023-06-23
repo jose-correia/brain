@@ -1,7 +1,7 @@
 from jeec_brain.apps.auth.services.encoding_service import PKCS7Encoder
 import base64
-from Crypto import Random
-from Crypto.Cipher import AES
+from Cryptodome import Random
+from Cryptodome.Cipher import AES
 import logging
 
 logger = logging.getLogger(__name__)

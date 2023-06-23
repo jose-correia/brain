@@ -21,8 +21,17 @@ class UsersFinder:
         return Users.get_by(role=role)
 
     @classmethod
+    def get_all_users_by_role(cls, role):
+        return Users.query.filter(
+            (Users.role == role)).all()
+
+    @classmethod
     def get_all(cls):
         return Users.all()
+    
+    @classmethod
+    def get_by_user_id(cls,id):
+        return Users.query.filter((Users.id == id)).first()
 
     @classmethod
     def get_all_admin_users(cls):
@@ -83,6 +92,26 @@ class UsersFinder:
     def get_company_user_from_user(cls, user):
         return CompanyUsers.query.filter_by(user_id=user.id).first()
 
+    # @classmethod
+    # def get_company_users_from_username(cls, username):
+    #     print(username)
+    #     search = "%{}%".format(username)
+    #     users= Users.query.filter(
+    #         Users.username.ilike(search)
+    #     ).all()
+    #     print(users)
+    #     company_users=[]
+    #     for user in users:
+    #         company_user = CompanyUsers.query.filter_by(user_id=user.id).first()
+    #         if company_user!=None:
+    #             company_users.append(company_user)
+    #     print(company_users)
+    #     return company_users
+
     @classmethod
     def get_company_users_from_username(cls, username):
         return CompanyUsers.query.filter(CompanyUsers.user.username == username).all()
+
+    @classmethod
+    def get_company_users_from_id(cls, id):
+        return CompanyUsers.query.filter(CompanyUsers.id == id).first()

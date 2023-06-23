@@ -86,7 +86,6 @@
     </form>
   </div>
 
-  {% if user.role.name in ['admin'] %}
   <div class="flexbox-btns">
     <form action="{{ url_for('admin_api.auctions_dashboard') }}" method="get">
       <button class="waves-effect blue lighten-2 btn-large dashboard-btn"><i
@@ -108,7 +107,6 @@
           class="large material-icons left">lock</i>Users</button>
     </form>
   </div>
-  {% endif %}
 
   <blockquote style="margin-left: 40px;margin-top: 70px;">
     <b>Caution!</b> Any change in this system will instantly affect the <b>JEEC website</b> and <b>JEEC Student App</b>!

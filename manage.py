@@ -54,7 +54,7 @@ def create_user(name, username, role):
     UsersHandler.generate_new_user_credentials(user)
     print(f"Name: {user.name}")
     print(f"Username: {user.username}")
-    print(f"Role: {user.role.name}")
+    print(f"Role: {user.role}")
     print(f"Password: {user.password}")
     exit()
 

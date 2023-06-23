@@ -53,7 +53,7 @@ class StudentsFinder:
 
     @classmethod
     def get_all(cls):
-        return Students.all()
+        return Students.query.order_by(Students.id).all()
 
     @classmethod
     def get_all_simple(cls):

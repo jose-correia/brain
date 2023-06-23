@@ -8,6 +8,7 @@ from jeec_brain.services.files.upload_image_service import UploadImageService
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
 from datetime import datetime, timedelta
+from jeec_brain.services.files.get_file_service import GetFileImage
 
 
 class EventsHandler:
@@ -51,19 +52,23 @@ class EventsHandler:
         return FindImageService(image_name, "static/events/images").call()
 
     @classmethod
+    def find_image_file(cls, image_name):
+        return GetFileImage(image_name, "static/events/images").call()
+
+    @classmethod
     def get_event_dates(cls, event):
         event_dates = []
 
         try:
-            start_date = datetime.strptime(event.start_date, "%d %b %Y, %a")
-            end_date = datetime.strptime(event.end_date, "%d %b %Y, %a")
+            start_date = datetime.strptime(event.start_date, "%d %m %Y, %A")
+            end_date = datetime.strptime(event.end_date, "%d %m %Y, %A")
         except:
             return None
 
         date = start_date
 
         while date <= end_date:
-            event_dates.append(date.strftime("%d %b %Y, %a"))
+            event_dates.append(date.strftime("%d %m %Y, %A"))
             date = date + timedelta(days=1)
 
         return event_dates

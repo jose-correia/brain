@@ -24,3 +24,8 @@ class ActivityTypesFinder:
             return ActivityTypes.query.filter_by(**kwargs).all()
         except Exception:
             return None
+
+    @classmethod
+    def get_from_activity_type_id(cls,activity_type_id):
+    
+        return ActivityTypes.query.filter_by(id = activity_type_id).first()

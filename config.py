@@ -54,8 +54,8 @@ class Config(object):
 
     REWARD_LOGIN = os.environ.get("REWARD_LOGIN", 15)
     REWARD_REFERRAL = os.environ.get("REWARD_REFERRAL", 15)
-    REWARD_LINKEDIN = os.environ.get("REWARD_LINKEDIN", 30)
-    REWARD_CV = os.environ.get("REWARD_CV", 200)
+    REWARD_LINKEDIN = os.environ.get("REWARD_LINKEDIN", 10)
+    REWARD_CV = os.environ.get("REWARD_CV", 30)
 
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = int(os.environ.get("MAIL_PORT") or 25)

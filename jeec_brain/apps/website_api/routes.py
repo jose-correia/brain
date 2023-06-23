@@ -1,6 +1,8 @@
+from jeec_brain.handlers.companies_handler import CompaniesHandler
 from . import bp
-from flask import render_template, current_app, request, redirect, url_for
+from flask import render_template, current_app, request, redirect, url_for, make_response, jsonify
 from copy import deepcopy
+from datetime import datetime
 
 # Finders
 from jeec_brain.finders.activities_finder import ActivitiesFinder
@@ -154,40 +156,62 @@ def get_speakers():
 @bp.get("/teams")
 @requires_client_auth
 def get_teams():
-    search_parameters = request.args
-    name = request.args.get("name")
+    # search_parameters = request.args
+    # name = request.args.get("name")
 
     # handle search bar requests
-    if name is not None:
-        search = name
-        teams_list = TeamsFinder.search_by_name(name)
+    # if name is not None:
+    #     search = name
+    #     teams_list = TeamsFinder.search_by_name(name)
 
     # handle parameter requests
-    elif len(search_parameters) != 0:
-        search_parameters = request.args
-        search = "search name"
-        teams_list = TeamsFinder.get_from_parameters(search_parameters)
+    # elif len(search_parameters) != 0:
+    #     search_parameters = request.args
+    #     search = "search name"
+    #     teams_list = TeamsFinder.get_from_parameters(search_parameters)
 
     # request endpoint with no parameters should return all activities
-    else:
-        search = None
-        event = EventsFinder.get_default_event()
-        teams_list = TeamsFinder.get_from_event_id(event.id)
+    # else:
+    event = EventsFinder.get_default_event()
+    teams_list = TeamsFinder.get_from_event_id(event.id)
 
     if teams_list is None or len(teams_list) == 0:
-        return APIErrorValue("No results found").json(400)
+        return APIErrorValue("No results found").json(204)
 
     teams_list.sort(key=lambda x: x.website_priority, reverse=True)
 
     return TeamsValue(teams_list).json(200)
 
 
+# datetime object containing current date and time
 @bp.get("/event")
-@requires_client_auth
+#@requires_client_auth
 def get_event():
+    
     event = EventsFinder.get_default_event()
+    date = event.start_date
 
-    return EventsValue(event).json(200)
+    now = datetime.now()
+    print(now)
+
+    day_today = now.day
+    hours_today = now.hour
+
+    
+    if (date[3:5] != '03' or date[6:10] != '2023'):
+        time_to_event = '00/00'
+    else: 
+        time1 = str((int(date[0:2]) - int(day_today) - 1))
+        if int(time1) < 10:
+            time1 = '0' + time1
+        time2 = str((24 - int(hours_today) - 1))
+        
+        if int(time2) < 10: 
+            time2 = '0' + time2
+        time_to_event = time1 + '/' + time2
+    
+    response = EventsValue(event).json(200)
+    return response
 
 
 @bp.get("/prizes")
@@ -223,6 +247,45 @@ def get_prizes():
     return WebsiteRewardsValue(
         jeecpot_rewards[0], level_reward, activity_reward, daily_squad_reward
     ).json(200)
+
+@bp.get('/job-fair')
+@requires_client_auth
+def get_job_fair_companies():
+    event = EventsFinder.get_default_event()
+    event_dates = EventsHandler.get_event_dates(event)
+    job_fair_type = ActivityTypesFinder.get_from_name('Job Fair')
+    job_fairs = ActivitiesFinder.get_all_from_type(job_fair_type)
+    companies0 = []
+    companies1 = []
+    companies2 = []
+    companies3 = []
+    companies4 = []
+    for job_fair in job_fairs:
+        company = CompaniesFinder.get_from_activity(job_fair)
+        if company:
+            company_img = CompaniesHandler.find_image(company[0].name)
+        
+            if(job_fair.day == event_dates[0]):
+                companies0.append(company_img)
+            elif (job_fair.day == event_dates[1]):
+                companies1.append(company_img)
+            elif (job_fair.day == event_dates[2]):
+                companies2.append(company_img)
+            elif (job_fair.day == event_dates[3]):
+                companies3.append(company_img)
+            else:
+                companies4.append(company_img)
+
+
+    return jsonify({
+        '0':companies0,
+        '1':companies1,
+        '2':companies2,
+        '3':companies3,
+        '4':companies4,
+    })
+
+
 
 
 def removeDuplicates(listofElements):

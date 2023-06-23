@@ -9,6 +9,7 @@ from jeec_brain.services.teams.create_team_member_service import CreateTeamMembe
 from jeec_brain.services.files.upload_image_service import UploadImageService
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
+from jeec_brain.services.files.get_file_service import GetFileImage
 
 
 class TeamsHandler:
@@ -53,6 +54,10 @@ class TeamsHandler:
     @staticmethod
     def upload_member_image(file, member_name):
         return UploadImageService(file, member_name, "static/members").call()
+
+    @staticmethod
+    def get_image_member(member_name):
+        return GetFileImage(member_name, "static/members").call()
 
     @staticmethod
     def find_member_image(member_name):

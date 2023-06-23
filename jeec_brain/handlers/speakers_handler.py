@@ -6,6 +6,7 @@ from jeec_brain.services.speakers.delete_speaker_service import DeleteSpeakerSer
 from jeec_brain.services.files.upload_image_service import UploadImageService
 from jeec_brain.services.files.delete_image_service import DeleteImageService
 from jeec_brain.services.files.find_image_service import FindImageService
+from jeec_brain.services.files.get_image_speaker import GetFileImageSpeaker
 
 
 class SpeakersHandler:
@@ -45,6 +46,15 @@ class SpeakersHandler:
     @staticmethod
     def find_image(speaker_name):
         return FindImageService(speaker_name, "static/speakers").call()
+
+    @staticmethod 
+    def get_image_speaker(speaker_name):
+        return GetFileImageSpeaker(speaker_name, "static/speakers").call()
+    
+    @staticmethod 
+    def get_image_company(company_name):
+        return GetFileImageSpeaker(company_name, "static/speakers/companies").call()
+
 
     @staticmethod
     def upload_company_logo(file, company_name):

@@ -39,3 +39,7 @@ class TagsFinder:
             .filter(Activities.external_id == external_id)
             .all()
         )
+    
+    @classmethod
+    def get_from_id(cls, id):
+        return Tags.query.filter_by(id=id).first()

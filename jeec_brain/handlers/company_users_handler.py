@@ -22,9 +22,9 @@ from jeec_brain.handlers.activities_handler import ActivitiesHandler
 class CompanyUsersHandler:
     @classmethod
     def create_company_user(
-        cls, chat_enabled, name, username, email, company, post, food_manager
+        cls, chat_enabled, name, username, email, company, post, food_manager, password
     ):
-        password = GenerateCredentialsService().call()
+        # password = GenerateCredentialsService().call()
 
         if chat_enabled:
             chat_id = UsersHandler.create_chat_user(
@@ -35,8 +35,11 @@ class CompanyUsersHandler:
         else:
             chat_id = None
 
+        # user = UsersHandler.create_user(
+        #     name, username, RolesEnum["company"], email, password, chat_id
+        # )
         user = UsersHandler.create_user(
-            name, username, RolesEnum["company"], email, password, chat_id
+            name, username, "company", email, password, chat_id
         )
         if not user:
             return None

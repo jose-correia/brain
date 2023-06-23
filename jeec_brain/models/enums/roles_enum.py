@@ -17,3 +17,5 @@ class RolesEnum(enum.Enum):
     company = 11
 
     student = 12
+
+    member = 13
