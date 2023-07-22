@@ -5,9 +5,9 @@ from sqlalchemy import sql
 
 
 class Tags(db.Model, ModelMixin):
-    __tablename__ = 'tags'
-    
+    __tablename__ = "tags"
+
     name = db.Column(db.String(100), unique=True, nullable=False)
 
     def __repr__(self):
-        return 'Name: {}'.format(self.name)
+        return "Name: {}".format(self.name)

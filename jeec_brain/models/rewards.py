@@ -5,8 +5,8 @@ from sqlalchemy import sql
 
 
 class Rewards(db.Model, ModelMixin):
-    __tablename__ = 'rewards'
-    
+    __tablename__ = "rewards"
+
     name = db.Column(db.String(100), unique=True, nullable=False)
 
     description = db.Column(db.String(300))
@@ -16,4 +16,4 @@ class Rewards(db.Model, ModelMixin):
     quantity = db.Column(db.Integer)
 
     def __repr__(self):
-        return 'Name: {}'.format(self.name)
+        return "Name: {}".format(self.name)

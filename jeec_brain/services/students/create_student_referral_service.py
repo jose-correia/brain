@@ -5,13 +5,12 @@ from typing import Dict, Optional
 logger = logging.getLogger(__name__)
 
 
-class CreateStudentReferralService():
-
-    def __init__(self, kwargs: Dict):
+class CreateStudentReferralService:
+    def __init__(self, **kwargs: Dict):
         self.kwargs = kwargs
 
     def call(self) -> Optional[StudentReferrals]:
-        
+
         student_referral = StudentReferrals.create(**self.kwargs)
 
         if not student_referral:

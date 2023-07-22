@@ -1,8 +1,7 @@
 from jeec_brain.models.activity_types import ActivityTypes
 
 
-class ActivityTypesFinder():
-
+class ActivityTypesFinder:
     @classmethod
     def get_from_name(cls, name):
         return ActivityTypes.query.filter_by(name=name).first()
@@ -14,7 +13,7 @@ class ActivityTypesFinder():
     @classmethod
     def get_all_from_event(cls, event):
         return ActivityTypes.query.filter_by(event=event).all()
-    
+
     @classmethod
     def get_all(cls):
         return ActivityTypes.query.order_by(ActivityTypes.updated_at).all()
@@ -25,3 +24,8 @@ class ActivityTypesFinder():
             return ActivityTypes.query.filter_by(**kwargs).all()
         except Exception:
             return None
+
+    @classmethod
+    def get_from_activity_type_id(cls,activity_type_id):
+    
+        return ActivityTypes.query.filter_by(id = activity_type_id).first()

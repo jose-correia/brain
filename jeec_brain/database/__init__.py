@@ -10,7 +10,7 @@ db_session = db.session
 def create_tables():
     # Event
     from jeec_brain.models.events import Events
-    
+
     from jeec_brain.models.colaborators import Colaborators
     from jeec_brain.models.speakers import Speakers
     from jeec_brain.models.users import Users
@@ -54,11 +54,16 @@ def create_tables():
     from jeec_brain.models.student_logins import StudentLogins
     from jeec_brain.models.student_referrals import StudentReferrals
     from jeec_brain.models.student_daily_points import StudentDailyPoints
+    from jeec_brain.models.quests import Quests
 
     # Rewards
     from jeec_brain.models.rewards import Rewards
     from jeec_brain.models.jeecpot_rewards import JeecpotRewards
     from jeec_brain.models.squads_rewards import SquadsRewards
+    from jeec_brain.models.reward_student import StudentRewards
+
+    # Schedule
+    from jeec_brain.models.student_schedule import ScheduleStudent
 
     from jeec_brain.models.logs import Logs
 
@@ -72,6 +77,6 @@ def drop_tables():
 
 def create_testing_db():
     conn = db.engine.connect()
-    conn.execute('commit')  # stop open transaction
-    conn.execute('create database test_' + os.environ['APP_DB'])
+    conn.execute("commit")  # stop open transaction
+    conn.execute("create database test_" + os.environ["APP_DB"])
     conn.close()

@@ -133,6 +133,7 @@
     <table class="striped">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Name</th>
           <th>Type</th>
           <th>Description</th>
@@ -148,6 +149,8 @@
       <tbody>
         {% for activity in activities %}
         <tr>
+          <td>{{ activity.id }}</td>
+
           <td><b>{{ activity.name }}</b></td>
 
           <td>
@@ -204,20 +207,21 @@
           </td>
 
           {% if role in ['admin', 'activities_admin'] %}
+          {% if activity.code_work_flow.value in ['Admin generates code, student uses it and its deleted', 'Admin generates code, multiple students use it, admin deletes it'] %}
           <td>
-            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
             <button title="Create Code" data-target="modal1" data-name="{{ activity.external_id }}"
               class="waves-effect waves-light green btn-floating modal-trigger code-btn"><i
                 class="material-icons left">qr_code</i>Generate Code</button>
-            {% endif %}
           </td>
+          {% endif %}
+          {% if activity.code_work_flow.value in ['Admin generates code, multiple students use it, admin deletes it',
+          'Company generates code, multiple students use it, admin deletes it'] %}
           <td>
-            {% if activity.activity_type.name not in ["Job Fair", "Job Fair Booth"] %}
-            <button title="Create Code" data-name="{{ activity.external_id }}"
+            <button title="Delete Code" data-name="{{ activity.external_id }}"
               class="waves-effect waves-light red btn-floating modal-trigger delete-code-btn"><i
                 class="material-icons left">delete</i>Delete Code</button>
-            {% endif %}
           </td>
+          {% endif %}
           {% endif %}
 
           {% if role in ['admin', 'activities_admin'] %}
@@ -239,7 +243,8 @@
   <div id="modal1" class="modal" style="height: auto;">
     <div class="modal-content">
       <center style="margin-top: 40px;">
-        <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" readonly>
+        <p><b>You can now write the code. Please choose something readable. If the code format is not valid, a random code will be generated.</b></p>
+        <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
 
         <div style="margin-top: 40px;">
           <button id="code" class="waves-effect red lighten-2 btn-large dashboard-btn"
@@ -270,11 +275,21 @@
         activity_external_id = jQuery(this).data('name');
       });
 
+      $("#code-input").on("keyup", function () {
+        let code_input = $('#code-input').val();
+        if (code_input.length === 4 || code_input.length === 9 || code_input.length === 14) {
+          $('#code-input').val(code_input + "-");
+        }
+      });
+
       $("#code").click(function () {
-        $.post("/admin/activity/" + activity_external_id + "/code", function (data) {
+        $.post("/admin/activity/" + activity_external_id + "/code", { "code": $('#code-input').val() }, function (data) {
           var code = data[0].substring(0, 4) + '-' + data[0].substring(4, 8) + '-' + data[0].substring(8, 12) + '-' + data[0].substring(12);
           $('#code-input').val(code);
-        });
+          alert("Code generated successfully")
+        }).fail(function (error) {
+          alert('Error: ' + error);
+        });;
       });
 
       $(".delete-code-btn").click(function () {

@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.auctions import Auctions
 
 
-class UpdateAuctionService():
-    
+class UpdateAuctionService:
     def __init__(self, auction: Auctions, kwargs: Dict):
         self.auction = auction
         self.kwargs = kwargs

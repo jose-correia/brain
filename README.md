@@ -10,6 +10,7 @@
     - [Features:](#features-1)
 - [Website Api](#website-api)
 - [Tech Stack](#tech-stack)
+- [Instructions to deploy to production](#instructions-to-deploy-to-production)
 - [Instructions to deploy locally](#instructions-to-deploy-locally)
   - [Creating the database](#creating-the-database)
   - [Configuring the secrets](#configuring-the-secrets)
@@ -123,6 +124,15 @@ and only the spotlight speakers will be requested. This **enables search queries
 *   PostgreSQL
 
 
+## Instructions to deploy to production
+To access JEEC Jenkins server go to:
+- https://jenkins.jeec.ist
+
+Each commit that is done to master branch will trigger a new pipeline in Jenkins. This pipeline builds the Docker image and creates a manually triggered step to deploy to the production server. 
+
+The pipeline to deploy to production can be accessed in the following address:
+- https://jenkins.jeec.ist/job/jeec-brain/job/master
+
 ## Instructions to deploy locally
 ### Creating the database
 1. Clone this repository;
@@ -132,8 +142,8 @@ and only the spotlight speakers will be requested. This **enables search queries
 3. Create a new role in postgresql with all privileges:
     - `sudo -u postgres -i`
     - `psql postgres`
-    - `CREATE ROLE '<your-computer-account-username>' WITH PASSWORD '<password>'`
-    - `GRANT ALL PRIVILEGES ON SCHEMA public TO ROLE '<your-computer-account-username>'`
+    - `CREATE ROLE <your-computer-account-username> WITH PASSWORD '<password>'`
+    - `GRANT ALL PRIVILEGES ON SCHEMA public TO <your-computer-account-username>`
     - `\q`
     - `exit`
 4. Create a database in postgresql for the application:

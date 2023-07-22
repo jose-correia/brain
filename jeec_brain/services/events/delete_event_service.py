@@ -1,8 +1,7 @@
 from jeec_brain.models.events import Events
 
 
-class DeleteEventService():
-
+class DeleteEventService:
     def __init__(self, event: Events):
         self.event = event
 

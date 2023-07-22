@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.companies import Companies
 
 
-class UpdateCompanyService():
-    
+class UpdateCompanyService:
     def __init__(self, company: Companies, kwargs: Dict):
         self.company = company
         self.kwargs = kwargs

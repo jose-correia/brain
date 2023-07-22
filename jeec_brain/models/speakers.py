@@ -7,8 +7,8 @@ from sqlalchemy import sql
 
 
 class Speakers(db.Model, ModelMixin):
-    __tablename__ = 'speakers'
-    
+    __tablename__ = "speakers"
+
     name = db.Column(db.String(100), unique=True, nullable=False)
 
     company = db.Column(db.String(100))
@@ -24,9 +24,11 @@ class Speakers(db.Model, ModelMixin):
 
     spotlight = db.Column(db.Boolean, default=False)
 
-    activities = relationship("Activities",
+    activities = relationship(
+        "Activities",
         secondary="speaker_activities",
-        secondaryjoin=sql.and_(SpeakerActivities.activity_id == Activities.id))
+        secondaryjoin=sql.and_(SpeakerActivities.activity_id == Activities.id),
+    )
 
     def __repr__(self):
-        return 'Name: {}'.format(self.name)
+        return "Name: {}".format(self.name)

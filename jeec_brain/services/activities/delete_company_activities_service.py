@@ -1,8 +1,7 @@
 from jeec_brain.models.company_activities import CompanyActivities
 
 
-class DeleteCompanyActivityService():
-
+class DeleteCompanyActivityService:
     def __init__(self, company_activity: CompanyActivities):
         self.company_activity = company_activity
 

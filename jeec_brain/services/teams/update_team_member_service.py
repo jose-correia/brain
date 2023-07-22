@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.colaborators import Colaborators
 
 
-class UpdateTeamMemberService():
-    
+class UpdateTeamMemberService:
     def __init__(self, member: Colaborators, kwargs: Dict):
         self.member = member
         self.kwargs = kwargs

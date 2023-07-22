@@ -1,7 +1,9 @@
-from jeec_brain.apps.auth.services.create_tecnico_client_service import CreateTecnicoClientService
+from jeec_brain.apps.auth.services.create_tecnico_client_service import (
+    CreateTecnicoClientService,
+)
+
 
 class TecnicoClientHandler(object):
-
     @staticmethod
     def create_client(fenix_config_file):
         return CreateTecnicoClientService(fenix_config_file=fenix_config_file).call()
@@ -13,6 +15,9 @@ class TecnicoClientHandler(object):
 
     @staticmethod
     def get_user(client, fenix_auth_code):
+        print(30*'*')
+        print(fenix_auth_code)
+        print(30*'*')
         user = client.get_user_by_code(fenix_auth_code)
         return user
 
@@ -20,3 +25,8 @@ class TecnicoClientHandler(object):
     def get_person(client, user):
         person = client.get_person(user)
         return person
+    
+    @staticmethod
+    def get_person_classes_calendar(client, user):
+        schedule = client.get_person_classes_calendar(user)
+        return schedule

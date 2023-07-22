@@ -10,15 +10,17 @@ from flask import current_app
 from datetime import datetime
 
 
-class ModelMixin():
-    __mapper_args__ = {'always_refresh': True}
+class ModelMixin:
+    __mapper_args__ = {"always_refresh": True}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
-    external_id = Column(UUIDType(binary=False), unique=True, default=uuid.uuid4, index=True)
+    external_id = Column(
+        UUIDType(binary=False), unique=True, default=uuid.uuid4, index=True
+    )
 
-    _repr_hide = ['created_at', 'updated_at']
+    _repr_hide = ["created_at", "updated_at"]
 
     @classmethod
     def query(cls):
@@ -143,12 +145,11 @@ class ModelMixin():
             return True
 
     def update(self, **kwargs):
-        '''
-            Updates the model's fields and returns the model instance if sucessful
-        '''
+        """
+        Updates the model's fields and returns the model instance if sucessful
+        """
         try:
-            db_session.query(self.__class__).filter_by(id=self.id).update(
-                kwargs)
+            db_session.query(self.__class__).filter_by(id=self.id).update(kwargs)
             db_session.commit()
         except Exception as e:
             current_app.logger.error(e)
@@ -158,9 +159,11 @@ class ModelMixin():
             return self
 
     def __repr__(self):
-        values = ', '.join(
-            "%s=%r" % (n, getattr(self, n)) for n in self.__table__.c.keys() if
-            n not in self._repr_hide)
+        values = ", ".join(
+            "%s=%r" % (n, getattr(self, n))
+            for n in self.__table__.c.keys()
+            if n not in self._repr_hide
+        )
         return "%s(%s)" % (self.__class__.__name__, values)
 
     def filter_string(self):

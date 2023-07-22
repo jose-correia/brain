@@ -5,15 +5,15 @@ from sqlalchemy import sql
 
 
 class SquadsRewards(db.Model, ModelMixin):
-    __tablename__ = 'squads_rewards'
-    
-    reward_id = db.Column(db.Integer, db.ForeignKey('rewards.id', ondelete='SET NULL'))
-    reward = relationship('Rewards')
+    __tablename__ = "squads_rewards"
+
+    reward_id = db.Column(db.Integer, db.ForeignKey("rewards.id", ondelete="SET NULL"))
+    reward = relationship("Rewards")
 
     date = db.Column(db.String(30), unique=True)
 
-    winner = relationship('Squads')
-    winner_id = db.Column(db.Integer, db.ForeignKey('squads.id', ondelete='SET NULL'))
+    winner = relationship("Squads")
+    winner_id = db.Column(db.Integer, db.ForeignKey("squads.id", ondelete="SET NULL"))
 
     def __repr__(self):
-        return 'Name: {}'.format(self.name)
+        return "Name: {}".format(self.name)

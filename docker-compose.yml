@@ -1,8 +1,9 @@
 version: '3.3'
 
 services:
-  jeec-brain:
-    container_name: jeec_brain_2
+  jeec_brain:
+    image: jeec_brain:latest
+    container_name: jeec_brain
     ports:
       - "8081:8081"
     build:
@@ -11,3 +12,8 @@ services:
     volumes:
       - /home/jeecist/jeec-brain/jeec_brain/storage:/jeec_brain/jeec_brain/storage
       - /home/jeecist/jeec-brain/jeec_brain/static:/jeec_brain/jeec_brain/static
+
+  db_migration:
+    image: jeec_brain:latest
+    container_name: db_migration
+    command: python3.6 manage.py db upgrade

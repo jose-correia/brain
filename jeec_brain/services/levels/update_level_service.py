@@ -2,8 +2,7 @@ from typing import Dict, Optional
 from jeec_brain.models.levels import Levels
 
 
-class UpdateLevelService():
-    
+class UpdateLevelService:
     def __init__(self, level: Levels, kwargs: Dict):
         self.level = level
         self.kwargs = kwargs
@@ -13,5 +12,5 @@ class UpdateLevelService():
             update_result = self.level.update(**self.kwargs)
         except:
             return None
-            
+
         return update_result

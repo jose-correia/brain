@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+  <script src="../static/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <meta charset="utf-8">
@@ -84,11 +85,13 @@
     <table class="striped">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Name</th>
           <th>IST Id</th>
           <th>Email</th>
           <th>Linkedin</th>
           <th>Level</th>
+          <th>Daily Points</th>
           <th>Total Points</th>
           <th>Uploaded CV</th>
           <th>Squad</th>
@@ -97,36 +100,44 @@
       <tbody>
         {% for student in students %}
         <tr>
+          <td>
+            {{ student[10] }}
+          </td>
+
           <td><b>
-              {{ student.user.name }}
+              {{ student[0] }}
             </b></td>
 
           <td>
-            {{ student.user.username }}
+            {{ student[1] }}
           </td>
 
           <td>
-            {{ student.user.email }}
+            {{ student[2] }}
           </td>
 
           <td>
-            {% if student.linkedin_url is not none %}
-            {{ student.linkedin_url}}
+            {% if student[3] is not none %}
+            <a href="{{ student[3] }}" target="_blank">{{ student[3] }}</a>
             {% else %}
             <i class="material-icons icon-red">clear</i>
             {% endif %}
           </td>
 
           <td>
-            {{ student.level.value }}
+            {{ student[4] }}
           </td>
 
           <td>
-            {{ student.total_points }}
+            {{ student[5] }}
           </td>
 
           <td>
-            {% if student.uploaded_cv is sameas true %}
+            {{ student[6] }}
+          </td>
+
+          <td>
+            {% if student[7] is sameas true %}
             <i class="material-icons icon-green">check</i>
             {% else %}
             <i class="material-icons icon-red">clear</i>
@@ -134,24 +145,74 @@
           </td>
 
           <td>
-            {{ student.squad.name }}
+            {% if student[8] %}
+            {{ student[8] }}
+            {% endif %}
           </td>
 
+          {% if current_user.role.name == 'admin' %}
           <td>
-            {% if current_user.role.name == 'admin' %}
-            <form action="/admin/student/{{student.external_id.hex}}/ban" method="post"
-              onsubmit="return confirm('Are you sure you want to ban this student?');">
+            <form action="/admin/student/{{student[9].hex}}/ban" method="post"
+              onsubmit="return confirm('Are you sure you want to ban this student?');" style="margin: 0;">
               <button title="Ban student" class="waves-effect waves-light btn-floating"><i
                   class="material-icons red left">person_remove</i>Ban</button>
             </form>
-            {% endif %}
           </td>
+          <td>
+            <button title="Add Points" data-target="modal1" data-name="{{ student[9].hex }}"
+              class="waves-effect waves-light green btn-floating modal-trigger points-btn"><i
+                class="material-icons left">qr_code</i>Add Points</button>
+          </td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>
     </table>
     {% endif %}
   </div>
+
+  <div id="modal1" class="modal" style="height: auto;">
+    <div class="modal-content">
+      <div class="row">
+        <div class="input-field col s2">
+          <input class="col s12" id="points" name="points" type="number" class="validate" required>
+          <label for="points">Points</label>
+        </div>
+        <div class="input-field col s2">
+          <input class="col s12" id="activity_id" name="activity_id" type="number" class="validate">
+          <label for="activity_id">Activity ID</label>
+        </div>
+      </div>
+      <p id="points-msg"></p>
+      <div class="row">
+        <button id="points-submit" type="submit" class="waves-effect blue lighten-2 btn add-btn right"><i
+            class="material-icons left">save</i>Add Points</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      var activity_external_id = "";
+
+      $('.modal').modal();
+
+      $(".points-btn").click(function () {
+        activity_external_id = jQuery(this).data('name');
+      });
+
+      $("#points-submit").click(function () {
+        $.post("/admin/student/" + activity_external_id + "/add-points", { "points": $("#points").val(), "activity_id": $("#activity_id").val() }, function (data) {
+          $('#points-msg').text(data);
+        }).fail(function (error) {
+          $('#points-msg').text(error.responseJSON.error);
+        });
+      })
+
+    })
+
+  </script>
+
 </body>
 
 </html>

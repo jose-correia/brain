@@ -98,8 +98,6 @@
           <th>Email</th>
           <th>Company</th>
           <th>Password</th>
-          <th>EVF Username</th>
-          <th>EVF Password</th>
           <th>Food Manager</th>
         </tr>
       </thead>
@@ -186,18 +184,6 @@
           <td>
             {% if current_user.role.name == 'admin' %}
             {{ company_user.user.password }}
-            {% endif %}
-          </td>
-
-          <td>
-            {% if current_user.role.name == 'admin' %}
-            {{ company_user.evf_username }}
-            {% endif %}
-          </td>
-
-          <td>
-            {% if current_user.role.name == 'admin' %}
-            {{ company_user.evf_password }}
             {% endif %}
           </td>
 

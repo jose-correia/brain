@@ -22,10 +22,9 @@ fenixedu.ini
 
 /__pycache__
 
-/venv
-.venv
-
-
+venv/
+.venv/
+azagent/
 
 # Editor directories and files
 .idea
@@ -34,3 +33,7 @@ fenixedu.ini
 *.ntvs*
 *.njsproj
 *.sln
+
+deployment/brain-nginx/logs
+deployment/brain-nginx/nginx/ssl
+

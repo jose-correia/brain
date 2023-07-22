@@ -8,7 +8,7 @@
 
   <script src="/static/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  
+
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1">
@@ -24,7 +24,7 @@
     <a href="{{ url_for('companies_api.dashboard') }}"><img class="jeec-logo-mobile"
         src="/static/jeec_logo_mobile.svg"></a>
 
-    <div class="company-dash-username right" style="color:black">{{ user.company.name }}</div>
+    <div class="company-dash-username right" style="color:black">{{ user.user.name }}</div>
 
     <form action="{{ url_for('companies_api.company_logout') }}" method="get">
       <button class="waves-effect red lighten-2 btn-small right logout-btn"><i class="material-icons left">lock</i>Log
@@ -38,113 +38,266 @@
   </div>
 
   <div class="section-header">
-    <h2>{{ meal.type.name }} {{ meal.day }}</h2>
-    <p>Choose your meal.</p>
+    <h2>{{ activity.name }}</h2>
   </div>
 
-  <form action="{{ url_for('companies_api.meals_dashboard') }}" method="get" class="row s12">
+  <form action="{{ url_for('companies_api.dashboard') }}" method="get" class="row s12">
     <button class="waves-effect waves-light btn back-btn left"><i
         class="material-icons left">arrow_back</i>back</button>
   </form>
 
-  <div class="section-title center-align" style="margin-top:50px;">
-    List of foods
+  <div class="activity_info" style="padding-left: 15vw; padding-right: 15vw;">
+    <div class="activity-basic-info">
+      <div class="activity-location">
+        Location: {{ activity.location }}
+      </div>
+      <div class="activity-time">
+        Time: {{ activity.day }} - {{ activity.time }}
+      </div>
+    </div>
+
+    <center class="activity-description">
+      {{ activity.description }}
+    </center>
   </div>
 
-  <div class="list">
-    {% if error is not none %}
-    <blockquote class="create-error">
-      {{ error }}
-    </blockquote>
-    {% else %}
+  <div class="flexbox-btns" style="margin-top: 50px; justify-content: space-evenly;">
+    <button class="waves-effect lighten-2 btn-large dashboard-btn add-calender-btn" style="width: auto;"><i
+        class="large material-icons left">event</i>Add To Calendar</button>
 
-    <form id="dish_form" class="col s12" action="/companies/meal/{{ meal.external_id.hex }}" method="post">
-      {% if max_dish_quantity is not none %}
-      <div class="sub_section-title left-align" style="margin-bottom: 20px;">
-        Number of Dishes Available: {{ max_dish_quantity }}
-      </div>
-      {% endif %}
+    {% if activity.zoom_link %}
+    <a href="{{ zoom_link }}" target="_blank" class="waves-effect lighten-2 btn-large dashboard-btn"
+      style="font-weight: 600;"><i class="large material-icons left">connected_tv</i>Zoom Link</a>
+    {% endif %}
 
-      {% for dish_type in dish_types %}
-      <table class="striped" id="table_{{ dish_type }}">
-        <thead>
-          <tr>
-            <th>{% if dish_type == 'MainCourse' %}Main Course{% else %}{{ dish_type }}{% endif %}</th>
-            <th>Description</th>
-            <th>Quantity</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for dish in dishes %}
-          {% if dish.type.name == dish_type %}
-          <tr>
-            <td>
-              {{ dish.name }}
-            </td>
-  
-            <td>
-              {{ dish.description }}
-            </td>
-  
-            <td>
-              <input id="dish_quantity{{ loop.index0 }}" name="dish_quantity_{{ dish_type }}" type="number" min="0" value="{% for company_dish in company_dishes %}{% if company_dish.dish_id == dish.id %}{{ company_dish.dish_quantity }}{% endif %}{% endfor %}" class="validate s2">
-              <input type="hidden" name="dish_{{ dish_type }}" value="{{ dish.external_id }}">
-            </td>
-          </tr>
-          {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
-      {% if not loop.last %}
-      <br><br>
-      {% endif %}
-      {% endfor %}
-      <button type="submit" class="waves-effect blue lighten-2 btn add-btn left" ><i class="material-icons left">save</i>Save</button>
-    </form>
+    {% if activity.code_work_flow.value in ['Company generates code, student uses it and its deleted'] %}
+    <button id="code_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="width: auto;"><i
+        class="large material-icons left">qr_code</i>Generate Code</button>
+    {% endif %}
+
+    {% if activity.code_work_flow.value in ['Company uses student IST id'] %}
+    <button id="istid_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn" style="width: auto;"><i
+        class="large material-icons left">school</i>Insert Student ID</button>
+    {% endif %}
+
+    {% if activity.code_work_flow.value in ['Company uses student IST id'] %}
+    <button id="qrcode_btn" class="waves-effect blue lighten-2 btn-large dashboard-btn activity_info"
+      style="width: auto;"><i class="large material-icons left">filter_center_focus</i>Scan student QR Code</button>
     {% endif %}
   </div>
 
-  <script>
-    $(document).ready(function(){
-      var max_dishes = "{{ max_dish_quantity }}";
-      var dish_types = [];
-      var dishes_type_size = "{{ dish_types|length }}"; 
-      var error = new Array(parseInt(dishes_type_size)).fill(0);
-      
-      {% for dish_type in dish_types %}
-      dish_types.push("{{ dish_type }}");
-      {% endfor %}
+  {% if activity.code_work_flow.value in ['Company generates code, student uses it and its deleted'] %}
+  <div id="code" style="height: auto;">
+    <center style="margin-top: 40px;">
+      <input id="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" readonly>
 
-      $("#dish_form").submit(function(e){
-        var sum = 0;
-        var number = 0;
-        var i = 0;
+      <div style="margin-top: 40px;">
+        <button id="code-generate" class="waves-effect red lighten-2 btn-large dashboard-btn"
+          style="width: auto; margin-right: 10px;"><i class="large material-icons left">qr_code</i>Generate
+          Code</button>
 
-        for(i=0;i<dish_types.length;i++)
-        {
-          sum = 0;
-          console.log(dish_types[i]);
-          $('#table_'+dish_types[i]+' input[name ="dish_quantity"]').each(function(){
-            number = $(this).val();
-            if(!isNaN(parseInt(number)))
-            {
-              sum += parseInt(number);
-            }
-          });
-          if(sum > max_dishes && !isNaN(parseInt(max_dishes)))
-          {
-            console.log('error');
-            if(error[i] == 0)
-            {
-              error[i] = 1;
-              $('#table_'+dish_types[i]).append('<blockquote class="create-error">Number of ' + dish_types[i] + 's must be smaller then ' + max_dishes + '!</blockquote>');
-            }
-            e.preventDefault();
-          }
-        }
+        <button id="copy" class="waves-effect blue lighten-2 btn-large dashboard-btn"
+          style="width: auto; margin-left: 10x;"><i class="large material-icons left">content_copy</i>Copy to
+          Clipboard</button>
+      </div>
+    </center>
+  </div>
+  {% endif %}
+
+  {% if activity.code_work_flow.value in ['Company uses student IST id'] %}
+  <div id="istid" style="height: auto;">
+    <center style="margin-top: 40px;">
+      <input id="istid-input" placeholder="istXXXXXX">
+      <p id="istid-success"></p>
+      <p id="istid-error"></p>
+      <div style="margin-top: 40px;">
+        <button id="istid-submit" class="waves-effect red lighten-2 btn-large dashboard-btn"
+          style="width: auto; margin-right: 10px;"><i class="large material-icons left">qr_code</i>Insert
+          ID</button>
+      </div>
+  </div>
+  </center>
+  </div>
+
+  <center>
+    <p id="scanner-code"></p>
+  </center>
+  <div id="scanner">
+    <center>
+      <video muted playsinline id="qr-video"></video>
+    </center>
+  </div>
+  {% endif %}
+
+  <script type="module">
+    import QrScanner from "/static/qr-scanner.min.js";
+    QrScanner.WORKER_PATH = '/static/qr-scanner-worker.min.js';
+    const video = document.getElementById('qr-video');
+    const camHasCamera = document.getElementById('cam-has-camera');
+
+    // ####### Web Cam Scanning #######
+    QrScanner.hasCamera().then(hasCamera => camHasCamera.textContent = hasCamera);
+    const scanner = new QrScanner(video, result => {
+      scanner.stop();
+      $.post("/companies/activity/{{ activity.external_id.hex }}/istid", { "istid": result }, function (data) {
+        alert(data);
+        scanner.start();
+      }).fail(function (error) {
+        alert(error.responseJSON.error);
+        scanner.start();
       });
     });
 
+    $(function () {
+      var activity = {
+        name: "{{activity.name}}",
+        location: "{{activity.location}}",
+        registration_link: "{{activity.registration_link}}",
+        zoom_link: "{{activity.zoom_link}}",
+        time: "{{activity.time}}",
+        registration_open: "{{activity.registration_open}}",
+        day: "{{activity.day}}",
+        end_time: "{{activity.end_time}}",
+        external_id: "{{activity.external_id.hex}}"
+      }
+
+
+      $("#code").hide();
+      $("#scanner").hide();
+      $("#istid").hide();
+      scanner.stop();
+
+      $("#qrcode_btn").click(function () {
+        $("#code").hide();
+        $("#scanner").show();
+        $("#istid").hide();
+        $(".activity_info").hide();
+        scanner.start();
+      });
+
+      $("#code_btn").click(function () {
+        $("#code").show();
+        $("#scanner").hide();
+        $("#istid").hide();
+        $(".activity_info").show();
+        scanner.stop();
+      });
+
+      $("#istid_btn").click(function () {
+        $("#code").hide();
+        $("#scanner").hide();
+        $("#istid").show();
+        $(".activity_info").show();
+        scanner.stop();
+      });
+
+      $("#code-generate").click(function () {
+        $.post("/companies/activity/" + activity.external_id + "/code", function (data) {
+          var code = data.substring(0, 4) + '-' + data.substring(4, 8) + '-' + data.substring(8, 12) + '-' + data.substring(12);
+          $('#code-input').val(code);
+        });
+      });
+
+      $("#istid-submit").click(function () {
+        let ist_id = $("#istid-input").val();
+        $.post("/companies/activity/" + activity.external_id + "/istid", { "istid": ist_id }, function (data) {
+          alert(data);
+        }).fail(function (error) {
+          alert(error.responseJSON.error);
+        });
+      });
+
+      $("#copy").click(function () {
+        var code = $("#code-input");
+        code.select();
+        document.execCommand("copy");
+      });
+
+      $(".add-calender-btn").click(function () {
+        var url = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+        url = url + "&text=" + activity.name;
+        url = url + "&ctz=" + "Europe/Lisbon";
+        url = url + "&location=" + activity.location;
+        url = url + "&dates=" + get_date(activity);
+        url =
+          url +
+          "&sprop=website:" +
+          activity.registration_link +
+          "&sprop=name:" +
+          activity.name;
+
+        if (activity.zoom_link) {
+          url =
+            url +
+            "&details=" +
+            "Zoom Link: " +
+            activity.zoom_link;
+        }
+
+        var date = new Date();
+
+        if (
+          date.getHours().toString() + ":" + date.getMinutes().toString() > activity.time
+        ) {
+          url = url + "&crm=" + "BUSY"; //busy
+        } else if (!activity.registration_open) {
+          url = url + "&crm=" + "BLOCKING"; //blocking
+        } else {
+          url = url + "&crm=" + "AVAILABLE"; //available
+        }
+
+        var win = window.open(url, '_blank');
+        win.focus();
+      });
+    });
+
+    function get_date(activity) {
+      var start_date = new Date(
+        activity.day.substring(0, 11) + " " + activity.time + ":00"
+      );
+      var end_date = new Date(
+        activity.day.substring(0, 11) +
+        " " +
+        activity.end_time +
+        ":00"
+      );
+
+      start_date =
+        start_date.getFullYear().toString() +
+        (start_date.getMonth() + 1 < 10
+          ? "0" + (start_date.getMonth() + 1).toString()
+          : (start_date.getMonth() + 1).toString()) +
+        (start_date.getDate() < 10
+          ? "0" + (start_date.getDate()).toString()
+          : (start_date.getDate()).toString()) +
+        "T" +
+        (start_date.getHours() < 10
+          ? "0" + start_date.getHours()
+          : start_date.getHours()) +
+        (start_date.getMinutes() < 10
+          ? "0" + start_date.getMinutes()
+          : start_date.getMinutes()) +
+        "00";
+
+      end_date =
+        end_date.getFullYear().toString() +
+        (end_date.getMonth() + 1 < 10
+          ? "0" + (end_date.getMonth() + 1).toString()
+          : (end_date.getMonth() + 1).toString()) +
+        (end_date.getDate() < 10
+          ? "0" + (end_date.getDate()).toString()
+          : (end_date.getDate()).toString()) +
+        "T" +
+        (end_date.getHours() < 10
+          ? "0" + end_date.getHours()
+          : end_date.getHours()) +
+        (end_date.getMinutes() < 10
+          ? "0" + end_date.getMinutes()
+          : end_date.getMinutes()) +
+        "00";
+
+      return start_date + "/" + end_date;
+    };
   </script>
 </body>
 

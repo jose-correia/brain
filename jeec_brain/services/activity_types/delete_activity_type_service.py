@@ -1,8 +1,7 @@
 from jeec_brain.models.activity_types import ActivityTypes
 
 
-class DeleteActivityTypeService():
-
+class DeleteActivityTypeService:
     def __init__(self, activity_type: ActivityTypes):
         self.activity_type = activity_type
 

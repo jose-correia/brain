@@ -1,20 +1,21 @@
 from jeec_brain.database import db
 from jeec_brain.models.model_mixin import ModelMixin
 from flask_login import UserMixin
-from jeec_brain.models.enums.roles_enum import RolesEnum
+# from jeec_brain.models.enums.roles_enum2 import RolesEnum2
+
 # from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Users(db.Model, ModelMixin, UserMixin):
-    __tablename__ = 'users'
-    
+    __tablename__ = "users"
+
     name = db.Column(db.String(100), unique=False, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True)
 
     password = db.Column(db.String)
-    
-    role = db.Column(db.Enum(RolesEnum), nullable=False)
+
+    role = db.Column(db.String, nullable=False)
 
     sent_authentication_to_email = db.Column(db.Boolean, default=False)
     last_auth_email_destination = db.Column(db.String(100))
@@ -24,7 +25,7 @@ class Users(db.Model, ModelMixin, UserMixin):
     chat_id = db.Column(db.String)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return "<User %r>" % self.username
 
     def get_id(self):
         """
@@ -32,6 +33,6 @@ class Users(db.Model, ModelMixin, UserMixin):
         :return:
         """
         return self.username
-    
+
     def get_role(self):
         return self.role

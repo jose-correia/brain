@@ -16,17 +16,15 @@ from jeec_brain.models.levels import Levels
 
 
 class Students(db.Model, ModelMixin):
-    __tablename__ = 'students'
-    
-    name = db.Column(db.String(100), nullable=False)
-    ist_id = db.Column(db.String(10), unique=True, nullable=False, index=True)
+    __tablename__ = "students"
+
     photo = db.Column(db.Text())
     photo_type = db.Column(db.String(20))
     linkedin_url = deferred(db.Column(db.String(150)))
     uploaded_cv = deferred(db.Column(db.Boolean, default=False))
 
-    level = relationship('Levels')
-    level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
+    level = relationship("Levels")
+    level_id = db.Column(db.Integer, db.ForeignKey("levels.id"))
 
     daily_points = db.Column(db.Integer())
     total_points = db.Column(db.Integer())
@@ -36,25 +34,31 @@ class Students(db.Model, ModelMixin):
     course = db.Column(db.String(10))
     entry_year = db.Column(db.String())
 
-    user = relationship('Users', cascade="all,delete")
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    user = relationship("Users", cascade="all,delete")
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
 
-    squad = relationship('Squads', back_populates="members", uselist=False)
-    squad_id = db.Column(db.Integer, db.ForeignKey('squads.id', ondelete='SET NULL'))
+    squad = relationship("Squads", back_populates="members", uselist=False)
+    squad_id = db.Column(db.Integer, db.ForeignKey("squads.id", ondelete="SET NULL"))
 
-    tags = relationship("Tags",
+    tags = relationship(
+        "Tags",
         secondary="students_tags",
-        secondaryjoin=sql.and_(StudentsTags.tag_id == Tags.id))
+        secondaryjoin=sql.and_(StudentsTags.tag_id == Tags.id),
+    )
 
-    companies = relationship("Companies",
+    companies = relationship(
+        "Companies",
         secondary="student_companies",
-        secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id))
+        secondaryjoin=sql.and_(StudentCompanies.company_id == Companies.id),
+    )
 
     login_dates = relationship("StudentLogins")
 
-    activities = relationship("Activities",
+    activities = relationship(
+        "Activities",
         secondary="student_activities",
-        secondaryjoin=sql.and_(StudentActivities.activity_id == Activities.id))
+        secondaryjoin=sql.and_(StudentActivities.activity_id == Activities.id),
+    )
 
     def is_captain(self):
         if self.squad:
@@ -62,4 +66,4 @@ class Students(db.Model, ModelMixin):
         return False
 
     def __repr__(self):
-        return 'Name: {}  |  IST Id: {}'.format(self.user.name, self.user.username)
+        return "Name: {}  |  IST Id: {}".format(self.user.name, self.user.username)
